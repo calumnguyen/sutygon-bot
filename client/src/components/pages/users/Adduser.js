@@ -122,7 +122,7 @@ class AddUser extends Component {
                                                 action="/upload"
                                                 method="POST"
                                                 onSubmit={(e) => this.onSubmit(e)}>
-
+                                                    <h1>TEST</h1>
                                                 <div className="row">
                                                     <div className="form-group col-12 mb-2">
                                                         <label>Select Profile Image</label>
