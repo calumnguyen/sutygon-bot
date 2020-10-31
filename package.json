@@ -12,7 +12,7 @@
     "start": "node server.js",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
-"author": "Calum Nguyen",
+  "author": "Calum Nguyen",
   "license": "ISC",
   "dependencies": {
     "@opuscapita/react-alerts": "^3.1.0",

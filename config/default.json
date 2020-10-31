@@ -1,5 +1,5 @@
 {
-    "mongoURI": "mongodb://default:jmongodb+srv://admin-calum:^OqgB'|_:&>3>=9sAih*Rnm#YtuN9F>=D}kM++tV@sutygon.aqp0q.mongodb.net/main?retryWrites=true&w=majority0HK4oADVK2VH9n1@cluster0-shard-00-00.b2se9.mongodb.net:27017,cluster0-shard-00-01.b2se9.mongodb.net:27017,cluster0-shard-00-02.b2se9.mongodb.net:27017/main?ssl=true&replicaSet=atlas-lshxba-shard-0&authSource=admin&retryWrites=true&w=majority",
+    "mongoURI": "mongodb+srv://admin-calum:QPE9xzsiYfExnWy4@sutygon.aqp0q.mongodb.net/main?retryWrites=true&w=majority",
     "ourMongoURI": "mongodb://default:j0HK4oADVK2VH9n1@cluster0-shard-00-00.b2se9.mongodb.net:27017,cluster0-shard-00-01.b2se9.mongodb.net:27017,cluster0-shard-00-02.b2se9.mongodb.net:27017/main?ssl=true&replicaSet=atlas-lshxba-shard-0&authSource=admin&retryWrites=true&w=majority",
     "jwtSecret": "sutygon-bot^#@#$"
   }

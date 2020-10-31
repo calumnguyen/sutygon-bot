@@ -57,7 +57,8 @@ class RentOrder extends Component {
       OCAlert.alertError('Return Date should be after rent date', { timeOut: 3000 });
     }
     var startDate = moment(rentDate);
-    var threeDaysAfter = (new Date().getTime()+(2*24*60*60*1000));
+    console.log("rentDate",rentDate)
+    var threeDaysAfter = (new Date(rentDate).getTime()+(2*24*60*60*1000));
     console.log("threeDaysAfter",threeDaysAfter)
     var momentthreeDaysAfter = moment(threeDaysAfter);
    console.log("momentthreeDaysAfter",momentthreeDaysAfter)
