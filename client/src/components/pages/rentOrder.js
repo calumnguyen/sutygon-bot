@@ -15,6 +15,8 @@ import { getOrderbyOrderNumber } from "../../actions/returnproduct";
 import { addNewInvoice } from "../../actions/invoices";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts'
+var JsBarcode = require('jsbarcode');
+
 
 
 class RentOrder extends Component {
@@ -51,32 +53,26 @@ class RentOrder extends Component {
     await this.props.getCustomer(this.state.customer_id);
   }
   returnDateValidity = () => {
-    const { rentDate, returnDate } = this.state;
-    if (moment(moment(returnDate).format('MM/DD/YYYY')).isBefore(rentDate)) {
+    const { rentDate } = this.state;
+    // if (moment(moment(returnDate).format('MM/DD/YYYY')).isBefore(rentDate)) {
 
-      OCAlert.alertError('Return Date should be after rent date', { timeOut: 3000 });
-    }
-    var startDate = moment(rentDate);
-    console.log("rentDate",rentDate)
-    var threeDaysAfter = (new Date(rentDate).getTime()+(2*24*60*60*1000));
-    console.log("threeDaysAfter",threeDaysAfter)
-    var momentthreeDaysAfter = moment(threeDaysAfter);
-   console.log("momentthreeDaysAfter",momentthreeDaysAfter)
-  //   var resultHours = endDate.diff(startDate, 'hours', true);
-  // console.log("resultHours",resultHours/24)
+    //   OCAlert.alertError('Return Date should be after rent date', { timeOut: 3000 });
+    // }
+
 
   }
-  
+
   rentDateValidity = () => {
     const { rentDate, } = this.state;
     var currentdate = moment(new Date).format('MM/DD/YYYY');
     if (moment(moment(rentDate).format('MM/DD/YYYY')).isBefore(currentdate)) {
       OCAlert.alertError(`Rent Date should be after today's date`, { timeOut: 3000 });
-
-
-
+      return;
     }
 
+    var threeDaysAfter = (new Date(rentDate).getTime() + (2 * 24 * 60 * 60 * 1000));
+    var momentthreeDaysAfter = moment(threeDaysAfter).format("DD/MMM/YYYY");
+    this.state.returnDate = momentthreeDaysAfter;
   }
 
   onSubmit = async (e) => {
@@ -126,6 +122,7 @@ class RentOrder extends Component {
         }
         await this.props.addNewInvoice(invoiceRent);
       }
+      this.printBarcode(orderBarcode)
     }
     let { product_Array } = this.state;
 
@@ -253,68 +250,34 @@ class RentOrder extends Component {
     }
     this.state.product_Array = productarray;
     return this.state.product_Array.map((product, b_index) => (
-      <div id="sizes_box" key={b_index}>
+      <div id="sizes_box">
         <div className="row">
           <div className="left">
-            <div className="col-md-8">
-              <input
-                type="text"
-                className="form-control mm-input s-input text-center"
-                placeholder="Barcode"
-                name="barcode"
-                id="widthBr"
-                style={{ width: "90%" }}
-                readOnly
-                value={
-                  product &&
-                  product[0].title &&
-                  product[0].title + " | " + product[0].barcode
-                }
-              />
+              <table className="table table-bordered table-light"style={{"borderWidth":"1px", 'borderColor':"#aaaaaa", 'borderStyle':'solid'}}>
+                <thead></thead>
+                <tbody>
+                  <tr key={b_index} style={{"margin":"3px"}}>
+                    <td className="text-center">{product[0].barcode}</td>
+                    <td className="text-center">{product[0].title}</td>
+                    <td className="text-center">{product[0].price}</td>
+                    <td className="text-center"><button
+                      type="button"
+                      onClick={() =>
+                        this.removeBarcodeRow(b_index, barcode_Array[b_index].barcode)
+                      }
+                      className="btn btn-raised btn-sm btn-icon btn-danger mt-1"
+                    >
+                      <i className="fa fa-minus"></i>
+                    </button></td>
+                  </tr></tbody></table>
             </div>
-
-            <input
-              type="text"
-              className="form-control mm-input s-input text-center"
-              placeholder="Price"
-              id="setSize"
-              name="total"
-              readOnly
-              value={`${product && product[0].price}`}
-            />
-          </div>
-          <div className="right">
-            <button
-              type="button"
-              onClick={() =>
-                this.removeBarcodeRow(b_index, barcode_Array[b_index].barcode)
-              }
-              className="btn btn-raised btn-sm btn-icon btn-danger mt-1"
-            >
-              <i className="fa fa-minus"></i>
-            </button>
-          </div>
-          <div className="right">
-            <button
-              type="button"
-              className="btn btn-raised btn-sm btn-success mt-1"
-            >
-              <i className="=ft ft-edit"></i>
-            </button>
-          </div>
+     
         </div>
       </div>
 
-      // <tr className="row">
-      //   <td className="form-control mm-input s-input text-center" colSpan={3}>{`${product && product[0].barcode}`}</td>
-      //   <td className="form-control mm-input s-input text-center" colSpan={3}>>{`${product && product[0].title}`}</td>
-      //   <td >{`${product && product[0].price}`}</td>
-
-      // </tr>
-
     ));
   }
-  
+
   getInvoiceBarcodeRecord() {
     let { product_Array } = this.state;
     return product_Array.map((product, b_index) => (
@@ -364,6 +327,7 @@ class RentOrder extends Component {
     return sum;
   };
 
+
   calculateTax = () => {
     var totalAmount = this.calculateTotalWithoutTax();
     var { taxper } = this.state;
@@ -392,7 +356,13 @@ class RentOrder extends Component {
     return sum;
   };
 
+  printBarcode = (barcode) => {
+    return JsBarcode("#barcode", barcode, {
+      width: 1.5,
+      height: 40,
+    });
 
+  }
   render() {
     const { auth, order } = this.props;
     const { data } = this.props.location;
@@ -441,17 +411,8 @@ class RentOrder extends Component {
                               <form onSubmit={(e) => this.onSubmit(e)}>
                                 <div className="col-md-12">
                                   <div id="sizes_box">
-                                    {/* <table className="sizes_box" >
-                                      <thead>
-                                        <th>ProductBarcode</th>
-                                        <th>Product Description</th>
-                                        <th>Product Title</th>
-                                        <th>Product Price</th>
-                                      </thead>
-                                      <tbody> */}
+                                   
                                     {this.getBarcodeRecord()}
-                                    {/* </tbody>
-                                    </table> */}
                                     <Link
                                       to="/product/addproduct"
                                       className="btn "
@@ -660,7 +621,7 @@ class RentOrder extends Component {
 
                                       <div className="col-md-6">
                                         <input
-                                          type="date"
+                                          type=""
                                           id="issueinput4"
                                           className="form-control round text-center"
                                           name="returnDate"
@@ -668,11 +629,10 @@ class RentOrder extends Component {
                                           data-trigger="hover"
                                           data-placement="top"
                                           required
-
+                                          readOnly
                                           data-title="Return Date"
-                                          onChange={(e) => this.onHandleChange(e)}
-                                          value={this.state.returnDate}
-                                          onInput={this.returnDateValidity()}
+                                          // onChange={(e) => this.onHandleChange(e)}
+                                          value={this.state.returnDate =="Invalid date" ? "" :this.state.returnDate}
                                         />
                                       </div>
                                     </div>
@@ -869,9 +829,7 @@ class RentOrder extends Component {
                               <tbody>
                                 <tr>
                                   <td className="col-md-6" style={{ 'backgroundColor': 'white', 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}>
-                                    OrderID <br />
-                                    {(order && !!order.length) ? `${order[0]._id}` : ""}<br />
-                                    {(order && !!order.length) ? `${this.state.orderBarcode}` : ""}
+                                    <svg id="barcode"></svg>
                                   </td>
                                   <td className="col-md-6" style={{ 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}>
                                     Authorized by <br />

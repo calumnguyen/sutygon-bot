@@ -152,6 +152,8 @@ class Barcode extends Component {
                       type="text"
                       className="form-control mm-input"
                       placeholder={"Scan existing Barcode"}
+                      maxLength={8}
+                      minLength={8}
                     />
                   </form>
                 ) : (

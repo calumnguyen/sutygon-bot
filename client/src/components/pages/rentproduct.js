@@ -88,7 +88,7 @@ class RentProduct extends Component {
                 <Link
                   to={{
                     pathname: "/checkout",
-                    data: this.props.customer[0].id,
+                    data:(!!this.props.customer.length) ? this.props.customer[0].id :"",
                   }}
                   type="button"
                   className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
@@ -175,7 +175,8 @@ class RentProduct extends Component {
     const state = { ...this.state };
     await this.props.getCustomer(state.customerNumber);
     const { customer } = this.props;
-    console.log("customer.length", customer.length)
+    this.setState({customerNumber:""});
+
     if (customer.length > 0) {
       this.setState({
         customerInfo: customer,
@@ -189,9 +190,8 @@ class RentProduct extends Component {
         showErrorBox: true
       })
     }
-    var contactnumber = document.getElementById("contactnumber");
     this.setState({ customer: customer, saving: false });
-    contactnumber.value = "";
+    // contactnumber.value = "";
 
   };
 
@@ -199,6 +199,10 @@ class RentProduct extends Component {
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
   };
+  clearState=(e)=>{
+    e.preventDefault();
+    
+  }
 
   render() {
     const { auth } = this.props;

@@ -13,6 +13,7 @@ import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import "../../../custom.css"
+var JsBarcode = require('jsbarcode');
 
 
 class MatchBarcodes extends Component {
@@ -313,6 +314,8 @@ class MatchBarcodes extends Component {
         orderBarcode: state.orderBarcode
       }
       await this.props.addNewInvoice(invoiceReturn);
+      this.printBarcode(orderBarcode)
+
     }
 
     let { product_Array } = this.state;
@@ -361,6 +364,13 @@ class MatchBarcodes extends Component {
     this.setState({ saving: false });
 
   };
+  printBarcode = (barcode) => {
+    return JsBarcode("#barcode", barcode, {
+      width: 1.5,
+      height: 40,
+    });
+
+  }
 
   render() {
 
@@ -818,9 +828,8 @@ to customer</h4>
                             <table>
                               <tr>
                                 <td style={{ 'backgroundColor': 'white', 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}>
-                                  OrderID <br />
-                                  {`${order[0]._id}`}<br />
-                                  {this.state.orderBarcode}
+                                <svg id="barcode"></svg>
+                                  
                                 </td>
                                 <td style={{ 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}> Authorized by <br />
                                                         Sutygon-Bot</td>

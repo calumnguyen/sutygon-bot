@@ -43,3 +43,5 @@
 .btn-cont {
   padding-left: 50px;
 }
+.table-light th, .table-light td, .table-light thead th, .table-light tbody + tbody {
+  border-color: #424242}

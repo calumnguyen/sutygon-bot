@@ -19,6 +19,8 @@ class ReturnProduct extends Component {
     selectedOrder: false,
     orderId: "",
 
+    product_Array: "",
+
   };
 
   async componentDidMount() {
@@ -120,31 +122,41 @@ class ReturnProduct extends Component {
       if (sortedAray) {
         barcodes.forEach((element) => {
           productarray.push(
-            sortedAray.filter((f) => f.barcode == element)
+            sortedAray.filter ((f) => f.barcode == element)
           );
-          return productarray;
         });
-      }
-    }
-    return productarray.map((b, b_index) => (
-      <>
-        <div className="form-group">
-          <div className="row" key={b_index}>
-            <input
-              type="text"
-              value={`${b[0].title} ${"|"} ${b[0].barcode}`}
-              className="form-control mm-input s-input text-center text-dark"
-              placeholder="Barcode"
-              id="setSize1"
-              style={{ 'width': '110%' }}
-              readOnly
-            />
-          </div>
-        </div>
-      </>
-    ))
+        this.state.product_Array = productarray;
+        {
+          Object.keys(productarray).map((key, i) => (
+            console.log(productarray[key][0])
+            // <p key={i}>
+            //   <span>Key Name: {key}</span>
+            //   <span>Value: {productarray[key]}</span>
+            // </p>
+          )
+            )  }
+{/* <div id="sizes_box" >
+          <div className="row">
+            <div className="left">
+              <div className="col-md-8">
+                <input
+                  type="text"
+                  className="form-control mm-input s-input text-center"
+                  placeholder="Barcode"
+                  name="barcode"
+                  id="widthBr"
+                  style={{ width: "90%" }}
+                  readOnly
+                  value={
+                    
+                    productarray[b][0].title + " | " + productarray[b][0].barcode
+                  }
+                />
+              </div>
+  </div></div></div> */}
+             // ));   
+    }}
   }
-
   CutomerBox = () => {
     const { orders } = this.props;
     const { customer } = this.props;
@@ -315,7 +327,7 @@ class ReturnProduct extends Component {
                                       <h3>{(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}</h3>
                                     </div>
                                     <div style={{ 'float': 'right' }}>
-                                      <h3>{(orders) ? `${"Order"}${"#"} ${orders[0].orderNumber}` : ""}</h3>
+                                      <h3>{(orders && this.state.seletedOrder) ? `${"Order"}${"#"} ${this.state.seletedOrder[0].orderNumber}` : ""}</h3>
                                     </div>
                                   </div>
                                 </div>

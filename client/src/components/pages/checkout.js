@@ -113,7 +113,7 @@ onScanBarcode = (e) => {
     }
 
     const barcodeArry = sortedArray.filter((barcode) => barcode.barcode == bc.trim())[0]; // get current barode
-
+console.log(barcodeArry)
     if (barcodeArry === undefined) {
       OCAlert.alertError(`This barcode does not exist`, { timeOut: 3000 });
       return;
