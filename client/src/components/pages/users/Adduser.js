@@ -31,7 +31,7 @@ class AddUser extends Component {
         // check form is to Add or Edit
         if (this.props.match.params.id) {
             const id = this.props.match.params.id;
-            let res = await this.props.getUser(id);
+           await this.props.getUser(id);
             const { user } = this.props;
             if (user) {
                 this.setState({
@@ -138,7 +138,7 @@ class AddUser extends Component {
                                                             <img
                                                                 className="media-object round-media"
                                                                 src={`${this.state.avatar}`}
-                                                                alt="Product image"
+                                                                alt={"Product"}
                                                                 height={100}
                                                             />
                                                             : ""}
@@ -146,7 +146,7 @@ class AddUser extends Component {
                                                             <img
                                                                 className="media-object round-media"
                                                                 src={`${this.state.src}`}
-                                                                alt="Product image"
+                                                                alt={"Product"}
                                                                 height={100}
                                                             />
                                                             : ""}
@@ -324,7 +324,7 @@ class AddUser extends Component {
                         </div>
                         <footer className="footer footer-static footer-light">
                             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                            <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
                         </footer>
                     </div>
                 </div>

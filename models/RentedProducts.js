@@ -4,7 +4,8 @@ const autoIncrement = require("mongoose-auto-increment");
 
 const RentedProductSchema = new mongoose.Schema({
     orderNumber: {
-        type: Number,
+        type: String,
+        default:001-00
     },
     user: {
         type: Schema.Types.ObjectId,
@@ -40,6 +41,10 @@ const RentedProductSchema = new mongoose.Schema({
     total: {
         type: String,
     },
+    leaveID:{
+        type:Boolean,
+    },
+  
 
 },
     { timestamps: true }

@@ -60,7 +60,7 @@ class ReportOrder extends Component {
                   {/* <td className="text-center">{record.status}</td> */}
 
                   <td className="text-center">{record.user.username}</td>
-                  <td className="text-center">{moment(record.deliveryDate).format("DD/MMM/YYYY")}</td>
+                  <td className="text-center">{moment(record.deliveryDate).format("DD-MM-YYYY")}</td>
 
                   
 
@@ -89,7 +89,7 @@ class ReportOrder extends Component {
                 {/* <td className="text-center">{record.status}</td> */}
 
                 <td className="text-center">{record.user.username}</td>
-                <td className="text-center">{moment(record.start).format("DD/MMM/YYYY")}</td>
+                <td className="text-center">{moment(record.start).format("DD-MM-YYYY")}</td>
 
                 
 
@@ -136,9 +136,9 @@ class ReportOrder extends Component {
 
           </div>
           <div className="col-md-6 col-sm-12 text-center text-md-right">
-             <p><span className="text-muted">Starting Date :</span> {data ? moment(data.startDate).format("DD/MMM/YYYY"): ""}</p> 
+             <p><span className="text-muted">Starting Date :</span> {data ? moment(data.startDate).format("DD-MM-YYYY"): ""}</p> 
             {/* <p><span className="text-muted">Terms :</span> Due on Receipt</p> */}
-             <p><span className="text-muted">Ending Date :</span>{data ? moment(data.endDate).format("DD/MMM/YYYY") :""}</p>
+             <p><span className="text-muted">Ending Date :</span>{data ? moment(data.endDate).format("DD-MM-YYYY") :""}</p>
             <p><span className="text-muted">User :</span> {user ? user.username:""}</p>
 
           </div>
@@ -272,7 +272,7 @@ class ReportOrder extends Component {
 
 <footer className="footer footer-static footer-light">
                             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                                <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
                         </footer>
 
 

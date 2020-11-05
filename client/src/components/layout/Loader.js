@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -9,7 +9,6 @@ const Loader = ({
   customerLoading,
   rentproductLoading,
   returnproductLoading,
-  // orderLoading,
   appointmentLoading,
   reportLoading,
 }) =>
@@ -20,12 +19,11 @@ const Loader = ({
     customerLoading ||
     rentproductLoading ||
     returnproductLoading ||
-    // orderLoading ||
     appointmentLoading ||
     reportLoading) && (
     <div className="loaderContainer">
       <div className="loader">
-      <img src="/assets/logo-icon.gif" className="loader-img" width="100"/>
+      <img src="/assets/logo-icon.gif" alt ="Loader"className="loader-img" width="100"/>
         <div className="ball-grid-pulse">
           <div></div>
           <div></div>
@@ -49,7 +47,6 @@ const mapStateToProps = (state) => ({
   customerLoading: state.customer.loading,
   rentproductLoading: state.rentproduct.loading,
   returnproductLoading: state.returnproduct.loading,
-  // orderLoading: state.order.loading,
   appointmentLoading: state.appointment.loading,
   reportLoading: state.report.loading,
   auth: state.auth,

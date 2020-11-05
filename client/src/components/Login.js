@@ -97,7 +97,9 @@ class Login extends Component {
                               </div>
                               <div className="col-lg-6 col-md-12 bg-white px-4 pt-3">
                                 <div className="logo-img text-center align-middle">
-                                  <img src="assets/img/logos/logo.png" height={100} width={100} />
+                                  <img 
+                                  alt={"Sutygon-bot"}
+                                  src="assets/img/logos/logo.png" height={100} width={100} />
                                 </div>
                                 <h4 className="mb-2 card-title text-center align-middle" style={{}}>Đăng Nhập</h4>
                                 <p className="card-text mb-3 text-center align-middle">

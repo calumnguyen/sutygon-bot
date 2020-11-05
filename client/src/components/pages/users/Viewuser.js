@@ -41,7 +41,7 @@ class ViewUser extends Component {
         <tr key={user._id}>
           <td className="text-center text-muted">{tbl_sno++}</td>
           <td className="text-center">
-            <img className="media-object round-media" src={`${user.avatar}`} alt="Profile Picture" height={75} />
+            <img className="media-object round-media" src={`${user.avatar}`} alt="Profile" height={75} />
           </td>
 
 
@@ -174,7 +174,7 @@ class ViewUser extends Component {
                             <div className="row">
                               <div className="col-md-4"><input type="text" className="form-control" name="search" onChange={(e) => this.handleChange(e)} /></div>
                               <div className="col-md-4">
-                                <a className="btn btn-success" onClick={() => this.searchTable()}><i className="fa fa-search"></i> Search </a>
+                                <a className="btn btn-success" href="" onClick={() => this.searchTable()}><i className="fa fa-search"></i> Search </a>
                               </div>
                               <div className="col-md-4">
                                 <Link to="/user/adduser" className="btn btn-primary pull-right"> <i className="fa fa-plus"></i> New User</Link>
@@ -195,7 +195,7 @@ class ViewUser extends Component {
                                   <th className="text-center">Actions</th>
                                 </tr>
                               </thead>
-                              <tbody> {this.getTAble()}</tbody>
+                              <tbody>{this.getTAble()}</tbody>
                             </table>
                           </div>
                         </div>
@@ -208,7 +208,7 @@ class ViewUser extends Component {
           </div>
           <footer className="footer footer-static footer-light">
             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-              <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+            <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
           </footer>
         </div>
       </React.Fragment>

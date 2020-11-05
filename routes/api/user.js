@@ -80,7 +80,7 @@ router.post(
         d: 'mm',
       })
       let userBody
-      if (req.file == undefined) {
+      if (req.file === undefined) {
         userBody = {
           username: body.username,
           fullname: body.username,
@@ -224,7 +224,7 @@ router.post(
         d: 'mm',
       })
 
-      if (req.file == undefined) {
+      if (req.file === undefined) {
         await User.updateOne(
           { _id: req.params.id },
           {
@@ -257,8 +257,7 @@ router.post(
       }
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
-      console.log('err message')
-      console.log(err.message)
+      console.log(err)
       res
         .status(500)
         .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })

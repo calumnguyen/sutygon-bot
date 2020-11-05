@@ -18,18 +18,24 @@ class ReturnProduct extends Component {
     customer_id: "",
     selectedOrder: false,
     orderId: "",
-
+    seletedOrder: "",
     product_Array: "",
+    tryAgain: false
 
   };
 
   async componentDidMount() {
     await this.props.getAllProducts();
     await this.props.getCustomer(this.state.customer_id);
+
+
   }
 
   tryAgain = (e) => {
     e.preventDefault();
+    this.setState({
+      tryAgain: true
+    })
     var orderNumber = document.getElementById("orderNumber");
     var contactNumber = document.getElementById("contactnumber");
     var statusBox = document.getElementById("statusBox");
@@ -37,29 +43,30 @@ class ReturnProduct extends Component {
     contactNumber.focus();
     statusBox.value = "";
     orderNumber.value = ""
+
   }
 
-//handle change for input fields
+  //handle change for input fields
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
   };
-//search by Customer Number
+  //search by Customer Number
   onSubmitCustomer = async (e) => {
     e.preventDefault();
     this.setState({ saving: true });
 
     const state = { ...this.state };
-    await this.props.getOrderbyCustomerNumber(state.customer);
-    this.setState({ saving: false });
+    await this.props.getOrderbyCustomerNumber(state.customer.trim());
+    this.setState({ saving: false, tryAgain: false });
   };
-//search by order number
+  //search by order number
   onSubmitOrderNumber = async (e) => {
     e.preventDefault();
     this.setState({ saving: true });
 
     const state = { ...this.state };
-    await this.props.getOrderbyOrderNumber(state.orderNumber);
-    this.setState({ saving: false });
+    await this.props.getOrderbyOrderNumber(state.orderNumber.trim());
+    this.setState({ saving: false, tryAgain: false });
   };
 
   // return sorted products for barcodes
@@ -110,52 +117,48 @@ class ReturnProduct extends Component {
     }); // products foreach ends here
     return rows;
   };
-  
+
 
   productBox = () => {
+
     const { seletedOrder } = this.state;
     let productarray = [];
+
     let { barcodes } = seletedOrder[0];
+
     const { products } = this.props;
     if (products) {
+
       let sortedAray = this.getSortedData(products);
       if (sortedAray) {
+
         barcodes.forEach((element) => {
           productarray.push(
-            sortedAray.filter ((f) => f.barcode == element)
+            sortedAray.filter((f) => f.barcode.toString() === element)
           );
         });
+
         this.state.product_Array = productarray;
-        {
-          Object.keys(productarray).map((key, i) => (
-            console.log(productarray[key][0])
-            // <p key={i}>
-            //   <span>Key Name: {key}</span>
-            //   <span>Value: {productarray[key]}</span>
-            // </p>
-          )
-            )  }
-{/* <div id="sizes_box" >
-          <div className="row">
-            <div className="left">
-              <div className="col-md-8">
-                <input
-                  type="text"
-                  className="form-control mm-input s-input text-center"
-                  placeholder="Barcode"
-                  name="barcode"
-                  id="widthBr"
-                  style={{ width: "90%" }}
-                  readOnly
-                  value={
-                    
-                    productarray[b][0].title + " | " + productarray[b][0].barcode
-                  }
-                />
-              </div>
-  </div></div></div> */}
-             // ));   
-    }}
+        return productarray.map((p, p_index) => {
+         return <>  <div className="form-group">
+            <div className="row" key={p_index}>
+
+              <input
+                type="text"
+                value={`${p[0].title} ${"|"} ${p[0].barcode}`}
+                className="form-control mm-input s-input text-center text-dark"
+                placeholder="Barcode"
+                id="setSize1"
+                style={{ 'width': '110%' }}
+                readOnly
+              />
+              
+            </div>
+          </div>
+        </>
+        })
+      }
+    }
   }
   CutomerBox = () => {
     const { orders } = this.props;
@@ -163,9 +166,10 @@ class ReturnProduct extends Component {
     let returningOrders = orders.filter((f => f.status !== "Completed"))
     return returningOrders.map((o, o_index) => (
       <>
-        <div className="col-md-12" key={o_index}>
-          <div className="row form-group">
-            <div className="col-md-11">
+        <div className="col-md-12">
+          <div className="row form-group"  onClick={(e) => this.selectedOrder(e, o._id)}
+>
+          <div className="col-md-11">
               <input
                 type="text"
                 id="statusBox"
@@ -174,16 +178,7 @@ class ReturnProduct extends Component {
                 value={(o && customer[0]) ? `${"Order#"}${o.orderNumber}${"             "}${customer[0].name}${"             "}${"OrderStatus-"}${o.status}` : "No Order Found"}
                 readOnly />
             </div>
-            <div className="col-md-1" style={{ margin: 'auto' }}>
-              <input
-                type="radio"
-                name="selectedOrder"
-                value={true}
-                onChange={(e) => this.handleChange(e)}
-                onClick={(e) => this.selectedOrder(e, o._id)}
-
-              />
-            </div>
+           
           </div>
         </div>
       </>
@@ -192,10 +187,13 @@ class ReturnProduct extends Component {
   }
 
   selectedOrder = (e, order_id) => {
+    this.setState({
+      selectedOrder: true
+    })
+    e.preventDefault()
     const orderID = order_id
-
     const { orders } = this.props;
-    const seletedOrder = orders.filter((f) => f._id == orderID);
+    const seletedOrder = orders.filter((f) => f._id === orderID);
     this.setState({
       seletedOrder: seletedOrder
     })
@@ -206,8 +204,8 @@ class ReturnProduct extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-   
-    const { orders } = this.props;
+
+    const { orders } = this.state;
     const { customer } = this.props;
 
     return (
@@ -282,7 +280,7 @@ class ReturnProduct extends Component {
                             </div>
                           </form>
 
-                          {this.props.orders ? <>
+                          {(this.props.orders && this.state.tryAgain === false) ? <>
                             <div id="colors_box" >
                               <div className="row color-row">
                                 <div className="row">
@@ -290,7 +288,7 @@ class ReturnProduct extends Component {
                                     <h3>Is this the One</h3>
                                   </div>
                                 </div>
-                                {(this.props.orders && !!this.props.orders.length) ? this.CutomerBox() :
+                                {(this.props.orders && this.state.tryAgain === false && !!this.props.orders.length) ? this.CutomerBox() :
 
                                   <div className="col-md-12" >
                                     <div className="form-group">
@@ -319,7 +317,7 @@ class ReturnProduct extends Component {
                             </div>
                           </> : ""}
                           <div id="colors_box">
-                            {(this.props.orders && this.state.selectedOrder === "true") ?
+                            {this.state.selectedOrder === true ?
                               <div className="row color-row" id="statusBox1">
                                 <div className="col-md-12">
                                   <div className="form-group">
@@ -327,15 +325,15 @@ class ReturnProduct extends Component {
                                       <h3>{(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}</h3>
                                     </div>
                                     <div style={{ 'float': 'right' }}>
-                                      <h3>{(orders && this.state.seletedOrder) ? `${"Order"}${"#"} ${this.state.seletedOrder[0].orderNumber}` : ""}</h3>
+                                      <h3>{(orders && this.state.selectedOrder === true) ? `${"Order"}${"#"} ${this.state.seletedOrder[0].orderNumber}` : ""}</h3>
                                     </div>
                                   </div>
                                 </div>
                                 <div className="col-md-12">
-                                  {(this.state.selectedOrder === "true") ?
-                                    <>
+                                {this.state.seletedOrder.length > 0 ?
+
                                       <div id="colors_box">
-                                        {`${this.productBox()}`}
+                                         {this.productBox()} 
                                         <div className="btn-cont text-center">
                                           <div className="form-group">
                                             <Link
@@ -343,7 +341,7 @@ class ReturnProduct extends Component {
                                                 pathname: "/scanBarcode",
                                                 data: {
                                                   customer: this.props.customer[0]._id,
-                                                  order: this.props.orders,
+                                                  order: this.state.seletedOrder
                                                 }
                                               }}
                                               type="submit"
@@ -351,9 +349,11 @@ class ReturnProduct extends Component {
                                               id="btnSize2" ><i className="ft-check"></i> Next</Link>
                                           </div>
                                         </div>
-                                      </div> </> : ""}
+                                      </div> 
+                                   :""}
                                 </div>
-                              </div> : ""}
+                              </div> 
+                                : ""}  
                           </div>
                         </div>
                       </div>
@@ -362,9 +362,9 @@ class ReturnProduct extends Component {
                 </section>
               </div>
             </div>
-          <footer className="footer footer-static footer-light">
+            <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
         </div>
@@ -380,7 +380,6 @@ ReturnProduct.propTypes = {
   getCustomer: PropTypes.func.isRequired,
   getAllProducts: PropTypes.func.isRequired,
   getOrderbyID: PropTypes.func.isRequired,
-  // saved: PropTypes.bool,
   orders: PropTypes.array,
   customer: PropTypes.array,
   auth: PropTypes.object,

@@ -31,7 +31,7 @@ class AddProduct extends Component {
     isEdit: false,
     src: "",
     sizeQty: "",
-    enteredSizeQty:"",
+    enteredSizeQty: "",
   };
 
   async componentDidMount() {
@@ -39,9 +39,8 @@ class AddProduct extends Component {
     if (this.props.match.params.id) {
 
       const id = this.props.match.params.id;
-      let res = await this.props.getProductById(id);
+      await this.props.getProductById(id);
       const { product } = this.props;
-      const { data } = this.props.location
       const test1 = this.calculateTotals(this.props.product);
       if (product) {
         this.setState({
@@ -51,7 +50,6 @@ class AddProduct extends Component {
           tags: product.tags,
           image: product.image,
           color: product.color,
-          image: product.image,
           totalFromProps: test1.total,
         });
       }
@@ -273,13 +271,13 @@ class AddProduct extends Component {
   QtyCheck = (e, Qty) => {
     this.setState({
       sizeQty: Qty,
-      enteredSizeQty:e.target.value 
+      enteredSizeQty: e.target.value
     })
     e.preventDefault()
-    if(this.state.sizeQty > e.target.value){
+    if (this.state.sizeQty > e.target.value) {
       OCAlert.alertError(`value can't be less than ${this.state.sizeQty}`, { timeOut: 3000 })
     }
-   
+
   }
 
   _onChange = (e, id = "") => {
@@ -329,7 +327,7 @@ class AddProduct extends Component {
     this.setState({ saving: true });
     const state = { ...this.state };
 
-    const totalFromState = this.calculateTotals(state);
+    this.calculateTotals(state);
     if (state.totalFromProps > state.total) {
       OCAlert.alertError(`${"Quantity cannot be less than"} ${state.totalFromProps}`, { timeOut: 3000 })
       this.setState({ saving: false });
@@ -420,7 +418,7 @@ class AddProduct extends Component {
                               <img
                                 className="media-object round-media"
                                 src={`${this.state.image}`}
-                                alt="Product image"
+                                alt={"Product"}
                                 height={100}
                               />
                               : ""}
@@ -428,7 +426,7 @@ class AddProduct extends Component {
                               <img
                                 className="media-object round-media"
                                 src={`${this.state.src}`}
-                                alt="Product image"
+                                alt={"Product"}
                                 height={100}
                               />
                               : ""}
@@ -531,10 +529,16 @@ class AddProduct extends Component {
               </div>
             </div>
 
-         
+
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a
+                  href="https://www.sutygon.com"
+                  id="pixinventLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+
+                  className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
 
           </div>

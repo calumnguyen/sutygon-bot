@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { changePage } from "../../actions/pages";
-import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
@@ -43,9 +42,8 @@ class Sidebar extends Component {
                       to="/dashboard"
                       >
               <div className="text-center align-middle mt-n4 mb-n4">
-                <img src={process.env.PUBLIC_URL+'/assets/img/logo.png'} height={120} width={120}/>
+                <img alt={"Sutygon-bot"} src={process.env.PUBLIC_URL+'/assets/img/logo.png'} height={120} width={120}/>
               </div>
-              {/* <span className="text align-middle"></span> */}
 </Link>
           </div>
         </div>

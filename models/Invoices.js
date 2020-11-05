@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const RentInvoiceSchema = new mongoose.Schema({
+const InvoiceSchema = new mongoose.Schema({
     order_id: {
         type: Schema.Types.ObjectId,
         ref: "rentedproducts",
@@ -24,4 +24,4 @@ const RentInvoiceSchema = new mongoose.Schema({
 },
 
 );
-module.exports = RentInvoice = mongoose.model("invoice", RentInvoiceSchema);
+module.exports = Invoice = mongoose.model("invoices", InvoiceSchema);

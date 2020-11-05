@@ -6,6 +6,7 @@ import {
   RENTPRODUCT_ERROR,
   GET_RENTPRODUCT,
   GET_RENTPRODUCTS,
+  GET_LASTRECORD,
   RENTPRODUCTS_ERROR,
   RENTPRODUCTS_LOADING,
   RENTPRODUCT_DELETED,
@@ -85,6 +86,23 @@ export const getProduct = (id) => async (dispatch) => {
   }
 };
 
+// Get User by Product
+export const getLastRecord = () => async (dispatch) => {
+  dispatch({ type: RENTPRODUCTS_LOADING });
+  try {
+    const res = await axios.get(`/api/rentedproducts/getLastRecord`);
+    dispatch({
+      type: GET_LASTRECORD,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: RENTPRODUCTS_ERROR,
+      payload: err.response,
+    });
+  }
+};
+
 
 // Update User
 export const updateRentedProduct = (product, id) => async (dispatch) => {
@@ -120,13 +138,7 @@ export const updateRentedProduct = (product, id) => async (dispatch) => {
   // Delete User
 export const deleteRentedProduct = (id) => async (dispatch) => {
   dispatch({ type: RENTPRODUCTS_LOADING });
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-    },  
-  };
-
-   try {
+    try {
 
     const res = await axios.delete(`/api/rentedproducts/${id}`);
     dispatch({

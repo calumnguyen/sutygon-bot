@@ -10,15 +10,14 @@ import Loader from "../../layout/Loader";
 import { getCustomer } from "../../../actions/customer";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts';
-import { barcodeUpdateProduct } from "../../../actions/product";
 
 class ScanBarcode extends Component {
   state = {
     barcode: [],
     customer_id: "",
-    order:"",
-    barcodeFromInput:"",
-    matchedBarcodes:[]
+    order: "",
+    barcodeFromInput: "",
+    matchedBarcodes: []
   };
 
   async componentDidMount() {
@@ -26,11 +25,11 @@ class ScanBarcode extends Component {
     if (data) {
       this.setState({
         customer_id: data.customer,
-        barcode:data.order[0].barcodes,
-        order:data.order
+        barcode: data.order[0].barcodes,
+        order: data.order
       });
     }
-    
+
     await this.props.getCustomer(this.state.customer_id);
   }
 
@@ -44,37 +43,44 @@ class ScanBarcode extends Component {
   };
   handleChangeInput = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
-};
+  };
 
   onScanBarcode = (e) => {
-    
-      e.preventDefault();
-      const bc = e.target[0].value;
-      e.target[0].value = '';
-      const { barcode } = this.state;
-      let { barcodeFromInput } = this.state;
-      const { matchedBarcodes } = this.state;
 
-    //   if(matchedBarcodes.includes(barcodeFromInput))
-    //  { 
-    //   OCAlert.alertError(`This barcode is already scanned. Please try again!`alertError); 
-    //   return;
-    // }
-    
-      let isMatch=barcode.includes(barcodeFromInput)
-      if(isMatch==true){
-        matchedBarcodes.push({
-          barcode: barcodeFromInput,
-        });
-        this.setState({ matchedBarcodes , barcodeFromInput:"" });
-        
-      }
-      else {
-        OCAlert.alertError(`The barcode you enter does not match with any item
+    e.preventDefault();
+    e.target[0].value = '';
+    const { barcode } = this.state;
+    let { barcodeFromInput } = this.state;
+    const { matchedBarcodes } = this.state;
+
+    let m_barcode = [];
+    matchedBarcodes.forEach((barcode, b_index) => {
+      m_barcode.push(
+        barcode.barcode)
+    })
+    const isInclude = m_barcode.includes(barcodeFromInput)
+    if (isInclude === true) {
+      OCAlert.alertError('This barcode already scanned! Try again', { timeOut: 3000 });
+      this.setState({ barcodeFromInput: "" });
+      return;
+
+    }
+
+    let isMatch = barcode.includes(barcodeFromInput)
+    if (isMatch === true) {
+      matchedBarcodes.push({
+        barcode: barcodeFromInput,
+      });
+      this.setState({ matchedBarcodes, barcodeFromInput: "" });
+
+    }
+    else {
+      OCAlert.alertError(`The barcode you enter does not match with any item
         in this order. Please try again!`, { timeOut: 3000 });
 
-      }
-     
+    }
+
+
   }
 
   removeBarcodeRow = (id) => {
@@ -83,49 +89,49 @@ class ScanBarcode extends Component {
     this.setState({ barcode });
   };
 
-  handleChange = (e, barcode_id = "") => {
-    let name = e.target.name;
-    let value = e.target.value;
-    let { barcode } = this.state;
+  // handleChange = (e, barcode_id = "") => {
+    
+  //   let name = e.target.name;
+  //   let value = e.target.value;
+  //   let { barcode } = this.state;
+  //   let barcode_obj = barcode.filter((barcode) => barcode.id == barcode_id)[0];
+  //   const barcodeIndex = barcode.findIndex(
+  //     (barcode) => barcode.id == barcode_id
+  //   );
+  //   barcode_obj[name] = value;
+  //   barcode[barcodeIndex] = barcode_obj;
 
-    let barcode_obj = barcode.filter((barcode) => barcode.id == barcode_id)[0];
-    const barcodeIndex = barcode.findIndex(
-      (barcode) => barcode.id == barcode_id
-    );
-    barcode_obj[name] = value;
-    barcode[barcodeIndex] = barcode_obj;
-
-    this.setState({ barcode });
-  };
+  //   this.setState({ barcode });
+  // };
 
   getBarcodeRow = () => {
     let { matchedBarcodes } = this.state; // get all barcode
-    if(matchedBarcodes){
-    return matchedBarcodes.map((barcode) => (
-      <div id="sizes_box" key={barcode.id || barcode._id}>
-        <div className="row">
-          <div className="left">
-            <input
-              type="text"
-              className="form-control mm-input s-input"
-              placeholder="Barcode"
-              id="widthBr"
-              style={{ width: "-webkit-fill-available" }}
-              value={barcode.barcode}
-            />
+    if (matchedBarcodes) {
+      return matchedBarcodes.map((barcode) => (
+        <div id="sizes_box" key={barcode.id || barcode._id}>
+          <div className="row">
+            <div className="left">
+              <input
+                type="text"
+                className="form-control mm-input s-input"
+                placeholder="Barcode"
+                id="widthBr"
+                style={{ width: "-webkit-fill-available" }}
+                value={barcode.barcode}
+              />
+            </div>
+            <div className="right">
+              <button
+                type="button"
+                className="btn btn-raised btn-sm btn-icon btn-default mt-1"
+              >
+                <i className="fa fa-check fa-2x text-success"></i>
+              </button>
+            </div>
+
           </div>
-          <div className="right">
-            <button
-              type="button"
-              className="btn btn-raised btn-sm btn-icon btn-default mt-1"
-            >
-              <i className="fa fa-check fa-2x text-success"></i>
-            </button>
-          </div>
-      
         </div>
-      </div>
-    ));
+      ));
     }
   };
 
@@ -134,11 +140,10 @@ class ScanBarcode extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    const { data } = this.props.location;
-    if(this.props.location.data == undefined){
+    if (this.props.location.data === undefined) {
       return <Redirect to="/returnproduct" />;
 
-   }
+    }
     if (this.props.saved) {
       return <Redirect to="/orders" />;
     }
@@ -173,57 +178,66 @@ class ScanBarcode extends Component {
                                   <div className="form-group">
                                     <h3>
                                       {customer && customer[0].name}{" "}
-                                      {`${"#"}${
-                                        customer && customer[0].contactnumber
-                                      }`}
+                                      {`${"#"}${customer && customer[0].contactnumber
+                                        }`}
                                     </h3>
                                   </div>
                                 </div>
-                                
-                                <div className="col-md-12">
-                                    <div className="form-group">
-                                        <form onSubmit={e => this.onScanBarcode(e)}>
-                                            <input 
-                                            name="barcodeFromInput" 
-                                            className="form-control mm-input col-md-12" 
-                                            type="text"
-                                            value={this.state.barcodeFromInput}
-                                            onChange={(e) => this.handleChangeInput(e)}
 
-                                            />
-                                        </form>
-                                    </div>
+                                <div className="col-md-12">
+                                  <div className="form-group">
+                                    <form onSubmit={e => this.onScanBarcode(e)}>
+                                      <input
+                                        name="barcodeFromInput"
+                                        className="form-control mm-input col-md-12"
+                                        type="text"
+                                        value={this.state.barcodeFromInput}
+                                        onChange={(e) => this.handleChangeInput(e)}
+
+                                      />
+                                    </form>
+                                  </div>
                                 </div>
 
                                 <div className="col-md-12">
                                   {this.getBarcodeRow()}
 
-                                 <div className="row text-center ">
+                                  <div className="row text-center ">
                                     <div className="col-md-12 btn-cont">
                                       <div className="form-group">
-                                        <Link
-                                          to={{
-                                            pathname: "/matchbarcodes",
-                                            data: {
-                                              customer:this.props.customer[0]._id,
-                                              barcodesArray: this.state.matchedBarcodes,
-                                              order:this.state.order,
-                                              orderedBarcode: this.state.barcode,
+                                        {!!this.state.matchedBarcodes.length ?
+                                          <Link
+                                            to={{
+                                              pathname: "/matchbarcodes",
+                                              data: {
+                                                customer: this.props.customer[0]._id,
+                                                barcodesArray: this.state.matchedBarcodes,
+                                                order: this.state.order,
+                                                orderedBarcode: this.state.barcode,
+                                              },
 
+                                            }}
+                                            type="submit"
+                                            className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                                            id="btnSize2"
+                                          >
+                                            <i className="ft-check"></i> Next
+                                    </Link> :
+                                          <Link
 
-                                            },
-                                          }}
-                                          type="button"
-                                          className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                                          id="btnSize2"
-                                        >
-                                          <i className="ft-check"></i> Next
-                                        </Link>
+                                            type="submit"
+                                            className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1 disabled"
+                                            id="btnSize2"
+                                          >
+                                            <i className="ft-check"></i> Next
+                                  </Link>
+                                        }
+
                                       </div>
                                     </div>
                                   </div>
 
-                              
+
                                 </div>
                               </div>
                             </div>
@@ -236,9 +250,9 @@ class ScanBarcode extends Component {
               </div>
             </div>
             <footer className="footer footer-static footer-light">
-                            <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
-                        </footer>
+              <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
+                <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+            </footer>
           </div>
         </div>
         <OCAlertsProvider />

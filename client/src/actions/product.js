@@ -14,7 +14,6 @@ import {
 
 } from "./types";
 import { setAlert } from "./alert";
-import { ReactReduxContext } from "react-redux";
 
 
 // Add new product
@@ -149,7 +148,6 @@ export const updateProduct = (product, id) => async (dispatch) => {
         'content-type': 'multipart/form-data'
     }
 }
-  const body = JSON.stringify(product);
   try {
     const res = await axios.post(`/api/products/${id}`,product, config);
 
