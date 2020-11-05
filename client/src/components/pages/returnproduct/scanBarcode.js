@@ -10,7 +10,6 @@ import Loader from "../../layout/Loader";
 import { getCustomer } from "../../../actions/customer";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts';
-import { barcodeUpdateProduct } from "../../../actions/product";
 
 class ScanBarcode extends Component {
   state = {
@@ -49,7 +48,6 @@ class ScanBarcode extends Component {
   onScanBarcode = (e) => {
 
     e.preventDefault();
-    const bc = e.target[0].value;
     e.target[0].value = '';
     const { barcode } = this.state;
     let { barcodeFromInput } = this.state;
@@ -69,7 +67,7 @@ class ScanBarcode extends Component {
     }
 
     let isMatch = barcode.includes(barcodeFromInput)
-    if (isMatch == true) {
+    if (isMatch === true) {
       matchedBarcodes.push({
         barcode: barcodeFromInput,
       });
@@ -91,20 +89,20 @@ class ScanBarcode extends Component {
     this.setState({ barcode });
   };
 
-  handleChange = (e, barcode_id = "") => {
-    let name = e.target.name;
-    let value = e.target.value;
-    let { barcode } = this.state;
+  // handleChange = (e, barcode_id = "") => {
+    
+  //   let name = e.target.name;
+  //   let value = e.target.value;
+  //   let { barcode } = this.state;
+  //   let barcode_obj = barcode.filter((barcode) => barcode.id == barcode_id)[0];
+  //   const barcodeIndex = barcode.findIndex(
+  //     (barcode) => barcode.id == barcode_id
+  //   );
+  //   barcode_obj[name] = value;
+  //   barcode[barcodeIndex] = barcode_obj;
 
-    let barcode_obj = barcode.filter((barcode) => barcode.id == barcode_id)[0];
-    const barcodeIndex = barcode.findIndex(
-      (barcode) => barcode.id == barcode_id
-    );
-    barcode_obj[name] = value;
-    barcode[barcodeIndex] = barcode_obj;
-
-    this.setState({ barcode });
-  };
+  //   this.setState({ barcode });
+  // };
 
   getBarcodeRow = () => {
     let { matchedBarcodes } = this.state; // get all barcode
@@ -142,8 +140,7 @@ class ScanBarcode extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    const { data } = this.props.location;
-    if (this.props.location.data == undefined) {
+    if (this.props.location.data === undefined) {
       return <Redirect to="/returnproduct" />;
 
     }
@@ -254,7 +251,7 @@ class ScanBarcode extends Component {
             </div>
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
         </div>

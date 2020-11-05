@@ -6,7 +6,6 @@ import Loader from "../layout/Loader";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import shortid from "shortid";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts';
 import { confirmAlert } from "react-confirm-alert";
@@ -222,23 +221,23 @@ class Barcode extends Component {
   // runs when existing barcode is scanned
   OnSubmitScanBarcode = async (e, product_id, color_id, size_id) => {
     e.preventDefault();
-    const {products}=this.props;
+    const { products } = this.props;
     const barcodesData = this.getBarcodeData(products);
     // get barcode input value
     let barcode = e.target[0].value;
     const isInclude = barcodesData.includes(barcode)
-    if(isInclude === true){
-          // error message
+    if (isInclude === true) {
+      // error message
       OCAlert.alertError('This barcode already exist! Try again', { timeOut: 3000 });
       return;
     }
     // empty barcode input
-    else if(isInclude === false){
-    e.target[0].value = '';
-    this.saveBarCode(barcode, product_id, color_id, size_id);
-    // success message
-    OCAlert.alertSuccess('Barcode Scanned and Added Successfully!');
-  }
+    else if (isInclude === false) {
+      e.target[0].value = '';
+      this.saveBarCode(barcode, product_id, color_id, size_id);
+      // success message
+      OCAlert.alertSuccess('Barcode Scanned and Added Successfully!');
+    }
   }
 
   // generate and print random bar code
@@ -499,7 +498,11 @@ class Barcode extends Component {
             </div>
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a href="https://www.sutygon.com"
+                  rel="noopener noreferrer"
+                  id="pixinventLink"
+                  target="_blank"
+                  className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
         </div>

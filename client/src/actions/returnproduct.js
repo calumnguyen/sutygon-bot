@@ -1,14 +1,10 @@
 import axios from "axios";
 import {
-  
   RETURNPRODUCT_LOADING,
   RETURNPRODUCT_ERROR,
   GET_RETURNPRODUCT,
  
 } from "./types";
-import { setAlert } from "./alert";
-
-
  // Get Order by Customer number
 export const getOrderbyCustomerNumber = (number) => async (dispatch) => {
   dispatch({ type:RETURNPRODUCT_LOADING });

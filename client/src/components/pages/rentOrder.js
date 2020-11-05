@@ -8,9 +8,7 @@ import { Link } from "react-router-dom";
 import Loader from "../layout/Loader";
 import shortid from "shortid";
 import * as moment from 'moment'
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { getProductById, getAllProducts, updateProductIndex, barcodeUpdateProduct, } from "../../actions/product";
+import { getProductById, getAllProducts, updateProductIndex } from "../../actions/product";
 import { getCustomer } from "../../actions/customer";
 import { addNewRentProduct, getLastRecord } from "../../actions/rentproduct";
 import { getOrderbyOrderNumber } from "../../actions/returnproduct";
@@ -52,7 +50,6 @@ class RentOrder extends Component {
       const orderNumber = lastRecord[0].orderNumber;
       if (orderNumber) {
         const newOrderNumber = this.generateRandomNumber(orderNumber)
-        console.log("newOrderNumber", newOrderNumber)
         this.setState({
           orderNumber: newOrderNumber
         })
@@ -73,7 +70,7 @@ class RentOrder extends Component {
   generateRandomNumber(previousNumber) {
     // break number by dash
     // convert number into integer
-    let pn = previousNumber;
+    // let pn = previousNumber;
     let n_array = previousNumber.split("-");
 
     // check second half if 90
@@ -174,13 +171,13 @@ class RentOrder extends Component {
 
     if (product_Array) {
       let products = [];
-      let counter = 1;
+      // let counter = 1;
 
       product_Array.forEach(async (pd, p_index) => {
         await this.props.getProductById(pd[0].product_id); // <-- Error is here this should give updated product in every loop
 
         let { product } = this.props;
-        counter++;
+        // counter++;
         if (product) {
           product.color.forEach((color, c_index) => {
             // get right color obj
@@ -744,7 +741,7 @@ class RentOrder extends Component {
 
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
 
@@ -986,7 +983,8 @@ class RentOrder extends Component {
                           </div>
                           <div className="row">
                             <p>For questions and contact information please check out
-                                              <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a></p>
+                                              <a href="https://www.sutygon.com" id="pixinventLink" rel="noopener noreferrer" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a>
+                                              </p>
                           </div>
 
 
@@ -1040,7 +1038,6 @@ const mapStateToProps = (state) => ({
   order: state.returnproduct.returnproduct,
   products: state.product.products,
   customer: state.customer.customer,
-  // saved: state.product.saved,
   generateInvoice: state.rentproduct.generateInvoice,
 
 });

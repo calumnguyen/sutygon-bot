@@ -111,18 +111,19 @@ class Checkout extends Component {
         OCAlert.alertError('This barcode already exist in Order! Try again', { timeOut: 3000 });
         return;
       }
-
-      const barcodeArry = sortedArray.filter((barcode) => barcode.barcode == bc.trim())[0]; // get current barode
+console.log(typeof bc,'bc' );
+      const barcodeArry = sortedArray.filter((barcode) => barcode.barcode.toString() === bc.trim())[0]; // get current barode
       if (barcodeArry === undefined) {
         OCAlert.alertError(`This barcode does not exist`, { timeOut: 3000 });
         return;
 
       }
+      console.log(barcodeArry)
       if (barcodeArry.isRented === true) {
         OCAlert.alertError(`This barcode is already Rented. Please try again!`, { timeOut: 3000 });
         return;
       }
-      else if ((barcodeArry.isRented == undefined) || (barcodeArry.isRented == false)) {
+      else if ((barcodeArry.isRented === undefined) || (barcodeArry.isRented === (false || 'false'))) {
         const { barcode } = this.state;
         barcode.push({
           id: shortid.generate(),
@@ -143,7 +144,7 @@ class Checkout extends Component {
     let value = e.target.value;
     let { barcode } = this.state;
 
-    let barcode_obj = barcode.filter((barcode) => barcode.id == barcode_id)[0];
+    let barcode_obj = barcode.filter((barcode) => barcode.id === barcode_id)[0];
     const barcodeIndex = barcode.findIndex(
       (barcode) => barcode.id == barcode_id
     );
@@ -289,7 +290,11 @@ class Checkout extends Component {
             </div>
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a href="https://www.sutygon.com"
+                 id="pixinventLink" 
+                 rel="noopener noreferrer"
+                 target="_blank"
+                  className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
         </div>

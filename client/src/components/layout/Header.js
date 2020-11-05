@@ -48,7 +48,11 @@ class Header extends Component {
         <div className="container-fluid">
           <div className="navbar-header">
             <button type="button" data-toggle="collapse" className="navbar-toggle d-lg-none float-left"><span className="sr-only">Toggle navigation</span><span className="icon-bar"></span><span className="icon-bar"></span><span className="icon-bar"></span></button><span className="d-lg-none navbar-right navbar-collapse-toggle">
-              <a aria-controls="navbarSupportedContent" className="open-navbar-container black"><i className="ft-more-vertical"></i></a></span>
+              <a 
+              aria-controls="navbarSupportedContent"
+              href="/dashboard" 
+              className="open-navbar-container black"
+              ><i className="ft-more-vertical"></i></a></span>
             <form className="navbar-form navbar-right mt-1">
               <div className="position-relative has-icon-right">
               </div>
@@ -58,7 +62,7 @@ class Header extends Component {
             <div id="navbarSupportedContent" className="collapse navbar-collapse">
               <ul className="navbar-nav">
                 <li className="dropdown nav-item">
-                  <a id="dropdownBasic3" href="#" data-toggle="dropdown" className="nav-link position-relative dropdown-toggle"><i className="ft-user font-medium-3 blue-grey darken-4"></i>
+                  <a id="dropdownBasic3"  href="/dashboard"  data-toggle="dropdown" className="nav-link position-relative dropdown-toggle"><i className="ft-user font-medium-3 blue-grey darken-4"></i>
                     <p className="d-none">User Settings</p></a>
                   <div ngbdropdownmenu="" aria-labelledby="dropdownBasic3" className="dropdown-menu text-left dropdown-menu-right">
                   
@@ -67,7 +71,7 @@ class Header extends Component {
                      
                     
                     <a
-                          href="#"
+                          href="/"
                           onClick={() => this.props.logout()}
                           className="dropdown-item"
                         >

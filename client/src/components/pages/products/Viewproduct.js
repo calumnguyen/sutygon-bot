@@ -8,7 +8,6 @@ import {
   findProducts,
   changeStatus
 } from "../../../actions/product";
-import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
@@ -16,8 +15,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
-import loadjs from "loadjs";
-import { changePage } from "../../../actions/pages";
+
 
 class ViewProduct extends Component {
   state = {
@@ -145,7 +143,6 @@ class ViewProduct extends Component {
     const { formated_products } = this.state;
 
     if (formated_products) {
-      let tbl_sno = 1;
       if (formated_products) {
         if (formated_products.length === 0) {
           return (
@@ -162,9 +159,10 @@ class ViewProduct extends Component {
               <div className="tb_top">
                 <div className="tb_t_left">
                   <img
+
                     className="media-object round-media"
                     src={`${product.image}`}
-                    alt="Product image"
+                    alt="Product"
                   />
                 </div>
                 <div className="tb_t_right">
@@ -311,10 +309,7 @@ class ViewProduct extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    const { products } = this.props;
-    const { filter } = this.state;
-
-    return (
+     return (
       <React.Fragment>
         <Loader />
         <div className="wrapper menu-collapsed">
@@ -343,6 +338,7 @@ class ViewProduct extends Component {
                               </div>
                               <div className="col-md-4">
                                 <a
+                                href="/product"
                                   className="btn btn-success"
                                   onClick={() => this.searchTable()}
                                 >
@@ -374,7 +370,7 @@ class ViewProduct extends Component {
           
           <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
         </div>
       </React.Fragment>

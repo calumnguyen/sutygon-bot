@@ -1,20 +1,17 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
-import { Link } from "react-router-dom";
-
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
 import {getAllRentedProducts,deleteRentedProduct } from "../../../actions/rentproduct";
-
 import {getAllProducts } from "../../../actions/product";
 import { confirmAlert } from "react-confirm-alert";
 import * as moment from 'moment'
-
 import "react-confirm-alert/src/react-confirm-alert.css";
+
 class Orders extends Component {
 
   async componentDidMount() {
@@ -29,7 +26,6 @@ class Orders extends Component {
    
  getTAble = () => {
     const { rentproducts } = this.props;
-        let tbl_sno=1;
     if (rentproducts) {
       if (rentproducts.length === 0) {
         return (
@@ -193,39 +189,9 @@ class Orders extends Component {
             return productarray;
          }
 
-            // element.forEach((e,e_index) => {
-              // console.log(element)
-            // productarray.push(
-            //   sortedAray.filter((f) => f.barcode === e)
-            // );
-            // return productarray;
-          // });
-
           });
         }
       }
-      // return productarray.map((b, b_index) => (
-      //   <>
-
-      //     {
-      //       <div className="form-group">
-      //         <div className="row" key={b_index}>
-      //           <input
-      //             type="text"
-      //             value={`${b[0].title} ${"|"} ${b[0].barcode}`}
-      //             className="form-control mm-input s-input text-center text-dark"
-      //             placeholder="Barcode"
-      //             id="setSize1"
-      //             style={{ 'width': '110%' }}
-      //             readOnly
-      //           />
-  
-      //         </div>
-      //       </div>}
-  
-  
-      // //   </>
-      // ))
     }
   
     
@@ -233,14 +199,6 @@ class Orders extends Component {
         const { auth   } = this.props;
         if (!auth.loading && !auth.isAuthenticated) {
           return <Redirect to="/" />;
-        }
-
-        // if (this.props.saved) {
-        //     return <Redirect to="/dashboard" />;
-        //   }
-        console.log(this.props)
-        if(this.props.products){
-        console.log(this.getSortedData(this.props.products))
         }
         return (
             <React.Fragment>
@@ -291,7 +249,7 @@ class Orders extends Component {
                     </div>
                     <footer className="footer footer-static footer-light">
                             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                            <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
                         </footer>
                 </div>
 

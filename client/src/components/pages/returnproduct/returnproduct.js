@@ -134,7 +134,7 @@ class ReturnProduct extends Component {
 
         barcodes.forEach((element) => {
           productarray.push(
-            sortedAray.filter((f) => f.barcode == element)
+            sortedAray.filter((f) => f.barcode.toString() === element)
           );
         });
 
@@ -178,18 +178,7 @@ class ReturnProduct extends Component {
                 value={(o && customer[0]) ? `${"Order#"}${o.orderNumber}${"             "}${customer[0].name}${"             "}${"OrderStatus-"}${o.status}` : "No Order Found"}
                 readOnly />
             </div>
-            {/* <div className="col-md-1" style={{margin:'auto'}}>
-              <input
-                // type="button"
-                type="radio"
-                name="selectedOrder"
-                value={true}
-                onChange={(e) => this.handleChange(e)}
-                // checked={this.state.selectedOrder === "true"}
-                onClick={(e) => this.selectedOrder(e, o._id)}
-
-              />
-            </div> */}
+           
           </div>
         </div>
       </>
@@ -199,12 +188,12 @@ class ReturnProduct extends Component {
 
   selectedOrder = (e, order_id) => {
     this.setState({
-      selectedOrder: "true"
+      selectedOrder: true
     })
     e.preventDefault()
     const orderID = order_id
     const { orders } = this.props;
-    const seletedOrder = orders.filter((f) => f._id == orderID);
+    const seletedOrder = orders.filter((f) => f._id === orderID);
     this.setState({
       seletedOrder: seletedOrder
     })
@@ -291,7 +280,7 @@ class ReturnProduct extends Component {
                             </div>
                           </form>
 
-                          {(this.props.orders && this.state.tryAgain == false) ? <>
+                          {(this.props.orders && this.state.tryAgain === false) ? <>
                             <div id="colors_box" >
                               <div className="row color-row">
                                 <div className="row">
@@ -299,7 +288,7 @@ class ReturnProduct extends Component {
                                     <h3>Is this the One</h3>
                                   </div>
                                 </div>
-                                {(this.props.orders && this.state.tryAgain == false && !!this.props.orders.length) ? this.CutomerBox() :
+                                {(this.props.orders && this.state.tryAgain === false && !!this.props.orders.length) ? this.CutomerBox() :
 
                                   <div className="col-md-12" >
                                     <div className="form-group">
@@ -328,7 +317,7 @@ class ReturnProduct extends Component {
                             </div>
                           </> : ""}
                           <div id="colors_box">
-                            {this.state.selectedOrder == "true" ?
+                            {this.state.selectedOrder === true ?
                               <div className="row color-row" id="statusBox1">
                                 <div className="col-md-12">
                                   <div className="form-group">
@@ -336,7 +325,7 @@ class ReturnProduct extends Component {
                                       <h3>{(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}</h3>
                                     </div>
                                     <div style={{ 'float': 'right' }}>
-                                      <h3>{(orders && this.state.selectedOrder == "true") ? `${"Order"}${"#"} ${this.state.seletedOrder[0].orderNumber}` : ""}</h3>
+                                      <h3>{(orders && this.state.selectedOrder === true) ? `${"Order"}${"#"} ${this.state.seletedOrder[0].orderNumber}` : ""}</h3>
                                     </div>
                                   </div>
                                 </div>
@@ -375,7 +364,7 @@ class ReturnProduct extends Component {
             </div>
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
         </div>

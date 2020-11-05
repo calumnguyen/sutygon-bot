@@ -6,7 +6,6 @@ import { getCustomer } from "../../../actions/customer";
 import { addNewInvoice } from "../../../actions/invoices";
 import { updateRentedProduct } from "../../../actions/rentproduct";
 import Loader from "../../layout/Loader";
-import { Link } from "react-router-dom";
 import * as moment from 'moment'
 import shortid from "shortid";
 import { Redirect } from "react-router-dom";
@@ -41,7 +40,6 @@ class MatchBarcodes extends Component {
   };
 
   async componentDidMount() {
-    const { order } = this.props;
     const { data } = this.props.location
     if (data) {
       this.setState({
@@ -147,7 +145,6 @@ class MatchBarcodes extends Component {
   }
   productBox = () => {
     let productarray = [];
-    let { order } = this.props.location.data;
     let { barcodesArray } = this.state;
     const { products } = this.props;
     if (products && barcodesArray) {
@@ -155,7 +152,7 @@ class MatchBarcodes extends Component {
       if (sortedAray) {
         barcodesArray.forEach((element) => {
           productarray.push(
-            sortedAray.filter((f) => f.barcode == element.barcode)
+            sortedAray.filter((f) => f.barcode.toString() === element.barcode)
           );
           return productarray;
         });
@@ -203,7 +200,6 @@ class MatchBarcodes extends Component {
   missingProducts = () => {
     let m_productarray = [];
     let { products } = this.props;
-    let { order } = this.props.location.data;
     let { orderedBarcode } = this.props.location.data;
     let { barcodesArray } = this.state;
     let m_product = [];
@@ -218,7 +214,7 @@ class MatchBarcodes extends Component {
       if (sortedAray) {
         m_product.forEach((element) => {
           m_productarray.push(
-            sortedAray.filter((f) => f.barcode == element)
+            sortedAray.filter((f) => f.barcode.toString() === element)
           );
           return m_productarray;
         });
@@ -304,7 +300,6 @@ class MatchBarcodes extends Component {
 
     const state = { ...this.state };
     const { user } = this.props.auth;
-    const { customer } = this.props;
     const { order } = this.props.location.data;
     const orderBarcode = shortid.generate();
     this.setState({
@@ -328,22 +323,23 @@ class MatchBarcodes extends Component {
 
     if (product_Array) {
       let products = [];
-      let counter = 1;
+      // let counter = 1;
 
       product_Array.forEach(async (pd, p_index) => {
         await this.props.getProductById(pd[0].product_id); // <-- Error is here this should give updated product in every loop
 
         let { product } = this.props;
-        counter++;
+        // counter++;
         // console.log('got from db', product);
         if (product) {
           product.color.forEach((color, c_index) => {
+        
             // get right color obj
-            if (color._id == pd[0].color_id) {
+            if (color._id === pd[0].color_id) {
               // get right size obj
               if (color.sizes) {
                 color.sizes.forEach((size, s_index) => {
-                  if (size.id == pd[0].size_id) {
+                  if (size.id === pd[0].size_id) {
                     // check if current size obj contain barcodes or not
                     if (size.barcodes) {
                       // Add isRented
@@ -361,7 +357,6 @@ class MatchBarcodes extends Component {
         }
         const rentedProduct = {
           status: "Completed",
-          // orderBarcode: this.generateOrderBarcode(order[0]._id)
         }
         this.props.updateRentedProduct(rentedProduct, order[0]._id)
       });
@@ -372,7 +367,6 @@ class MatchBarcodes extends Component {
 
   };
   printInvoice = () => {
-    // var css = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" />'
     var css = '<link rel="stylesheet"  href="%PUBLIC_URL%/assets/css/app.css"/>'
     var printDiv = document.getElementById('invoiceDiv').innerHTML
 
@@ -397,7 +391,7 @@ class MatchBarcodes extends Component {
 
     const { customer } = this.props;
     const { data } = this.props.location;
-    if (this.props.location.data == undefined) {
+    if (this.props.location.data === undefined) {
       return <Redirect to="/returnproduct" />;
 
     }
@@ -405,7 +399,7 @@ class MatchBarcodes extends Component {
 
     const { barcodesArray } = data
     const { customerOwe, insuranceAmt, m_total } = this.state;
-
+    
     return (
       <React.Fragment>
         <Loader />
@@ -578,7 +572,7 @@ to customer</h4>
                                           <div style={{ 'float': 'center', 'paddingRight': '170px' }}>
 
 
-                                            <h4>{order[0].leaveID == true ? `${"Customer left ID. Please return ID to customer."}` : `${"No ID"}`}</h4> </div>
+                                            <h4>{order[0].leaveID === true ? `${"Customer left ID. Please return ID to customer."}` : `${"No ID"}`}</h4> </div>
                                         </div>
                                       </div>
                                     </div>
@@ -630,7 +624,7 @@ to customer</h4>
 
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
 
           </div>
@@ -852,7 +846,7 @@ to customer</h4>
                           <br />
                           <div className="row">
                             <p>For questions and contact information please check out
-                                              <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a></p>
+                                              <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a></p>
                           </div>
 
 
@@ -904,7 +898,7 @@ to customer</h4>
                 </tr>
 
                 <tr>
-                  <tr><h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: $"}${this.state.insuranceAmt}`}</h4>
+                  <tr><h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: "}${this.state.insuranceAmt}`}</h4>
                   </tr>
                 </tr>
                 <tr>

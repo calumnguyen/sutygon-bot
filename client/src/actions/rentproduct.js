@@ -138,13 +138,7 @@ export const updateRentedProduct = (product, id) => async (dispatch) => {
   // Delete User
 export const deleteRentedProduct = (id) => async (dispatch) => {
   dispatch({ type: RENTPRODUCTS_LOADING });
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-    },  
-  };
-
-   try {
+    try {
 
     const res = await axios.delete(`/api/rentedproducts/${id}`);
     dispatch({
