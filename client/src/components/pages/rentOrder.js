@@ -1044,7 +1044,7 @@ const mapStateToProps = (state) => ({
   products: state.product.products,
   customer: state.customer.customer,
   generateInvoice: state.rentproduct.generateInvoice,
-saved:state.product.saved
+  saved: state.product.saved
 });
 export default connect(mapStateToProps, {
   getAllProducts,
