@@ -106,19 +106,17 @@ class Checkout extends Component {
       })
       e.target[0].value = '';
       const isInclude = m_barcode.includes(bc)
-      if (isInclude === true) {
+      if (isInclude == true) {
         // error message
         OCAlert.alertError('This barcode already exist in Order! Try again', { timeOut: 3000 });
         return;
       }
-console.log(typeof bc,'bc' );
       const barcodeArry = sortedArray.filter((barcode) => barcode.barcode.toString() === bc.trim())[0]; // get current barode
       if (barcodeArry === undefined) {
         OCAlert.alertError(`This barcode does not exist`, { timeOut: 3000 });
         return;
 
       }
-      console.log(barcodeArry)
       if (barcodeArry.isRented === true) {
         OCAlert.alertError(`This barcode is already Rented. Please try again!`, { timeOut: 3000 });
         return;
