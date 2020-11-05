@@ -194,7 +194,7 @@ class RentOrder extends Component {
                     if (size.barcodes) {
                       // Add isRented
                       size.barcodes[pd[0].barcodeIndex].isRented = true;
-                      // this.props.updateProductIndex(product, pd[0].product_id);
+                      this.props.updateProductIndex(product, pd[0].product_id);
                     }
                   }
                 });
@@ -415,6 +415,10 @@ class RentOrder extends Component {
     }
 
     if (this.props.location.data === undefined) {
+      return <Redirect to="/rentproduct" />;
+
+    }
+    if (this.props.saved === true) {
       return <Redirect to="/rentproduct" />;
 
     }
@@ -1040,7 +1044,7 @@ const mapStateToProps = (state) => ({
   products: state.product.products,
   customer: state.customer.customer,
   generateInvoice: state.rentproduct.generateInvoice,
-
+  saved: state.product.saved
 });
 export default connect(mapStateToProps, {
   getAllProducts,
