@@ -105,8 +105,11 @@ class Checkout extends Component {
           barcode.barcode)
       })
       e.target[0].value = '';
+      console.log(m_barcode)
       const isInclude = m_barcode.includes(bc)
-      if (isInclude === true) {
+      if (isInclude == true) {
+        console.log(isInclude)
+        return;
         // error message
         OCAlert.alertError('This barcode already exist in Order! Try again', { timeOut: 3000 });
         return;
