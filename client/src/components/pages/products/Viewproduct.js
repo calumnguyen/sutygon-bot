@@ -113,7 +113,7 @@ class ViewProduct extends Component {
         product.total = product_total;
       }
       // break tags by comma
-      if (product.tags && typeof product.tags == "string") {
+      if (product.tags && typeof product.tags === "string") {
         let tags_arr = product.tags.split(",");
         product.tags = tags_arr;
       }
@@ -166,7 +166,7 @@ class ViewProduct extends Component {
                   />
                 </div>
                 <div className="tb_t_right">
-                  <span className={"badge badge-"+((product.disabled == "true") ? "secondary":"info")+ " float-right"}>{(product.disabled == "false") ? "active":"disabled"}</span>
+                  <span className={"badge badge-"+((product.disabled === "true") ? "secondary":"info")+ " float-right"}>{(product.disabled === "false") ? "active":"disabled"}</span>
                   <h2>
                     <strong>Product Name</strong> {product.name}
                   </h2>
@@ -269,7 +269,7 @@ class ViewProduct extends Component {
                 </Link>
                 <button type="button" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="btn btn-primary pull-right mbtn">
                   {" "}
-                  <i className={"ft-" + ((product.disabled == "true") ? "play":"pause")}></i> {(product.disabled == "true") ? "Reactivate":"Disable"}
+                  <i className={"ft-" + ((product.disabled === "true") ? "play":"pause")}></i> {(product.disabled === "true") ? "Reactivate":"Disable"}
                 </button>
               </div>
 
@@ -291,7 +291,7 @@ class ViewProduct extends Component {
 
   async toggleStatus(status, product_id) {
     
-    if(status == "true") {
+    if(status === "true") {
       status = "false";
     } else {
       status = "true";

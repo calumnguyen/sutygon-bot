@@ -282,7 +282,7 @@ class Dashboard extends Component {
                                 <h2>
                                   Cửa Hàng Đã{' '}
                                   {this.props.shop[0] &&
-                                    (this.props.shop[0].status == 'on'
+                                    (this.props.shop[0].status === 'on'
                                       ? 'Mở Cửa'
                                       : 'Đóng Cửa')}{' '}
                                   lúc
@@ -309,7 +309,7 @@ class Dashboard extends Component {
                                 <h3 className='mt-1'>Trạng thái</h3>
                                 <p className='badge badge-pill badge-light'>
                                   {this.props.shop[0] &&
-                                    (this.props.shop[0].status == 'on'
+                                    (this.props.shop[0].status === 'on'
                                       ? 'Mở Cửa'
                                       : 'Đóng Cửa')}
                                 </p>
@@ -317,7 +317,7 @@ class Dashboard extends Component {
                               <div className='col-md-2'>
                                 <h3 className='mt-1'>Hành động</h3>
                                 {this.props.shop[0] &&
-                                  (this.props.shop[0].status == 'on' ? (
+                                  (this.props.shop[0].status === 'on' ? (
                                     <button
                                       type='button'
                                       onClick={() =>

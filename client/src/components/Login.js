@@ -37,16 +37,16 @@ class Login extends Component {
     const { shop } = this.props;
     const { user } = this.props.auth;
 
-    if (user && user.type == "Employee") {
+    if (user && user.type === "Employee") {
       if (shop) {
         let openShop = shop[0]
         if (openShop) {
           if (this.props.AuthLoading === false && this.props.isAuthenticated) {
-            if (openShop.status == "on") {
+            if (openShop.status === "on") {
               return <Redirect to="/dashboard" />;
             }
 
-            else if (openShop.status == "off") {
+            else if (openShop.status === "off") {
               // setAlert("Shop is closed", "danger", 5000);
             }
           }
@@ -68,7 +68,7 @@ class Login extends Component {
     // };
     // }
 
-    if (user && user.type == "Admin") {
+    if (user && user.type === "Admin") {
       if (this.props.AuthLoading === false && this.props.isAuthenticated) {
         return <Redirect to="/dashboard" />;
       }

@@ -58,10 +58,10 @@ class AddProduct extends Component {
   }
   addSizeRow = (color_id) => {
     let { color } = this.state; // get all colors
-    let color_obj = color.filter((color) => color._id == color_id); // get current color obj
+    let color_obj = color.filter((color) => color._id === color_id); // get current color obj
     // get index of color i all colors object
     const index = color.findIndex(
-      (color_obj) => color_obj.id == color_id
+      (color_obj) => color_obj.id === color_id
     );
 
     color_obj[0].sizes.push({
@@ -87,11 +87,11 @@ class AddProduct extends Component {
 
   addSizeRow = (color_id) => {
     let { color } = this.state; // get all colors
-    let color_obj = color.filter((color) => color._id == color_id); // get current color obj
+    let color_obj = color.filter((color) => color._id === color_id); // get current color obj
 
     // get index of color i all colors object
     const index = color.findIndex(
-      (color_obj) => color_obj.id == color_id
+      (color_obj) => color_obj.id === color_id
     );
 
     color_obj[0].sizes.push({
@@ -110,11 +110,11 @@ class AddProduct extends Component {
 
   removeSizeRow = (color_id, size_id) => {
     let { color } = this.state;
-    let color_obj = color.filter((color) => color._id == color_id); // get current color obj
-    if (size_id != '') {
+    let color_obj = color.filter((color) => color._id === color_id); // get current color obj
+    if (size_id !== '') {
       let { sizes } = color_obj[0];
       const sizeIndex = sizes.findIndex(
-        (size) => size.id == size_id
+        (size) => size.id === size_id
       );
       sizes.splice(sizeIndex, 1)
 
@@ -182,21 +182,21 @@ class AddProduct extends Component {
     // get all colors
     let { color } = this.state;
     // get current color obj
-    let color_obj = color.filter((color) => color._id == color_id)[0]; // get current color obj
+    let color_obj = color.filter((color) => color._id === color_id)[0]; // get current color obj
     // get index of color obj in all colors
     const colorIndex = color.findIndex(
-      (color) => color._id == color_id
+      (color) => color._id === color_id
     );
-    if (size_id != '') {
+    if (size_id !== '') {
       // get all sizes
       let { sizes } = color_obj;
 
       // find current size obj in current color obj
-      let size_obj = color_obj.sizes.filter((size) => size.id == size_id)[0];
+      let size_obj = color_obj.sizes.filter((size) => size.id === size_id)[0];
 
       // get index of size obj in all sizes 
       const sizeIndex = sizes.findIndex(
-        (size) => size.id == size_id
+        (size) => size.id === size_id
       );
 
       // update value inside size object
@@ -218,7 +218,7 @@ class AddProduct extends Component {
   getSizeboxes = (color_id) => {
     let { color } = this.state; // get all colors
     if (color_id) {
-      let color_obj = color.filter((color) => color._id == color_id); // get current color obj
+      let color_obj = color.filter((color) => color._id === color_id); // get current color obj
       return color_obj[0].sizes.map((size) => (
         <div className="sizes_box" key={size.id}>
           <div className="row">
@@ -346,7 +346,7 @@ class AddProduct extends Component {
     const formData = new FormData();
     formData.append('name', state.name)
     formData.append('productId', productId)
-    if (state.image != "") {
+    if (state.image !== "") {
       formData.append('image', state.image)
     }
     else {

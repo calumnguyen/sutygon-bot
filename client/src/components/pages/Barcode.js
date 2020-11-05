@@ -49,7 +49,7 @@ class Barcode extends Component {
               let size_id = size.id;
 
               let length;
-              if (this.state.dataType == "without_barcode") { // show sizes without barcodes
+              if (this.state.dataType === "without_barcode") { // show sizes without barcodes
                 // if we have some barcodes then skip that 
                 // number of rows for the current size
                 if (size.barcodes) {
@@ -120,13 +120,13 @@ class Barcode extends Component {
                   </div>
                 </div>
               </td>
-              {(this.state.dataType == 'with_barcode') && (
+              {(this.state.dataType === 'with_barcode') && (
                 <td>
                   <span className="badge badge-secondary">{product.barcodes[product.barcodeIndex].barcode}</span>
                 </td>
               )}
               <td>
-                {(this.state.dataType == 'without_barcode') ? (
+                {(this.state.dataType === 'without_barcode') ? (
                   <button
                     type="button"
                     className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
@@ -145,7 +145,7 @@ class Barcode extends Component {
                   )}
               </td>
               <td>
-                {(this.state.dataType == 'without_barcode') ? (
+                {(this.state.dataType === 'without_barcode') ? (
                   <form onSubmit={(e) => this.OnSubmitScanBarcode(e, product.product_id, product.color_id, product.size_id)}>
                     <input
                       type="text"
@@ -166,7 +166,7 @@ class Barcode extends Component {
                   )}
               </td>
               <td>
-                {(this.state.dataType == 'without_barcode') ? (
+                {(this.state.dataType === 'without_barcode') ? (
                   <button
                     type="button"
                     className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
@@ -281,12 +281,12 @@ class Barcode extends Component {
       // loop through product colors
       product.color.forEach((color, c_index) => {
         // get right color obj
-        if (color._id == color_id) {
+        if (color._id === color_id) {
           // get right size obj
           if (color.sizes) {
             color.sizes.forEach((size, s_index) => {
               total_qty += parseInt(size.qty);
-              if (size.id == size_id) {
+              if (size.id === size_id) {
                 // decrease size qty
                 if (size.qty > 0) {
                   size.qty = parseInt(size.qty) - 1;
@@ -323,7 +323,7 @@ class Barcode extends Component {
           })
         }
       })
-      if (total_qty == 0) {
+      if (total_qty === 0) {
         await this.props.deleteProduct(product._id);
         OCAlert.alertSuccess('Product Deleted Successfully!');
 
@@ -376,15 +376,15 @@ class Barcode extends Component {
       // loop through product colors
       product.color.forEach((color, c_index) => {
         // get right color obj
-        if (color._id == color_id) {
+        if (color._id === color_id) {
           // get right size obj
           if (color.sizes) {
             color.sizes.forEach((size, s_index) => {
-              if (size.id == size_id) {
+              if (size.id === size_id) {
                 // check if current size obj contain barcodes or not
                 if (size.barcodes) {
 
-                  if (mode == 'add') {
+                  if (mode === 'add') {
                     size.barcodes.push({ barcode });  // Add barcode
                   } else {
                     // size.barcodes[barcodeIndex].barcode = barcode; // Change barcode
@@ -477,7 +477,7 @@ class Barcode extends Component {
                             <tr>
                               <th>Product ID</th>
                               <th>Product</th>
-                              {(this.state.dataType == "with_barcode") && (
+                              {(this.state.dataType === "with_barcode") && (
                                 <th>Barcode</th>
                               )}
                               <th>Change Barcode</th>

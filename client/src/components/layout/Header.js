@@ -31,7 +31,7 @@ class Header extends Component {
     const { user } = this.props.auth;
     if(user != undefined) {
       this.setState({
-      username: user.fullName,
+      username: user.username,
       userType: user.type,
       id:user._id,
       avatar:user.avatar
