@@ -34,7 +34,7 @@ class RentOrder extends Component {
     returnDate: "",
     total: "",
     saving: false,
-    leaveID: "",
+    leaveID: false,
     barcodesRented: false,
     redirect: false,
     m_returnDate: ""
@@ -47,14 +47,23 @@ class RentOrder extends Component {
     await this.props.getLastRecord();
     const { lastRecord } = this.props
     if (lastRecord) {
-      const orderNumber = lastRecord[0].orderNumber;
-      if (orderNumber) {
+      if (lastRecord.length === 0) {
+        const orderNumber = "001-00";
         const newOrderNumber = this.generateRandomNumber(orderNumber)
         this.setState({
           orderNumber: newOrderNumber
         })
       }
+      else if (lastRecord.length > 0) {
+        const orderNumber = lastRecord[0].orderNumber;
+        if (orderNumber) {
+          const newOrderNumber = this.generateRandomNumber(orderNumber)
+          this.setState({
+            orderNumber: newOrderNumber
+          })
+        }
 
+      }
     }
 
     const { data } = this.props.location;
@@ -64,44 +73,42 @@ class RentOrder extends Component {
         barcode_Array: data.barcode,
       });
     }
+    const orderBarcode = shortid.generate();
+    this.setState({
+      orderBarcode: orderBarcode
+    })
     await this.props.getCustomer(this.state.customer_id);
 
   }
   generateRandomNumber(previousNumber) {
     // break number by dash
     // convert number into integer
-    // let pn = previousNumber;
     let n_array = previousNumber.split("-");
-
     // check second half if 90
-    if (n_array[1] == 99) {
+    if (n_array[1] == "99") {
       // if yes increment first half 
       n_array[0]++;
-      n_array[1] = 1;
+      n_array[1] = "00";
     } else {
       // if not add 1
       n_array[1]++;
     }
 
-    // let firstHalf = "";
-    // if (n_array[0] <= 9) {
-    //   firstHalf += "00" + n_array[0];
-    // } else if (n_array[0] > 9 && n_array[0] <= 99) {
-    //   firstHalf += "0" + n_array[0];
-    // } else if (n_array[0] > 99) {
-    //   firstHalf += n_array[0];
-    // }
+    function getPadded(num) {
+      var str = "" + num;
+      var pad = "000";
+      return pad.substring(0, pad.length - str.length) + str;
+    }
+    let firstHalf = getPadded(n_array[0]);
 
-    // // let secondHalf = "";
-    // if (n_array[1] <= 9) {
-    //   secondHalf += "0" + n_array[1];
-    // } else if (n_array[1] > 9) {
-    //   secondHalf += n_array[1];
-    // }
+    function getPaddedSecond(num) {
+      var str = "" + num;
+      var pad = "00";
+      return pad.substring(0, pad.length - str.length) + str;
+    }
+    let secondHalf = getPaddedSecond(n_array[1]);
 
-
-    // return new number
-    let n = n_array[0] + "-" + n_array[1];
+    let n = firstHalf + "-" + secondHalf;
     return n;
   }
 
@@ -133,10 +140,7 @@ class RentOrder extends Component {
     barcode_Array.forEach((element) => {
       barcodeArr.push(element.barcode);
     });
-    const orderBarcode = shortid.generate();
-    this.setState({
-      orderBarcode: orderBarcode
-    })
+
     const rentedOrder = {
       orderNumber: state.orderNumber,
       customer: state.customer_id,
@@ -154,8 +158,8 @@ class RentOrder extends Component {
 
     await this.props.getOrderbyOrderNumber(state.orderNumber)
     const { order, auth } = this.props;
-    if (this.props.generateInvoice == true) {
-      if (order && state.orderBarcode){
+    if (this.props.generateInvoice === true) {
+      if (order && state.orderBarcode) {
         const invoiceRent = {
           order_id: order[0]._id,
           customer_id: order[0].customer,
@@ -165,7 +169,7 @@ class RentOrder extends Component {
         }
         await this.props.addNewInvoice(invoiceRent);
       }
-      this.printBarcode(orderBarcode)
+      this.printBarcode(state.orderBarcode)
     }
     let { product_Array } = this.state;
 
@@ -190,7 +194,7 @@ class RentOrder extends Component {
                     if (size.barcodes) {
                       // Add isRented
                       size.barcodes[pd[0].barcodeIndex].isRented = true;
-                      this.props.updateProductIndex(product, pd[0].product_id);
+                      // this.props.updateProductIndex(product, pd[0].product_id);
                     }
                   }
                 });
@@ -269,7 +273,6 @@ class RentOrder extends Component {
   };
 
   printInvoice = () => {
-    // var css = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" />'
     var css = '<link rel="stylesheet"  href="%PUBLIC_URL%/assets/css/app.css"/>'
     var printDiv = document.getElementById('invoiceDiv').innerHTML
 
@@ -403,17 +406,15 @@ class RentOrder extends Component {
   }
   render() {
     const { auth, order } = this.props;
-    const { data } = this.props.location;
-
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
 
-    if (this.state.redirect == true) {
+    if (this.state.redirect === true) {
       return <Redirect to="/rentproduct" />;
     }
 
-    if (this.props.location.data == undefined) {
+    if (this.props.location.data === undefined) {
       return <Redirect to="/rentproduct" />;
 
     }
@@ -674,7 +675,7 @@ class RentOrder extends Component {
                                           required
                                           readOnly
                                           data-title="Return Date"
-                                          value={this.state.returnDate == "Invalid date" ? "" : this.state.returnDate}
+                                          value={this.state.returnDate === "Invalid date" ? "" : this.state.returnDate}
                                         />
                                       </div>
                                     </div>
@@ -747,7 +748,7 @@ class RentOrder extends Component {
 
           {/* pdf invoice  */}
 
-          <div id="invoiceDiv" style={{ 'width': '100%' ,'display':'none'}}>
+          <div id="invoiceDiv" style={{ 'width': '100%', 'display': 'none' }}>
             <h1 style={{ 'text-align': 'center' }}>
               {(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}
             </h1>
@@ -789,20 +790,20 @@ class RentOrder extends Component {
               <tbody>
                 <tr>
                   <td style={{ 'width': '90%' }} >Leave ID</td>
-                  <td>                               
-                     {this.state.leaveID === "true" ? `${"Yes"}` : `${"No"}`}
+                  <td>
+                    {this.state.leaveID === "true" ? `${"Yes"}` : `${"No"}`}
                   </td>
                 </tr>
                 <tr>
                   <td>Rent From</td>
-                  <td>                           
+                  <td>
                     {moment(this.state.rentDate).format('DD-MM-YYYY')}
                   </td>
                 </tr>
                 <tr>
                   <td>Return Date</td>
-                  <td>                       
-                     {moment(this.state.m_returnDate).format('DD-MM-YYYY')}
+                  <td>
+                    {moment(this.state.m_returnDate).format('DD-MM-YYYY')}
                   </td>
                 </tr>
               </tbody>
@@ -984,7 +985,7 @@ class RentOrder extends Component {
                           <div className="row">
                             <p>For questions and contact information please check out
                                               <a href="https://www.sutygon.com" id="pixinventLink" rel="noopener noreferrer" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a>
-                                              </p>
+                            </p>
                           </div>
 
 

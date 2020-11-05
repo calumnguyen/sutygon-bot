@@ -258,8 +258,8 @@ class RentProduct extends Component {
                               </div>
                             </div>
 
-                            {this.state.showCustomerBox == true ? this.CutomerBox() : ""}
-                            {this.state.showErrorBox == true ? this.NoCustomerBox() : ""}
+                            {this.state.showCustomerBox === true ? this.CutomerBox() : ""}
+                            {this.state.showErrorBox === true ? this.NoCustomerBox() : ""}
 
 
 

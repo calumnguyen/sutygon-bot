@@ -451,10 +451,10 @@ class MatchBarcodes extends Component {
                                 <div id="sizes_box">
                                   {this.productBox()}
                                   <br />
-                                  {barcodesArray.length != order[0].barcodes.length ?
+                                  {barcodesArray.length !== order[0].barcodes.length ?
                                     <h3>Missing Products</h3>
                                     : ""}
-                                  {barcodesArray.length != order[0].barcodes.length ?
+                                  {barcodesArray.length !== order[0].barcodes.length ?
                                     this.missingProducts()
                                     : ""}
                                   <div className="row">
