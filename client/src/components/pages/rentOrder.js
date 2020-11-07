@@ -115,17 +115,24 @@ class RentOrder extends Component {
   rentDateValidity = () => {
     const { rentDate, } = this.state;
     var currentdate = moment(new Date).format('DD-MM-YYYY');
-    if (moment(moment(rentDate).format('DD-MM-YYYY')).isBefore(currentdate)) {
+    
+    const rent = new Date(rentDate)
+      if((rent.getTime() - (new Date).getTime()) > 0)
+      {
+        var threeDaysAfter = (new Date(rentDate).getTime() + (2 * 24 * 60 * 60 * 1000));
+        var momentthreeDaysAfter = moment(threeDaysAfter).format("DD-MM-YYYY");
+        this.state.returnDate = momentthreeDaysAfter;
+    
+        this.state.m_returnDate = moment(threeDaysAfter).format("YYYY-MM-DD");
+      }
+      else if((rent.getTime() - (new Date).getTime()) < 0)
+
       OCAlert.alertError(`Rent Date should be after today's date`, { timeOut: 3000 });
       return;
     }
 
-    var threeDaysAfter = (new Date(rentDate).getTime() + (2 * 24 * 60 * 60 * 1000));
-    var momentthreeDaysAfter = moment(threeDaysAfter).format("DD-MM-YYYY");
-    this.state.returnDate = momentthreeDaysAfter;
-
-    this.state.m_returnDate = moment(threeDaysAfter).format("YYYY-MM-DD");
-  }
+    
+  
 
   onSubmit = async (e) => {
     e.preventDefault();
@@ -209,7 +216,14 @@ class RentOrder extends Component {
 
     }
     this.printInvoice()
-    this.setState({ saving: false });
+    this.setState({
+      orderNumber:"",
+      customer: "",
+      customerContactNumber: "",
+      barcodes:"",
+      orderBarcode: "",
+      saving: false 
+    })
   };
 
   onHandleChange = (e) => {
@@ -422,6 +436,7 @@ class RentOrder extends Component {
       return <Redirect to="/rentproduct" />;
 
     }
+   
     const { customer } = this.props;
     return (
       <React.Fragment>
@@ -459,7 +474,13 @@ class RentOrder extends Component {
 
                                     {this.getBarcodeRecord()}
                                     <Link
-                                      to="/product/addproduct"
+                                    to={{
+                                      pathname: "/checkout",
+                                      data: {
+                                        customer: this.state.customer_id,
+                                      }
+                                    }}
+                                      to="/checkout"
                                       className="btn "
                                     >
                                       <i className="fa fa-plus"></i>
@@ -598,19 +619,22 @@ class RentOrder extends Component {
                                           </div>
                                           <div style={{ 'textAlign': 'right', 'paddingRight': '170px' }}>
 
-                                            <div className="" style={{ 'textAlign': 'right', }}>
+                                            <div className="" style={{ }}>
                                               <input
+                                              id="yes"
                                                 type="radio"
                                                 name="leaveID"
                                                 value={true}
                                                 onChange={(e) => this.onHandleChange(e)}
                                                 checked={this.state.leaveID === "true"}
                                               />
-                                              <label
-                                              >YES</label>
+                                              <label htmlFor="yes"
+
+                                              >&nbsp;YES</label>
                                             </div>
-                                            <div className="" style={{ 'textAlign': 'right', }}>
+                                            <div className="" style={{  }}>
                                               <input
+                                              id="no"
                                                 type="radio"
                                                 name="leaveID"
                                                 value={false}
@@ -618,8 +642,8 @@ class RentOrder extends Component {
                                                 onChange={(e) => this.onHandleChange(e)}
                                                 checked={this.state.leaveID === "false"}
                                               />
-                                              <label
-                                              >NO</label>
+                                              <label htmlFor="no"
+                                              >&nbsp;NO</label>
                                             </div>
                                           </div>
                                         </div>
@@ -787,7 +811,7 @@ class RentOrder extends Component {
               </tbody>
             </table>
             <br />
-            <h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: $"}${this.state.total}`}</h4>
+            <h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: "}${this.state.total}`}</h4>
             <br />
 
             <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>

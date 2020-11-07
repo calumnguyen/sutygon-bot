@@ -29,6 +29,10 @@ class ViewProduct extends Component {
       this.calculateTotals(products);
     }
   }
+  encodeURI = (src) =>{
+ var uri = src.split(" ").join("_")
+    return uri;
+  }
 
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
@@ -139,6 +143,8 @@ class ViewProduct extends Component {
       .is_open;
     this.setState({ formated_products });;
   };
+  // Replace all <img /> with <Img />
+ 
   getTAble = () => {
     const { formated_products } = this.state;
 
@@ -160,8 +166,8 @@ class ViewProduct extends Component {
                 <div className="tb_t_left">
                   <img
 
-                    className="media-object round-media"
-                    src={`${product.image}`}
+                    className="media-object round-media" 
+                   src={this.encodeURI(product.image)}
                     alt="Product"
                   />
                 </div>

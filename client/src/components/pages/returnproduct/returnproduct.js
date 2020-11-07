@@ -3,7 +3,7 @@ import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
 import { getOrderbyCustomerNumber, getOrderbyOrderNumber, getOrderbyID } from "../../../actions/returnproduct";
 import { getAllProducts } from "../../../actions/product";
-import { getCustomer } from "../../../actions/customer";
+import { getCustomerbyCustomerNumber } from "../../../actions/customer";
 import Loader from "../../layout/Loader";
 import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
@@ -20,15 +20,16 @@ class ReturnProduct extends Component {
     orderId: "",
     seletedOrder: "",
     product_Array: "",
-    tryAgain: false
-
+    tryAgain: false,
+    isSearched:false
   };
 
   async componentDidMount() {
     await this.props.getAllProducts();
-    await this.props.getCustomer(this.state.customer_id);
-
-
+    const { orders} = this.props
+    if(this.state.customer){
+    await this.props.getCustomerbyCustomerNumber(this.state.customer);
+    }
   }
 
   tryAgain = (e) => {
@@ -53,11 +54,12 @@ class ReturnProduct extends Component {
   //search by Customer Number
   onSubmitCustomer = async (e) => {
     e.preventDefault();
-    this.setState({ saving: true });
+    this.setState({ saving: true ,});
 
     const state = { ...this.state };
     await this.props.getOrderbyCustomerNumber(state.customer.trim());
-    this.setState({ saving: false, tryAgain: false });
+    const { orders} = this.props
+    this.setState({ saving: false, tryAgain: false,customer:orders[0].contactNumber });
   };
   //search by order number
   onSubmitOrderNumber = async (e) => {
@@ -66,7 +68,9 @@ class ReturnProduct extends Component {
 
     const state = { ...this.state };
     await this.props.getOrderbyOrderNumber(state.orderNumber.trim());
-    this.setState({ saving: false, tryAgain: false });
+    const { orders} = this.props
+
+    this.setState({ saving: false, tryAgain: false,customer:orders[0].contactNumber });
   };
 
   // return sorted products for barcodes
@@ -175,7 +179,7 @@ class ReturnProduct extends Component {
                 id="statusBox"
                 className="form-control mm-input text-center"
                 style={{ 'color': '#495057', 'width': '-webkit-fill-available' }}
-                value={(o && customer[0]) ? `${"Order#"}${o.orderNumber}${"             "}${customer[0].name}${"             "}${"OrderStatus-"}${o.status}` : "No Order Found"}
+                // value={(o && customer[0]) ? `${"Order#"}${o.orderNumber}${"             "}${customer[0].name}${"             "}${"OrderStatus-"}${o.status}` : "No Order Found"}
                 readOnly />
             </div>
            
@@ -377,7 +381,7 @@ class ReturnProduct extends Component {
 ReturnProduct.propTypes = {
   getOrderbyCustomerNumber: PropTypes.func.isRequired,
   getOrderbyOrderNumber: PropTypes.func.isRequired,
-  getCustomer: PropTypes.func.isRequired,
+  getCustomerbyCustomerNumber: PropTypes.func.isRequired,
   getAllProducts: PropTypes.func.isRequired,
   getOrderbyID: PropTypes.func.isRequired,
   orders: PropTypes.array,
@@ -395,7 +399,7 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   getOrderbyCustomerNumber,
   getOrderbyOrderNumber,
-  getCustomer,
+  getCustomerbyCustomerNumber,
   getAllProducts,
   getOrderbyID
 
