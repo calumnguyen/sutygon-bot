@@ -13,8 +13,7 @@ var storage = multer.diskStorage({
         cb(null, FILE_PATH)
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, file.originalname)
+        cb(null, file.originalname.split(' ').join('_'))
     }
 })
 
@@ -35,12 +34,13 @@ router.post(
     async (req, res) => {
 
         const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+        const image = req.file.originalname.split(' ').join('_')
         try {
             const productBody = {
                 name: body.name,
                 productId: body.productId,
                 tags: body.tags,
-                image: `/uploads/products/${req.file.originalname}`,
+                image: `/uploads/products/${image}`,
                 color: JSON.parse(req.body.color),
             };
 

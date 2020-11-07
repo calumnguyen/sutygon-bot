@@ -88,7 +88,6 @@ router.get("/:id", auth,
     async (req, res) => {
         try {
             const customer = await Customer.findById(req.params.id);
-
             if (!customer) {
                 return res
                     .status(404)
@@ -163,4 +162,38 @@ router.delete("/:id", auth,
         }
     });
 
+
+    router.get('/number',
+     auth,
+    async (req, res) => {
+        try {
+console.log(req.query.number)
+            const result = await Customer.find({
+                customerContactNumber: { $eq: req.query.number }
+            })
+            if (result == null) {
+                return res
+                    .status(404)
+                    .json({ msg: "No Order found" });
+            }
+            if (!result ) {
+                return res
+                    .status(404)
+                    .json({ msg: "No Order found" });
+            }
+            return res.json(result);
+
+        } catch (err) {
+            console.error(err.message);
+            // Check if id is not valid
+            if (err.kind === "ObjectId") {
+                return res
+                    .status(404)
+                    .json({ msg: "No Order found" });
+            }
+            res
+                .status(500)
+                .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+        }
+    });
 module.exports = router;

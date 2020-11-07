@@ -22,13 +22,14 @@ class Checkout extends Component {
     await this.props.getAllProducts();
 
     const { data } = this.props.location;
-
     if (data) {
       this.setState({
-        customer_id: data.customer.id,
+        customer_id: data,
       });
     }
+    if(this.state.customer_id){
     await this.props.getCustomer(this.state.customer_id);
+  }
   }
 
   addBarcodeRow = () => {
@@ -203,9 +204,13 @@ class Checkout extends Component {
     //     return <Redirect to="/rentproduct" />;
 
     //  }
-    if (this.props.saved) {
-      return <Redirect to="/orders" />;
+    if (this.props.customer === null) {
+      return <Redirect to="/rentproduct" />;
+
     }
+    // if (this.props.saved) {
+    //   return <Redirect to="/orders" />;
+    // }
     const { customer } = this.props;
     return (
       <React.Fragment>
@@ -236,8 +241,8 @@ class Checkout extends Component {
                                 <div className="col-md-12">
                                   <div className="form-group">
                                     <h3>
-                                      {customer && customer[0].name}{" "}
-                                      {`${"#"}${customer && customer[0].contactnumber
+                                      {customer && customer.name}{" "}
+                                      {`${"#"}${customer && customer.contactnumber
                                         }`}
                                     </h3>
                                   </div>
@@ -257,20 +262,25 @@ class Checkout extends Component {
                                  <div className="row text-center ">
                                     <div className="col-md-12 btn-cont">
                                       <div className="form-group">
+                                        {!!this.state.barcode.length ? 
                                         <Link
                                           to={{
                                             pathname: "/rentorder",
                                             data: {
-                                              customer_id: (customer) && customer[0]._id,
+                                              customer_id: (customer) && customer._id,
                                               barcode: this.state.barcode,
                                             },
-                                          }}
+                                          }} 
                                           type="button"
                                           className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
                                           id="btnSize2"
                                         >
                                           <i className="ft-check"></i> Checkout
-                                        </Link>
+                                        </Link> 
+                                        :   
+                                     
+                                      <p><h4>Please scan atleast one barcode!</h4></p>
+                                       }
                                       </div>
                                     </div>
                                   </div>

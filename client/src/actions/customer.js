@@ -141,3 +141,27 @@ export const deleteCustomer = (id) => async (dispatch) => {
     });
   }
 };
+
+// Get Order by Customer number
+export const getCustomerbyCustomerNumber = (number) => async (dispatch) => {
+  dispatch({ type:CUSTOMERS_LOADING });
+console.log(number)
+    try { 
+ 
+    const res = await axios.get(`/api/customers/number`, {
+      params: {
+        "number": number,
+      } }
+    )
+ 
+      dispatch({
+      type: GET_CUSTOMER,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type:CUSTOMERS_ERROR,
+      payload: err.response,
+    });
+  }
+};

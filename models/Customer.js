@@ -16,9 +16,7 @@ const CutomerSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    noOfOrders: {
-        type: String,
-    },
+   
     date: {
         type: Date,
         default: Date.now,

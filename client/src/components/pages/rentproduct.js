@@ -87,7 +87,7 @@ class RentProduct extends Component {
                 <Link
                   to={{
                     pathname: "/checkout",
-                    data:(!!this.props.customer.length) ? this.props.customer[0].id :"",
+                    data:(!!this.props.customer.length) ? this.props.customer[0]._id :"",
                   }}
                   type="button"
                   className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
