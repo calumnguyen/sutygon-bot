@@ -10,7 +10,9 @@ const initialState = {
     returnorder: null,
     loading: false,
     saved: false,
+    generateInvoice:false,
     error: {},
+
 };
 
 export default function (state = initialState, action) {

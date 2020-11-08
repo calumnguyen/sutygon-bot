@@ -14,7 +14,7 @@ import { OCAlert } from '@opuscapita/react-alerts';
 class ScanBarcode extends Component {
   state = {
     barcode: [],
-    customer_id: "",
+    customer: "",
     order: "",
     barcodeFromInput: "",
     matchedBarcodes: []
@@ -24,13 +24,12 @@ class ScanBarcode extends Component {
     const { data } = this.props.location;
     if (data) {
       this.setState({
-        customer_id: data.customer,
+        customer: data.customer,
         barcode: data.order[0].barcodes,
         order: data.order
       });
-    }
 
-    await this.props.getCustomer(this.state.customer_id);
+    }
   }
 
   addBarcodeRow = () => {
@@ -89,22 +88,7 @@ class ScanBarcode extends Component {
     this.setState({ barcode });
   };
 
-  // handleChange = (e, barcode_id = "") => {
-    
-  //   let name = e.target.name;
-  //   let value = e.target.value;
-  //   let { barcode } = this.state;
-  //   let barcode_obj = barcode.filter((barcode) => barcode.id == barcode_id)[0];
-  //   const barcodeIndex = barcode.findIndex(
-  //     (barcode) => barcode.id == barcode_id
-  //   );
-  //   barcode_obj[name] = value;
-  //   barcode[barcodeIndex] = barcode_obj;
-
-  //   this.setState({ barcode });
-  // };
-
-  getBarcodeRow = () => {
+   getBarcodeRow = () => {
     let { matchedBarcodes } = this.state; // get all barcode
     if (matchedBarcodes) {
       return matchedBarcodes.map((barcode) => (
@@ -147,7 +131,7 @@ class ScanBarcode extends Component {
     if (this.props.saved) {
       return <Redirect to="/orders" />;
     }
-    const { customer } = this.props;
+    const { customer } = this.state;
     return (
       <React.Fragment>
         <Loader />
@@ -177,8 +161,8 @@ class ScanBarcode extends Component {
                                 <div className="col-md-12">
                                   <div className="form-group">
                                     <h3>
-                                      {customer && customer[0].name}{" "}
-                                      {`${"#"}${customer && customer[0].contactnumber
+                                      {customer && customer.name}{" "}
+                                      {`${"#"}${customer && customer.contactnumber
                                         }`}
                                     </h3>
                                   </div>
@@ -210,7 +194,7 @@ class ScanBarcode extends Component {
                                             to={{
                                               pathname: "/matchbarcodes",
                                               data: {
-                                                customer: this.props.customer[0]._id,
+                                                // customer: this.props.customer[0]._id,
                                                 barcodesArray: this.state.matchedBarcodes,
                                                 order: this.state.order,
                                                 orderedBarcode: this.state.barcode,
@@ -264,6 +248,7 @@ class ScanBarcode extends Component {
 ScanBarcode.propTypes = {
   auth: PropTypes.object,
   customer: PropTypes.array,
+  getCustomer:PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({

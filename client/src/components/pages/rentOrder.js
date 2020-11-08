@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import Loader from "../layout/Loader";
 import shortid from "shortid";
 import * as moment from 'moment'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { getProductById, getAllProducts, updateProductIndex } from "../../actions/product";
 import { getCustomer } from "../../actions/customer";
 import { addNewRentProduct, getLastRecord } from "../../actions/rentproduct";
@@ -16,7 +18,7 @@ import { addNewInvoice } from "../../actions/invoices";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts'
 var JsBarcode = require('jsbarcode');
-
+ 
 
 class RentOrder extends Component {
   state = {
@@ -216,14 +218,7 @@ class RentOrder extends Component {
 
     }
     this.printInvoice()
-    this.setState({
-      orderNumber:"",
-      customer: "",
-      customerContactNumber: "",
-      barcodes:"",
-      orderBarcode: "",
-      saving: false 
-    })
+   
   };
 
   onHandleChange = (e) => {
@@ -418,6 +413,13 @@ class RentOrder extends Component {
     });
 
   }
+
+
+  handleChangeForDate = (date) => {
+    this.setState({ rentDate: date });
+  };
+
+
   render() {
     const { auth, order } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
@@ -556,7 +558,7 @@ class RentOrder extends Component {
                                     <div className="row">
                                       <div className="col-md-12">
                                         <div className="form-group">
-                                          <h4 id="arowDown">
+                                          <h4 id="arowDown" style={{ marginLeft: "715px" }}>
                                             <i className="ft-arrow-down"></i>
                                           </h4>
                                           <div style={{ paddingLeft: "650px" }}>
@@ -670,11 +672,21 @@ class RentOrder extends Component {
                                         </label>
                                       </div>
                                     </div>
-                                    <br />
 
                                     <div className="row justify-content-center">
-                                      <div className="col-md-6">
-                                        <input
+                                      <div className="col-md-6 text-center">
+                                      <DatePicker  
+                                       id="issueinput3"
+                                      selected={this.state.rentDate}
+                                      className="form-control round text-center"
+                                      onChange={(e) => this.handleChangeForDate(e)}
+                                      onInput={this.rentDateValidity()}
+                                      dateFormat="dd-MM-yyyy"
+                                      popperPlacement="top-start"
+
+                                       />
+
+                                        {/* <input
                                           type="date"
                                           id="issueinput3"
                                           className="form-control round text-center"
@@ -688,18 +700,15 @@ class RentOrder extends Component {
                                           value={this.state.rentDate}
                                           onInput={this.rentDateValidity()}
 
-                                        />
+                                        /> */}
                                       </div>
 
-                                      <div className="col-md-6">
+                                      <div className="col-md-6 text-center">
                                         <input
-                                          type=""
                                           id="issueinput4"
-                                          className="form-control round text-center"
+                                          className="round text-center"
                                           name="returnDate"
-                                          data-toggle="tooltip"
-                                          data-trigger="hover"
-                                          data-placement="top"
+                                         style={{'border':'1px solid #A6A9AE','color':'#75787d' ,'padding':'0.375rem 0.75rem','lineHeight':'1.5' }}
                                           required
                                           readOnly
                                           data-title="Return Date"

@@ -142,25 +142,19 @@ export const deleteCustomer = (id) => async (dispatch) => {
   }
 };
 
-// Get Order by Customer number
-export const getCustomerbyCustomerNumber = (number) => async (dispatch) => {
-  dispatch({ type:CUSTOMERS_LOADING });
-console.log(number)
-    try { 
+// Get User by ID
+export const getCustomerbyCN = (customernumber) => async (dispatch) => {
+  dispatch({ type: CUSTOMERS_LOADING });
  
-    const res = await axios.get(`/api/customers/number`, {
-      params: {
-        "number": number,
-      } }
-    )
- 
-      dispatch({
+  try {
+    const res = await axios.get(`/api/customers/${customernumber}`);
+    dispatch({
       type: GET_CUSTOMER,
       payload: res.data,
     });
   } catch (err) {
     dispatch({
-      type:CUSTOMERS_ERROR,
+      type: CUSTOMERS_ERROR,
       payload: err.response,
     });
   }
