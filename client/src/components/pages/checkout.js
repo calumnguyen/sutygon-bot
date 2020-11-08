@@ -204,10 +204,10 @@ class Checkout extends Component {
     //     return <Redirect to="/rentproduct" />;
 
     //  }
-    if (this.props.customer === null) {
-      return <Redirect to="/rentproduct" />;
+    // if (this.props.customer === null) {
+    //   return <Redirect to="/rentproduct" />;
 
-    }
+    // }
     // if (this.props.saved) {
     //   return <Redirect to="/orders" />;
     // }

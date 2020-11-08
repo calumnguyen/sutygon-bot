@@ -20,7 +20,7 @@ class MatchBarcodes extends Component {
     customer: "",
     barcodesArray: "",
     taxAmt: "",
-    customer_id: "",
+    customer: "",
     order: "",
     missingItmCharges: "",
     customerOwe: "",
@@ -32,7 +32,9 @@ class MatchBarcodes extends Component {
     product_Array: "",
     m_product: "",
     m_productarray: "",
-    m_total: ""
+    m_total: "",
+    generateInvoice:true,
+
   };
 
   handleChange = (e, id = "") => {
@@ -43,7 +45,7 @@ class MatchBarcodes extends Component {
     const { data } = this.props.location
     if (data) {
       this.setState({
-        customer_id: data.customer,
+        customer: data.customer,
         order: data.order,
         insuranceAmt: data.order[0].insuranceAmt,
         barcodesArray: data.barcodesArray,
@@ -52,7 +54,6 @@ class MatchBarcodes extends Component {
         leaveID: data.order[0].leaveID
       });
     }
-    await this.props.getCustomer(this.state.customer_id);
 
   }
 
@@ -296,29 +297,30 @@ class MatchBarcodes extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-    this.setState({ saving: true });
+    this.setState({ saving: true,      generateInvoice:true,    });
 
     const state = { ...this.state };
     const { user } = this.props.auth;
     const { order } = this.props.location.data;
     const orderBarcode = shortid.generate();
     this.setState({
-      orderBarcode: orderBarcode
-
+      orderBarcode: orderBarcode,
     })
+if(state.generateInvoice=== true){
     if (order && state.orderBarcode) {
       const invoiceReturn = {
         order_id: order[0]._id,
-        customer_id: order[0].customer,
+        customer: order[0].customer,
         user_id: user._id,
         type: "Return-Invoice",
         orderBarcode: state.orderBarcode
       }
       await this.props.addNewInvoice(invoiceReturn);
-      this.printBarcode(orderBarcode)
 
     }
+    this.printBarcode(orderBarcode)
 
+  }
     let { product_Array } = this.state;
 
     if (product_Array) {
@@ -333,7 +335,7 @@ class MatchBarcodes extends Component {
         // console.log('got from db', product);
         if (product) {
           product.color.forEach((color, c_index) => {
-        
+
             // get right color obj
             if (color._id === pd[0].color_id) {
               // get right size obj
@@ -355,6 +357,9 @@ class MatchBarcodes extends Component {
           product = null;
 
         }
+      
+    
+
         const rentedProduct = {
           status: "Completed",
         }
@@ -395,11 +400,15 @@ class MatchBarcodes extends Component {
       return <Redirect to="/returnproduct" />;
 
     }
+    if (this.props.saved === true) {
+      return <Redirect to="/returnproduct" />;
+
+    }
     const { order } = data;
 
     const { barcodesArray } = data
     const { customerOwe, insuranceAmt, m_total } = this.state;
-    
+
     return (
       <React.Fragment>
         <Loader />
@@ -432,7 +441,7 @@ class MatchBarcodes extends Component {
                               <div className="form-group">
                                 <div style={{ 'float': 'left' }}>
 
-                                  <h3>{(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}</h3>
+                                  <h3>{(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}</h3>
                                   <br />
                                 </div>
                                 <div style={{ 'float': 'right' }}>
@@ -645,7 +654,7 @@ to customer</h4>
                       <div className="col-md-12">
                         <div className="text-center">
 
-                          <h4>{(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}</h4>
+                          <h4>{(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}</h4>
                         </div>
                         <div className="text-center">
                           <h4>{(data) ? `${"Order"}${"#"} ${order[0].orderNumber}` : ""}</h4>
@@ -868,7 +877,7 @@ to customer</h4>
 
           <div id="invoiceDiv" style={{ 'width': '100%', 'display': 'none' }}>
             <h1 style={{ 'text-align': 'center' }}>
-              {(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}            </h1>
+              {(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}            </h1>
             <h1 style={{ 'text-align': 'center' }}>
               {(data) ? `${"Order"}${"#"} ${order[0].orderNumber}` : ""}            </h1>
 
@@ -877,7 +886,7 @@ to customer</h4>
                 {this.invoiceproductBox()}
               </tbody>
             </table>
-            <table><thead></thead><tbody>
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead><tbody>
               {!!this.state.m_productarray.length ?
 
                 <h5>Missing Products</h5> : ""}
@@ -919,8 +928,7 @@ to customer</h4>
 
             <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>
               <tbody>
-                <tr>
-                  <td style={{ 'width': '90%' }} >Leave ID</td>
+                <tr style={{textAlign:"center"}}>
                   <td>
                     {this.state.leaveID === true ? `${"Customer left ID. Please return IDto customer"}` : `${"No ID"}`}
                   </td>
@@ -937,6 +945,8 @@ to customer</h4>
                     {moment(this.state.returnDate).format('DD/MMM/YYYY')}
                   </td>
                 </tr>
+                <tr><h4 style={{ 'text-align': 'center' }}>{`${"FINAL INVOICE TOTAL: "}${this.finalInVoiceTotal()}`}</h4></tr>
+
               </tbody>
             </table>
 
@@ -950,6 +960,8 @@ to customer</h4>
                     Authorized by <br />
                                      Sutygon-Bot</td>
                 </tr>
+                <tr><h4 style={{ 'text-align': 'center' }}>{`${"ORDER COMPLETED"}`}</h4></tr>
+
               </tbody>
             </table>
             <br />
@@ -966,7 +978,6 @@ to customer</h4>
             </table>
             <br />
             <br />
-            <h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: $"}${this.state.insuranceAmt}`}</h4>
 
           </div>
 
@@ -994,6 +1005,8 @@ MatchBarcodes.propTypes = {
   customer: PropTypes.array,
   addNewInvoice: PropTypes.func.isRequired,
   auth: PropTypes.object,
+  generateInvoice: PropTypes.bool,
+
 };
 
 const mapStateToProps = (state) => ({
@@ -1001,6 +1014,9 @@ const mapStateToProps = (state) => ({
   product: state.product.product,
   customer: state.customer.customer,
   auth: state.auth,
+  saved: state.product.saved,
+  generateInvoice: state.product.generateReturnInvoice,
+
 
 });
 export default connect(mapStateToProps, {

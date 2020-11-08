@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
-import { getOrderbyCustomerNumber, getOrderbyOrderNumber, getOrderbyID } from "../../../actions/returnproduct";
+import { getOrderbyCustomerNumber, getOrderbyOrder, getOrderbyID } from "../../../actions/returnproduct";
 import { getAllProducts } from "../../../actions/product";
-import { getCustomerbyCustomerNumber } from "../../../actions/customer";
+import { getCustomer } from "../../../actions/customer";
 import Loader from "../../layout/Loader";
 import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
@@ -21,16 +21,13 @@ class ReturnProduct extends Component {
     seletedOrder: "",
     product_Array: "",
     tryAgain: false,
-    isSearched:false
+    isSearched:false,
+    returningOrder:"",
   };
 
   async componentDidMount() {
     await this.props.getAllProducts();
-    const { orders} = this.props
-    if(this.state.customer){
-    await this.props.getCustomerbyCustomerNumber(this.state.customer);
     }
-  }
 
   tryAgain = (e) => {
     e.preventDefault();
@@ -42,7 +39,7 @@ class ReturnProduct extends Component {
     var statusBox = document.getElementById("statusBox");
     contactNumber.value = "";
     contactNumber.focus();
-    statusBox.value = "";
+    // statusBox.value = "";
     orderNumber.value = ""
 
   }
@@ -55,11 +52,15 @@ class ReturnProduct extends Component {
   onSubmitCustomer = async (e) => {
     e.preventDefault();
     this.setState({ saving: true ,});
-
     const state = { ...this.state };
     await this.props.getOrderbyCustomerNumber(state.customer.trim());
-    const { orders} = this.props
-    this.setState({ saving: false, tryAgain: false,customer:orders[0].contactNumber });
+    const { orders } = this.props
+    if(orders){
+    await this.props.getCustomer(orders[0].customer);
+    var returningOrder = orders.filter((f => f.status !== "Completed"))
+
+    }
+    this.setState({ saving: false, tryAgain: false , orders: orders,returningOrder:returningOrder });
   };
   //search by order number
   onSubmitOrderNumber = async (e) => {
@@ -67,10 +68,14 @@ class ReturnProduct extends Component {
     this.setState({ saving: true });
 
     const state = { ...this.state };
-    await this.props.getOrderbyOrderNumber(state.orderNumber.trim());
-    const { orders} = this.props
+    await this.props.getOrderbyOrder(state.orderNumber.trim());
+    const { orders } = this.props
+    if(orders){
 
-    this.setState({ saving: false, tryAgain: false,customer:orders[0].contactNumber });
+    await this.props.getCustomer(orders[0].customer);
+    var returningOrder = orders.filter((f => f.status !== "Completed"))
+    }
+    this.setState({ saving: false, tryAgain: false, orders: orders ,returningOrder:returningOrder});
   };
 
   // return sorted products for barcodes
@@ -127,8 +132,7 @@ class ReturnProduct extends Component {
 
     const { seletedOrder } = this.state;
     let productarray = [];
-
-    let { barcodes } = seletedOrder[0];
+   let { barcodes } = seletedOrder[0];
 
     const { products } = this.props;
     if (products) {
@@ -164,10 +168,15 @@ class ReturnProduct extends Component {
       }
     }
   }
-  CutomerBox = () => {
+ 
+
+  CutomerBox =  () => {
     const { orders } = this.props;
-    const { customer } = this.props;
+    const { customeR } = this.props;
+    
+
     let returningOrders = orders.filter((f => f.status !== "Completed"))
+  
     return returningOrders.map((o, o_index) => (
       <>
         <div className="col-md-12">
@@ -179,7 +188,7 @@ class ReturnProduct extends Component {
                 id="statusBox"
                 className="form-control mm-input text-center"
                 style={{ 'color': '#495057', 'width': '-webkit-fill-available' }}
-                // value={(o && customer[0]) ? `${"Order#"}${o.orderNumber}${"             "}${customer[0].name}${"             "}${"OrderStatus-"}${o.status}` : "No Order Found"}
+                value={(o && customeR) ? `${"Order#"}${o.orderNumber}${"             "}${customeR.name}${"             "}${"OrderStatus-"}${o.status}` : "No Order Found"}
                 readOnly />
             </div>
            
@@ -210,7 +219,7 @@ class ReturnProduct extends Component {
     }
 
     const { orders } = this.state;
-    const { customer } = this.props;
+    const { customeR } = this.props;
 
     return (
       <React.Fragment>
@@ -301,11 +310,12 @@ class ReturnProduct extends Component {
                                         id="statusBox"
                                         className="form-control mm-input text-center"
                                         style={{ 'color': '#495057' }}
-                                        value={"No Order Found"}
+                                        value={"No order found"}
                                         readOnly />
                                     </div>
                                   </div>
-                                }
+
+                            }
 
                                 <div className="col-md-12">
                                   <div className="text-center">
@@ -321,12 +331,12 @@ class ReturnProduct extends Component {
                             </div>
                           </> : ""}
                           <div id="colors_box">
-                            {this.state.selectedOrder === true ?
+                            {(this.state.selectedOrder === true && this.state.tryAgain === false) ?
                               <div className="row color-row" id="statusBox1">
                                 <div className="col-md-12">
                                   <div className="form-group">
                                     <div style={{ 'float': 'left' }}>
-                                      <h3>{(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}</h3>
+                                      <h3>{(customeR) ? `${customeR.name}${"#"}${customeR.contactnumber}` : ""}</h3>
                                     </div>
                                     <div style={{ 'float': 'right' }}>
                                       <h3>{(orders && this.state.selectedOrder === true) ? `${"Order"}${"#"} ${this.state.seletedOrder[0].orderNumber}` : ""}</h3>
@@ -344,7 +354,7 @@ class ReturnProduct extends Component {
                                               to={{
                                                 pathname: "/scanBarcode",
                                                 data: {
-                                                  customer: this.props.customer[0]._id,
+                                                  customer: this.props.customeR,
                                                   order: this.state.seletedOrder
                                                 }
                                               }}
@@ -380,26 +390,26 @@ class ReturnProduct extends Component {
 
 ReturnProduct.propTypes = {
   getOrderbyCustomerNumber: PropTypes.func.isRequired,
-  getOrderbyOrderNumber: PropTypes.func.isRequired,
-  getCustomerbyCustomerNumber: PropTypes.func.isRequired,
+  getOrderbyOrder: PropTypes.func.isRequired,
+  getCustomer: PropTypes.func.isRequired,
   getAllProducts: PropTypes.func.isRequired,
   getOrderbyID: PropTypes.func.isRequired,
   orders: PropTypes.array,
-  customer: PropTypes.array,
+  customeR: PropTypes.array,
   auth: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
   products: state.product.products,
-  orders: state.returnproduct.returnproduct,
-  customer: state.customer.customer,
+  orders: state.returnproduct.returnorder,
+  customeR: state.customer.customer,
   auth: state.auth,
 
 });
 export default connect(mapStateToProps, {
   getOrderbyCustomerNumber,
-  getOrderbyOrderNumber,
-  getCustomerbyCustomerNumber,
+  getOrderbyOrder,
+  getCustomer,
   getAllProducts,
   getOrderbyID
 
