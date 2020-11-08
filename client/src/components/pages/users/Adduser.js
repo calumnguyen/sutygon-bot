@@ -16,7 +16,7 @@ class AddUser extends Component {
         email: "",
         contactnumber: "",
         password: "",
-        type: "SuperAdmin",
+        type: "Admin",
         gender: "",
         avatar: "",
         saving: false,
@@ -122,7 +122,6 @@ class AddUser extends Component {
                                                 action="/upload"
                                                 method="POST"
                                                 onSubmit={(e) => this.onSubmit(e)}>
-
                                                 <div className="row">
                                                     <div className="form-group col-12 mb-2">
                                                         <label>Select Profile Image</label>
@@ -232,7 +231,7 @@ class AddUser extends Component {
                                                             name="type"
                                                             className="form-control"
                                                             onChange={(e) => this.handleChange(e)} >
-                                                            <option selected={"SuperAdmin" === this.state.type} value="SuperAdmin"> Super Admin </option>
+                                                            <option selected={"Admin" === this.state.type} value="Admin"> Super Admin </option>
                                                             <option selected={"Employee" === this.state.type} value="Employee"> Employee </option>
 
                                                         </select>
