@@ -11,6 +11,8 @@ import {
     invoices: null,
     loading: false,
     saved: false,
+    generateReturnInvoice : false,
+
     error: {},
   };
   
@@ -44,6 +46,7 @@ import {
           ...state,
           saved: true,
           loading: false,
+          generateReturnInvoice : true
         };
       case INVOICES_ERROR:
         return {

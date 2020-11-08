@@ -32,7 +32,9 @@ class MatchBarcodes extends Component {
     product_Array: "",
     m_product: "",
     m_productarray: "",
-    m_total: ""
+    m_total: "",
+    generateInvoice:true,
+
   };
 
   handleChange = (e, id = "") => {
@@ -295,16 +297,16 @@ class MatchBarcodes extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-    this.setState({ saving: true });
+    this.setState({ saving: true,      generateInvoice:true,    });
 
     const state = { ...this.state };
     const { user } = this.props.auth;
     const { order } = this.props.location.data;
     const orderBarcode = shortid.generate();
     this.setState({
-      orderBarcode: orderBarcode
-
+      orderBarcode: orderBarcode,
     })
+if(state.generateInvoice=== true){
     if (order && state.orderBarcode) {
       const invoiceReturn = {
         order_id: order[0]._id,
@@ -314,9 +316,11 @@ class MatchBarcodes extends Component {
         orderBarcode: state.orderBarcode
       }
       await this.props.addNewInvoice(invoiceReturn);
-      this.printBarcode(orderBarcode)
-    }
 
+    }
+    this.printBarcode(orderBarcode)
+
+  }
     let { product_Array } = this.state;
 
     if (product_Array) {
@@ -353,6 +357,9 @@ class MatchBarcodes extends Component {
           product = null;
 
         }
+      
+    
+
         const rentedProduct = {
           status: "Completed",
         }
@@ -879,7 +886,7 @@ to customer</h4>
                 {this.invoiceproductBox()}
               </tbody>
             </table>
-            <table style={{ 'width': '100%' }} cellpadding="10">><thead></thead><tbody>
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead><tbody>
               {!!this.state.m_productarray.length ?
 
                 <h5>Missing Products</h5> : ""}
@@ -998,6 +1005,8 @@ MatchBarcodes.propTypes = {
   customer: PropTypes.array,
   addNewInvoice: PropTypes.func.isRequired,
   auth: PropTypes.object,
+  generateInvoice: PropTypes.bool,
+
 };
 
 const mapStateToProps = (state) => ({
@@ -1005,7 +1014,8 @@ const mapStateToProps = (state) => ({
   product: state.product.product,
   customer: state.customer.customer,
   auth: state.auth,
-  saved: state.product.saved
+  saved: state.product.saved,
+  generateInvoice: state.product.generateReturnInvoice,
 
 
 });

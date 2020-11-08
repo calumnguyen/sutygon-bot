@@ -21,7 +21,8 @@ class ReturnProduct extends Component {
     seletedOrder: "",
     product_Array: "",
     tryAgain: false,
-    isSearched:false
+    isSearched:false,
+    returningOrder:"",
   };
 
   async componentDidMount() {
@@ -38,7 +39,7 @@ class ReturnProduct extends Component {
     var statusBox = document.getElementById("statusBox");
     contactNumber.value = "";
     contactNumber.focus();
-    statusBox.value = "";
+    // statusBox.value = "";
     orderNumber.value = ""
 
   }
@@ -56,8 +57,10 @@ class ReturnProduct extends Component {
     const { orders } = this.props
     if(orders){
     await this.props.getCustomer(orders[0].customer);
+    var returningOrder = orders.filter((f => f.status !== "Completed"))
+
     }
-    this.setState({ saving: false, tryAgain: false , orders: orders });
+    this.setState({ saving: false, tryAgain: false , orders: orders,returningOrder:returningOrder });
   };
   //search by order number
   onSubmitOrderNumber = async (e) => {
@@ -70,8 +73,9 @@ class ReturnProduct extends Component {
     if(orders){
 
     await this.props.getCustomer(orders[0].customer);
+    var returningOrder = orders.filter((f => f.status !== "Completed"))
     }
-    this.setState({ saving: false, tryAgain: false, orders: orders });
+    this.setState({ saving: false, tryAgain: false, orders: orders ,returningOrder:returningOrder});
   };
 
   // return sorted products for barcodes
@@ -128,8 +132,7 @@ class ReturnProduct extends Component {
 
     const { seletedOrder } = this.state;
     let productarray = [];
-
-    let { barcodes } = seletedOrder[0];
+   let { barcodes } = seletedOrder[0];
 
     const { products } = this.props;
     if (products) {
@@ -165,12 +168,15 @@ class ReturnProduct extends Component {
       }
     }
   }
+ 
+
   CutomerBox =  () => {
     const { orders } = this.props;
     const { customeR } = this.props;
     
 
     let returningOrders = orders.filter((f => f.status !== "Completed"))
+  
     return returningOrders.map((o, o_index) => (
       <>
         <div className="col-md-12">
@@ -304,11 +310,12 @@ class ReturnProduct extends Component {
                                         id="statusBox"
                                         className="form-control mm-input text-center"
                                         style={{ 'color': '#495057' }}
-                                        value={"No Order Found"}
+                                        value={"No order found"}
                                         readOnly />
                                     </div>
                                   </div>
-                                }
+
+                            }
 
                                 <div className="col-md-12">
                                   <div className="text-center">

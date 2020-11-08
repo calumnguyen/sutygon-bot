@@ -12,6 +12,7 @@ import {
     products: null,
     loading: false,
     saved: false,
+    generateReturnInvoice:false,
     error: {},
   };
   
@@ -31,6 +32,8 @@ import {
           products: payload,
           loading: false,
           // saved: tr,
+          generateReturnInvoice:false,
+
         };
   
       case GET_PRODUCT:
@@ -38,6 +41,8 @@ import {
           ...state,
           product: payload,
           loading: false,
+          generateReturnInvoice:false,
+
         };
   
       case PRODUCT_SAVED:
@@ -51,6 +56,7 @@ import {
             ...state,
             saved: true,
             loading: false,
+            generateReturnInvoice:true,
           };
       case PRODUCTS_ERROR:
         return {
