@@ -396,10 +396,7 @@ if(state.generateInvoice=== true){
 
     const { customer } = this.props;
     const { data } = this.props.location;
-    if (this.props.location.data === undefined) {
-      return <Redirect to="/returnproduct" />;
-
-    }
+   
     if (this.props.saved === true) {
       return <Redirect to="/returnproduct" />;
 
