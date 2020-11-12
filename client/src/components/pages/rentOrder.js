@@ -17,8 +17,9 @@ import { getOrderbyOrderNumber } from "../../actions/returnproduct";
 import { addNewInvoice } from "../../actions/invoices";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts'
+import { cookie } from "express-validator";
 var JsBarcode = require('jsbarcode');
- 
+
 
 class RentOrder extends Component {
   state = {
@@ -116,25 +117,31 @@ class RentOrder extends Component {
 
   rentDateValidity = () => {
     const { rentDate, } = this.state;
-    var currentdate = moment(new Date).format('DD-MM-YYYY');
-    
+    var currentdate = moment(rentDate).format('YYYY-MM-DD');
+    const r_date = moment(new Date).format('YYYY-MM-DD');
+    var isToday = moment(r_date).isSameOrBefore(currentdate); // true
+console.log("isToday",isToday)
     const rent = new Date(rentDate)
-      if((rent.getTime() - (new Date).getTime()) > 0)
-      {
-        var threeDaysAfter = (new Date(rentDate).getTime() + (2 * 24 * 60 * 60 * 1000));
-        var momentthreeDaysAfter = moment(threeDaysAfter).format("DD-MM-YYYY");
-        this.state.returnDate = momentthreeDaysAfter;
-    
-        this.state.m_returnDate = moment(threeDaysAfter).format("YYYY-MM-DD");
-      }
-      else if((rent.getTime() - (new Date).getTime()) < 0)
+
+    if (isToday === false && (rent.getTime() - (new Date).getTime()) < 0) {
+      this.state.returnDate = "";
 
       OCAlert.alertError(`Rent Date should be after today's date`, { timeOut: 3000 });
       return;
     }
 
-    
-  
+    else if ((rent.getTime() - (new Date).getTime()) > 0 || isToday === true ) {
+      var threeDaysAfter = (new Date(rentDate).getTime() + (2 * 24 * 60 * 60 * 1000));
+      var momentthreeDaysAfter = moment(threeDaysAfter).format("DD-MM-YYYY");
+      this.state.returnDate = momentthreeDaysAfter;
+
+      this.state.m_returnDate = moment(threeDaysAfter).format("YYYY-MM-DD");
+    }
+
+  }
+
+
+
 
   onSubmit = async (e) => {
     e.preventDefault();
@@ -218,7 +225,7 @@ class RentOrder extends Component {
 
     }
     this.printInvoice()
-   
+
   };
 
   onHandleChange = (e) => {
@@ -384,7 +391,7 @@ class RentOrder extends Component {
 
     let amount;
     if (taxper !== null && taxper !== "0") {
-      amount = Math.round(totalAmount / taxper)
+      amount = totalAmount * (taxper*0.01)
     }
     else {
       amount = 0;
@@ -401,7 +408,7 @@ class RentOrder extends Component {
   calculateTotal = () => {
     let sum = 0;
     let { tax, insAmt, total_amt } = this.state;
-    sum = Number(Number(total_amt) + Number(tax) + Number(insAmt));
+    sum = Math.round(Number(total_amt) + Number(tax) + Number(insAmt));
     this.state.total = sum;
     return sum;
   };
@@ -438,7 +445,7 @@ class RentOrder extends Component {
       return <Redirect to="/rentproduct" />;
 
     }
-   
+
     const { customer } = this.props;
     return (
       <React.Fragment>
@@ -476,12 +483,12 @@ class RentOrder extends Component {
 
                                     {this.getBarcodeRecord()}
                                     <Link
-                                    to={{
-                                      pathname: "/checkout",
-                                      data: {
-                                        customer: this.state.customer_id,
-                                      }
-                                    }}
+                                      to={{
+                                        pathname: "/checkout",
+                                        data: {
+                                          customer: this.state.customer_id,
+                                        }
+                                      }}
                                       to="/checkout"
                                       className="btn "
                                     >
@@ -621,9 +628,9 @@ class RentOrder extends Component {
                                           </div>
                                           <div style={{ 'textAlign': 'right', 'paddingRight': '170px' }}>
 
-                                            <div className="" style={{ }}>
+                                            <div className="" style={{}}>
                                               <input
-                                              id="yes"
+                                                id="yes"
                                                 type="radio"
                                                 name="leaveID"
                                                 value={true}
@@ -634,9 +641,9 @@ class RentOrder extends Component {
 
                                               >&nbsp;YES</label>
                                             </div>
-                                            <div className="" style={{  }}>
+                                            <div className="" style={{}}>
                                               <input
-                                              id="no"
+                                                id="no"
                                                 type="radio"
                                                 name="leaveID"
                                                 value={false}
@@ -675,16 +682,16 @@ class RentOrder extends Component {
 
                                     <div className="row justify-content-center">
                                       <div className="col-md-6 text-center">
-                                      <DatePicker  
-                                       id="issueinput3"
-                                      selected={this.state.rentDate}
-                                      className="form-control round text-center"
-                                      onChange={(e) => this.handleChangeForDate(e)}
-                                      onInput={this.rentDateValidity()}
-                                      dateFormat="dd-MM-yyyy"
-                                      popperPlacement="top-start"
+                                        <DatePicker
+                                          id="issueinput3"
+                                          selected={this.state.rentDate}
+                                          className="form-control round text-center"
+                                          onChange={(e) => this.handleChangeForDate(e)}
+                                          onInput={this.rentDateValidity()}
+                                          dateFormat="dd-MM-yyyy"
+                                          popperPlacement="top-start"
 
-                                       />
+                                        />
 
                                         {/* <input
                                           type="date"
@@ -708,7 +715,7 @@ class RentOrder extends Component {
                                           id="issueinput4"
                                           className="round text-center"
                                           name="returnDate"
-                                         style={{'border':'1px solid #A6A9AE','color':'#75787d' ,'padding':'0.375rem 0.75rem','lineHeight':'1.5' }}
+                                          style={{ 'border': '1px solid #A6A9AE', 'color': '#75787d', 'padding': '0.375rem 0.75rem', 'lineHeight': '1.5' }}
                                           required
                                           readOnly
                                           data-title="Return Date"
