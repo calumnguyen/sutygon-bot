@@ -124,10 +124,10 @@ class ScanBarcode extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    // // if (this.props.location.data === undefined) {
-    // //   return <Redirect to="/returnproduct" />;
+    if (this.props.location.data === undefined) {
+       return <Redirect to="/returnproduct" />;
 
-    // }
+    }
     if (this.props.saved) {
       return <Redirect to="/orders" />;
     }
