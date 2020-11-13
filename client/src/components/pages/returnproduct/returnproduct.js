@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
-import { getOrderbyCustomerNumber, getOrderbyOrder, getOrderbyID } from "../../../actions/returnproduct";
+import { getOrderbyCustomerNumber, getOrderbyOrderNumber, getOrderbyID } from "../../../actions/returnproduct";
 import { getAllProducts } from "../../../actions/product";
 import { getCustomer } from "../../../actions/customer";
 import Loader from "../../layout/Loader";
@@ -55,7 +55,7 @@ class ReturnProduct extends Component {
     const state = { ...this.state };
     await this.props.getOrderbyCustomerNumber(state.customer.trim());
     const { orders } = this.props
-    if(orders){
+    if(!!orders.length){
     await this.props.getCustomer(orders[0].customer);
     var returningOrder = orders.filter((f => f.status !== "Completed"))
 
@@ -68,9 +68,9 @@ class ReturnProduct extends Component {
     this.setState({ saving: true });
 
     const state = { ...this.state };
-    await this.props.getOrderbyOrder(state.orderNumber.trim());
+    await this.props.getOrderbyOrderNumber(state.orderNumber.trim());
     const { orders } = this.props
-    if(orders){
+    if(!!orders.lengt){
 
     await this.props.getCustomer(orders[0].customer);
     var returningOrder = orders.filter((f => f.status !== "Completed"))
@@ -180,8 +180,7 @@ class ReturnProduct extends Component {
     return returningOrders.map((o, o_index) => (
       <>
         <div className="col-md-12">
-          <div className="row form-group"  onClick={(e) => this.selectedOrder(e, o._id)}
->
+          <div className="row form-group"  onClick={(e) => this.selectedOrder(e, o._id)}>
           <div className="col-md-11">
               <input
                 type="text"
@@ -217,6 +216,7 @@ class ReturnProduct extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
+    
 
     const { orders } = this.state;
     const { customeR } = this.props;
@@ -390,7 +390,7 @@ class ReturnProduct extends Component {
 
 ReturnProduct.propTypes = {
   getOrderbyCustomerNumber: PropTypes.func.isRequired,
-  getOrderbyOrder: PropTypes.func.isRequired,
+  getOrderbyOrderNumber: PropTypes.func.isRequired,
   getCustomer: PropTypes.func.isRequired,
   getAllProducts: PropTypes.func.isRequired,
   getOrderbyID: PropTypes.func.isRequired,
@@ -408,7 +408,7 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   getOrderbyCustomerNumber,
-  getOrderbyOrder,
+  getOrderbyOrderNumber,
   getCustomer,
   getAllProducts,
   getOrderbyID
