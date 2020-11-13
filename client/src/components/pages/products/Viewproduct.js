@@ -167,7 +167,7 @@ class ViewProduct extends Component {
                   <img
 
                     className="media-object round-media" 
-                   src={this.encodeURI(product.image)}
+                   src={(product.image)}
                     alt="Product"
                   />
                 </div>
