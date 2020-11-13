@@ -393,6 +393,10 @@ if(state.generateInvoice=== true){
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
+        if (this.props.location.data === undefined) {
+        return <Redirect to="/returnproduct" />;
+
+    }
 
     const { customer } = this.props;
     const { data } = this.props.location;
