@@ -29,8 +29,8 @@ class ViewProduct extends Component {
       this.calculateTotals(products);
     }
   }
-  encodeURI = (src) =>{
- var uri = src.split(" ").join("_")
+  encodeURI = (src) => {
+    var uri = src.split(" ").join("_")
     return uri;
   }
 
@@ -103,10 +103,10 @@ class ViewProduct extends Component {
           let color_size_total = 0;
           // looping through sizes of current color
           if (color.sizes) {
-         
+
             color.sizes.forEach((size, s_index) => {
-               color_size_total += parseInt(size.qty);
-             size.is_open = false;
+              color_size_total += parseInt(size.qty);
+              size.is_open = false;
             });
             color.total = color_size_total;
             color.is_open = false;
@@ -144,7 +144,7 @@ class ViewProduct extends Component {
     this.setState({ formated_products });;
   };
   // Replace all <img /> with <Img />
- 
+
   getTAble = () => {
     const { formated_products } = this.state;
 
@@ -166,13 +166,13 @@ class ViewProduct extends Component {
                 <div className="tb_t_left">
                   <img
 
-                    className="media-object round-media" 
-                   src={(product.image)}
+                    className="media-object round-media"
+                    src={(product.image)}
                     alt="Product"
                   />
                 </div>
                 <div className="tb_t_right">
-                  <span className={"badge badge-"+((product.disabled === "true") ? "secondary":"info")+ " float-right"}>{(product.disabled === "false") ? "active":"disabled"}</span>
+                  <span className={"badge badge-" + ((product.disabled === "true") ? "secondary" : "info") + " float-right"}>{(product.disabled === "false") ? "active" : "disabled"}</span>
                   <h2>
                     <strong>Product Name</strong> {product.name}
                   </h2>
@@ -198,17 +198,16 @@ class ViewProduct extends Component {
                           this.toggleColor(e, i, color_i)
                         }
                       >
-                        <i 
-                        className={color.is_open ? "ft-arrow-down" : "ft-arrow-right"}
+                        <i
+                          className={color.is_open ? "ft-arrow-down" : "ft-arrow-right"}
                         ></i>
                       </button>{" "}
                       <p>
                         {color.colorname} : {color.total}
                       </p>
                       <div
-                        className={`tb_color_box_content ${
-                          color.is_open ? "show_it" : "hide_it"
-                        }`}
+                        className={`tb_color_box_content ${color.is_open ? "show_it" : "hide_it"
+                          }`}
                       >
                         {color.sizes &&
                           color.sizes.map((size, size_i) => (
@@ -221,21 +220,20 @@ class ViewProduct extends Component {
                                   this.toggleSize(e, i, color_i, size_i)
                                 }
                               >
-                                <i 
-                                className={size.is_open ? "ft-arrow-down" : "ft-arrow-right"}
+                                <i
+                                  className={size.is_open ? "ft-arrow-down" : "ft-arrow-right"}
                                 ></i>
                               </button>{" "}
                               <p>
                                 {size.size} : {size.qty}{" "}
                               </p>
                               <div
-                                className={`tb_size_box_content ${
-                                  size.is_open ? "show_it" : "hide_it"
-                                }`}
+                                className={`tb_size_box_content ${size.is_open ? "show_it" : "hide_it"
+                                  }`}
                               >
                                 <div className="tb_barcodes_box">
                                   <ul>
-                                    {size.barcodes && 
+                                    {size.barcodes &&
                                       size.barcodes.map(
                                         (barcode, barcode_i) => (
                                           <li key={barcode_i}>
@@ -264,18 +262,18 @@ class ViewProduct extends Component {
                     ))}
                 </p>
 
-                <Link 
-                to={{
-                  pathname: `/product/editproduct/${product._id}`,
-                  data: product
-                }}
-                 className="btn btn-primary pull-right mbtn">
-                    {" "}
+                <Link
+                  to={{
+                    pathname: `/product/editproduct/${product._id}`,
+                    data: product
+                  }}
+                  className="btn btn-primary pull-right mbtn">
+                  {" "}
                   <i className="fa fa-pencil"></i> Edit{" "}
                 </Link>
                 <button type="button" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="btn btn-primary pull-right mbtn">
                   {" "}
-                  <i className={"ft-" + ((product.disabled === "true") ? "play":"pause")}></i> {(product.disabled === "true") ? "Reactivate":"Disable"}
+                  <i className={"ft-" + ((product.disabled === "true") ? "play" : "pause")}></i> {(product.disabled === "true") ? "Reactivate" : "Disable"}
                 </button>
               </div>
 
@@ -296,8 +294,8 @@ class ViewProduct extends Component {
   }
 
   async toggleStatus(status, product_id) {
-    
-    if(status === "true") {
+
+    if (status === "true") {
       status = "false";
     } else {
       status = "true";
@@ -315,7 +313,7 @@ class ViewProduct extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-     return (
+    return (
       <React.Fragment>
         <Loader />
         <div className="wrapper menu-collapsed">
@@ -344,7 +342,7 @@ class ViewProduct extends Component {
                               </div>
                               <div className="col-md-4">
                                 <a
-                                href="/product"
+                                  href="/product"
                                   className="btn btn-success"
                                   onClick={() => this.searchTable()}
                                 >
@@ -373,11 +371,11 @@ class ViewProduct extends Component {
             </div>
           </div>
 
-          
+
           <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-              <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
-            </footer>
+            <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
+              <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+          </footer>
         </div>
       </React.Fragment>
     );
