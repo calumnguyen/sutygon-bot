@@ -167,7 +167,7 @@ class ViewProduct extends Component {
                   <img
 
                     className="media-object round-media"
-                    src={(product.image)}
+                    src={process.env.PUBLIC_URL + product.image}
                     alt="Product"
                   />
                 </div>
