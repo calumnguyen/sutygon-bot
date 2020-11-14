@@ -302,23 +302,20 @@ class MatchBarcodes extends Component {
     const state = { ...this.state };
     const { user } = this.props.auth;
     const { order } = this.props.location.data;
-    const orderBarcode = shortid.generate();
-    this.setState({
-      orderBarcode: orderBarcode,
-    })
+    
 if(state.generateInvoice=== true){
-    if (order && state.orderBarcode) {
+    if (order && state.orderNumber) {
       const invoiceReturn = {
         order_id: order[0]._id,
         customer: order[0].customer,
         user_id: user._id,
         type: "Return-Invoice",
-        orderBarcode: state.orderBarcode
+        orderBarcode: state.orderNumber
       }
       await this.props.addNewInvoice(invoiceReturn);
 
     }
-    this.printBarcode(orderBarcode)
+    this.printBarcode(state.orderNumber)
 
   }
     let { product_Array } = this.state;
