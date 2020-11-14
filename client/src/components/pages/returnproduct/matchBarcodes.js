@@ -34,6 +34,7 @@ class MatchBarcodes extends Component {
     m_product: "",
     m_productarray: "",
     m_total: "",
+
     generateInvoice:true,
 
   };
@@ -198,6 +199,7 @@ class MatchBarcodes extends Component {
     ))
   }
 
+  
 
   missingProducts = () => {
     let m_productarray = [];
@@ -367,7 +369,7 @@ class MatchBarcodes extends Component {
 
     }
     this.printInvoice()
-    this.setState({ saving: false });
+    this.setState({ saving: false , orderNumber:""});
 
   };
   printInvoice = () => {
@@ -404,6 +406,9 @@ class MatchBarcodes extends Component {
       return <Redirect to="/returnproduct" />;
 
     }
+
+    
+   
     const { order } = data;
 
     const { barcodesArray } = data
@@ -716,7 +721,6 @@ to customer</h4>
 
 
                               <h6 >
-                                {this.state.m_total}
                               </h6>
 
                             </div>
@@ -767,7 +771,7 @@ to customer</h4>
                             </div>
                             <div style={{ 'float': 'right', 'color': 'black', 'marginLeft': '25px' }}>
                               <h6>
-                                {moment(this.state.rentDate).format('DD/MMM/YYYY')}
+                                {moment(this.state.rentDate).format('DD-MM-YYYY')}
 
                               </h6>
                             </div>
@@ -785,7 +789,7 @@ to customer</h4>
                             <div style={{ 'float': 'right', 'color': 'black', 'marginLeft': '25px' }}>
                               <h6 >
 
-                                {moment(this.state.returnDate).format('DD/MMM/YYYY')}
+                                {moment(this.state.returnDate).format('DD-MM-YYYY')}
                               </h6>
                             </div>
 
@@ -913,13 +917,12 @@ to customer</h4>
                 <tr>
                   <td>Lost Items Charge</td>
                   <td>
-                    {this.state.m_total}
-                  </td>
+                  {this.state.m_total && this.state.m_total }                 </td>
                 </tr>
                 <tr>
                   <td>Amount Return to customer</td>
                   <td>
-                    {(customerOwe && insuranceAmt && m_total) ? `${this.returnAmt()}` : "0"}
+                    {(insuranceAmt) ? this.returnAmt() : "0"}
                   </td>
                 </tr>
               </tbody>
