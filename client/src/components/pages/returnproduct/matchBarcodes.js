@@ -25,6 +25,7 @@ class MatchBarcodes extends Component {
     missingItmCharges: "",
     customerOwe: "",
     insuranceAmt: "",
+    orderNumber:"",
     leaveID: "",
     returnAmt: "",
     totalPaid: "",
@@ -297,20 +298,21 @@ class MatchBarcodes extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-    this.setState({ saving: true,      generateInvoice:true,    });
-
     const state = { ...this.state };
     const { user } = this.props.auth;
     const { order } = this.props.location.data;
-    
-if(state.generateInvoice=== true){
+    this.setState({ saving: true, generateInvoice:true,orderNumber:order[0].orderNumber  });
+
+
+    if(state.generateInvoice=== true){
     if (order && state.orderNumber) {
       const invoiceReturn = {
         order_id: order[0]._id,
         customer: order[0].customer,
         user_id: user._id,
         type: "Return-Invoice",
-        orderBarcode: state.orderNumber
+        orderBarcode:state.orderNumber
+
       }
       await this.props.addNewInvoice(invoiceReturn);
 
@@ -397,7 +399,7 @@ if(state.generateInvoice=== true){
 
     const { customer } = this.props;
     const { data } = this.props.location;
-   
+    const { user } = this.props.auth;
     if (this.props.saved === true) {
       return <Redirect to="/returnproduct" />;
 
@@ -694,7 +696,7 @@ to customer</h4>
 
                                   id="setSizeFloat"
 
-                                  value={`${"PAID TOTAL: $"}${this.state.insuranceAmt}`}
+                                  value={`${"PAID TOTAL: $"}${this.state.totalPaid}`}
 
                                 />
 
@@ -822,7 +824,7 @@ to customer</h4>
 
                                 </td>
                                 <td style={{ 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}> Authorized by <br />
-                                                        Sutygon-Bot</td>
+                          {user.username}</td>
                               </tr>
                             </table>
 
@@ -905,7 +907,7 @@ to customer</h4>
                 </tr>
 
                 <tr>
-                  <tr><h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: "}${this.state.insuranceAmt}`}</h4>
+                  <tr><h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: "}${this.state.totalPaid}`}</h4>
                   </tr>
                 </tr>
                 <tr>
