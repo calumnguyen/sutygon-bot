@@ -45,3 +45,11 @@
 }
 .table-light th, .table-light td, .table-light thead th, .table-light tbody + tbody {
   border-color: #424242}
+
+
+.hovered:hover {
+  color: white !important; 
+  background: lightslategray;
+  opacity: 0.6;
+  transition: 0.3s;
+}
