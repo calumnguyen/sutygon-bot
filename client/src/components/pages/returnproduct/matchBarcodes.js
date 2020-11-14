@@ -41,6 +41,8 @@ class MatchBarcodes extends Component {
 
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
+    this.customerOwe();
+    this.returnAmt();
   };
 
   async componentDidMount() {
@@ -486,7 +488,7 @@ class MatchBarcodes extends Component {
                                             placeholder="Total"
                                             id="setSizeFloat"
                                             required
-                                            value={!!this.state.m_productarray.length ? this.getMissingItemTotal() : "0"}
+                                            value={!!this.state.m_productarray.length ? this.getMissingItemTotal() : this.state.missingItmCharges}
                                             onChange={(e) => this.handleChange(e)}
                                           />
                                         </div>  </div>
@@ -538,7 +540,6 @@ to customer</h4>
                                             className="form-control mm-input s-input text-center"
                                             placeholder="Total"
                                             id="setSizeFloat"
-                                            value={customerOwe}
                                             required
                                             value={(insuranceAmt) ? `${this.customerOwe()}` : "0"}
                                             onChange={(e) => this.handleChange(e)}

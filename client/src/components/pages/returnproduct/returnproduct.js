@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
-import { getOrderbyCustomerNumber, getOrderbyOrderNumber, getOrderbyID } from "../../../actions/returnproduct";
+import { getOrderbyCustomerNumber, getOrderbyOrderNumber, getOrderbyID, emptyReturnOrder } from "../../../actions/returnproduct";
 import { getAllProducts } from "../../../actions/product";
 import { getCustomer } from "../../../actions/customer";
 import Loader from "../../layout/Loader";
@@ -27,6 +27,7 @@ class ReturnProduct extends Component {
 
   async componentDidMount() {
     await this.props.getAllProducts();
+    await this.props.emptyReturnOrder();
   }
 
   tryAgain = (e) => {
@@ -386,6 +387,7 @@ class ReturnProduct extends Component {
 ReturnProduct.propTypes = {
   getOrderbyCustomerNumber: PropTypes.func.isRequired,
   getOrderbyOrderNumber: PropTypes.func.isRequired,
+  emptyReturnOrder: PropTypes.func.isRequired,
   getCustomer: PropTypes.func.isRequired,
   getAllProducts: PropTypes.func.isRequired,
   getOrderbyID: PropTypes.func.isRequired,
@@ -406,7 +408,7 @@ export default connect(mapStateToProps, {
   getOrderbyOrderNumber,
   getCustomer,
   getAllProducts,
-  getOrderbyID
-
+  getOrderbyID,
+  emptyReturnOrder
 
 })(ReturnProduct);

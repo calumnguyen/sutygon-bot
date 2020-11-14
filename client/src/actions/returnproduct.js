@@ -4,6 +4,7 @@ import {
   RETURNPRODUCT_ERROR,
   GET_RETURNPRODUCT,
   GET_RETURNORDER,
+  EMPTY_RETURN_ORDER,
  
 } from "./types";
  // Get Order by Customer number
@@ -94,4 +95,8 @@ export const getOrderbyID = (id) => async (dispatch) => {
       payload: err.response,
     });
   }
+};
+// empty return order object in props
+export const emptyReturnOrder = () => async (dispatch) => {
+  dispatch({ type: EMPTY_RETURN_ORDER });
 };

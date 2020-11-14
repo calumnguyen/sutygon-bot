@@ -81,7 +81,6 @@ class RentOrder extends Component {
       orderBarcode: orderBarcode
     })
     await this.props.getCustomer(this.state.customer_id);
-
   }
   generateRandomNumber(previousNumber) {
     // break number by dash
@@ -784,6 +783,7 @@ class RentOrder extends Component {
                   </div>
                 </section>
               </div>
+              
             </div>
 
 
@@ -881,11 +881,11 @@ class RentOrder extends Component {
                 </tr>
               </tbody>
             </table>
-
+            
           </div>
 
 
-
+          
           {/* Invoice Modal */}
           <div className="modal fade text-left" id="primary" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel8"
             aria-hidden="true">
@@ -1054,8 +1054,8 @@ class RentOrder extends Component {
             </div>
           </div>
         </div>
+        <div className="clearfix"></div>
         <OCAlertsProvider />
-
       </React.Fragment>
     );
   }

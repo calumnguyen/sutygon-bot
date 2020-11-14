@@ -48,6 +48,7 @@
 
 
 .hovered:hover {
+  cursor: pointer;
   color: white !important; 
   background: lightslategray;
   opacity: 0.6;
