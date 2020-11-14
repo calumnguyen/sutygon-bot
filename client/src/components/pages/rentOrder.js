@@ -114,23 +114,25 @@ class RentOrder extends Component {
     let n = firstHalf + "-" + secondHalf;
     return n;
   }
-
+  focousOut(value) {
+    if (value === false) {
+      this.setState({ rentDate: '',returnDate : '' });
+    }
+  }
   rentDateValidity = () => {
-    const { rentDate, } = this.state;
+    let { rentDate, } = this.state;
     var currentdate = moment(rentDate).format('YYYY-MM-DD');
     const r_date = moment(new Date).format('YYYY-MM-DD');
     var isToday = moment(r_date).isSameOrBefore(currentdate); // true
-console.log("isToday",isToday)
     const rent = new Date(rentDate)
 
     if (isToday === false && (rent.getTime() - (new Date).getTime()) < 0) {
-      this.state.returnDate = "";
-
-      OCAlert.alertError(`Rent Date should be after today's date`, { timeOut: 3000 });
+      OCAlert.alertError(`Invalid Date`, { timeOut: 3000 });
+      this.focousOut(isToday);
       return;
     }
 
-    else if ((rent.getTime() - (new Date).getTime()) > 0 || isToday === true ) {
+    else if ((rent.getTime() - (new Date).getTime()) > 0 || isToday === true) {
       var threeDaysAfter = (new Date(rentDate).getTime() + (2 * 24 * 60 * 60 * 1000));
       var momentthreeDaysAfter = moment(threeDaysAfter).format("DD-MM-YYYY");
       this.state.returnDate = momentthreeDaysAfter;
@@ -175,17 +177,17 @@ console.log("isToday",isToday)
     await this.props.getOrderbyOrderNumber(state.orderNumber)
     const { order, auth } = this.props;
     if (this.props.generateInvoice === true) {
-      if (order && state.orderBarcode) {
+      if (order && state.orderBarcode && state.orderNumber) {
         const invoiceRent = {
           order_id: order[0]._id,
           customer_id: order[0].customer,
           user_id: auth.user._id,
           type: "Rent-Invoice",
-          orderBarcode: state.orderBarcode
+          orderBarcode: state.orderNumber
         }
         await this.props.addNewInvoice(invoiceRent);
       }
-      this.printBarcode(state.orderBarcode)
+      this.printBarcode(state.orderNumber)
     }
     let { product_Array } = this.state;
 
@@ -391,7 +393,7 @@ console.log("isToday",isToday)
 
     let amount;
     if (taxper !== null && taxper !== "0") {
-      amount = totalAmount * (taxper*0.01)
+      amount = totalAmount * (taxper * 0.01)
     }
     else {
       amount = 0;
@@ -423,8 +425,10 @@ console.log("isToday",isToday)
 
 
   handleChangeForDate = (date) => {
+    let { rentDate, } = this.state;
     this.setState({ rentDate: date });
-  };
+  }
+
 
 
   render() {
@@ -797,7 +801,7 @@ console.log("isToday",isToday)
               {(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}
             </h1>
             <h1 style={{ 'text-align': 'center' }}>
-              {(order) ? `${"Order"}${"#"} ${order[0].orderNumber}` : ""}
+              {(this.state.orderNumber) ? `${"Order"}${"#"} ${this.state.orderNumber}` : ""}
             </h1>
 
             <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>
