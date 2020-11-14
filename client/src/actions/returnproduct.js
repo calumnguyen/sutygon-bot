@@ -67,9 +67,8 @@ export const getOrderbyCustomerNumber = (number) => async (dispatch) => {
         "orderNumber": orderNumber,
       } }
     )
- 
       dispatch({
-      type: GET_RETURNPRODUCT,
+      type: GET_RETURNORDER,
       payload: res.data,
     });
   } catch (err) {
