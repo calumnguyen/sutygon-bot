@@ -5,6 +5,8 @@ const Product = require("../../models/Product");
 const { check, validationResult } = require("express-validator");
 var multer = require('multer')
 var upload = multer({ dest: 'client/public/uploads/products' })
+var cloudinary = require('cloudinary')
+
 
 const FILE_PATH = 'client/public/uploads/products';
 
@@ -18,6 +20,42 @@ var storage = multer.diskStorage({
 })
 
 var upload = multer({ storage: storage })
+router.post(
+    "/test",
+    [
+        check("name", "Product Name Required").not().isEmpty(),
+        check("image", "Product Image Required").not().isEmpty(),
+        check("color", "Product Color Required").isArray().not().isEmpty(),
+    ],
+    auth,
+    async( req, res) => {
+        const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+        const image = req.file.originalname.split(' ').join('_')
+
+        try {
+
+            cloudinary.uploader.upload(image,
+            function(result) { console.log('image uploaded: ', result) })
+
+            const productBody = {
+                name: body.name,
+                productId: body.productId,
+                tags: body.tags,
+                image: `/uploads/products/${image}`,
+                color: JSON.parse(req.body.color),
+            };
+
+            let product = new Product(productBody);
+            await product.save();
+            res.json({ product, msg: "Product Added Successfully" });
+        } catch (err) {
+            console.log(err);
+            res
+                .status(500)
+                .send("Server error");
+        }
+    }
+)
 
 // @route   POST api/products/add
 // @desc    Add New Product
