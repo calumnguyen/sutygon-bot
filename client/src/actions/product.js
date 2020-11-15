@@ -26,7 +26,7 @@ export const addNewProduct = (product) => async (dispatch) => {
   }
   try {
 
-      const res = await axios.post("/api/products/add", product, config);
+      const res = await axios.post("/api/products/test", product, config);
   
       dispatch({
         type: PRODUCT_SAVED,
