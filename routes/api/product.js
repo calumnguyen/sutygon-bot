@@ -30,18 +30,19 @@ router.post(
     auth,
     async( req, res) => {
         const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-        const image = req.file.originalname.split(' ').join('_')
 
+        // const image = req.file.originalname.split(' ').join('_')
+        
         try {
-
-            cloudinary.uploader.upload(image,
-            function(result) { console.log('image uploaded: ', result) })
+            console.log(body);
+            // cloudinary.uploader.upload(image,
+            // function(result) { console.log('image uploaded: ', result) })
 
             const productBody = {
                 name: body.name,
                 productId: body.productId,
                 tags: body.tags,
-                image: `/uploads/products/${image}`,
+                // image: `/uploads/products/${image}`,
                 color: JSON.parse(req.body.color),
             };
 
@@ -74,6 +75,19 @@ router.post(
         const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
         const image = req.file.originalname.split(' ').join('_')
         try {
+
+            cloudinary.config({ 
+                cloud_name: 'hiqtaqcaf', 
+                api_key: '472617698116631', 
+                api_secret: 's5RMcbDwdeirTPQIN0UQX4fcZc0' 
+              });
+              console.log(req.file);
+            cloudinary.uploader.upload(req.file.path,
+            function(result) { 
+                console.log('image uploaded vai cloudinary');
+                console.log('image uploaded: ', result) 
+            })
+            console.log(body);
             const productBody = {
                 name: body.name,
                 productId: body.productId,
