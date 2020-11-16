@@ -15,6 +15,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
+import {Image} from 'cloudinary-react';
+
 
 
 class ViewProduct extends Component {
@@ -164,6 +166,7 @@ class ViewProduct extends Component {
             <div className="tb_row">
               <div className="tb_top">
                 <div className="tb_t_left">
+
                   <img
 
                     className="media-object round-media"
