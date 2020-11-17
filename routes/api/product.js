@@ -8,7 +8,6 @@ var upload = multer({ dest: 'client/public/uploads/products' })
 const FILE_PATH = 'client/public/uploads/products';
 var cloudinary = require('cloudinary')
 const config = require("config");
-const { image } = require("html2canvas/dist/types/css/types/image");
 
 cloudinary.config({
     cloud_name: config.get("cloud_name"),
