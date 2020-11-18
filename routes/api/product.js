@@ -28,11 +28,11 @@ router.post(
         check("color", "Product Color Required").isArray().not().isEmpty(),
     ],
     auth,
-    async( req, res) => {
+    async (req, res) => {
         const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
 
         // const image = req.file.originalname.split(' ').join('_')
-        
+
         try {
             console.log(body);
             // cloudinary.uploader.upload(image,
@@ -76,17 +76,17 @@ router.post(
         const image = req.file.originalname.split(' ').join('_')
         try {
 
-            cloudinary.config({ 
-                cloud_name: 'hiqtaqcaf', 
-                api_key: '472617698116631', 
-                api_secret: 's5RMcbDwdeirTPQIN0UQX4fcZc0' 
-              });
-              console.log(req.file);
+            cloudinary.config({
+                cloud_name: 'hiqtaqcaf',
+                api_key: '472617698116631',
+                api_secret: 's5RMcbDwdeirTPQIN0UQX4fcZc0'
+            });
+            console.log(req.file);
             cloudinary.uploader.upload(req.file.path,
-            function(result) { 
-                console.log('image uploaded vai cloudinary');
-                console.log('image uploaded: ', result) 
-            })
+                function (result) {
+                    console.log('image uploaded vai cloudinary');
+                    console.log('image uploaded: ', result)
+                })
             console.log(body);
             const productBody = {
                 name: body.name,
@@ -168,7 +168,7 @@ router.post(
     auth,
     async (req, res) => {
         try {
-await Product.updateOne({ _id: req.params.id }, {
+            await Product.updateOne({ _id: req.params.id }, {
                 $set: {
                     disabled: req.params.status,
                 }
@@ -192,8 +192,8 @@ router.post(
     async (req, res) => {
         try {
             const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-const product = await Product.updateOne({ _id: req.params.id }, {
-                $set: {     
+            const product = await Product.updateOne({ _id: req.params.id }, {
+                $set: {
                     color: body.color,
                 }
             });
@@ -437,6 +437,11 @@ router.get('/suleman_test', auth, async(req, res) => {
     }
 })
 
+router.post(
+    "/testing",
+    console.log("Working")
+
+)
 
 module.exports = router;
 
