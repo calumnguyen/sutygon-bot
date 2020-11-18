@@ -40,22 +40,16 @@ router.post(
     auth,
     upload.single('image'),
     async (req, res) => {
-        const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-
+       const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+        const image = req.file.originalname.split(' ').join('_')
         try {
-            let img;
-              cloudinary.uploader.upload(req.file.path,
-             function (result) {
-                  img = result.url
-                })
-                console.log(img)
-                let productBody = {
-                    name: body.name,
-                    productId: body.productId,
-                    tags: body.tags,
-                    image: img,
-                    color: JSON.parse(req.body.color),
-                };
+            const productBody = {
+                name: body.name,
+                productId: body.productId,
+                tags: body.tags,
+                image: `/uploads/products/${image}`,
+                color: JSON.parse(req.body.color),
+            };
                 let product = new Product(productBody);
             await product.save();
                 res.json({ product, msg: "Product Added Successfully" });
