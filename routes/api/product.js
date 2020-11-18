@@ -417,31 +417,6 @@ router.get("/searchBarcode/:val", auth,
         }
     });
 
-router.get('/suleman_test', auth, async(req, res) => {
-    try {
-        const search = req.params.val;
-        const products = await Product.find({
-            $or: [
-                { 'color.sizes..barcodes..barcode': search },
-            ]
-        });
-
-        res
-            .status(200)
-            .json(products);
-    } catch (err) {
-        console.log(err);
-        res
-            .status(500)
-            .send("Server Error!");
-    }
-})
-
-router.post(
-    "/testing",
-    console.log("Working")
-
-)
 
 module.exports = router;
 
