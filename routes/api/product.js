@@ -9,12 +9,14 @@ const FILE_PATH = 'client/public/uploads/products';
 var cloudinary = require('cloudinary')
 const config = require("config");
 
+// cloundinary configuration
 cloudinary.config({
     cloud_name: config.get("cloud_name"),
     api_key: config.get("api_key"),
     api_secret: config.get("api_secret")
 });
 
+// multer configuration
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, FILE_PATH)
@@ -23,10 +25,11 @@ var storage = multer.diskStorage({
         cb(null, file.originalname.split(' ').join('_'))
     }
 })
-
 var upload = multer({ storage: storage })
 
-
+router.post('/myroute', (req, res) => {
+  res.send('response from the server');
+})
 // @route   POST api/products/add
 // @desc    Add New Product
 // @access  private
@@ -41,18 +44,22 @@ router.post(
     upload.single('image'),
     async (req, res) => {
        const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-        const image = req.file.originalname.split(' ').join('_')
+        const image = req.file.path
         try {
+
+          cloudinary.uploader.upload(image, async function(result) {
             const productBody = {
                 name: body.name,
                 productId: body.productId,
                 tags: body.tags,
-                image: `/uploads/products/${image}`,
+                image: result.secure_url,
                 color: JSON.parse(req.body.color),
             };
-                let product = new Product(productBody);
+            let product = new Product(productBody);
             await product.save();
-                res.json({ product, msg: "Product Added Successfully" });
+            res.json({ product, msg: "Product Added Successfully" });
+          })
+
 
        } catch (err) {
             console.log(err);
@@ -166,39 +173,39 @@ router.post(
 // @route  POST api/products/:id
 // @desc   Update a Product
 // @access Private
-router.post(
-    "/:id",
-    auth,
-    upload.single('image'),
-    async (req, res) => {
-        try {
-            let updatedImage = "";
-
-            const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-            if (req.file === undefined) {
-                updatedImage = body.image;
-            }
-            else {
-                updatedImage = `/uploads/products/${req.file.originalname}`;
-            }
-            await Product.updateOne({ _id: req.params.id }, {
-                $set: {
-                    name: body.name,
-                    tags: body.tags,
-                    image: updatedImage,
-                    color: JSON.parse(body.color),
-                }
-            });
-            res
-                .json({ msg: "Product Updated Successfully" });
-        } catch (err) {
-            console.error(err.message);
-            res
-                .status(500)
-                .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
-        }
-    }
-);
+// router.post(
+//     "/:id",
+//     auth,
+//     upload.single('image'),
+//     async (req, res) => {
+//         try {
+//             let updatedImage = "";
+//
+//             const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+//             if (req.file === undefined) {
+//                 updatedImage = body.image;
+//             }
+//             else {
+//                 updatedImage = `/uploads/products/${req.file.originalname}`;
+//             }
+//             await Product.updateOne({ _id: req.params.id }, {
+//                 $set: {
+//                     name: body.name,
+//                     tags: body.tags,
+//                     image: updatedImage,
+//                     color: JSON.parse(body.color),
+//                 }
+//             });
+//             res
+//                 .json({ msg: "Product Updated Successfully" });
+//         } catch (err) {
+//             console.error(err.message);
+//             res
+//                 .status(500)
+//                 .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+//         }
+//     }
+// );
 
 // @route   GET api/products
 // @desc    Get all products
@@ -371,5 +378,8 @@ router.get("/searchBarcode/:val", auth,
                 .send("Server Error!");
         }
     });
+
+
+
 
 module.exports = router;

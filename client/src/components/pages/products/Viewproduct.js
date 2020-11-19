@@ -168,7 +168,6 @@ class ViewProduct extends Component {
                 <div className="tb_t_left">
 
                   <img
-
                     className="media-object round-media"
                     src={product.image}
                     alt="Product"
