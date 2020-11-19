@@ -380,6 +380,4 @@ router.get("/searchBarcode/:val", auth,
     });
 
 
-
-
 module.exports = router;
