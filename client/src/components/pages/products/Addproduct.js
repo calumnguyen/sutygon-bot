@@ -17,12 +17,12 @@ class AddProduct extends Component {
     productId: "",
     id: "",
     image: "",
-    name: "test",
-    tags: "test,test",
+    name: "",
+    tags: "",
     color: [
       {
         _id: shortid.generate(),
-        colorname: "test",
+        colorname: "",
         sizes: [],
       }
     ],
