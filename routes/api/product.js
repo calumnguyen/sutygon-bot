@@ -11,20 +11,20 @@ const config = require("config");
 
 // cloundinary configuration
 cloudinary.config({
-    cloud_name: config.get("cloud_name"),
-    api_key: config.get("api_key"),
-    api_secret: config.get("api_secret")
+  cloud_name: config.get("cloud_name"),
+  api_key: config.get("api_key"),
+  api_secret: config.get("api_secret")
 });
 
 // multer configuration
 var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, FILE_PATH)
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, file.originalname)
-    }
+  destination: function (req, file, cb) {
+    cb(null, FILE_PATH)
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, file.originalname)
+  }
 })
 var upload = multer({ storage: storage })
 router.post('/myroute', (req, res) => {
@@ -36,37 +36,37 @@ router.post('/myroute', (req, res) => {
 router.post(
   "/add",
   [
-      check("name", "Product Name Required").not().isEmpty(),
-      check('image', "Product Image Required").not().isEmpty(),
-      check("color", "Product Color Required").isArray().not().isEmpty(),
+    check("name", "Product Name Required").not().isEmpty(),
+    check('image', "Product Image Required").not().isEmpty(),
+    check("color", "Product Color Required").isArray().not().isEmpty(),
   ],
   auth,
   upload.single('image'),
   async (req, res) => {
-     const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-      const image = req.file.path
-      try {
+    const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+    const image = req.file.path
+    try {
 
-        cloudinary.uploader.upload(image, async function(result) {
-          const productBody = {
-              name: body.name,
-              productId: body.productId,
-              tags: body.tags,
-              image: result.secure_url,
-              color: JSON.parse(req.body.color),
-          };
-          let product = new Product(productBody);
-          await product.save();
-          res.json({ product, msg: "Product Added Successfully" });
-        })
+      cloudinary.uploader.upload(image, async function (result) {
+        const productBody = {
+          name: body.name,
+          productId: body.productId,
+          tags: body.tags,
+          image: result.secure_url,
+          color: JSON.parse(req.body.color),
+        };
+        let product = new Product(productBody);
+        await product.save();
+        res.json({ product, msg: "Product Added Successfully" });
+      })
 
 
-     } catch (err) {
-          console.log(err);
-          res
-              .status(500)
-              .send("Server error");
-      }
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .send("Server error");
+    }
   }
 );
 
@@ -164,54 +164,68 @@ router.post("/item_delete/:id", auth, async (req, res) => {
 // @route  POST api/products/:id
 // @desc   Update a Product
 // @access Private
-router.post("/:id", auth, upload.single("image"), async (req, res) => {
-  try {
-    let updatedImage = "";
-
-    const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-    if (req.file === undefined) {
-      updatedImage = body.image;
-    } else {
-      updatedImage = `/uploads/products/${req.file.originalname}`;
-    }
-    await Product.updateOne(
-      { _id: req.params.id },
-      {
-        $set: {
-          name: body.name,
-          tags: body.tags,
-          image: updatedImage,
-          color: JSON.parse(body.color),
-        },
+router.post("/:id",
+  auth,
+  upload.single('image'),
+  async (req, res) => {
+    try {
+      const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+      if (req.file === undefined) {
+        await Product.updateOne(
+          { _id: req.params.id },
+          {
+            $set: {
+              name: body.name,
+              tags: body.tags,
+              image:  body.image,
+              color: JSON.parse(body.color),
+            },
+          }
+        );
+        res.json({ msg: "Product Updated Successfully" });
+      } else {
+        const image = req.file.path
+        cloudinary.uploader.upload(image, async function (result) {
+          await Product.updateOne(
+            { _id: req.params.id },
+            {
+              $set: {
+                name: body.name,
+                tags: body.tags,
+                image: result.secure_url,
+                color: JSON.parse(body.color),
+              },
+            }
+          );
+          res.json({ msg: "Product Updated Successfully" });
+      })
       }
-    );
-    res.json({ msg: "Product Updated Successfully" });
-  } catch (err) {
-    console.error(err.message);
-    res
-      .status(500)
-      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
-  }
-});
+    } catch (err) {
+      console.error(err.message);
+      res
+        .status(500)
+        .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+    }
+  });
 
 // @route   GET api/products
 // @desc    Get all products
 // @access  Private
 router.get("/", auth,
 
-    async (req, res) => {
-        try {
-            const products = await Product.find().sort({ 'date' : -1 });
-            res
-                .status(200)
-                .json(products);
-        } catch (err) {
-            console.log(err);
-            res
-                .status(500)
-                .send("Server Error!");
-        }
-    });
+  async (req, res) => {
+    try {
+      const products = await Product.find().sort({ 'date': -1 });
+      res
+        .status(200)
+        .json(products);
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .send("Server Error!");
+    }
+  });
 
 
 // @route   GET api/products/search/search val
