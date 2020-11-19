@@ -5,8 +5,6 @@ const Product = require("../../models/Product");
 const { check, validationResult } = require("express-validator");
 var multer = require('multer')
 var upload = multer({ dest: 'client/public/uploads/products' })
-var cloudinary = require('cloudinary')
-
 
 const FILE_PATH = 'client/public/uploads/products';
 
@@ -15,48 +13,12 @@ var storage = multer.diskStorage({
         cb(null, FILE_PATH)
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname.split(' ').join('_'))
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, file.originalname)
     }
 })
 
 var upload = multer({ storage: storage })
-router.post(
-    "/test",
-    [
-        check("name", "Product Name Required").not().isEmpty(),
-        check("image", "Product Image Required").not().isEmpty(),
-        check("color", "Product Color Required").isArray().not().isEmpty(),
-    ],
-    auth,
-    async (req, res) => {
-        const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-
-        // const image = req.file.originalname.split(' ').join('_')
-
-        try {
-            console.log(body);
-            // cloudinary.uploader.upload(image,
-            // function(result) { console.log('image uploaded: ', result) })
-
-            const productBody = {
-                name: body.name,
-                productId: body.productId,
-                tags: body.tags,
-                // image: `/uploads/products/${image}`,
-                color: JSON.parse(req.body.color),
-            };
-
-            let product = new Product(productBody);
-            await product.save();
-            res.json({ product, msg: "Product Added Successfully" });
-        } catch (err) {
-            console.log(err);
-            res
-                .status(500)
-                .send("Server error");
-        }
-    }
-)
 
 // @route   POST api/products/add
 // @desc    Add New Product
@@ -73,26 +35,12 @@ router.post(
     async (req, res) => {
 
         const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-        const image = req.file.originalname.split(' ').join('_')
         try {
-
-            cloudinary.config({
-                cloud_name: 'hiqtaqcaf',
-                api_key: '472617698116631',
-                api_secret: 's5RMcbDwdeirTPQIN0UQX4fcZc0'
-            });
-            console.log(req.file);
-            cloudinary.uploader.upload(req.file.path,
-                function (result) {
-                    console.log('image uploaded vai cloudinary');
-                    console.log('image uploaded: ', result)
-                })
-            console.log(body);
             const productBody = {
                 name: body.name,
                 productId: body.productId,
                 tags: body.tags,
-                image: `/uploads/products/${image}`,
+                image: `/uploads/products/${req.file.originalname}`,
                 color: JSON.parse(req.body.color),
             };
 
@@ -168,7 +116,7 @@ router.post(
     auth,
     async (req, res) => {
         try {
-            await Product.updateOne({ _id: req.params.id }, {
+await Product.updateOne({ _id: req.params.id }, {
                 $set: {
                     disabled: req.params.status,
                 }
@@ -192,8 +140,8 @@ router.post(
     async (req, res) => {
         try {
             const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-            const product = await Product.updateOne({ _id: req.params.id }, {
-                $set: {
+const product = await Product.updateOne({ _id: req.params.id }, {
+                $set: {     
                     color: body.color,
                 }
             });
@@ -417,6 +365,4 @@ router.get("/searchBarcode/:val", auth,
         }
     });
 
-
 module.exports = router;
-

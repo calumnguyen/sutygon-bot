@@ -10,6 +10,7 @@ const auth = require('../../middleware/auth')
 const User = require('../../models/User')
 var multer = require('multer')
 var upload = multer({ dest: 'client/public/uploads/user' })
+const { isAdmin } = require('../../middleware/isAdmin')
 
 const FILE_PATH = 'client/public/uploads/user'
 
@@ -25,7 +26,6 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage })
 
-
 // @route   POST /api/users/add
 // @desc    Add new user
 // @access  Private
@@ -33,11 +33,12 @@ var upload = multer({ storage: storage })
 router.post(
   '/add',
   upload.single('avatar'),
+  auth,
+  isAdmin,
   [
     check('username', 'User Name is Required').not().isEmpty(),
     check('fullname', 'Full Name is Required').not().isEmpty(),
     check('email', 'Please Enter a Valid Email').isEmail(),
-    check('password', 'Password is Required').not().isEmpty(),
     check('contactnumber', 'Please Enter Contact Number').not().isEmpty(),
     check('gender', 'Please select your Gender').not().isEmpty(),
     check(
@@ -45,7 +46,6 @@ router.post(
       'Please Enter a password with 6 or more characters'
     ).isLength({ min: 6 }),
   ],
-  auth,
   async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -80,29 +80,42 @@ router.post(
         d: 'mm',
       })
       let userBody
-      if (req.file === undefined) {
-        userBody = {
-          username: body.username,
-          fullname: body.username,
-          email: body.email,
-          password: password,
-          gender: body.gender,
-          contactnumber: body.contactnumber,
-          type: body.type,
-          avatar: avatar,
-        }
+
+      if (req.file == undefined) {
+        userBody = { ...req.body, password, avatar }
       } else {
         userBody = {
-          username: body.username,
-          fullname: body.fullname,
-          email: body.email,
-          password: password,
-          gender: body.gender,
-          contactnumber: body.contactnumber,
-          type: body.type,
+          ...req.body,
+          password,
           avatar: `/uploads/user/${req.file.originalname}`,
         }
       }
+      // if (req.file == undefined) {
+      //   userBody = {
+      //     username: body.username,
+      //     fullname: body.fullname,
+      //     email: body.email,
+      //     password: password,
+      //     gender: body.gender,
+      //     contactnumber: body.contactnumber,
+      //     type: body.type,
+      //     avatar: avatar,
+      //     sections: body.sections,
+      //   }
+      // } else {
+      //   userBody = {
+      //     username: body.username,
+      //     fullname: body.fullname,
+      //     email: body.email,
+      //     password: password,
+      //     gender: body.gender,
+      //     contactnumber: body.contactnumber,
+      //     type: body.type,
+      //     sections: body.sections,
+      //     avatar: `/uploads/user/${req.file.originalname}`,
+      //   }
+      // }
+
       let user = new User(userBody)
       await user.save()
 
@@ -126,6 +139,19 @@ router.get('/', auth, async (req, res) => {
     res.status(500).send('Server Error!')
   }
 })
+
+// // @route   GET api/users/:status
+// // @desc    Get all users
+// // @access  Private
+// router.get('/', auth, async (req, res) => {
+//   try {
+//     const users = await User.find()
+//     res.json(users)
+//   } catch (err) {
+//     console.log(err)
+//     res.status(500).send('Server Error!')
+//   }
+// })
 
 // @route   GET api/users/search/sarchval
 // @desc    Search user
@@ -224,40 +250,72 @@ router.post(
         d: 'mm',
       })
 
-      if (req.file === undefined) {
-        await User.updateOne(
-          { _id: req.params.id },
-          {
-            $set: {
-              username: body.username,
-              fullname: body.fullname,
-              email: body.email,
-              gender: body.gender,
-              contactnumber: body.contactnumber,
-              type: body.type,
-              avatar: avatar,
-            },
-          }
-        )
+      // It will update any number of requested fields both by Employee and Admin...
+      let fieldsToUpdate
+      if (req.file == undefined) {
+        fieldsToUpdate = { ...req.body, avatar }
       } else {
-        await User.updateOne(
-          { _id: req.params.id },
-          {
-            $set: {
-              username: body.username,
-              fullname: body.fullname,
-              email: body.email,
-              gender: body.gender,
-              contactnumber: body.contactnumber,
-              type: body.type,
-              avatar: `/uploads/user/${req.file.originalname}`,
-            },
-          }
-        )
+        fieldsToUpdate = {
+          ...req.body,
+          avatar: `/uploads/user/${req.file.originalname}`,
+        }
       }
+
+      //check if the accountStatus is set to 'inactivated'..
+      let inactivated_date
+      if (req.body.accountStatus && req.body.accountStatus === 'inactive') {
+        inactivated_date = Date.now()
+      }
+
+      if (req.body.salary) {
+        if (!(req.body.code === process.env.salarySecretCode)) {
+          return res
+            .status(400)
+            .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
+        }
+      }
+
+      await User.findByIdAndUpdate(
+        req.params.id,
+        { $set: { ...req.body, avatar, inactivated_date } },
+        { new: true }
+      )
+
+      // if (req.file == undefined) {
+      //   await User.updateOne(
+      //     { _id: req.params.id },
+      //     {
+      //       $set: {
+      //         username: body.username,
+      //         fullname: body.fullname,
+      //         email: body.email,
+      //         gender: body.gender,
+      //         contactnumber: body.contactnumber,
+      //         type: body.type,
+      //         avatar: avatar,
+      //       },
+      //     }
+      //   )
+      // } else {
+      //   await User.updateOne(
+      //     { _id: req.params.id },
+      //     {
+      //       $set: {
+      //         username: body.username,
+      //         fullname: body.fullname,
+      //         email: body.email,
+      //         gender: body.gender,
+      //         contactnumber: body.contactnumber,
+      //         type: body.type,
+      //         avatar: `/uploads/user/${req.file.originalname}`,
+      //       },
+      //     }
+      //   )
+      // }
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
-      console.log(err)
+      console.log('err message')
+      console.log(err.message)
       res
         .status(500)
         .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
@@ -268,35 +326,31 @@ router.post(
 // @route  POST api/users/changestatus/:id
 // @desc   Change Account status (blocked/active)
 // @access Private
-router.post(
-
-  auth,
-  async (req, res) => {
-    try {
-      const errors = validationResult(req)
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() })
-      }
-
-      const user = await User.findById(req.params.id)
-
-      await User.updateOne(
-        { _id: user._id },
-        {
-          $set: {
-            accountStatus: 'block',
-          },
-        }
-      )
-      res.status(200).json({ msg: 'Status Updated Successfully' })
-    } catch (err) {
-      console.error(err.message)
-      res
-        .status(500)
-        .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+router.post(auth, async (req, res) => {
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
     }
+
+    const user = await User.findById(req.params.id)
+
+    await User.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          accountStatus: 'block',
+        },
+      }
+    )
+    res.status(200).json({ msg: 'Status Updated Successfully' })
+  } catch (err) {
+    console.error(err.message)
+    res
+      .status(500)
+      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
   }
-)
+})
 
 // @route   POST /api/users/updatePassword/:id
 // @desc    Update Password

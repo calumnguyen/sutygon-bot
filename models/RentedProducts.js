@@ -5,7 +5,6 @@ const autoIncrement = require("mongoose-auto-increment");
 const RentedProductSchema = new mongoose.Schema({
     orderNumber: {
         type: String,
-        default:001-00
     },
     user: {
         type: Schema.Types.ObjectId,

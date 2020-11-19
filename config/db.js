@@ -1,16 +1,19 @@
 const mongoose = require('mongoose')
-const config = require('config')
-const dbUrl = config.get('ourMongoURI')
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(dbUrl, {
-      // added to avoid bugs
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-      useUnifiedTopology: true,
-    })
+    await mongoose.connect(
+      process.env.NODE_ENV !== 'production'
+        ? process.env.ourMongoURI
+        : process.env.mongoURI,
+      {
+        // added to avoid bugs
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true,
+      }
+    )
 
     console.log('MongoDB is connected!')
   } catch (err) {

@@ -28,8 +28,7 @@ router.post(
                 rentDate: req.body.rentDate,
                 returnDate: req.body.returnDate,
                 total: req.body.total,
-                insuranceAmt: req.body.insuranceAmt,
-                leaveID:req.body.leaveID
+                insuranceAmt: req.body.insuranceAmt._id,
             });
             await rentedProduct.save();
 
@@ -160,6 +159,7 @@ router.get("/getLastRecord", auth,
     async (req, res) => {
         try {
             const rentInvoice = await RentedProduct.find({}).sort({ _id: -1 }).limit(1);
+            console.log(rentInvoice)
             if (!rentInvoice) {
                 return res
                     .status(404)
