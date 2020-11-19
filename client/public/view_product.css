@@ -44,7 +44,7 @@
     font-size: 11px;
     color: #fff;
     border: none;
-  
+
   }
   .tb_size_box {
     margin-left: 50px;
@@ -71,3 +71,35 @@
   .show_it {
     display: block;
   }
+  .imeg_container {
+    width: 100%;
+    height: 250px;
+    background-color: #C5E0E8;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position:  center;
+    position: relative;
+  }
+
+.product_card {
+  height: '452.078px';
+  clear: both;
+}
+.product_card .textbbody {
+  padding: 15px;
+  padding-top: 35px;
+}
+.product_card .badge {
+  margin: 2px;
+}
+.imeg_container .bdg {
+  position: absolute;
+  top: 95%; left: 80%;
+  color: #fff !important;
+}
+.product_card .eicon {
+  font-size: 10px;
+}
+.product_card a {
+  color: #000 !important;
+}
