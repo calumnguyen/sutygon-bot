@@ -173,39 +173,39 @@ router.post(
 // @route  POST api/products/:id
 // @desc   Update a Product
 // @access Private
-// router.post(
-//     "/:id",
-//     auth,
-//     upload.single('image'),
-//     async (req, res) => {
-//         try {
-//             let updatedImage = "";
-//
-//             const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-//             if (req.file === undefined) {
-//                 updatedImage = body.image;
-//             }
-//             else {
-//                 updatedImage = `/uploads/products/${req.file.originalname}`;
-//             }
-//             await Product.updateOne({ _id: req.params.id }, {
-//                 $set: {
-//                     name: body.name,
-//                     tags: body.tags,
-//                     image: updatedImage,
-//                     color: JSON.parse(body.color),
-//                 }
-//             });
-//             res
-//                 .json({ msg: "Product Updated Successfully" });
-//         } catch (err) {
-//             console.error(err.message);
-//             res
-//                 .status(500)
-//                 .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
-//         }
-//     }
-// );
+router.post(
+    "/:id",
+    auth,
+    upload.single('image'),
+    async (req, res) => {
+        try {
+            let updatedImage = "";
+
+            const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+            if (req.file === undefined) {
+                updatedImage = body.image;
+            }
+            else {
+                updatedImage = `/uploads/products/${req.file.originalname}`;
+            }
+            await Product.updateOne({ _id: req.params.id }, {
+                $set: {
+                    name: body.name,
+                    tags: body.tags,
+                    image: updatedImage,
+                    color: JSON.parse(body.color),
+                }
+            });
+            res
+                .json({ msg: "Product Updated Successfully" });
+        } catch (err) {
+            console.error(err.message);
+            res
+                .status(500)
+                .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+        }
+    }
+);
 
 // @route   GET api/products
 // @desc    Get all products
