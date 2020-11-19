@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-  
+
   PRODUCT_LOADING,
  PRODUCT_SAVED,
   PRODUCT_ERROR,
@@ -10,8 +10,6 @@ import {
   PRODUCTS_LOADING,
   PRODUCT_DELETED,
   PRODUCT_UPDATED
- 
-
 } from "./types";
 import { setAlert } from "./alert";
 
@@ -25,13 +23,13 @@ export const addNewProduct = (product) => async (dispatch) => {
       }
   }
   try {
-    console.log(product);
+
       const res = await axios.post("/api/products/add", product, config);
-  
+
       dispatch({
         type: PRODUCT_SAVED,
       });
-      
+
       dispatch(setAlert(res.data.msg, "success"));
 
     } catch (err) {
@@ -68,7 +66,7 @@ export const getAllProducts = () => async (dispatch) => {
     dispatch({ type: PRODUCT_LOADING });
     try {
       const res = await axios.get(`/api/products/search/${search}`);
-  
+
       dispatch({
         type: GET_PRODUCTS,
         payload: res.data,
@@ -87,7 +85,7 @@ export const getAllProducts = () => async (dispatch) => {
     dispatch({ type: PRODUCT_LOADING });
     try {
       const res = await axios.get(`/api/products/searchBarcode/${search}`);
-  
+
       dispatch({
         type: GET_PRODUCTS,
         payload: res.data,
@@ -104,7 +102,7 @@ export const getAllProducts = () => async (dispatch) => {
 
 export const getProduct = (name) => async (dispatch) => {
   dispatch({ type: PRODUCTS_LOADING });
- 
+
   try {
     const res = await axios.get(`/api/products/${name}`);
     dispatch({
@@ -121,7 +119,7 @@ export const getProduct = (name) => async (dispatch) => {
 
 export const getProductById = (id) => async (dispatch) => {
   dispatch({ type: PRODUCTS_LOADING });
- 
+
   try {
     const res = await axios.get(`/api/products/${id}`);
     dispatch({
@@ -142,7 +140,7 @@ export const getProductById = (id) => async (dispatch) => {
 
 export const updateProduct = (product, id) => async (dispatch) => {
   dispatch({ type: PRODUCTS_LOADING });
-  
+
   const config = {
     headers: {
         'content-type': 'multipart/form-data'
@@ -173,7 +171,7 @@ export const updateProduct = (product, id) => async (dispatch) => {
 
 export const changeStatus = (status, id) => async (dispatch) => {
   dispatch({ type: PRODUCTS_LOADING });
-  
+
   try {
     const res = await axios.post(`/api/products/changeStatus/${id}/${status}`);
 
@@ -244,7 +242,7 @@ export const deleteItem = (product, id) => async (dispatch) => {
     });
   }
 };
-  
+
 
 
 // Update User
@@ -253,7 +251,7 @@ export const updateProductIndex = (product, id) => async (dispatch) => {
   const config = {
     headers: {
       "Content-Type": "application/json",
-    },  
+    },
   };
   const body = JSON.stringify(product);
   try {
@@ -280,7 +278,7 @@ export const updateProductIndex = (product, id) => async (dispatch) => {
   // Delete User
 export const deleteProduct = (id) => async (dispatch) => {
   dispatch({ type: PRODUCTS_LOADING });
- 
+
 
    try {
 
@@ -291,7 +289,7 @@ export const deleteProduct = (id) => async (dispatch) => {
     });
     dispatch(setAlert(res.data.msg, "success"));
     dispatch(getAllProducts());
-  
+
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {

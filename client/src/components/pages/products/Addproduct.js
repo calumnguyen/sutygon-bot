@@ -194,7 +194,7 @@ class AddProduct extends Component {
       // find current size obj in current color obj
       let size_obj = color_obj.sizes.filter((size) => size.id === size_id)[0];
 
-      // get index of size obj in all sizes 
+      // get index of size obj in all sizes
       const sizeIndex = sizes.findIndex(
         (size) => size.id === size_id
       );
@@ -363,6 +363,8 @@ class AddProduct extends Component {
     } else {
       await this.props.updateProduct(formData, state.id);
     }
+
+    return;
   }
 
   render() {
