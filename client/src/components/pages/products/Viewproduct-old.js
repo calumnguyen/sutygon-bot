@@ -162,24 +162,108 @@ class ViewProduct extends Component {
           );
         }
         return formated_products.map((product, i) => (
-          <div className="col-xl-4 col-lg-6 col-md-12" key={i}>
-            <div className="card product_card" >
-              <div className="card-content">
-                <div className="imeg_container" style={{backgroundImage: `url(${product.image})`}}>
-                <span className={"badge badge-pill badge-" + ((product.disabled === "true") ? "secondary" : "success") + " bdg"}>{(product.disabled === "false") ? "active" : "disabled"}</span>
+          <div className="tb_container" key={i}>
+            <div className="tb_row">
+              <div className="tb_top">
+                <div className="tb_t_left">
+
+                  <img
+                    className="media-object round-media"
+                    src={product.image}
+                    alt="Product"
+                  />
                 </div>
-                <div className="textbbody">
-                  <h4 className="card-title">{product.name}</h4>
-                  <h6 className="card-subtitle text-muted">Product id: {product.productId}</h6>
-                  <h6 className="card-subtitle text-muted">Total Items: {product.total}</h6>
+                <div className="tb_t_right">
+                  <span className={"badge badge-" + ((product.disabled === "true") ? "secondary" : "info") + " float-right"}>{(product.disabled === "false") ? "active" : "disabled"}</span>
+                  <h2>
+                    <strong>Product Name</strong> {product.name}
+                  </h2>
+                  <h2>
+                    <strong>Product ID # </strong> {product.productId}
+                  </h2>
+                  <h2>
+                    <strong>Total Items : </strong> {product.total}
+                  </h2>
+                </div>
+              </div>
+              <div className="clearfix"></div>
+
+              <div className="tb_center">
+                {product.color &&
+                  product.color.map((color, color_i) => (
+                    <div className={`tb_color_box`} key={color_i}>
+                      <button
+                        type="button"
+                        name="button"
+                        className="tb_arrow-btn color_btn"
+                        onClick={(e) =>
+                          this.toggleColor(e, i, color_i)
+                        }
+                      >
+                        <i
+                          className={color.is_open ? "ft-arrow-down" : "ft-arrow-right"}
+                        ></i>
+                      </button>{" "}
+                      <p>
+                        {color.colorname} : {color.total}
+                      </p>
+                      <div
+                        className={`tb_color_box_content ${color.is_open ? "show_it" : "hide_it"
+                          }`}
+                      >
+                        {color.sizes &&
+                          color.sizes.map((size, size_i) => (
+                            <div className="tb_size_box" key={size_i}>
+                              <button
+                                type="button"
+                                name="button"
+                                className="tb_arrow-btn size_btn"
+                                onClick={(e) =>
+                                  this.toggleSize(e, i, color_i, size_i)
+                                }
+                              >
+                                <i
+                                  className={size.is_open ? "ft-arrow-down" : "ft-arrow-right"}
+                                ></i>
+                              </button>{" "}
+                              <p>
+                                {size.size} : {size.qty}{" "}
+                              </p>
+                              <div
+                                className={`tb_size_box_content ${size.is_open ? "show_it" : "hide_it"
+                                  }`}
+                              >
+                                <div className="tb_barcodes_box">
+                                  <ul>
+                                    {size.barcodes &&
+                                      size.barcodes.map(
+                                        (barcode, barcode_i) => (
+                                          <li key={barcode_i}>
+                                            BARCODE ID # {barcode.barcode}
+                                          </li>
+                                        )
+                                      )}
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+
+              <div className="tb_bottom">
+                <p>
+                  Tags:
                   {product.tags &&
                     product.tags.map((tag, tag_i) => (
-                      <span className="badge badge-pill badge-light" key={tag_i}>
+                      <span className="ttag" key={tag_i}>
                         {tag}
                       </span>
                     ))}
-                </div>
-                <div className="card-footer">
+                </p>
+
                 <Link
                   to={{
                     pathname: `/product/editproduct/${product._id}`,
@@ -189,13 +273,13 @@ class ViewProduct extends Component {
                   {" "}
                   <i className="icon-pencil"></i> Edit{" "}
                 </Link>
-                <a href="#" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="card-link default">
+                <button type="button" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="card-link default">
                   {" "}
                   <i className={"icon-control-" + ((product.disabled === "true") ? "play" : "pause")}></i> {(product.disabled === "true") ? "Reactivate" : "Disable"}
-                </a>
-                  <a className="card-link default"><i class="icon-eye"></i> View Details</a>
-                  </div>
+                </button>
               </div>
+
+              <div className="clearfix"></div>
             </div>
           </div>
         ));
@@ -278,26 +362,22 @@ class ViewProduct extends Component {
                               </div>
                             </div>
                             <Alert />
+                            {this.getTAble()}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-
-                  <div className="row">
-                  {this.getTAble()}
-                  </div>
-
                 </section>
               </div>
             </div>
           </div>
-          <div style={{clear: "both"}}></div>
 
-          {/*<footer className="footer footer-static footer-light">
+
+          <footer className="footer footer-static footer-light">
             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
               <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
-          </footer>*/}
+          </footer>
         </div>
       </React.Fragment>
     );
