@@ -214,7 +214,7 @@ router.get("/", auth,
 
     async (req, res) => {
         try {
-            const products = await Product.find();
+            const products = await Product.find().sort({ 'date' : -1 });
             res
                 .status(200)
                 .json(products);
