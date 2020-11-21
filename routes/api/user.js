@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator')
 const bcrypt = require('bcryptjs')
 const gravatar = require('gravatar')
 const moment = require('moment')
+const cron = require('node-cron')
 
 const jwt = require('jsonwebtoken')
 const config = require('config')
@@ -12,11 +13,8 @@ const User = require('../../models/User')
 var multer = require('multer')
 var upload = multer({ dest: 'client/public/uploads/user' })
 const { isAdmin } = require('../../middleware/isAdmin')
-<<<<<<< HEAD
 
 // const { weekly, biWeekly, monthly } = require('../../helpers/timePeriod')
-=======
->>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
 
 const FILE_PATH = 'client/public/uploads/user'
 
@@ -87,7 +85,6 @@ router.post(
       })
       let userBody
 
-<<<<<<< HEAD
       if (req.file === undefined) {
         userBody = {
           username: body.username,
@@ -99,10 +96,6 @@ router.post(
           type: body.type,
           avatar: avatar,
         }
-=======
-      if (req.file == undefined) {
-        userBody = { ...req.body, password, avatar }
->>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
       } else {
         userBody = {
           ...req.body,
@@ -409,37 +402,46 @@ router.post(
           }
         } else {
           // set the existing salary object again to the salary field in db until the cron-job runs...
+
+          // check if the salary period in req.body.salary is equal to the period in db
+          // if it is then no change
+          // else cron-job
+
           salary = {
             ...user.salary,
           }
 
-          console.log('cloned sal', salary)
+          if (req.body.salary.period !== salary.period) {
+            // apply cron job here.. in every if else depending on the given period in the req.body
 
-          // if salary is already set then do cron job...
-          // let salary_period = user.salary.period
+            console.log('apply cron job')
 
-          // apply cron job here.. in every if else depending on the given period in the req.body
-          if (req.body.salary.period === 'weekly') {
-            // check how many days are left in the effective date.
-            console.log(
-              `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
-            )
+            if (req.body.salary.period === 'weekly') {
+              // check how many days are left in the effective date.
+              console.log(
+                `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
+              )
 
-            // apply cron-job
-          }
-          if (req.body.salary.period === 'bi-weekly') {
-            // check how many days are left in the effective date.
-            console.log(
-              `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date[1]}`
-            )
+              cron.schedule('* * * * *', () => {
+                console.log('period updated!')
+              })
 
-            // apply cron-job
-          }
-          if (req.body.salary.period === 'monthly') {
-            // check how many days are left in the effective date.
-            console.log(
-              `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
-            )
+              // apply cron-job
+            }
+            if (req.body.salary.period === 'bi-weekly') {
+              // check how many days are left in the effective date.
+              console.log(
+                `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date[1]}`
+              )
+
+              // apply cron-job
+            }
+            if (req.body.salary.period === 'monthly') {
+              // check how many days are left in the effective date.
+              console.log(
+                `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
+              )
+            }
           }
         }
       }
@@ -467,60 +469,12 @@ router.post(
         inactivated_date = Date.now()
       }
 
-<<<<<<< HEAD
       await User.findByIdAndUpdate(
         req.params.id,
         { $set: { ...req.body, avatar, inactivated_date, salary } },
         { new: true }
       )
 
-=======
-      if (req.body.salary) {
-        if (!(req.body.code === process.env.salarySecretCode)) {
-          return res
-            .status(400)
-            .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
-        }
-      }
-
-      await User.findByIdAndUpdate(
-        req.params.id,
-        { $set: { ...req.body, avatar, inactivated_date } },
-        { new: true }
-      )
-
-      // if (req.file == undefined) {
-      //   await User.updateOne(
-      //     { _id: req.params.id },
-      //     {
-      //       $set: {
-      //         username: body.username,
-      //         fullname: body.fullname,
-      //         email: body.email,
-      //         gender: body.gender,
-      //         contactnumber: body.contactnumber,
-      //         type: body.type,
-      //         avatar: avatar,
-      //       },
-      //     }
-      //   )
-      // } else {
-      //   await User.updateOne(
-      //     { _id: req.params.id },
-      //     {
-      //       $set: {
-      //         username: body.username,
-      //         fullname: body.fullname,
-      //         email: body.email,
-      //         gender: body.gender,
-      //         contactnumber: body.contactnumber,
-      //         type: body.type,
-      //         avatar: `/uploads/user/${req.file.originalname}`,
-      //       },
-      //     }
-      //   )
-      // }
->>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
       console.log(err)

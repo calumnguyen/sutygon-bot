@@ -2,11 +2,8 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const dotenv = require('dotenv')
-<<<<<<< HEAD
 const moment = require('moment')
 
-=======
->>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
 const connectDB = require('./config/db')
 
 const { weekly, biWeekly, monthly } = require('./helpers/timePeriod')
