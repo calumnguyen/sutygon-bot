@@ -12,8 +12,11 @@ const User = require('../../models/User')
 var multer = require('multer')
 var upload = multer({ dest: 'client/public/uploads/user' })
 const { isAdmin } = require('../../middleware/isAdmin')
+<<<<<<< HEAD
 
 // const { weekly, biWeekly, monthly } = require('../../helpers/timePeriod')
+=======
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
 
 const FILE_PATH = 'client/public/uploads/user'
 
@@ -84,6 +87,7 @@ router.post(
       })
       let userBody
 
+<<<<<<< HEAD
       if (req.file === undefined) {
         userBody = {
           username: body.username,
@@ -95,6 +99,10 @@ router.post(
           type: body.type,
           avatar: avatar,
         }
+=======
+      if (req.file == undefined) {
+        userBody = { ...req.body, password, avatar }
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
       } else {
         userBody = {
           ...req.body,
@@ -459,12 +467,60 @@ router.post(
         inactivated_date = Date.now()
       }
 
+<<<<<<< HEAD
       await User.findByIdAndUpdate(
         req.params.id,
         { $set: { ...req.body, avatar, inactivated_date, salary } },
         { new: true }
       )
 
+=======
+      if (req.body.salary) {
+        if (!(req.body.code === process.env.salarySecretCode)) {
+          return res
+            .status(400)
+            .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
+        }
+      }
+
+      await User.findByIdAndUpdate(
+        req.params.id,
+        { $set: { ...req.body, avatar, inactivated_date } },
+        { new: true }
+      )
+
+      // if (req.file == undefined) {
+      //   await User.updateOne(
+      //     { _id: req.params.id },
+      //     {
+      //       $set: {
+      //         username: body.username,
+      //         fullname: body.fullname,
+      //         email: body.email,
+      //         gender: body.gender,
+      //         contactnumber: body.contactnumber,
+      //         type: body.type,
+      //         avatar: avatar,
+      //       },
+      //     }
+      //   )
+      // } else {
+      //   await User.updateOne(
+      //     { _id: req.params.id },
+      //     {
+      //       $set: {
+      //         username: body.username,
+      //         fullname: body.fullname,
+      //         email: body.email,
+      //         gender: body.gender,
+      //         contactnumber: body.contactnumber,
+      //         type: body.type,
+      //         avatar: `/uploads/user/${req.file.originalname}`,
+      //       },
+      //     }
+      //   )
+      // }
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
       console.log(err)

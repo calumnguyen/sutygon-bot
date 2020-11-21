@@ -2,12 +2,16 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../../middleware/auth')
 const Customer = require('../../models/Customer')
+<<<<<<< HEAD
 const RentedProduct = require('../../models/RentedProducts')
 const { check, validationResult } = require('express-validator')
 const RentedProducts = require('../../models/RentedProducts')
 const mongoose = require('mongoose')
 const Invoice = require('../../models/Invoices')
 var moment = require('moment')
+=======
+const { check, validationResult } = require('express-validator')
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
 
 // @route   POST api/customers/add
 // @desc    Add New Customer
@@ -19,7 +23,10 @@ router.post(
     check('contactnumber', 'Contact Number Required').isLength({ min: 10 }),
     check('email', 'Email Required').not().isEmpty(),
     check('address', 'Address Required').not().isEmpty(),
+<<<<<<< HEAD
     check('birthday', 'Enter birth date.').not().isEmpty(),
+=======
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
   ],
   auth,
 
@@ -27,6 +34,7 @@ router.post(
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() })
+<<<<<<< HEAD
     }
 
     try {
@@ -49,6 +57,18 @@ router.post(
       console.log(err)
       res.status(500).send('Server error')
     }
+=======
+    }
+
+    try {
+      let customer = new Customer(req.body)
+      await customer.save()
+      res.status(200).json({ msg: 'Customer Added Successfully' })
+    } catch (err) {
+      console.log(err)
+      res.status(500).send('Server error')
+    }
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
   }
 )
 
@@ -75,6 +95,7 @@ router.post('/:id', auth, async (req, res) => {
       .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
   }
 })
+<<<<<<< HEAD
 
 // @route    PUT api/customers/update/:id
 //@desc      update customers.
@@ -111,6 +132,8 @@ router.put('/update/:id', auth, async (req, res) => {
       .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
   }
 })
+=======
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
 
 // @route   GET api/customers
 // @desc    Get all customers
@@ -221,6 +244,7 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
+<<<<<<< HEAD
 // @route  GET api/customers/insights
 // @desc   Get customer insights
 // @access Private
@@ -313,4 +337,6 @@ router.get('/:id/insights', auth, async (req, res) => {
   // late fees. (no)
 })
 
+=======
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
 module.exports = router

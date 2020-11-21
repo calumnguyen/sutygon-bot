@@ -1,8 +1,17 @@
+<<<<<<< HEAD
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { changePage } from '../../actions/pages'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+=======
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { changePage } from "../../actions/pages";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
 
 class Sidebar extends Component {
   componentDidMount() {
@@ -32,6 +41,7 @@ class Sidebar extends Component {
   render() {
     const { user } = this.props.auth
     return (
+<<<<<<< HEAD
       <div
         data-active-color='white'
         data-background-color='purple-bliss'
@@ -50,6 +60,19 @@ class Sidebar extends Component {
                 />
               </div>
             </Link>
+=======
+      <div data-active-color="white" data-background-color="purple-bliss" data-image={process.env.PUBLIC_URL+'/assets/img/sidebar-bg/01.jpg'} className="app-sidebar">
+
+        <div className="sidebar-header">
+          <div className="logo">
+          <Link
+                      to="/dashboard"
+                      >
+              <div className="text-center align-middle mt-n4 mb-n4">
+                <img alt={"Sutygon-bot"} src={process.env.PUBLIC_URL+'/assets/img/logo.png'} height={120} width={120}/>
+              </div>
+</Link>
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
           </div>
         </div>
         <div className='sidebar-content'>

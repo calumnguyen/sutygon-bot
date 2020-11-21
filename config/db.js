@@ -1,4 +1,9 @@
 const mongoose = require('mongoose')
+<<<<<<< HEAD
+=======
+const config = require('config')
+const dbUrl = config.get('mongoURI')
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
 
 const connectDB = async () => {
   try {

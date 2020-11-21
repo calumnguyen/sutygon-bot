@@ -4,6 +4,7 @@ const Schema = mongoose.Schema
 const CutomerSchema = new mongoose.Schema({
   name: {
     type: String,
+<<<<<<< HEAD
     required: true,
   },
   username: {
@@ -43,6 +44,25 @@ const CutomerSchema = new mongoose.Schema({
   address: {
     type: String,
     required: true,
+=======
+  },
+  contactnumber: {
+    type: String,
+  },
+  online_account: {
+    type: String,
+  },
+  membership: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
   },
   company: {
     type: String,
@@ -52,7 +72,10 @@ const CutomerSchema = new mongoose.Schema({
   },
   birthday: {
     type: Date,
+<<<<<<< HEAD
     required: true,
+=======
+>>>>>>> 9af3125294361bf3e3e4e1cc5efdf2480a6b7dac
   },
   noOfOrders: {
     type: String,
