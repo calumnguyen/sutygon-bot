@@ -6,6 +6,8 @@ import {
     GET_RENTPRODUCT,
     GET_LASTRECORD,
    RENTPRODUCT_DELETED,
+   RENTPRODUCT_UPDATED
+
   } from "../actions/types";
   const initialState = {
     rentproduct: null,
@@ -42,12 +44,16 @@ import {
           ...state,
           rentproduct: payload,
           loading: false,
+          generateInvoice:true
+
         };
         case GET_LASTRECORD:
           return {
             ...state,
             lastrecord: payload,
             loading: false,
+            generateInvoice:true
+
           };
 
   
@@ -58,11 +64,21 @@ import {
           loading: false,
           generateInvoice:true
         };
+        case RENTPRODUCT_UPDATED: 
+        return {
+          ...state,
+          // saved: true,
+          loading: false,
+          generateInvoice:true
+        };
+        
       case RENTPRODUCTS_ERROR:
         return {
           ...state,
           error: payload,
           loading: false,
+          generateInvoice:false
+
         };
   
       case RENTPRODUCT_DELETED:

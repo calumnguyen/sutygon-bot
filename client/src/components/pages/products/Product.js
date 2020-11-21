@@ -14,7 +14,7 @@ class Product extends Component {
     async componentDidMount() {
         if (this.props.match.params.id) {
             const id = this.props.match.params.id;
-            let res = await this.props.getProduct(id);
+            await this.props.getProduct(id);
 
         }
     };
@@ -60,7 +60,7 @@ class Product extends Component {
                                                                 {product ?
                                                                     <>
                                                                         <img
-                                                                            // className="form-control"
+                                                                            alt={"product"}
                                                                             id="projectinput8"
                                                                             src={`${product.image}`}
                                                                             height={290} width={250}
@@ -130,7 +130,12 @@ class Product extends Component {
 
                     <footer className="footer footer-static footer-light">
                             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                                <a 
+                                href="https://www.sutygon.com"
+                                rel="noopener noreferrer"
+                                id="pixinventLink"
+                                target="_blank" 
+                                className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
                         </footer>
 
 
@@ -145,7 +150,6 @@ class Product extends Component {
 
 Product.propTypes = {
     auth: PropTypes.object,
-
     getProduct: PropTypes.func.isRequired,
     product: PropTypes.array,
 };
@@ -153,8 +157,6 @@ Product.propTypes = {
 const mapStateToProps = (state) => ({
     product: state.product.product,
     auth: state.auth,
-
-
 });
 export default connect(mapStateToProps, {
     getProduct

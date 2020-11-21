@@ -31,7 +31,7 @@ class AddProduct extends Component {
     isEdit: false,
     src: "",
     sizeQty: "",
-    enteredSizeQty:"",
+    enteredSizeQty: "",
   };
 
   async componentDidMount() {
@@ -39,9 +39,8 @@ class AddProduct extends Component {
     if (this.props.match.params.id) {
 
       const id = this.props.match.params.id;
-      let res = await this.props.getProductById(id);
+      await this.props.getProductById(id);
       const { product } = this.props;
-      const { data } = this.props.location
       const test1 = this.calculateTotals(this.props.product);
       if (product) {
         this.setState({
@@ -51,7 +50,6 @@ class AddProduct extends Component {
           tags: product.tags,
           image: product.image,
           color: product.color,
-          image: product.image,
           totalFromProps: test1.total,
         });
       }
@@ -60,10 +58,10 @@ class AddProduct extends Component {
   }
   addSizeRow = (color_id) => {
     let { color } = this.state; // get all colors
-    let color_obj = color.filter((color) => color._id == color_id); // get current color obj
+    let color_obj = color.filter((color) => color._id === color_id); // get current color obj
     // get index of color i all colors object
     const index = color.findIndex(
-      (color_obj) => color_obj.id == color_id
+      (color_obj) => color_obj.id === color_id
     );
 
     color_obj[0].sizes.push({
@@ -89,11 +87,11 @@ class AddProduct extends Component {
 
   addSizeRow = (color_id) => {
     let { color } = this.state; // get all colors
-    let color_obj = color.filter((color) => color._id == color_id); // get current color obj
+    let color_obj = color.filter((color) => color._id === color_id); // get current color obj
 
     // get index of color i all colors object
     const index = color.findIndex(
-      (color_obj) => color_obj.id == color_id
+      (color_obj) => color_obj.id === color_id
     );
 
     color_obj[0].sizes.push({
@@ -112,11 +110,11 @@ class AddProduct extends Component {
 
   removeSizeRow = (color_id, size_id) => {
     let { color } = this.state;
-    let color_obj = color.filter((color) => color._id == color_id); // get current color obj
-    if (size_id != '') {
+    let color_obj = color.filter((color) => color._id === color_id); // get current color obj
+    if (size_id !== '') {
       let { sizes } = color_obj[0];
       const sizeIndex = sizes.findIndex(
-        (size) => size.id == size_id
+        (size) => size.id === size_id
       );
       sizes.splice(sizeIndex, 1)
 
@@ -184,21 +182,21 @@ class AddProduct extends Component {
     // get all colors
     let { color } = this.state;
     // get current color obj
-    let color_obj = color.filter((color) => color._id == color_id)[0]; // get current color obj
+    let color_obj = color.filter((color) => color._id === color_id)[0]; // get current color obj
     // get index of color obj in all colors
     const colorIndex = color.findIndex(
-      (color) => color._id == color_id
+      (color) => color._id === color_id
     );
-    if (size_id != '') {
+    if (size_id !== '') {
       // get all sizes
       let { sizes } = color_obj;
 
       // find current size obj in current color obj
-      let size_obj = color_obj.sizes.filter((size) => size.id == size_id)[0];
+      let size_obj = color_obj.sizes.filter((size) => size.id === size_id)[0];
 
-      // get index of size obj in all sizes 
+      // get index of size obj in all sizes
       const sizeIndex = sizes.findIndex(
-        (size) => size.id == size_id
+        (size) => size.id === size_id
       );
 
       // update value inside size object
@@ -220,7 +218,7 @@ class AddProduct extends Component {
   getSizeboxes = (color_id) => {
     let { color } = this.state; // get all colors
     if (color_id) {
-      let color_obj = color.filter((color) => color._id == color_id); // get current color obj
+      let color_obj = color.filter((color) => color._id === color_id); // get current color obj
       return color_obj[0].sizes.map((size) => (
         <div className="sizes_box" key={size.id}>
           <div className="row">
@@ -273,13 +271,13 @@ class AddProduct extends Component {
   QtyCheck = (e, Qty) => {
     this.setState({
       sizeQty: Qty,
-      enteredSizeQty:e.target.value 
+      enteredSizeQty: e.target.value
     })
     e.preventDefault()
-    if(this.state.sizeQty > e.target.value){
+    if (this.state.sizeQty > e.target.value) {
       OCAlert.alertError(`value can't be less than ${this.state.sizeQty}`, { timeOut: 3000 })
     }
-   
+
   }
 
   _onChange = (e, id = "") => {
@@ -329,7 +327,7 @@ class AddProduct extends Component {
     this.setState({ saving: true });
     const state = { ...this.state };
 
-    const totalFromState = this.calculateTotals(state);
+    this.calculateTotals(state);
     if (state.totalFromProps > state.total) {
       OCAlert.alertError(`${"Quantity cannot be less than"} ${state.totalFromProps}`, { timeOut: 3000 })
       this.setState({ saving: false });
@@ -348,7 +346,7 @@ class AddProduct extends Component {
     const formData = new FormData();
     formData.append('name', state.name)
     formData.append('productId', productId)
-    if (state.image != "") {
+    if (state.image !== "") {
       formData.append('image', state.image)
     }
     else {
@@ -365,6 +363,8 @@ class AddProduct extends Component {
     } else {
       await this.props.updateProduct(formData, state.id);
     }
+
+    return;
   }
 
   render() {
@@ -420,7 +420,7 @@ class AddProduct extends Component {
                               <img
                                 className="media-object round-media"
                                 src={`${this.state.image}`}
-                                alt="Product image"
+                                alt={"Product"}
                                 height={100}
                               />
                               : ""}
@@ -428,7 +428,7 @@ class AddProduct extends Component {
                               <img
                                 className="media-object round-media"
                                 src={`${this.state.src}`}
-                                alt="Product image"
+                                alt={"Product"}
                                 height={100}
                               />
                               : ""}
@@ -531,10 +531,16 @@ class AddProduct extends Component {
               </div>
             </div>
 
-         
+
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a
+                  href="https://www.sutygon.com"
+                  id="pixinventLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+
+                  className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
 
           </div>

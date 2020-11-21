@@ -84,8 +84,17 @@ router.post(
       })
       let userBody
 
-      if (req.file == undefined) {
-        userBody = { ...req.body, password, avatar }
+      if (req.file === undefined) {
+        userBody = {
+          username: body.username,
+          fullname: body.username,
+          email: body.email,
+          password: password,
+          gender: body.gender,
+          contactnumber: body.contactnumber,
+          type: body.type,
+          avatar: avatar,
+        }
       } else {
         userBody = {
           ...req.body,
@@ -458,8 +467,7 @@ router.post(
 
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
-      console.log('err message')
-      console.log(err.message)
+      console.log(err)
       res
         .status(500)
         .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })

@@ -5,21 +5,31 @@ const Product = require("../../models/Product");
 const { check, validationResult } = require("express-validator");
 var multer = require('multer')
 var upload = multer({ dest: 'client/public/uploads/products' })
-
 const FILE_PATH = 'client/public/uploads/products';
+var cloudinary = require('cloudinary')
+const config = require("config");
 
+// cloundinary configuration
+cloudinary.config({
+    cloud_name: config.get("cloud_name"),
+    api_key: config.get("api_key"),
+    api_secret: config.get("api_secret")
+});
+
+// multer configuration
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, FILE_PATH)
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, file.originalname)
+        cb(null, file.originalname.split(' ').join('_'))
     }
 })
-
 var upload = multer({ storage: storage })
 
+router.post('/myroute', (req, res) => {
+  res.send('response from the server');
+})
 // @route   POST api/products/add
 // @desc    Add New Product
 // @access  private
@@ -27,27 +37,31 @@ router.post(
     "/add",
     [
         check("name", "Product Name Required").not().isEmpty(),
-        check("image", "Product Image Required").not().isEmpty(),
+        check('image', "Product Image Required").not().isEmpty(),
         check("color", "Product Color Required").isArray().not().isEmpty(),
     ],
     auth,
     upload.single('image'),
     async (req, res) => {
-
-        const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+       const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+        const image = req.file.path
         try {
+
+          cloudinary.uploader.upload(image, async function(result) {
             const productBody = {
                 name: body.name,
                 productId: body.productId,
                 tags: body.tags,
-                image: `/uploads/products/${req.file.originalname}`,
+                image: result.secure_url,
                 color: JSON.parse(req.body.color),
             };
-
             let product = new Product(productBody);
             await product.save();
             res.json({ product, msg: "Product Added Successfully" });
-        } catch (err) {
+          })
+
+
+       } catch (err) {
             console.log(err);
             res
                 .status(500)
@@ -116,7 +130,7 @@ router.post(
     auth,
     async (req, res) => {
         try {
-await Product.updateOne({ _id: req.params.id }, {
+            await Product.updateOne({ _id: req.params.id }, {
                 $set: {
                     disabled: req.params.status,
                 }
@@ -140,8 +154,8 @@ router.post(
     async (req, res) => {
         try {
             const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-const product = await Product.updateOne({ _id: req.params.id }, {
-                $set: {     
+            const product = await Product.updateOne({ _id: req.params.id }, {
+                $set: {
                     color: body.color,
                 }
             });
@@ -200,7 +214,7 @@ router.get("/", auth,
 
     async (req, res) => {
         try {
-            const products = await Product.find();
+            const products = await Product.find().sort({ 'date' : -1 });
             res
                 .status(200)
                 .json(products);
@@ -364,5 +378,6 @@ router.get("/searchBarcode/:val", auth,
                 .send("Server Error!");
         }
     });
+
 
 module.exports = router;

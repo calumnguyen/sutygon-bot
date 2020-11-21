@@ -8,7 +8,6 @@ import {
   findProducts,
   changeStatus
 } from "../../../actions/product";
-import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
@@ -16,8 +15,9 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
-import loadjs from "loadjs";
-import { changePage } from "../../../actions/pages";
+import {Image} from 'cloudinary-react';
+
+
 
 class ViewProduct extends Component {
   state = {
@@ -30,6 +30,10 @@ class ViewProduct extends Component {
     if (products) {
       this.calculateTotals(products);
     }
+  }
+  encodeURI = (src) => {
+    var uri = src.split(" ").join("_")
+    return uri;
   }
 
   handleChange = (e, id = "") => {
@@ -101,10 +105,10 @@ class ViewProduct extends Component {
           let color_size_total = 0;
           // looping through sizes of current color
           if (color.sizes) {
-         
+
             color.sizes.forEach((size, s_index) => {
-               color_size_total += parseInt(size.qty);
-             size.is_open = false;
+              color_size_total += parseInt(size.qty);
+              size.is_open = false;
             });
             color.total = color_size_total;
             color.is_open = false;
@@ -115,7 +119,7 @@ class ViewProduct extends Component {
         product.total = product_total;
       }
       // break tags by comma
-      if (product.tags && typeof product.tags == "string") {
+      if (product.tags && typeof product.tags === "string") {
         let tags_arr = product.tags.split(",");
         product.tags = tags_arr;
       }
@@ -141,11 +145,12 @@ class ViewProduct extends Component {
       .is_open;
     this.setState({ formated_products });;
   };
+  // Replace all <img /> with <Img />
+
   getTAble = () => {
     const { formated_products } = this.state;
 
     if (formated_products) {
-      let tbl_sno = 1;
       if (formated_products) {
         if (formated_products.length === 0) {
           return (
@@ -157,125 +162,40 @@ class ViewProduct extends Component {
           );
         }
         return formated_products.map((product, i) => (
-          <div className="tb_container" key={i}>
-            <div className="tb_row">
-              <div className="tb_top">
-                <div className="tb_t_left">
-                  <img
-                    className="media-object round-media"
-                    src={`${product.image}`}
-                    alt="Product image"
-                  />
+          <div className="col-xl-4 col-lg-6 col-md-12" key={i}>
+            <div className="card product_card" >
+              <div className="card-content">
+                <div className="imeg_container" style={{backgroundImage: `url(${product.image})`}}>
+                <span className={"badge badge-pill badge-" + ((product.disabled === "true") ? "secondary" : "success") + " bdg"}>{(product.disabled === "false") ? "active" : "disabled"}</span>
                 </div>
-                <div className="tb_t_right">
-                  <span className={"badge badge-"+((product.disabled == "true") ? "secondary":"info")+ " float-right"}>{(product.disabled == "false") ? "active":"disabled"}</span>
-                  <h2>
-                    <strong>Product Name</strong> {product.name}
-                  </h2>
-                  <h2>
-                    <strong>Product ID # </strong> {product.productId}
-                  </h2>
-                  <h2>
-                    <strong>Total Items : </strong> {product.total}
-                  </h2>
-                </div>
-              </div>
-              <div className="clearfix"></div>
-
-              <div className="tb_center">
-                {product.color &&
-                  product.color.map((color, color_i) => (
-                    <div className={`tb_color_box`} key={color_i}>
-                      <button
-                        type="button"
-                        name="button"
-                        className="tb_arrow-btn color_btn"
-                        onClick={(e) =>
-                          this.toggleColor(e, i, color_i)
-                        }
-                      >
-                        <i 
-                        className={color.is_open ? "ft-arrow-down" : "ft-arrow-right"}
-                        ></i>
-                      </button>{" "}
-                      <p>
-                        {color.colorname} : {color.total}
-                      </p>
-                      <div
-                        className={`tb_color_box_content ${
-                          color.is_open ? "show_it" : "hide_it"
-                        }`}
-                      >
-                        {color.sizes &&
-                          color.sizes.map((size, size_i) => (
-                            <div className="tb_size_box" key={size_i}>
-                              <button
-                                type="button"
-                                name="button"
-                                className="tb_arrow-btn size_btn"
-                                onClick={(e) =>
-                                  this.toggleSize(e, i, color_i, size_i)
-                                }
-                              >
-                                <i 
-                                className={size.is_open ? "ft-arrow-down" : "ft-arrow-right"}
-                                ></i>
-                              </button>{" "}
-                              <p>
-                                {size.size} : {size.qty}{" "}
-                              </p>
-                              <div
-                                className={`tb_size_box_content ${
-                                  size.is_open ? "show_it" : "hide_it"
-                                }`}
-                              >
-                                <div className="tb_barcodes_box">
-                                  <ul>
-                                    {size.barcodes && 
-                                      size.barcodes.map(
-                                        (barcode, barcode_i) => (
-                                          <li key={barcode_i}>
-                                            BARCODE ID # {barcode.barcode}
-                                          </li>
-                                        )
-                                      )}
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-
-              <div className="tb_bottom">
-                <p>
-                  Tags:
+                <div className="textbbody">
+                  <h4 className="card-title">{product.name}</h4>
+                  <h6 className="card-subtitle text-muted">Product id: {product.productId}</h6>
+                  <h6 className="card-subtitle text-muted">Total Items: {product.total}</h6>
                   {product.tags &&
                     product.tags.map((tag, tag_i) => (
-                      <span className="ttag" key={tag_i}>
+                      <span className="badge badge-pill badge-light" key={tag_i}>
                         {tag}
                       </span>
                     ))}
-                </p>
-
-                <Link 
-                to={{
-                  pathname: `/product/editproduct/${product._id}`,
-                  data: product
-                }}
-                 className="btn btn-primary pull-right mbtn">
-                    {" "}
-                  <i className="fa fa-pencil"></i> Edit{" "}
-                </Link>
-                <button type="button" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="btn btn-primary pull-right mbtn">
+                </div>
+                <div className="card-footer">
+                <Link
+                  to={{
+                    pathname: `/product/editproduct/${product._id}`,
+                    data: product
+                  }}
+                  className="card-link default">
                   {" "}
-                  <i className={"ft-" + ((product.disabled == "true") ? "play":"pause")}></i> {(product.disabled == "true") ? "Reactivate":"Disable"}
-                </button>
+                  <i className="icon-pencil"></i> Edit{" "}
+                </Link>
+                <a href="#" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="card-link default">
+                  {" "}
+                  <i className={"icon-control-" + ((product.disabled === "true") ? "play" : "pause")}></i> {(product.disabled === "true") ? "Reactivate" : "Disable"}
+                </a>
+                  <a className="card-link default"><i class="icon-eye"></i> View Details</a>
+                  </div>
               </div>
-
-              <div className="clearfix"></div>
             </div>
           </div>
         ));
@@ -292,8 +212,8 @@ class ViewProduct extends Component {
   }
 
   async toggleStatus(status, product_id) {
-    
-    if(status == "true") {
+
+    if (status === "true") {
       status = "false";
     } else {
       status = "true";
@@ -311,9 +231,6 @@ class ViewProduct extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    const { products } = this.props;
-    const { filter } = this.state;
-
     return (
       <React.Fragment>
         <Loader />
@@ -343,6 +260,7 @@ class ViewProduct extends Component {
                               </div>
                               <div className="col-md-4">
                                 <a
+                                  href="/product"
                                   className="btn btn-success"
                                   onClick={() => this.searchTable()}
                                 >
@@ -360,22 +278,26 @@ class ViewProduct extends Component {
                               </div>
                             </div>
                             <Alert />
-                            {this.getTAble()}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
+
+                  <div className="row">
+                  {this.getTAble()}
+                  </div>
+
                 </section>
               </div>
             </div>
           </div>
+          <div style={{clear: "both"}}></div>
 
-          
-          <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
-            </footer>
+          {/*<footer className="footer footer-static footer-light">
+            <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
+              <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+          </footer>*/}
         </div>
       </React.Fragment>
     );

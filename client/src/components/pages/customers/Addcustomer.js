@@ -15,7 +15,6 @@ class AddCustomer extends Component {
     contactnumber: "",
     email: "",
     address: "",
-    noOfOrders: "",
     saving: false,
   };
 
@@ -33,7 +32,6 @@ class AddCustomer extends Component {
       email: state.email,
       contactnumber: state.contactnumber,
       address: state.address,
-      noOfOrders: state.noOfOrders,
     };
     if (state.id === "") {
       await this.props.addNewCustomer(customer);
@@ -78,7 +76,7 @@ class AddCustomer extends Component {
                         <form onSubmit={(e) => this.onSubmit(e)}>
                           <Alert />
                           <div className="row">
-                            <div className="form-group col-md-6 mb-2">
+                            <div className="form-group col-md-4 mb-2">
                               <label htmlFor="projectinput1">Name</label>
                               <input type="text" id="projectinput1"
                                 className="form-control"
@@ -90,7 +88,7 @@ class AddCustomer extends Component {
 
                               />
                             </div>
-                            <div className="form-group col-md-6 mb-2">
+                            <div className="form-group col-md-4 mb-2">
                               <label htmlFor="projectinput4">Contact Number</label>
                               <input type="number"
                                 id="projectinput4"
@@ -102,11 +100,9 @@ class AddCustomer extends Component {
                                 required
                               />
                             </div>
-                          </div>
-                          <div className="row">
-                            <div className="form-group col-md-6 mb-2">
-                              <label htmlFor="projectinput3">E-mail</label>
-                              <input type="email"
+                            <div className="form-group col-md-4 mb-2">
+                            <label htmlFor="projectinput3">E-mail</label>
+                            <input type="email"
                                 id="projectinput3"
                                 className="form-control"
                                 placeholder="E-mail"
@@ -116,12 +112,11 @@ class AddCustomer extends Component {
                                 required
                              />
                             </div>
-
                           </div>
                           <div className="row">
-                            <div className="form-group col-md-6 mb-2">
+                            <div className="form-group col-md-12 mb-2">
                               <label htmlFor="projectinput1">Address</label>
-                              <input type="text"
+                              <textarea type="text"
                                 id="projectinput1"
                                 className="form-control"
                                 placeholder="Address"
@@ -129,20 +124,9 @@ class AddCustomer extends Component {
                                 value={this.state.address}
                                 onChange={(e) => this.handleChange(e)}
                                 required
-                              />
+                              textarea />
                             </div>
-                            <div className="form-group col-md-6 mb-2">
-                              <label htmlFor="projectinput4">No. Of Orders</label>
-                              <input type="number"
-                                id="projectinput4"
-                                className="form-control"
-                                placeholder="No. Of Orders"
-                                name="noOfOrders"
-                                value={this.state.noOfOrders}
-                                onChange={(e) => this.handleChange(e)}
-                                required
-                              />
-                            </div>
+                           
                           </div>
 
                           <div className="form-actions top">
@@ -172,7 +156,7 @@ class AddCustomer extends Component {
             </div>
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
         </div>

@@ -8,15 +8,16 @@ import { Link } from "react-router-dom";
 import Loader from "../layout/Loader";
 import shortid from "shortid";
 import * as moment from 'moment'
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { getProductById, getAllProducts, updateProductIndex, barcodeUpdateProduct, } from "../../actions/product";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { getProductById, getAllProducts, updateProductIndex } from "../../actions/product";
 import { getCustomer } from "../../actions/customer";
 import { addNewRentProduct, getLastRecord } from "../../actions/rentproduct";
 import { getOrderbyOrderNumber } from "../../actions/returnproduct";
 import { addNewInvoice } from "../../actions/invoices";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts'
+import { cookie } from "express-validator";
 var JsBarcode = require('jsbarcode');
 
 
@@ -36,10 +37,10 @@ class RentOrder extends Component {
     returnDate: "",
     total: "",
     saving: false,
-    leaveID: "",
+    leaveID: false,
     barcodesRented: false,
     redirect: false,
-    m_returnDate:""
+    m_returnDate: ""
   };
 
 
@@ -49,14 +50,23 @@ class RentOrder extends Component {
     await this.props.getLastRecord();
     const { lastRecord } = this.props
     if (lastRecord) {
-      const orderNumber = lastRecord[0].orderNumber;
-      if(orderNumber){      const newOrderNumber = this.generateRandomNumber(orderNumber)
-      console.log("newOrderNumber",newOrderNumber)
-      this.setState({
-        orderNumber: newOrderNumber
-      })
-    }
+      if (lastRecord.length === 0) {
+        const orderNumber = "001-00";
+        const newOrderNumber = this.generateRandomNumber(orderNumber)
+        this.setState({
+          orderNumber: newOrderNumber
+        })
+      }
+      else if (lastRecord.length > 0) {
+        const orderNumber = lastRecord[0].orderNumber;
+        if (orderNumber) {
+          const newOrderNumber = this.generateRandomNumber(orderNumber)
+          this.setState({
+            orderNumber: newOrderNumber
+          })
+        }
 
+      }
     }
 
     const { data } = this.props.location;
@@ -66,61 +76,73 @@ class RentOrder extends Component {
         barcode_Array: data.barcode,
       });
     }
+    const orderBarcode = shortid.generate();
+    this.setState({
+      orderBarcode: orderBarcode
+    })
     await this.props.getCustomer(this.state.customer_id);
-
   }
   generateRandomNumber(previousNumber) {
     // break number by dash
     // convert number into integer
-    let pn = previousNumber;
     let n_array = previousNumber.split("-");
-
     // check second half if 90
-    if (n_array[1] == 99) {
+    if (n_array[1] == "99") {
       // if yes increment first half 
       n_array[0]++;
-      n_array[1] = 1;
+      n_array[1] = "00";
     } else {
       // if not add 1
       n_array[1]++;
     }
 
-    // let firstHalf = "";
-    // if (n_array[0] <= 9) {
-    //   firstHalf += "00" + n_array[0];
-    // } else if (n_array[0] > 9 && n_array[0] <= 99) {
-    //   firstHalf += "0" + n_array[0];
-    // } else if (n_array[0] > 99) {
-    //   firstHalf += n_array[0];
-    // }
+    function getPadded(num) {
+      var str = "" + num;
+      var pad = "000";
+      return pad.substring(0, pad.length - str.length) + str;
+    }
+    let firstHalf = getPadded(n_array[0]);
 
-    // // let secondHalf = "";
-    // if (n_array[1] <= 9) {
-    //   secondHalf += "0" + n_array[1];
-    // } else if (n_array[1] > 9) {
-    //   secondHalf += n_array[1];
-    // }
+    function getPaddedSecond(num) {
+      var str = "" + num;
+      var pad = "00";
+      return pad.substring(0, pad.length - str.length) + str;
+    }
+    let secondHalf = getPaddedSecond(n_array[1]);
 
-
-    // return new number
-    let n = n_array[0] + "-" + n_array[1];
+    let n = firstHalf + "-" + secondHalf;
     return n;
   }
-
+  focousOut(value) {
+    if (value === false) {
+      this.setState({ rentDate: '',returnDate : '' });
+    }
+  }
   rentDateValidity = () => {
-    const { rentDate, } = this.state;
-    var currentdate = moment(new Date).format('DD-MM-YYYY');
-    if (moment(moment(rentDate).format('DD-MM-YYYY')).isBefore(currentdate)) {
-      OCAlert.alertError(`Rent Date should be after today's date`, { timeOut: 3000 });
+    let { rentDate, } = this.state;
+    var currentdate = moment(rentDate).format('YYYY-MM-DD');
+    const r_date = moment(new Date).format('YYYY-MM-DD');
+    var isToday = moment(r_date).isSameOrBefore(currentdate); // true
+    const rent = new Date(rentDate)
+
+    if (isToday === false && (rent.getTime() - (new Date).getTime()) < 0) {
+      OCAlert.alertError(`Invalid Date`, { timeOut: 3000 });
+      this.focousOut(isToday);
       return;
     }
 
-    var threeDaysAfter = (new Date(rentDate).getTime() + (2 * 24 * 60 * 60 * 1000));
-    var momentthreeDaysAfter = moment(threeDaysAfter).format("DD-MM-YYYY");
-    this.state.returnDate = momentthreeDaysAfter;
+    else if ((rent.getTime() - (new Date).getTime()) > 0 || isToday === true) {
+      var threeDaysAfter = (new Date(rentDate).getTime() + (2 * 24 * 60 * 60 * 1000));
+      var momentthreeDaysAfter = moment(threeDaysAfter).format("DD-MM-YYYY");
+      this.state.returnDate = momentthreeDaysAfter;
 
-    this.state.m_returnDate = moment(threeDaysAfter).format("YYYY-MM-DD");
+      this.state.m_returnDate = moment(threeDaysAfter).format("YYYY-MM-DD");
+    }
+
   }
+
+
+
 
   onSubmit = async (e) => {
     e.preventDefault();
@@ -135,12 +157,9 @@ class RentOrder extends Component {
     barcode_Array.forEach((element) => {
       barcodeArr.push(element.barcode);
     });
-    const orderBarcode = shortid.generate();
-    this.setState({
-      orderBarcode: orderBarcode
-    })
+
     const rentedOrder = {
-      orderNumber:state.orderNumber,
+      orderNumber: state.orderNumber,
       customer: state.customer_id,
       customerContactNumber: customer.contactnumber,
       user: user._id,
@@ -148,38 +167,38 @@ class RentOrder extends Component {
       total: state.total,
       returnDate: state.m_returnDate,
       rentDate: state.rentDate,
-      leaveId: true,
+      leaveID: this.state.leaveID,
       insuranceAmt: state.insAmt,
-      orderBarcode:state.orderBarcode
+      orderBarcode: state.orderBarcode
     };
     await this.props.addNewRentProduct(rentedOrder);
 
     await this.props.getOrderbyOrderNumber(state.orderNumber)
     const { order, auth } = this.props;
-    if (this.props.generateInvoice == true) {
-      if (order) {
+    if (this.props.generateInvoice === true) {
+      if (order && state.orderBarcode && state.orderNumber) {
         const invoiceRent = {
           order_id: order[0]._id,
           customer_id: order[0].customer,
           user_id: auth.user._id,
           type: "Rent-Invoice",
-          orderBarcode: state.orderBarcode
+          orderBarcode: state.orderNumber
         }
         await this.props.addNewInvoice(invoiceRent);
       }
-      this.printBarcode(orderBarcode)
+      this.printBarcode(state.orderNumber)
     }
     let { product_Array } = this.state;
 
     if (product_Array) {
       let products = [];
-      let counter = 1;
+      // let counter = 1;
 
       product_Array.forEach(async (pd, p_index) => {
         await this.props.getProductById(pd[0].product_id); // <-- Error is here this should give updated product in every loop
 
         let { product } = this.props;
-        counter++;
+        // counter++;
         if (product) {
           product.color.forEach((color, c_index) => {
             // get right color obj
@@ -206,7 +225,8 @@ class RentOrder extends Component {
       });
 
     }
-    this.setState({ saving: false });
+    this.printInvoice()
+
   };
 
   onHandleChange = (e) => {
@@ -270,9 +290,11 @@ class RentOrder extends Component {
   };
 
   printInvoice = () => {
-    var printDiv = document.getElementById('modal-body').innerHTML
+    var css = '<link rel="stylesheet"  href="%PUBLIC_URL%/assets/css/app.css"/>'
+    var printDiv = document.getElementById('invoiceDiv').innerHTML
+
     let newWindow = window.open("", '_blank', 'location=yes,height=570,width=720,scrollbars=yes,status=yes');
-    newWindow.document.body.innerHTML = printDiv
+    newWindow.document.body.innerHTML = css + printDiv
     newWindow.window.print();
     newWindow.document.close();
   }
@@ -341,24 +363,13 @@ class RentOrder extends Component {
   getInvoiceBarcodeRecord() {
     let { product_Array } = this.state;
     return product_Array.map((product, b_index) => (
-      <div key={b_index}>
-        <div >
-          <table className="table table-bordered table-light" style={{ "borderWidth": "1px", 'borderColor': "#aaaaaa", 'borderStyle': 'solid' }}>
-            <thead></thead>
-            <tr>
-              <td className="text-center">{product[0].barcode}</td>
-              <td className="text-center">{product[0].title}</td>
-              <td className="text-center">{product[0].color}</td>
-              <td className="text-center">{product[0].price}</td>
+      <tr>
+        <td className="text-center">{product[0].barcode}</td>
+        <td className="text-center">{product[0].title}</td>
+        <td className="text-center">{product[0].color}</td>
+        <td className="text-center">{product[0].price}</td>
 
-
-            </tr>
-          </table>
-
-
-
-        </div>
-      </div>
+      </tr>
     ));
   }
 
@@ -381,7 +392,7 @@ class RentOrder extends Component {
 
     let amount;
     if (taxper !== null && taxper !== "0") {
-      amount = totalAmount / taxper;
+      amount = totalAmount * (taxper * 0.01)
     }
     else {
       amount = 0;
@@ -398,7 +409,7 @@ class RentOrder extends Component {
   calculateTotal = () => {
     let sum = 0;
     let { tax, insAmt, total_amt } = this.state;
-    sum = Number(Number(total_amt) + Number(tax) + Number(insAmt));
+    sum = Math.round(Number(total_amt) + Number(tax) + Number(insAmt));
     this.state.total = sum;
     return sum;
   };
@@ -410,22 +421,34 @@ class RentOrder extends Component {
     });
 
   }
+
+
+  handleChangeForDate = (date) => {
+    let { rentDate, } = this.state;
+    this.setState({ rentDate: date });
+  }
+
+
+
   render() {
     const { auth, order } = this.props;
-    const { data } = this.props.location;
-
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
 
-    if (this.state.redirect == true) {
+    if (this.state.redirect === true) {
       return <Redirect to="/rentproduct" />;
     }
 
-    if (this.props.location.data == undefined) {
+    if (this.props.location.data === undefined) {
       return <Redirect to="/rentproduct" />;
 
     }
+    if (this.props.saved === true) {
+      return <Redirect to="/rentproduct" />;
+
+    }
+
     const { customer } = this.props;
     return (
       <React.Fragment>
@@ -456,14 +479,20 @@ class RentOrder extends Component {
                                 </div>
                               </div>
                               {/* <form > */}
-                                <form onSubmit={(e) => this.onSubmit(e)}>
+                              <form onSubmit={(e) => this.onSubmit(e)}>
 
                                 <div className="col-md-12">
                                   <div id="sizes_box">
 
                                     {this.getBarcodeRecord()}
                                     <Link
-                                      to="/product/addproduct"
+                                      to={{
+                                        pathname: "/checkout",
+                                        data: {
+                                          customer: this.state.customer_id,
+                                        }
+                                      }}
+                                      to="/checkout"
                                       className="btn "
                                     >
                                       <i className="fa fa-plus"></i>
@@ -539,7 +568,7 @@ class RentOrder extends Component {
                                     <div className="row">
                                       <div className="col-md-12">
                                         <div className="form-group">
-                                          <h4 id="arowDown">
+                                          <h4 id="arowDown" style={{ marginLeft: "715px" }}>
                                             <i className="ft-arrow-down"></i>
                                           </h4>
                                           <div style={{ paddingLeft: "650px" }}>
@@ -600,21 +629,24 @@ class RentOrder extends Component {
 
                                             <h4 id="padLeft">Leave ID</h4>
                                           </div>
-                                          <div style={{ 'textAlign': 'center', 'paddingRight': '170px' }}>
+                                          <div style={{ 'textAlign': 'right', 'paddingRight': '170px' }}>
 
-                                            <div className="">
+                                            <div className="" style={{}}>
                                               <input
+                                                id="yes"
                                                 type="radio"
                                                 name="leaveID"
                                                 value={true}
                                                 onChange={(e) => this.onHandleChange(e)}
                                                 checked={this.state.leaveID === "true"}
                                               />
-                                              <label
-                                              >YES</label>
+                                              <label htmlFor="yes"
+
+                                              >&nbsp;YES</label>
                                             </div>
-                                            <div className="">
+                                            <div className="" style={{}}>
                                               <input
+                                                id="no"
                                                 type="radio"
                                                 name="leaveID"
                                                 value={false}
@@ -622,8 +654,8 @@ class RentOrder extends Component {
                                                 onChange={(e) => this.onHandleChange(e)}
                                                 checked={this.state.leaveID === "false"}
                                               />
-                                              <label
-                                              >NO</label>
+                                              <label htmlFor="no"
+                                              >&nbsp;NO</label>
                                             </div>
                                           </div>
                                         </div>
@@ -650,11 +682,21 @@ class RentOrder extends Component {
                                         </label>
                                       </div>
                                     </div>
-                                    <br />
 
                                     <div className="row justify-content-center">
-                                      <div className="col-md-6">
-                                        <input
+                                      <div className="col-md-6 text-center">
+                                        <DatePicker
+                                          id="issueinput3"
+                                          selected={this.state.rentDate}
+                                          className="form-control round text-center"
+                                          onChange={(e) => this.handleChangeForDate(e)}
+                                          onInput={this.rentDateValidity()}
+                                          dateFormat="dd-MM-yyyy"
+                                          popperPlacement="top-start"
+
+                                        />
+
+                                        {/* <input
                                           type="date"
                                           id="issueinput3"
                                           className="form-control round text-center"
@@ -668,22 +710,19 @@ class RentOrder extends Component {
                                           value={this.state.rentDate}
                                           onInput={this.rentDateValidity()}
 
-                                        />
+                                        /> */}
                                       </div>
 
-                                      <div className="col-md-6">
+                                      <div className="col-md-6 text-center">
                                         <input
-                                          type=""
                                           id="issueinput4"
-                                          className="form-control round text-center"
+                                          className="round text-center"
                                           name="returnDate"
-                                          data-toggle="tooltip"
-                                          data-trigger="hover"
-                                          data-placement="top"
+                                          style={{ 'border': '1px solid #A6A9AE', 'color': '#75787d', 'padding': '0.375rem 0.75rem', 'lineHeight': '1.5' }}
                                           required
                                           readOnly
                                           data-title="Return Date"
-                                          value={this.state.returnDate == "Invalid date" ? "" : this.state.returnDate}
+                                          value={this.state.returnDate === "Invalid date" ? "" : this.state.returnDate}
                                         />
                                       </div>
                                     </div>
@@ -724,9 +763,10 @@ class RentOrder extends Component {
                                           type="submit"
                                           className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
                                           id="btnSize2"
-                                          data-toggle="modal"
-                                          data-backdrop="false"
-                                          data-target="#primary">
+                                        // data-toggle="modal"
+                                        // data-backdrop="false"
+                                        // data-target="#primary"
+                                        >
                                           <i className="ft-check"></i>
                                           Submit &amp; Get Invoice
                                         </button>
@@ -743,15 +783,109 @@ class RentOrder extends Component {
                   </div>
                 </section>
               </div>
+              
             </div>
 
 
 
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
+
+          {/* pdf invoice  */}
+
+          <div id="invoiceDiv" style={{ 'width': '100%', 'display': 'none' }}>
+            <h1 style={{ 'text-align': 'center' }}>
+              {(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}
+            </h1>
+            <h1 style={{ 'text-align': 'center' }}>
+              {(this.state.orderNumber) ? `${"Order"}${"#"} ${this.state.orderNumber}` : ""}
+            </h1>
+
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>
+              <tbody>
+                {this.getInvoiceBarcodeRecord()}
+              </tbody>
+            </table>
+            <hr />
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>
+              <tbody>
+                <tr>
+                  <td style={{ 'width': '90%' }} >Total Without Tax</td>
+                  <td>{`${this.state.total_amt}`}</td>
+                </tr>
+                <tr>
+                  <td>Tax Percentage</td>
+                  <td>{`${this.state.taxper}${"%"}`}</td>
+                </tr>
+                <tr>
+                  <td>Tax Amount</td>
+                  <td>{`${this.state.tax}`}</td>
+                </tr>
+                <tr>
+                  <td>Insurance Amount</td>
+                  <td>{`${this.state.insAmt}`}</td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: "}${this.state.total}`}</h4>
+            <br />
+
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>
+              <tbody>
+                <tr>
+                  <td style={{ 'width': '90%' }} >Leave ID</td>
+                  <td>
+                    {this.state.leaveID === "true" ? `${"Yes"}` : `${"No"}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Rent From</td>
+                  <td>
+                    {moment(this.state.rentDate).format('DD-MM-YYYY')}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Return Date</td>
+                  <td>
+                    {moment(this.state.m_returnDate).format('DD-MM-YYYY')}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table style={{ 'width': '100%' }}><thead></thead>
+              <tbody>
+                <tr>
+                  <td className="col-md-6" style={{ 'backgroundColor': 'white', 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}>
+                    <svg id="barcode"></svg>
+                  </td>
+                  <td className="col-md-6" style={{ 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}>
+                    Authorized by <br />
+                                     Sutygon-Bot</td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <br />
+            <br />
+            <br />
+
+            <table style={{ "width": "100%" }}><thead></thead>
+              <tbody>
+                <tr>
+                  <td style={{ 'text-align': 'center' }}>For questions and information please contact out www.sutygon-bot.com</td>
+                </tr>
+              </tbody>
+            </table>
+            
+          </div>
+
+
+          
           {/* Invoice Modal */}
           <div className="modal fade text-left" id="primary" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel8"
             aria-hidden="true">
@@ -762,7 +896,7 @@ class RentOrder extends Component {
                   <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
-                  <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <button type="button" className="" data-dismiss="modal" aria-label="Close">
                     <span className="fa fa-print" aria-hidden="true" onClick={(e) => this.printInvoice(e)}></span>
                   </button>
                 </div>
@@ -898,14 +1032,15 @@ class RentOrder extends Component {
                           </div>
                           <div className="row">
                             <p>For questions and contact information please check out
-                                              <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a></p>
+                                              <a href="https://www.sutygon.com" id="pixinventLink" rel="noopener noreferrer" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a>
+                            </p>
                           </div>
 
 
 
                         </div>
                       </div>
-                      
+
                     </div>
 
 
@@ -919,8 +1054,8 @@ class RentOrder extends Component {
             </div>
           </div>
         </div>
+        <div className="clearfix"></div>
         <OCAlertsProvider />
-
       </React.Fragment>
     );
   }
@@ -952,9 +1087,8 @@ const mapStateToProps = (state) => ({
   order: state.returnproduct.returnproduct,
   products: state.product.products,
   customer: state.customer.customer,
-  // saved: state.product.saved,
   generateInvoice: state.rentproduct.generateInvoice,
-
+  saved: state.product.saved
 });
 export default connect(mapStateToProps, {
   getAllProducts,

@@ -6,7 +6,6 @@ import { getCustomer } from "../../../actions/customer";
 import { addNewInvoice } from "../../../actions/invoices";
 import { updateRentedProduct } from "../../../actions/rentproduct";
 import Loader from "../../layout/Loader";
-import { Link } from "react-router-dom";
 import * as moment from 'moment'
 import shortid from "shortid";
 import { Redirect } from "react-router-dom";
@@ -21,11 +20,12 @@ class MatchBarcodes extends Component {
     customer: "",
     barcodesArray: "",
     taxAmt: "",
-    customer_id: "",
+    customer: "",
     order: "",
     missingItmCharges: "",
     customerOwe: "",
     insuranceAmt: "",
+    orderNumber:"",
     leaveID: "",
     returnAmt: "",
     totalPaid: "",
@@ -33,27 +33,31 @@ class MatchBarcodes extends Component {
     product_Array: "",
     m_product: "",
     m_productarray: "",
-    m_total: ""
+    m_total: "",
+
+    generateInvoice:true,
+
   };
 
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
+    this.customerOwe();
+    this.returnAmt();
   };
 
   async componentDidMount() {
-    const { order } = this.props;
     const { data } = this.props.location
     if (data) {
       this.setState({
-        customer_id: data.customer,
+        customer: data.customer,
         order: data.order,
         insuranceAmt: data.order[0].insuranceAmt,
         barcodesArray: data.barcodesArray,
         taxAmt: data.order[0].taxAmt,
         totalPaid: data.order[0].total,
+        leaveID: data.order[0].leaveID
       });
     }
-    await this.props.getCustomer(this.state.customer_id);
 
   }
 
@@ -121,7 +125,7 @@ class MatchBarcodes extends Component {
     if (m_total > insuranceAmt) {
       customerOwe = Number(m_total) - Number(insuranceAmt)
     }
-    else if (insuranceAmt >=m_total ) {
+    else if (insuranceAmt >= m_total) {
       customerOwe = Number(insuranceAmt) - Number(m_total)
     }
     return customerOwe;
@@ -146,7 +150,6 @@ class MatchBarcodes extends Component {
   }
   productBox = () => {
     let productarray = [];
-    let { order } = this.props.location.data;
     let { barcodesArray } = this.state;
     const { products } = this.props;
     if (products && barcodesArray) {
@@ -154,7 +157,7 @@ class MatchBarcodes extends Component {
       if (sortedAray) {
         barcodesArray.forEach((element) => {
           productarray.push(
-            sortedAray.filter((f) => f.barcode == element.barcode)
+            sortedAray.filter((f) => f.barcode.toString() === element.barcode)
           );
           return productarray;
         });
@@ -198,11 +201,11 @@ class MatchBarcodes extends Component {
     ))
   }
 
+  
 
   missingProducts = () => {
     let m_productarray = [];
     let { products } = this.props;
-    let { order } = this.props.location.data;
     let { orderedBarcode } = this.props.location.data;
     let { barcodesArray } = this.state;
     let m_product = [];
@@ -217,7 +220,7 @@ class MatchBarcodes extends Component {
       if (sortedAray) {
         m_product.forEach((element) => {
           m_productarray.push(
-            sortedAray.filter((f) => f.barcode == element)
+            sortedAray.filter((f) => f.barcode.toString() === element)
           );
           return m_productarray;
         });
@@ -226,27 +229,27 @@ class MatchBarcodes extends Component {
     this.state.m_productarray = m_productarray;
     return this.state.m_productarray.map((m_product, m_product_index) => (
       <>
-          <div id="sizes_box" key={m_product_index}>
+        <div id="sizes_box" key={m_product_index}>
           <div className="row" >
 
             <div style={{ float: "left", width: "90%" }} >
-            <table className="table table-bordered table-light" style={{ "borderWidth": "1px", 'borderColor': "#aaaaaa", 'borderStyle': 'solid' }}>
-              <thead></thead>
-              <tbody>
-                <tr key={m_product_index} style={{ "margin": "3px" }}>
-                  <td className="text-center">{m_product[0].barcode}</td>
-                  <td className="text-center">{m_product[0].title}</td>
-                  <td className="text-center">{m_product[0].color}</td>
-                  <td className="text-center">{m_product[0].price}</td>
+              <table className="table table-bordered table-light" style={{ "borderWidth": "1px", 'borderColor': "#aaaaaa", 'borderStyle': 'solid' }}>
+                <thead></thead>
+                <tbody>
+                  <tr key={m_product_index} style={{ "margin": "3px" }}>
+                    <td className="text-center">{m_product[0].barcode}</td>
+                    <td className="text-center">{m_product[0].title}</td>
+                    <td className="text-center">{m_product[0].color}</td>
+                    <td className="text-center">{m_product[0].price}</td>
 
-                </tr>
-              </tbody>
-            </table>
-            <br />
+                  </tr>
+                </tbody>
+              </table>
+              <br />
 
-          </div>
-          
-          <div className="right ml-3">
+            </div>
+
+            <div className="right ml-3">
               <button
                 type="button"
                 className="btn btn-raised btn-sm btn-icon btn-danger mt-2"
@@ -255,9 +258,9 @@ class MatchBarcodes extends Component {
               </button>
             </div>
             <br />
-          
+
           </div>
-          
+
 
         </div>
 
@@ -269,22 +272,13 @@ class MatchBarcodes extends Component {
     const { product_Array } = this.state
     return product_Array.map((b, b_index) => (
       <>
-        <div key={b_index} >
-          <div className="" style={{ 'alignContent': 'center' }} >
+        <tr key={b_index} >
+          <td className="text-center">{b[0].barcode} </td>
+          <td className="text-center">{b[0].title}</td>
+          <td className="text-center">{b[0].color} </td>
+          <td className="text-center">{b[0].price} </td>
 
-            <table className="table table-bordered table-light" style={{ "borderWidth": "1px", 'borderColor': "#aaaaaa", 'borderStyle': 'solid' }}>
-              <thead></thead>
-              <tbody><tr key={b_index} >
-                <td className="text-center">{b[0].barcode} </td>
-                <td className="text-center">{b[0].title}</td>
-                <td className="text-center">{b[0].color} </td>
-                <td className="text-center">{b[0].price} </td>
-
-              </tr></tbody>
-            </table>
-
-          </div>
-        </div>
+        </tr>
 
       </>
     ))
@@ -295,73 +289,62 @@ class MatchBarcodes extends Component {
     const { m_productarray } = this.state
     return m_productarray.map((b, b_index) => (
       <>
-        <div  key={b_index} >
-          <div style={{ 'alignContent': 'center' }} >
+        <tr key={b_index} >
+          <td className="text-center">{b[0].barcode} </td>
+          <td className="text-center">{b[0].title}</td>
+          <td className="text-center">{b[0].color} </td>
+          <td className="text-center">{b[0].price} </td>
 
-            <table className="table table-bordered table-light" style={{ "borderWidth": "1px", 'borderColor': "#aaaaaa", 'borderStyle': 'solid' }}>
-              <thead></thead>
-              <tbody><tr key={b_index} >
-                <td className="text-center">{b[0].barcode} </td>
-                <td className="text-center">{b[0].title}</td>
-                <td className="text-center">{b[0].color} </td>
-                <td className="text-center">{b[0].price} </td>
-
-              </tr></tbody>
-            </table>
-
-          </div>
-        </div>
-
+        </tr>
       </>
     ))
   }
 
   onSubmit = async (e) => {
     e.preventDefault();
-    this.setState({ saving: true });
-
     const state = { ...this.state };
     const { user } = this.props.auth;
-    const { customer } = this.props;
     const { order } = this.props.location.data;
-    const orderBarcode = shortid.generate();
-    this.setState({
-      orderBarcode: orderBarcode
+    this.setState({ saving: true, generateInvoice:true,orderNumber:order[0].orderNumber  });
 
-    })
-    if (order) {
+
+    if(state.generateInvoice=== true){
+    if (order && state.orderNumber) {
       const invoiceReturn = {
         order_id: order[0]._id,
-        customer_id: order[0].customer,
+        customer: order[0].customer,
         user_id: user._id,
         type: "Return-Invoice",
-        orderBarcode: state.orderBarcode
+        orderBarcode:state.orderNumber
+
       }
       await this.props.addNewInvoice(invoiceReturn);
-      this.printBarcode(orderBarcode)
 
     }
+    this.printBarcode(state.orderNumber)
 
+  }
     let { product_Array } = this.state;
 
     if (product_Array) {
       let products = [];
-      let counter = 1;
+      // let counter = 1;
 
       product_Array.forEach(async (pd, p_index) => {
         await this.props.getProductById(pd[0].product_id); // <-- Error is here this should give updated product in every loop
 
         let { product } = this.props;
-        counter++;
+        // counter++;
         // console.log('got from db', product);
         if (product) {
           product.color.forEach((color, c_index) => {
+
             // get right color obj
-            if (color._id == pd[0].color_id) {
+            if (color._id === pd[0].color_id) {
               // get right size obj
               if (color.sizes) {
                 color.sizes.forEach((size, s_index) => {
-                  if (size.id == pd[0].size_id) {
+                  if (size.id === pd[0].size_id) {
                     // check if current size obj contain barcodes or not
                     if (size.barcodes) {
                       // Add isRented
@@ -377,17 +360,29 @@ class MatchBarcodes extends Component {
           product = null;
 
         }
+      
+    
+
         const rentedProduct = {
           status: "Completed",
-          // orderBarcode: this.generateOrderBarcode(order[0]._id)
         }
         this.props.updateRentedProduct(rentedProduct, order[0]._id)
       });
 
     }
-    this.setState({ saving: false });
+    this.printInvoice()
+    this.setState({ saving: false , orderNumber:""});
 
   };
+  printInvoice = () => {
+    var css = '<link rel="stylesheet"  href="%PUBLIC_URL%/assets/css/app.css"/>'
+    var printDiv = document.getElementById('invoiceDiv').innerHTML
+
+    let newWindow = window.open("", '_blank', 'location=yes,height=570,width=720,scrollbars=yes,status=yes');
+    newWindow.document.body.innerHTML = css + printDiv
+    newWindow.window.print();
+    newWindow.document.close();
+  }
   printBarcode = (barcode) => {
     return JsBarcode("#barcode", barcode, {
       width: 1.5,
@@ -401,13 +396,21 @@ class MatchBarcodes extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
+        if (this.props.location.data === undefined) {
+        return <Redirect to="/returnproduct" />;
+
+    }
 
     const { customer } = this.props;
     const { data } = this.props.location;
-    if (this.props.location.data == undefined) {
+    const { user } = this.props.auth;
+    if (this.props.saved === true) {
       return <Redirect to="/returnproduct" />;
 
     }
+
+    
+   
     const { order } = data;
 
     const { barcodesArray } = data
@@ -445,7 +448,7 @@ class MatchBarcodes extends Component {
                               <div className="form-group">
                                 <div style={{ 'float': 'left' }}>
 
-                                  <h3>{(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}</h3>
+                                  <h3>{(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}</h3>
                                   <br />
                                 </div>
                                 <div style={{ 'float': 'right' }}>
@@ -464,10 +467,10 @@ class MatchBarcodes extends Component {
                                 <div id="sizes_box">
                                   {this.productBox()}
                                   <br />
-                                  {barcodesArray.length != order[0].barcodes.length ?
+                                  {barcodesArray.length !== order[0].barcodes.length ?
                                     <h3>Missing Products</h3>
                                     : ""}
-                                  {barcodesArray.length != order[0].barcodes.length ?
+                                  {barcodesArray.length !== order[0].barcodes.length ?
                                     this.missingProducts()
                                     : ""}
                                   <div className="row">
@@ -485,7 +488,7 @@ class MatchBarcodes extends Component {
                                             placeholder="Total"
                                             id="setSizeFloat"
                                             required
-                                            value={!!this.state.m_productarray.length ? this.getMissingItemTotal() : "0"}
+                                            value={!!this.state.m_productarray.length ? this.getMissingItemTotal() : this.state.missingItmCharges}
                                             onChange={(e) => this.handleChange(e)}
                                           />
                                         </div>  </div>
@@ -510,7 +513,7 @@ to customer</h4>
                                             placeholder="Total"
                                             id="setSizeFloat"
                                             readOnly
-                                            value={this.state.order[0] ? this.state.order[0].insuranceAmt:""}
+                                            value={this.state.order[0] ? this.state.order[0].insuranceAmt : ""}
                                             onChange={(e) => this.handleChange(e)}
 
 
@@ -537,7 +540,6 @@ to customer</h4>
                                             className="form-control mm-input s-input text-center"
                                             placeholder="Total"
                                             id="setSizeFloat"
-                                            value={customerOwe}
                                             required
                                             value={(insuranceAmt) ? `${this.customerOwe()}` : "0"}
                                             onChange={(e) => this.handleChange(e)}
@@ -582,10 +584,10 @@ to customer</h4>
                                           <div style={{ 'float': 'left' }}>
 
                                           </div>
-                                          <div style={{ 'float': 'right', 'paddingRight': '170px' }}>
+                                          <div style={{ 'float': 'center', 'paddingRight': '170px' }}>
 
 
-                                            <h4>{order[0].leaveID == true ? `${"Customer left ID. Please return ID to customer."}` : `${"No ID"}`}</h4> </div>
+                                            <h4>{order[0].leaveID === true ? `${"Customer left ID. Please return ID to customer."}` : `${"No ID"}`}</h4> </div>
                                         </div>
                                       </div>
                                     </div>
@@ -600,9 +602,9 @@ to customer</h4>
                                               type="submit"
                                               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
                                               id="btnSize2"
-                                              data-toggle="modal"
-                                              data-backdrop="false"
-                                              data-target="#primary"
+                                            // data-toggle="modal"
+                                            // data-backdrop="false"
+                                            // data-target="#primary"
                                             ><i className="ft-check"></i> Submit &amp; Generate Invoice	</button>
                                           </div>
                                         </div>
@@ -637,7 +639,7 @@ to customer</h4>
 
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
 
           </div>
@@ -656,14 +658,14 @@ to customer</h4>
                   <div id="colors_box">
                     <div className="row color-row">
                       <div className="col-md-12">
-                          <div className="text-center">
+                        <div className="text-center">
 
-                            <h4>{(customer) ? `${customer[0].name}${"#"}${customer[0].contactnumber}` : ""}</h4>
-                          </div>
-                          <div className="text-center">
-                            <h4>{(data) ? `${"Order"}${"#"} ${order[0].orderNumber}` : ""}</h4>
+                          <h4>{(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}</h4>
+                        </div>
+                        <div className="text-center">
+                          <h4>{(data) ? `${"Order"}${"#"} ${order[0].orderNumber}` : ""}</h4>
 
-                          </div>
+                        </div>
                       </div>
                       <div className="col-md-12">
                         <div >
@@ -699,7 +701,8 @@ to customer</h4>
                                   style={{ 'color': 'black' }}
 
                                   id="setSizeFloat"
-                                  value={`${"PAID TOTAL: $"}${this.state.insuranceAmt}`}
+
+                                  value={`${"PAID TOTAL: $"}${this.state.totalPaid}`}
 
                                 />
 
@@ -714,12 +717,11 @@ to customer</h4>
                               <h6 >Lost Items Charge
 </h6></div>
 
-                            <div className="col-md-6" style={{'float': 'right', 'color': 'black' }}>
+                            <div className="col-md-6" style={{ 'float': 'right', 'color': 'black' }}>
 
 
 
                               <h6 >
-                                {this.state.m_total}
                               </h6>
 
                             </div>
@@ -770,7 +772,7 @@ to customer</h4>
                             </div>
                             <div style={{ 'float': 'right', 'color': 'black', 'marginLeft': '25px' }}>
                               <h6>
-                                {moment(this.state.rentDate).format('DD/MMM/YYYY')}
+                                {moment(this.state.rentDate).format('DD-MM-YYYY')}
 
                               </h6>
                             </div>
@@ -788,13 +790,13 @@ to customer</h4>
                             <div style={{ 'float': 'right', 'color': 'black', 'marginLeft': '25px' }}>
                               <h6 >
 
-                                {moment(this.state.returnDate).format('DD/MMM/YYYY')}
+                                {moment(this.state.returnDate).format('DD-MM-YYYY')}
                               </h6>
                             </div>
 
 
                           </div>
-<br />
+                          <br />
 
                           <div className="container">
                             <div class="row justify-content-md-center">
@@ -827,7 +829,7 @@ to customer</h4>
 
                                 </td>
                                 <td style={{ 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}> Authorized by <br />
-                                                        Sutygon-Bot</td>
+                          {user.username}</td>
                               </tr>
                             </table>
 
@@ -858,7 +860,7 @@ to customer</h4>
                           <br />
                           <div className="row">
                             <p>For questions and contact information please check out
-                                              <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a></p>
+                                              <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">www.sutygon-bot.com</a></p>
                           </div>
 
 
@@ -875,7 +877,117 @@ to customer</h4>
 
             </div>
           </div>
+
+          {/* pdf invoice  */}
+
+          <div id="invoiceDiv" style={{ 'width': '100%', 'display': 'none' }}>
+            <h1 style={{ 'text-align': 'center' }}>
+              {(customer) ? `${customer.name}${"#"}${customer.contactnumber}` : ""}            </h1>
+            <h1 style={{ 'text-align': 'center' }}>
+              {(data) ? `${"Order"}${"#"} ${order[0].orderNumber}` : ""}            </h1>
+
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>
+              <tbody>
+                {this.invoiceproductBox()}
+              </tbody>
+            </table>
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead><tbody>
+              {!!this.state.m_productarray.length ?
+
+                <h5>Missing Products</h5> : ""}
+
+              {!!this.state.m_productarray.length ?
+
+                this.m_invoiceproductBox() : ""}
+            </tbody>
+            </table>
+            <hr />
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>
+              <tbody>
+                <tr>
+                  <td style={{ 'width': '90%' }} >Insurance amount</td>
+                  <td>
+                    {this.state.insuranceAmt}
+                  </td>
+                </tr>
+
+                <tr>
+                  <tr><h4 style={{ 'text-align': 'center' }}>{`${"PAID TOTAL: "}${this.state.totalPaid}`}</h4>
+                  </tr>
+                </tr>
+                <tr>
+                  <td>Lost Items Charge</td>
+                  <td>
+                  {this.state.m_total && this.state.m_total }                 </td>
+                </tr>
+                <tr>
+                  <td>Amount Return to customer</td>
+                  <td>
+                    {(insuranceAmt) ? this.returnAmt() : "0"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+
+            <table style={{ 'width': '100%' }} cellpadding="10"><thead></thead>
+              <tbody>
+                <tr style={{textAlign:"center"}}>
+                  <td>
+                    {this.state.leaveID === true ? `${"Customer left ID. Please return IDto customer"}` : `${"No ID"}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Rent From</td>
+                  <td>
+                    {moment(this.state.rentDate).format('DD/MMM/YYYY')}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Return Date</td>
+                  <td>
+                    {moment(this.state.returnDate).format('DD/MMM/YYYY')}
+                  </td>
+                </tr>
+                <tr><h4 style={{ 'text-align': 'center' }}>{`${"FINAL INVOICE TOTAL: "}${this.finalInVoiceTotal()}`}</h4></tr>
+
+              </tbody>
+            </table>
+
+            <table style={{ 'width': '100%' }}><thead></thead>
+              <tbody>
+                <tr>
+                  <td className="col-md-6" style={{ 'backgroundColor': 'white', 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}>
+                    <svg id="barcode"></svg>
+                  </td>
+                  <td className="col-md-6" style={{ 'textAlign': 'center', 'padding': '8px', 'width': '50%' }}>
+                    Authorized by <br />
+                                     Sutygon-Bot</td>
+                </tr>
+                <tr><h4 style={{ 'text-align': 'center' }}>{`${"ORDER COMPLETED"}`}</h4></tr>
+
+              </tbody>
+            </table>
+            <br />
+            <br />
+            <br />
+            <br />
+
+            <table style={{ "width": "100%" }}><thead></thead>
+              <tbody>
+                <tr>
+                  <td style={{ 'text-align': 'center' }}>For questions and information please contact out www.sutygon-bot.com</td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <br />
+
+          </div>
+
+
         </div>
+
 
 
       </React.Fragment>
@@ -897,6 +1009,8 @@ MatchBarcodes.propTypes = {
   customer: PropTypes.array,
   addNewInvoice: PropTypes.func.isRequired,
   auth: PropTypes.object,
+  generateInvoice: PropTypes.bool,
+
 };
 
 const mapStateToProps = (state) => ({
@@ -904,6 +1018,9 @@ const mapStateToProps = (state) => ({
   product: state.product.product,
   customer: state.customer.customer,
   auth: state.auth,
+  saved: state.product.saved,
+  generateInvoice: state.product.generateReturnInvoice,
+
 
 });
 export default connect(mapStateToProps, {

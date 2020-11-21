@@ -11,7 +11,7 @@ class View extends Component {
     async componentDidMount() {
         if (this.props.match.params.id) {
             const id = this.props.match.params.id;
-            let res = await this.props.getUser(id);
+            await this.props.getUser(id);
 
         }
     }
@@ -49,7 +49,7 @@ class View extends Component {
                                                 <div className="form-group col-md-6 mb-2 text-center">
                                                     {user ?
                                                         <>
-                                                            <img
+                                                            <img alt={"User"}
                                                                 id="projectinput8"
                                                                 src={`${user.avatar}`}
                                                                 height={290} width={250}
@@ -138,7 +138,7 @@ class View extends Component {
                         </div>
                         <footer className="footer footer-static footer-light">
                             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                            <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
                         </footer>
                     </div>
                 </div>

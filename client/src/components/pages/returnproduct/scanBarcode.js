@@ -10,12 +10,11 @@ import Loader from "../../layout/Loader";
 import { getCustomer } from "../../../actions/customer";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts';
-import { barcodeUpdateProduct } from "../../../actions/product";
 
 class ScanBarcode extends Component {
   state = {
     barcode: [],
-    customer_id: "",
+    customer: "",
     order: "",
     barcodeFromInput: "",
     matchedBarcodes: []
@@ -25,13 +24,12 @@ class ScanBarcode extends Component {
     const { data } = this.props.location;
     if (data) {
       this.setState({
-        customer_id: data.customer,
+        customer: data.customer,
         barcode: data.order[0].barcodes,
         order: data.order
       });
-    }
 
-    await this.props.getCustomer(this.state.customer_id);
+    }
   }
 
   addBarcodeRow = () => {
@@ -49,7 +47,6 @@ class ScanBarcode extends Component {
   onScanBarcode = (e) => {
 
     e.preventDefault();
-    const bc = e.target[0].value;
     e.target[0].value = '';
     const { barcode } = this.state;
     let { barcodeFromInput } = this.state;
@@ -69,7 +66,7 @@ class ScanBarcode extends Component {
     }
 
     let isMatch = barcode.includes(barcodeFromInput)
-    if (isMatch == true) {
+    if (isMatch === true) {
       matchedBarcodes.push({
         barcode: barcodeFromInput,
       });
@@ -91,22 +88,7 @@ class ScanBarcode extends Component {
     this.setState({ barcode });
   };
 
-  handleChange = (e, barcode_id = "") => {
-    let name = e.target.name;
-    let value = e.target.value;
-    let { barcode } = this.state;
-
-    let barcode_obj = barcode.filter((barcode) => barcode.id == barcode_id)[0];
-    const barcodeIndex = barcode.findIndex(
-      (barcode) => barcode.id == barcode_id
-    );
-    barcode_obj[name] = value;
-    barcode[barcodeIndex] = barcode_obj;
-
-    this.setState({ barcode });
-  };
-
-  getBarcodeRow = () => {
+   getBarcodeRow = () => {
     let { matchedBarcodes } = this.state; // get all barcode
     if (matchedBarcodes) {
       return matchedBarcodes.map((barcode) => (
@@ -142,15 +124,14 @@ class ScanBarcode extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    const { data } = this.props.location;
-    if (this.props.location.data == undefined) {
-      return <Redirect to="/returnproduct" />;
+    if (this.props.location.data === undefined) {
+       return <Redirect to="/returnproduct" />;
 
     }
     if (this.props.saved) {
       return <Redirect to="/orders" />;
     }
-    const { customer } = this.props;
+    const { customer } = this.state;
     return (
       <React.Fragment>
         <Loader />
@@ -180,8 +161,8 @@ class ScanBarcode extends Component {
                                 <div className="col-md-12">
                                   <div className="form-group">
                                     <h3>
-                                      {customer && customer[0].name}{" "}
-                                      {`${"#"}${customer && customer[0].contactnumber
+                                      {customer && customer.name}{" "}
+                                      {`${"#"}${customer && customer.contactnumber
                                         }`}
                                     </h3>
                                   </div>
@@ -213,7 +194,7 @@ class ScanBarcode extends Component {
                                             to={{
                                               pathname: "/matchbarcodes",
                                               data: {
-                                                customer: this.props.customer[0]._id,
+                                                // customer: this.props.customer[0]._id,
                                                 barcodesArray: this.state.matchedBarcodes,
                                                 order: this.state.order,
                                                 orderedBarcode: this.state.barcode,
@@ -254,7 +235,7 @@ class ScanBarcode extends Component {
             </div>
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
         </div>
@@ -267,6 +248,7 @@ class ScanBarcode extends Component {
 ScanBarcode.propTypes = {
   auth: PropTypes.object,
   customer: PropTypes.array,
+  getCustomer:PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({

@@ -1,6 +1,8 @@
 {
-    "mongoURI": "mongodb+srv://admin-calum:QPE9xzsiYfExnWy4@sutygon.aqp0q.mongodb.net/main?retryWrites=true&w=majority",
-    "ourMongoURI": "mongodb://default:j0HK4oADVK2VH9n1@cluster0-shard-00-00.b2se9.mongodb.net:27017,cluster0-shard-00-01.b2se9.mongodb.net:27017,cluster0-shard-00-02.b2se9.mongodb.net:27017/main?ssl=true&replicaSet=atlas-lshxba-shard-0&authSource=admin&retryWrites=true&w=majority",
-    "jwtSecret": "sutygon-bot^#@#$"
-  }
-  
+  "mongoURI": "mongodb+srv://admin-calum:QPE9xzsiYfExnWy4@sutygon.aqp0q.mongodb.net/main?retryWrites=true&w=majority",
+  "ourMongoURI": "mongodb://default:j0HK4oADVK2VH9n1@cluster0-shard-00-00.b2se9.mongodb.net:27017,cluster0-shard-00-01.b2se9.mongodb.net:27017,cluster0-shard-00-02.b2se9.mongodb.net:27017/main?ssl=true&replicaSet=atlas-lshxba-shard-0&authSource=admin&retryWrites=true&w=majority",
+  "jwtSecret": "sutygon-bot^#@#$",
+  "cloud_name": "hiqtaqcaf",
+  "api_key": "472617698116631",
+  "api_secret": "s5RMcbDwdeirTPQIN0UQX4fcZc0"
+}

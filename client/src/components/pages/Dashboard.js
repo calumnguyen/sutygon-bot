@@ -37,7 +37,6 @@ class Dashboard extends Component {
     }
   }
   getOverDueOrder = () => {
-    // e.preventDefault()
     const { rentedproducts } = this.props
     if (rentedproducts) {
       var currentdate = moment(new Date()).format('MM/DD/YYYY')
@@ -98,9 +97,11 @@ class Dashboard extends Component {
   }
 
   render() {
+
     const { shop } = this.props
     const { user } = this.props.auth
-    if (user && user.type == 'User') {
+    if (user && user.type === "User") {
+
       if (shop) {
         let openShop = shop[0]
         if (openShop && openShop.status === 'off') {
@@ -280,7 +281,7 @@ class Dashboard extends Component {
                                 <h2>
                                   Cửa Hàng Đã{' '}
                                   {this.props.shop[0] &&
-                                    (this.props.shop[0].status == 'on'
+                                    (this.props.shop[0].status === 'on'
                                       ? 'Mở Cửa'
                                       : 'Đóng Cửa')}{' '}
                                   lúc
@@ -307,7 +308,7 @@ class Dashboard extends Component {
                                 <h3 className='mt-1'>Trạng thái</h3>
                                 <p className='badge badge-pill badge-light'>
                                   {this.props.shop[0] &&
-                                    (this.props.shop[0].status == 'on'
+                                    (this.props.shop[0].status === 'on'
                                       ? 'Mở Cửa'
                                       : 'Đóng Cửa')}
                                 </p>
@@ -315,7 +316,7 @@ class Dashboard extends Component {
                               <div className='col-md-2'>
                                 <h3 className='mt-1'>Hành động</h3>
                                 {this.props.shop[0] &&
-                                  (this.props.shop[0].status == 'on' ? (
+                                  (this.props.shop[0].status === 'on' ? (
                                     <button
                                       type='button'
                                       onClick={() =>
@@ -326,16 +327,16 @@ class Dashboard extends Component {
                                       Đóng Cửa
                                     </button>
                                   ) : (
-                                    <button
-                                      type='button'
-                                      onClick={() =>
-                                        this.changeShopStatus('on')
-                                      }
-                                      className='btn btn-link'
-                                    >
-                                      Mở Cửa
-                                    </button>
-                                  ))}
+                                      <button
+                                        type='button'
+                                        onClick={() =>
+                                          this.changeShopStatus('on')
+                                        }
+                                        className='btn btn-link'
+                                      >
+                                        Mở Cửa
+                                      </button>
+                                    ))}
                               </div>
                             </div>
                           </div>
@@ -344,8 +345,8 @@ class Dashboard extends Component {
                     </div>
                   </>
                 ) : (
-                  ' '
-                )}
+                    ' '
+                  )}
               </div>
             </div>
 
@@ -357,6 +358,7 @@ class Dashboard extends Component {
                     href='https://www.sutygon.com'
                     id='pixinventLink'
                     target='_blank'
+                    rel="noopener noreferrer"
                     className='text-bold-800 primary darken-2'
                   >
                     SUTYGON-BOT{' '}

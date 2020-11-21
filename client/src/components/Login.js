@@ -37,16 +37,16 @@ class Login extends Component {
     const { shop } = this.props;
     const { user } = this.props.auth;
 
-    if (user && user.type == "Employee") {
+    if (user && user.type === "Employee") {
       if (shop) {
         let openShop = shop[0]
         if (openShop) {
           if (this.props.AuthLoading === false && this.props.isAuthenticated) {
-            if (openShop.status == "on") {
+            if (openShop.status === "on") {
               return <Redirect to="/dashboard" />;
             }
 
-            else if (openShop.status == "off") {
+            else if (openShop.status === "off") {
               // setAlert("Shop is closed", "danger", 5000);
             }
           }
@@ -68,7 +68,7 @@ class Login extends Component {
     // };
     // }
 
-    if (user && user.type == "Admin") {
+    if (user && user.type === "Admin") {
       if (this.props.AuthLoading === false && this.props.isAuthenticated) {
         return <Redirect to="/dashboard" />;
       }
@@ -97,7 +97,9 @@ class Login extends Component {
                               </div>
                               <div className="col-lg-6 col-md-12 bg-white px-4 pt-3">
                                 <div className="logo-img text-center align-middle">
-                                  <img src="assets/img/logos/logo.png" height={100} width={100} />
+                                  <img 
+                                  alt={"Sutygon-bot"}
+                                  src="assets/img/logos/logo.png" height={100} width={100} />
                                 </div>
                                 <h4 className="mb-2 card-title text-center align-middle" style={{}}>Đăng Nhập</h4>
                                 <p className="card-text mb-3 text-center align-middle">

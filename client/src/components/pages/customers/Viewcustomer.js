@@ -40,7 +40,6 @@ class ViewCustomer extends Component {
           <td className="text-center">{customer.contactnumber}</td>
           <td className="text-center">{customer.email}</td>
           <td className="text-center">{customer.address}</td>
-          <td className="text-center">{customer.noOfOrders}</td>
           <td className="text-center">
             <Link to="/customer"
               onClick={() => this.onDelete(customer._id)}
@@ -118,7 +117,6 @@ class ViewCustomer extends Component {
                                   <th>SĐT</th>
                                   <th>Địa Chỉ</th>
                                   <th>Email</th>
-                                  <th>No of Orders</th>
                                   <th>Actions</th>
                                 </tr>
                               </thead>
@@ -134,7 +132,7 @@ class ViewCustomer extends Component {
             </div>
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
           </div>
         </div>

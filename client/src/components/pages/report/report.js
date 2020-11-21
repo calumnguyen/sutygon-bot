@@ -10,11 +10,6 @@ import { getAllUsers } from "../../../actions/user";
 import { getAllCustomers } from "../../../actions/customer";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
-// import jsPDF from 'jspdf';
-// import html2canvas from 'html2canvas';
-
-
-
 
 class Report extends Component {
     state = {
@@ -55,71 +50,6 @@ class Report extends Component {
         await this.props.getReport(report);
         this.setState({ saving: false });
     };
-
-
-
-    // handlePdf = () => {
-    //     const input = document.getElementById('page');
-
-        // html2canvas(input)
-        //     .then((canvas) => {
-        //         const imgData = canvas.toDataURL('image/png');
-        //         const pdf = new jsPDF('p', 'px', 'a4');
-        //         var width = pdf.internal.pageSize.getWidth();
-        //         var height = pdf.internal.pageSize.getHeight();
-
-        //         pdf.addImage(imgData, 'JPEG', 0, 0, width, height);
-        //         pdf.save("download.pdf");
-        //     });
-    // };
-
-    // getTAble = () => {
-    //     const { reports } = this.props.report;
-    //     const { user } = this.props.auth;
-
-    //     console.log("tableReport", reports)
-    //     let tbl_sno = 1;
-    //     if (reports) {
-    //         if (reports.length === 0) {
-    //             return (
-    //                 <tr>
-    //                     <td colSpan={6} className="text-center">
-    //                         No Report Found
-    //         </td>
-    //                 </tr>
-    //             );
-    //         }
-    //         return reports.map((record, i) => (
-    //             <tr key={i}>
-
-    //                 <td className="text-center text-muted">{tbl_sno++}</td>
-    //                 <td className="text-center">{""}</td>
-    //                 <td className="text-center">{record.orderNumber}</td>
-    //                 {/* <td className="text-center">{record.status}</td> */}
-
-    //                 <td className="text-center">{record.customer.name}</td>
-    //                 <td className="text-center">{record.product.name}</td>
-    //                 <td className="text-center">{user.username}</td>
-    //                 {/* <td className="text-center">{new Date(record.deliveryDate).toLocaleDateString()}</td> */}
-    //                 <td className="text-center">{record.deliveryDate}</td>
-
-    //                 <td className="text-center">
-    //                     <Link
-    //                         to={{
-    //                             pathname: "/report",
-    //                             data: record // your data array of objects
-    //                         }}
-    //                         onClick={() => this.handlePdf()}
-    //                         className="danger p-0">
-    //                         <i className="icon-printer font-medium-3 mr-2"></i>
-    //                     </Link>
-    //                 </td>
-
-    //             </tr>
-
-    //         ));
-    //     }
-    // };
 
     render() {
         const { auth } = this.props;
@@ -329,7 +259,7 @@ class Report extends Component {
 
                     <footer className="footer footer-static footer-light">
                             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+                            <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
                         </footer>
 
 
@@ -343,7 +273,6 @@ class Report extends Component {
 
 Report.propTypes = {
     saved: PropTypes.bool,
-    //   addNewRentProduct: PropTypes.func.isRequired,
     getAllCustomers: PropTypes.func.isRequired,
     getAllUsers: PropTypes.func.isRequired,
     auth: PropTypes.object,

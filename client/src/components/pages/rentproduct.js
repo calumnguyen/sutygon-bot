@@ -8,7 +8,6 @@ import { getCustomer } from "../../actions/rentproduct";
 import { Link } from "react-router-dom";
 import Loader from "../layout/Loader";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
 
 
 class RentProduct extends Component {
@@ -88,7 +87,7 @@ class RentProduct extends Component {
                 <Link
                   to={{
                     pathname: "/checkout",
-                    data:(!!this.props.customer.length) ? this.props.customer[0].id :"",
+                    data:(!!this.props.customer.length) ? this.props.customer[0]._id :"",
                   }}
                   type="button"
                   className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
@@ -259,8 +258,8 @@ class RentProduct extends Component {
                               </div>
                             </div>
 
-                            {this.state.showCustomerBox == true ? this.CutomerBox() : ""}
-                            {this.state.showErrorBox == true ? this.NoCustomerBox() : ""}
+                            {this.state.showCustomerBox === true ? this.CutomerBox() : ""}
+                            {this.state.showErrorBox === true ? this.NoCustomerBox() : ""}
 
 
 
@@ -282,7 +281,7 @@ class RentProduct extends Component {
             </div>
             <footer className="footer footer-static footer-light">
               <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
             </footer>
 
           </div>

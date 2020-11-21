@@ -44,6 +44,7 @@ class ViewUser extends Component {
       }
       return users.map((user) => (
         <tr key={user._id}>
+<<<<<<< HEAD
           <td className='text-center text-muted'>{tbl_sno++}</td>
           <td className='text-center'>
             <img
@@ -52,6 +53,11 @@ class ViewUser extends Component {
               alt='Profile Picture'
               height={75}
             />
+=======
+          <td className="text-center text-muted">{tbl_sno++}</td>
+          <td className="text-center">
+            <img className="media-object round-media" src={`${user.avatar}`} alt="Profile" height={75} />
+>>>>>>> ee0b4e0f5af31caea5fd408b0d20909188849950
           </td>
 
           <td className='text-center'>{user.username}</td>
@@ -195,6 +201,7 @@ class ViewUser extends Component {
                         <div className='card-header'>
                           <h4 className='card-title'>All Users</h4>
                         </div>
+<<<<<<< HEAD
                         <div className='card-content'>
                           <div className='card-body'>
                             <div className='row'>
@@ -205,6 +212,14 @@ class ViewUser extends Component {
                                   name='search'
                                   onChange={(e) => this.handleChange(e)}
                                 />
+=======
+                        <div className="card-content">
+                          <div className="card-body">
+                            <div className="row">
+                              <div className="col-md-4"><input type="text" className="form-control" name="search" onChange={(e) => this.handleChange(e)} /></div>
+                              <div className="col-md-4">
+                                <a className="btn btn-success" href="" onClick={() => this.searchTable()}><i className="fa fa-search"></i> Search </a>
+>>>>>>> ee0b4e0f5af31caea5fd408b0d20909188849950
                               </div>
                               <div className='col-md-4'>
                                 <a
@@ -267,7 +282,7 @@ class ViewUser extends Component {
                                   <th className='text-center'>Actions</th>
                                 </tr>
                               </thead>
-                              <tbody> {this.getTAble()}</tbody>
+                              <tbody>{this.getTAble()}</tbody>
                             </table>
                           </div>
                         </div>
@@ -278,6 +293,7 @@ class ViewUser extends Component {
               </div>
             </div>
           </div>
+<<<<<<< HEAD
           <footer className='footer footer-static footer-light'>
             <p className='clearfix text-muted text-sm-center px-2'>
               <span>
@@ -293,6 +309,11 @@ class ViewUser extends Component {
                 , All rights reserved.{' '}
               </span>
             </p>
+=======
+          <footer className="footer footer-static footer-light">
+            <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
+            <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+>>>>>>> ee0b4e0f5af31caea5fd408b0d20909188849950
           </footer>
         </div>
       </React.Fragment>

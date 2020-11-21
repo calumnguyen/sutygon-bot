@@ -2,7 +2,8 @@ import {
     GET_RETURNPRODUCT,
     RETURNPRODUCT_ERROR,
     RETURNPRODUCT_LOADING,
-    GET_RETURNORDER
+    GET_RETURNORDER,
+    EMPTY_RETURN_ORDER,
     
 } from "../actions/types";
 const initialState = {
@@ -10,7 +11,9 @@ const initialState = {
     returnorder: null,
     loading: false,
     saved: false,
+    generateInvoice:false,
     error: {},
+
 };
 
 export default function (state = initialState, action) {
@@ -44,6 +47,11 @@ export default function (state = initialState, action) {
                 error: payload,
                 loading: false,
             };
+        case EMPTY_RETURN_ORDER:
+            return {
+                ...state,
+                returnorder: null
+            }
 
         default:
             return state;
