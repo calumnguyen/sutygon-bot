@@ -22,4 +22,12 @@ const monthly = (date = moment()) => {
   return moment(date).endOf('month').startOf('isoweek')
 }
 
-module.exports = { weekly, biWeekly, monthly }
+function datePrompt(period, date) {
+  console.log(
+    `your new changes of ${period} will be working after the completion of the next effective date.${
+      date.length > 0 ? date[1] : date[0]
+    }`
+  )
+}
+
+module.exports = { weekly, biWeekly, monthly, datePrompt }

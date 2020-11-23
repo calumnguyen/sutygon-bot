@@ -272,6 +272,17 @@ router.get('/:id/insights', auth, async (req, res) => {
               $toDouble: '$insuranceAmt',
             },
           },
+          Total_spent: {
+            $sum: {
+              $subtract: [
+                { $toDouble: '$total' },
+                { $toDouble: '$insuranceAmt' },
+              ],
+            },
+          },
+          // tax: {
+          //    total - (product + insurance)
+          // },
           // Used to count the documents. It should be the direct child of
           // the $group because it is an object accumulator...
           // count: { $sum: 1 },

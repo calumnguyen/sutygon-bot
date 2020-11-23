@@ -13,7 +13,12 @@ var multer = require('multer')
 const { isAdmin } = require('../../middleware/isAdmin')
 var cloudinary = require('cloudinary')
 const config = require('config')
-const { weekly, biWeekly, monthly } = require('../../helpers/timePeriod')
+const {
+  weekly,
+  biWeekly,
+  monthly,
+  datePrompt,
+} = require('../../helpers/timePeriod')
 
 // cloundinary configuration
 cloudinary.config({
@@ -380,17 +385,7 @@ router.post(
 
           // Period : bi-weekly
           if (salary.period === 'bi-weekly') {
-            // const nextMonday = moment().startOf('isoWeek').add(1, 'week')
-
             const NextandThirdMon = biWeekly()
-
-            // // create new instance
-            // let secondMonday = nextMonday.clone()
-            // secondMonday.startOf('isoWeek').add(1, 'week')
-
-            // // create new instance
-            // let thirdMonday = secondMonday.clone()
-            // thirdMonday.startOf('isoWeek').add(1, 'week')
 
             salary = {
               ...req.body.salary,
@@ -413,13 +408,13 @@ router.post(
         } else {
           // set the existing salary object again to the salary field in db until the cron-job runs...
 
-          // check if the salary period in req.body.salary is equal to the period in db
-          // if it is then no change
-          // else cron-job
-
           salary = {
             ...user.salary,
           }
+
+          // check if the salary period in req.body.salary is equal to the period in db
+          // if it is then no change
+          // else cron-job
 
           if (req.body.salary.period !== salary.period) {
             // apply cron job here.. in every if else depending on the given period in the req.body
@@ -428,26 +423,23 @@ router.post(
 
             if (req.body.salary.period === 'weekly') {
               // check how many days are left in the effective date.
-              console.log(
-                `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
-              )
+
+              datePrompt(req.body.salary.period, user.salary.effective_date)
 
               // run cron at the current set effective date.
               // set the next effective date according to current effective date.
-
               // instead of stars, the current effective date will come.
+
               cron.schedule('*/1 * * * *', async () => {
                 console.log('period updated!')
 
-                // console.log(req.body.salary)
-
-                // console.log(user.salary.effective_date)
-
-                // console.log(req.params.id)
-
                 salary = {
                   ...req.body.salary,
-                  effective_date: weekly(user.salary.effective_date[0]),
+                  effective_date: weekly(
+                    user.salary.effective_date.length > 0
+                      ? user.salary.effective_date[1]
+                      : user.salary.effective_date[0]
+                  ),
                 }
 
                 await User.findByIdAndUpdate(
@@ -456,22 +448,18 @@ router.post(
                   { new: true }
                 )
               })
-
-              // apply cron-job
             }
             if (req.body.salary.period === 'bi-weekly') {
               // check how many days are left in the effective date.
-              console.log(
-                `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
-              )
+
+              datePrompt(req.body.salary.period, user.salary.effective_date)
 
               // apply cron-job
             }
             if (req.body.salary.period === 'monthly') {
               // check how many days are left in the effective date.
-              console.log(
-                `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
-              )
+
+              datePrompt(req.body.salary.period, user.salary.effective_date)
             }
           }
         }
