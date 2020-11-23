@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
 import { updateUser, getUser } from '../../../actions/user'
-import Alert from '../../layout/Alert'
 import Loader from '../../layout/Loader'
 import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
@@ -19,7 +18,7 @@ class AddUser extends Component {
     type: 'Admin',
     gender: '',
     avatar: '',
-    jobTitle:'',
+    jobTitle: '',
     saving: false,
     isEdit: false,
     imgUpd: false,
@@ -60,6 +59,9 @@ class AddUser extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
+  handleChangeNumber = (e) =>{
+    this.setState({ [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : ''})
+  }
   render() {
     const { auth } = this.props
     if (!auth.loading && !auth.isAuthenticated) {
@@ -106,16 +108,16 @@ class AddUser extends Component {
                             />
                             <br />
                             {this.state.isEdit === true &&
-                            this.state.imgUpd === false ? (
-                              <img
-                                className='media-object round-media'
-                                src={`${this.state.avatar}`}
-                                alt='Product image'
-                                height={100}
-                              />
-                            ) : (
-                              ''
-                            )}
+                              this.state.imgUpd === false ? (
+                                <img
+                                  className='media-object round-media'
+                                  src={`${this.state.avatar}`}
+                                  alt='Product image'
+                                  height={100}
+                                />
+                              ) : (
+                                ''
+                              )}
                             {this.state.imgUpd === true ? (
                               <img
                                 className='media-object round-media'
@@ -124,8 +126,8 @@ class AddUser extends Component {
                                 height={100}
                               />
                             ) : (
-                              ''
-                            )}
+                                ''
+                              )}
                           </div>
 
                           <div className='form-group col-12 mb-2'></div>
@@ -185,13 +187,13 @@ class AddUser extends Component {
                               required
                               placeholder='Phone'
                               name='contactnumber'
-                              onChange={(e) => this.handleChange(e)}
+                              onChange={(e) => this.handleChangeNumber(e)}
                               value={this.state.contactnumber}
                             />
                           </div>
                         </div>
                         <div className='row'>
-                        <div className='form-group col-md-6 mb-2'>
+                          <div className='form-group col-md-6 mb-2'>
                             <label htmlFor='projectinput3'>Job Title</label>
                             <input
                               type='text'
@@ -214,19 +216,19 @@ class AddUser extends Component {
                               className='form-control'
                               onChange={(e) => this.handleChange(e)}
                             >
-                              
+
                               <option
-                              value={'SuperAdmin' === this.state.type}
-                                // selected={'SuperAdmin' === this.state.type}
-                                // value='SuperAdmin'
+                                value={'SuperAdmin' === this.state.type}
+                              // selected={'SuperAdmin' === this.state.type}
+                              // value='SuperAdmin'
                               >
                                 {' '}
                                 Admin{' '}
                               </option>
                               <option
-                              value={'Employee' === this.state.type}
-                                // selected={'Employee' === this.state.type}
-                                // value='Employee'
+                                value={'Employee' === this.state.type}
+                              // selected={'Employee' === this.state.type}
+                              // value='Employee'
                               >
                                 {' '}
                                 Employee{' '}
@@ -270,17 +272,22 @@ class AddUser extends Component {
                         </div>
 
                         <div className='form-actions top'>
-                        <Link
-                        to={{
-                          pathname: "/user/configuresystem",
-                          data:this.state
-                        }}
-                                  type='submit'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <i className='ft-chevron-right' /> Next
+                          {(this.state.avatar == "" ||this.state.contactnumber == ""||this.state.email == ""||this.state.fullname == "" ||this.state.gender== "" ||this.state.jobTitle== "") ? 
+                          <button
+ className="mb-2 mr-2 btn btn-raised btn-primary disabled">
+ <i className='ft-chevron-right' /> Next
+                          </button> :
+                          <Link
+                            to={{
+                              pathname: "/user/configuresystem",
+                              data: this.state
+                            }}
+                            type='submit'
+                            className='mb-2 mr-2 btn btn-raised btn-primary'
+                          >
+                            <i className='ft-chevron-right' /> Next
                                 </Link>
-                       
+  }
                         </div>
                       </form>
                     </div>
@@ -312,7 +319,7 @@ class AddUser extends Component {
 }
 
 AddUser.propTypes = {
-  
+
   getUser: PropTypes.func.isRequired,
   auth: PropTypes.object,
   updateUser: PropTypes.func.isRequired,
