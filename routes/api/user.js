@@ -13,6 +13,7 @@ var multer = require('multer')
 const { isAdmin } = require('../../middleware/isAdmin')
 var cloudinary = require('cloudinary')
 const config = require('config')
+const { weekly, biWeekly, monthly } = require('../../helpers/timePeriod')
 
 // cloundinary configuration
 cloudinary.config({
@@ -370,7 +371,7 @@ router.post(
 
           // Period : Weekly
           if (salary.period === 'weekly') {
-            const nextMonday = moment().startOf('isoWeek').add(1, 'week')
+            const nextMonday = weekly()
             salary = {
               ...req.body.salary,
               effective_date: nextMonday,
@@ -379,29 +380,34 @@ router.post(
 
           // Period : bi-weekly
           if (salary.period === 'bi-weekly') {
-            const nextMonday = moment().startOf('isoWeek').add(1, 'week')
+            // const nextMonday = moment().startOf('isoWeek').add(1, 'week')
 
-            // create new instance
-            let secondMonday = nextMonday.clone()
-            secondMonday.startOf('isoWeek').add(1, 'week')
+            const NextandThirdMon = biWeekly()
 
-            // create new instance
-            let thirdMonday = secondMonday.clone()
-            thirdMonday.startOf('isoWeek').add(1, 'week')
+            // // create new instance
+            // let secondMonday = nextMonday.clone()
+            // secondMonday.startOf('isoWeek').add(1, 'week')
+
+            // // create new instance
+            // let thirdMonday = secondMonday.clone()
+            // thirdMonday.startOf('isoWeek').add(1, 'week')
 
             salary = {
               ...req.body.salary,
-              effective_date: [nextMonday, thirdMonday],
+              effective_date: NextandThirdMon,
             }
-            console.log('bi-weekly', [nextMonday, thirdMonday])
+            console.log('bi-weekly', NextandThirdMon)
           }
 
           // Period : monthly
           if (salary.period === 'monthly') {
             // grabbed the last monday of the month using momentjs..
+
+            const lastMonOfMonth = monthly()
+
             salary = {
               ...req.body.salary,
-              effective_date: moment().endOf('month').startOf('isoweek'),
+              effective_date: lastMonOfMonth,
             }
           }
         } else {
@@ -430,19 +436,25 @@ router.post(
               // set the next effective date according to current effective date.
 
               // instead of stars, the current effective date will come.
-              cron.schedule('* * * * *', () => {
+              cron.schedule('*/1 * * * *', async () => {
                 console.log('period updated!')
 
-                //     const nextMonday = moment(user.salary.effective_date).startOf('isoWeek').add(1, 'week')
-                // salary = {
-                //   ...req.body.salary,
-                //   effective_date: nextMonday,
-                // }
+                // console.log(req.body.salary)
 
-                // salary = {
-                //   ...req.body.salary,
-                //   effective_date:
-                // }
+                // console.log(user.salary.effective_date)
+
+                // console.log(req.params.id)
+
+                salary = {
+                  ...req.body.salary,
+                  effective_date: weekly(user.salary.effective_date[0]),
+                }
+
+                await User.findByIdAndUpdate(
+                  req.params.id,
+                  { $set: { salary } },
+                  { new: true }
+                )
               })
 
               // apply cron-job
