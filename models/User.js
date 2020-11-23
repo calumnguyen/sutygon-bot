@@ -47,6 +47,9 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String,
   },
+  userID:{
+    type: Number
+  },
   type: {
     type: String,
     default: 'Employee',
@@ -57,9 +60,9 @@ const UserSchema = new mongoose.Schema({
       'Inventory',
       'Barcode',
       'Customers',
-      'Rent a product',
+      'Rentproduct',
       'Report',
-      'Return a product',
+      'Returnproduct',
       'Orders',
       'Appointments',
       'Calender',

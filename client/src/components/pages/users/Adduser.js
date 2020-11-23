@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { addNewUser, updateUser, getUser } from '../../../actions/user'
-import Alert from '../../layout/Alert'
+import { updateUser, getUser } from '../../../actions/user'
 import Loader from '../../layout/Loader'
 import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
@@ -60,23 +59,8 @@ class AddUser extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  onSubmit = async (e) => {
-    e.preventDefault()
-    const formData = new FormData()
-    formData.append('avatar', this.state.avatar)
-    formData.append('username', this.state.username)
-    formData.append('fullname', this.state.username)
-    formData.append('contactnumber', this.state.contactnumber)
-    formData.append('email', this.state.email)
-    formData.append('type', this.state.type)
-    formData.append('gender', this.state.gender)
-
-    if (this.state.id === '') {
-      await this.props.addNewUser(formData)
-    } else {
-      await this.props.updateUser(formData, this.state.id)
-    }
-    this.setState({ saving: false })
+  handleChangeNumber = (e) =>{
+    this.setState({ [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : ''})
   }
   render() {
     const { auth } = this.props
@@ -106,12 +90,10 @@ class AddUser extends Component {
                     </div>
 
                     <div className='card-body'>
-                      <Alert />
                       <form
                         encType='multipart/form-data'
                         action='/upload'
                         method='POST'
-                        // onSubmit={(e) => this.onSubmit(e)}
                       >
                         <div className='row'>
                           <div className='form-group col-12 mb-2'>
@@ -126,16 +108,16 @@ class AddUser extends Component {
                             />
                             <br />
                             {this.state.isEdit === true &&
-                            this.state.imgUpd === false ? (
-                              <img
-                                className='media-object round-media'
-                                src={`${this.state.avatar}`}
-                                alt='Product image'
-                                height={100}
-                              />
-                            ) : (
-                              ''
-                            )}
+                              this.state.imgUpd === false ? (
+                                <img
+                                  className='media-object round-media'
+                                  src={`${this.state.avatar}`}
+                                  alt='Product image'
+                                  height={100}
+                                />
+                              ) : (
+                                ''
+                              )}
                             {this.state.imgUpd === true ? (
                               <img
                                 className='media-object round-media'
@@ -144,8 +126,8 @@ class AddUser extends Component {
                                 height={100}
                               />
                             ) : (
-                              ''
-                            )}
+                                ''
+                              )}
                           </div>
 
                           <div className='form-group col-12 mb-2'></div>
@@ -205,7 +187,7 @@ class AddUser extends Component {
                               required
                               placeholder='Phone'
                               name='contactnumber'
-                              onChange={(e) => this.handleChange(e)}
+                              onChange={(e) => this.handleChangeNumber(e)}
                               value={this.state.contactnumber}
                             />
                           </div>
@@ -230,19 +212,26 @@ class AddUser extends Component {
                               id='type'
                               name='type'
                               required
+<<<<<<< HEAD
+=======
+                              defaultValue='----'
+>>>>>>> 4eb51da3b03744e5ff9da88895744413945231c6
                               className='form-control'
                               onChange={(e) => this.handleChange(e)}
                             >
+
                               <option
-                                selected={'SuperAdmin' === this.state.type}
-                                value='SuperAdmin'
+                                value={'SuperAdmin' === this.state.type}
+                              // selected={'SuperAdmin' === this.state.type}
+                              // value='SuperAdmin'
                               >
                                 {' '}
                                 Admin{' '}
                               </option>
                               <option
-                                selected={'Employee' === this.state.type}
-                                value='Employee'
+                                value={'Employee' === this.state.type}
+                              // selected={'Employee' === this.state.type}
+                              // value='Employee'
                               >
                                 {' '}
                                 Employee{' '}
@@ -286,15 +275,28 @@ class AddUser extends Component {
                         </div>
 
                         <div className='form-actions top'>
+<<<<<<< HEAD
                           <Link
                             to={{
                               pathname: '/user/configuresystem',
                               data: this.state,
+=======
+                          {(this.state.avatar == "" ||this.state.contactnumber == ""||this.state.email == ""||this.state.fullname == "" ||this.state.gender== "" ||this.state.jobTitle== "") ? 
+                          <button
+ className="mb-2 mr-2 btn btn-raised btn-primary disabled">
+ <i className='ft-chevron-right' /> Next
+                          </button> :
+                          <Link
+                            to={{
+                              pathname: "/user/configuresystem",
+                              data: this.state
+>>>>>>> 4eb51da3b03744e5ff9da88895744413945231c6
                             }}
                             type='submit'
                             className='mb-2 mr-2 btn btn-raised btn-primary'
                           >
                             <i className='ft-chevron-right' /> Next
+<<<<<<< HEAD
                           </Link>
                           {/* {this.state.id === '' ? (
                             <>
@@ -341,6 +343,10 @@ class AddUser extends Component {
                               )}
                             </>
                           )} */}
+=======
+                                </Link>
+  }
+>>>>>>> 4eb51da3b03744e5ff9da88895744413945231c6
                         </div>
                       </form>
                     </div>
@@ -372,20 +378,17 @@ class AddUser extends Component {
 }
 
 AddUser.propTypes = {
-  saved: PropTypes.bool,
-  addNewUser: PropTypes.func.isRequired,
+
   getUser: PropTypes.func.isRequired,
   auth: PropTypes.object,
   updateUser: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
-  saved: state.user.saved,
   auth: state.auth,
   user: state.user.profile,
 })
 export default connect(mapStateToProps, {
-  addNewUser,
   updateUser,
   getUser,
 })(AddUser)

@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { addNewUser, updateUser, getUser } from '../../../actions/user'
+import { addNewUser, updateUser, getUser} from '../../../actions/user'
 import Alert from '../../layout/Alert'
 import Loader from '../../layout/Loader'
 import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import shortid from "shortid";
 
 class ConfigureSystemUser extends Component {
     state = {
@@ -24,26 +23,21 @@ class ConfigureSystemUser extends Component {
     async componentDidMount() {
         // check form is to Add or Edit
 
-        const { data } = this.props.location
-        const userID = Math.floor(Math.random() * 8999999999 + 1000000000);
-        const tempPwd = shortid.generate();
-        // if(data) {
+        const { user} = this.props
+        if(user) {
         this.setState({
-            // fullname: data.fullname,
-            // username: data.username,
-            // jobTitle: data.jobTitle,
-            userID: userID,
-            tempPwd: tempPwd
+            fullname: user.fullname,
+            username: user.username,
+            jobTitle: user.jobTitle,
+            userID: user.userID,
+            tempPwd: user.password
         })
-        // }
+        }
 
 
     }
 
-    onDone= (e) =>{
-        e.preventDefault();
-        // return <Redirect to='/user/adduser' />
-    }
+   
 
     handleChange = (e, id = '') => {
         this.setState({ [e.target.name]: e.target.value })
@@ -55,8 +49,8 @@ class ConfigureSystemUser extends Component {
         if (!auth.loading && !auth.isAuthenticated) {
             return <Redirect to='/' />
         }
-        if (this.props.saved) {
-            return <Redirect to='/user' />
+        if (this.props.user ==  null){
+            return <Redirect push to='/user' />
         }
         return (
             <React.Fragment>
@@ -77,7 +71,6 @@ class ConfigureSystemUser extends Component {
                                         </div>
 
                                         <div className='card-body'>
-                                            <Alert />
                                             <form
                                                 action='/upload'
                                                 method='POST'
@@ -107,13 +100,12 @@ class ConfigureSystemUser extends Component {
                                                 </div>
 
                                                 <div className='form-actions top'>
-                                                    <button
-                                                        onClick={e => this.onDone(e)}
-                                                        type='submit'
-                                                        className='mb-2 mr-2 btn btn-raised btn-primary'
+                                                    <Link
+to="/user"
+                                        className='mb-2 mr-2 btn btn-raised btn-primary'
                                                     >
                                                         <i className='ft-chevron-down' /> Done
-                                                    </button>
+                                                    </Link>
                                                 </div>
 
                                             </form>
@@ -156,10 +148,11 @@ ConfigureSystemUser.propTypes = {
 const mapStateToProps = (state) => ({
     saved: state.user.saved,
     auth: state.auth,
-    user: state.user.profile,
+    user: state.user.user.user,
 })
 export default connect(mapStateToProps, {
     addNewUser,
     updateUser,
     getUser,
+    
 })(ConfigureSystemUser)

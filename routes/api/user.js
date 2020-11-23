@@ -7,28 +7,35 @@ const moment = require('moment')
 const cron = require('node-cron')
 
 const jwt = require('jsonwebtoken')
-const config = require('config')
 const auth = require('../../middleware/auth')
 const User = require('../../models/User')
 var multer = require('multer')
-var upload = multer({ dest: 'client/public/uploads/user' })
 const { isAdmin } = require('../../middleware/isAdmin')
+var cloudinary = require('cloudinary')
+const config = require('config')
 
-// const { weekly, biWeekly, monthly } = require('../../helpers/timePeriod')
-
-const FILE_PATH = 'client/public/uploads/user'
-
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, FILE_PATH)
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
-    cb(null, file.originalname)
-  },
+// cloundinary configuration
+cloudinary.config({
+  cloud_name: config.get('cloud_name'),
+  api_key: config.get('api_key'),
+  api_secret: config.get('api_secret'),
 })
 
-var upload = multer({ storage: storage })
+// multer configuration
+var storage = multer.diskStorage({
+  filename: function (req, file, callback) {
+    callback(null, Date.now() + file.originalname)
+  },
+})
+const imageFilter = function (req, file, cb) {
+  // accept image files only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+    return cb(new Error('Only image files are accepted!'), false)
+  }
+  cb(null, true)
+}
+
+var upload = multer({ storage: storage, fileFilter: imageFilter })
 
 // @route   POST /api/users/add
 // @desc    Add new user
@@ -51,20 +58,18 @@ router.post(
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() })
-    }
-
     const body = JSON.parse(JSON.stringify(req.body))
 
-    const salt = await bcrypt.genSalt(10)
-    const password = await bcrypt.hash(body.password, salt)
+    console.log(req.body.sections)
+    var sections = req.body.sections
+    // const salt = await bcrypt.genSalt(10)
+    // const password = await bcrypt.hash(body.password, salt)
 
     try {
       // check if there is any record with same email and username
       const userByEmail = await User.findOne({ email: body.email })
       const userByUsername = await User.findOne({ username: body.username })
+
       if (userByEmail) {
         return res
           .status(422)
@@ -85,60 +90,59 @@ router.post(
       })
       let userBody
 
-      if (req.file === undefined) {
-        userBody = {
-          username: body.username,
-          fullname: body.username,
-          email: body.email,
-          password: password,
-          gender: body.gender,
-          contactnumber: body.contactnumber,
-          type: body.type,
-          avatar: avatar,
-        }
+      if (req.file == undefined) {
+        userBody = { ...req.body, avatar, sections }
+        let user = new User(userBody)
+        console.log(user)
+        await user.save()
+
+        res.status(200).json({ user, msg: 'User Added Successfully' })
       } else {
-        userBody = {
-          ...req.body,
-          password,
-          avatar: `/uploads/user/${req.file.originalname}`,
-        }
+        const avatar = req.file.path
+
+        cloudinary.uploader.upload(avatar, async function (result) {
+          userBody = {
+            ...req.body,
+            avatar: result.secure_url,
+            sections,
+          }
+          let user = new User(userBody)
+          await user.save()
+
+          res.status(200).json({ user, msg: 'User Added Successfully' })
+        })
       }
-      // if (req.file == undefined) {
-      //   userBody = {
-      //     username: body.username,
-      //     fullname: body.fullname,
-      //     email: body.email,
-      //     password: password,
-      //     gender: body.gender,
-      //     contactnumber: body.contactnumber,
-      //     type: body.type,
-      //     avatar: avatar,
-      //     sections: body.sections,
-      //   }
-      // } else {
-      //   userBody = {
-      //     username: body.username,
-      //     fullname: body.fullname,
-      //     email: body.email,
-      //     password: password,
-      //     gender: body.gender,
-      //     contactnumber: body.contactnumber,
-      //     type: body.type,
-      //     sections: body.sections,
-      //     avatar: `/uploads/user/${req.file.originalname}`,
-      //   }
-      // }
-
-      let user = new User(userBody)
-      await user.save()
-
-      res.status(200).json({ user, msg: 'User Added Successfully' })
     } catch (err) {
-      console.log(err)
       res.status(500).json({ msg: err })
     }
   }
 )
+
+// if (req.file == undefined) {
+//   userBody = {
+//     username: body.username,
+//     fullname: body.fullname,
+//     email: body.email,
+//     password: password,
+//     gender: body.gender,
+//     contactnumber: body.contactnumber,
+//     type: body.type,
+//     avatar: avatar,
+//     sections: body.sections,
+//   }
+// } else {
+//   userBody = {
+//     username: body.username,
+//     fullname: body.fullname,
+//     email: body.email,
+//     password: password,
+//     gender: body.gender,
+//     contactnumber: body.contactnumber,
+//     type: body.type,
+//     sections: body.sections,
+//     avatar: `/uploads/user/${req.file.originalname}`,
+//   }
+// }
 
 // @route   GET api/users
 // @desc    Get all users
@@ -422,8 +426,23 @@ router.post(
                 `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
               )
 
+              // run cron at the current set effective date.
+              // set the next effective date according to current effective date.
+
+              // instead of stars, the current effective date will come.
               cron.schedule('* * * * *', () => {
                 console.log('period updated!')
+
+                //     const nextMonday = moment(user.salary.effective_date).startOf('isoWeek').add(1, 'week')
+                // salary = {
+                //   ...req.body.salary,
+                //   effective_date: nextMonday,
+                // }
+
+                // salary = {
+                //   ...req.body.salary,
+                //   effective_date:
+                // }
               })
 
               // apply cron-job
@@ -431,7 +450,7 @@ router.post(
             if (req.body.salary.period === 'bi-weekly') {
               // check how many days are left in the effective date.
               console.log(
-                `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date[1]}`
+                `your new changes of ${req.body.salary.period} will be working after the completion of the next effective date.${user.salary.effective_date}`
               )
 
               // apply cron-job

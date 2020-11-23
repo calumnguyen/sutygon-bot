@@ -8,11 +8,25 @@ const connectDB = require('./config/db')
 
 const { weekly, biWeekly, monthly } = require('./helpers/timePeriod')
 
-// console.log('-------------')
-// weekly()
-// biWeekly()
+// will use DRY approach later after testing.
+console.log('-------------')
+let week = weekly()
+
+console.log(week)
+
+let biWeek = biWeekly()
+
+console.log(biWeek)
+
+let month = monthly()
+
+console.log(month)
+
+// let biwee = biWeekly()
+// console.log(biwee)
+
 // monthly()
-// console.log('-------------')
+console.log('-------------')
 
 // Load env vars
 dotenv.config({ path: './config/config.env' })
