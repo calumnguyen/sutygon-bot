@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { addNewUser, updateUser, getUser } from '../../../actions/user'
+import { updateUser, getUser } from '../../../actions/user'
 import Alert from '../../layout/Alert'
 import Loader from '../../layout/Loader'
 import { Redirect } from 'react-router-dom'
@@ -60,24 +60,6 @@ class AddUser extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  onSubmit = async (e) => {
-    e.preventDefault()
-    const formData = new FormData()
-    formData.append('avatar', this.state.avatar)
-    formData.append('username', this.state.username)
-    formData.append('fullname', this.state.username)
-    formData.append('contactnumber', this.state.contactnumber)
-    formData.append('email', this.state.email)
-    formData.append('type', this.state.type)
-    formData.append('gender', this.state.gender)
-
-    if (this.state.id === '') {
-      await this.props.addNewUser(formData)
-    } else {
-      await this.props.updateUser(formData, this.state.id)
-    }
-    this.setState({ saving: false })
-  }
   render() {
     const { auth } = this.props
     if (!auth.loading && !auth.isAuthenticated) {
@@ -106,12 +88,10 @@ class AddUser extends Component {
                     </div>
 
                     <div className='card-body'>
-                      <Alert />
                       <form
                         encType='multipart/form-data'
                         action='/upload'
                         method='POST'
-                        // onSubmit={(e) => this.onSubmit(e)}
                       >
                         <div className='row'>
                           <div className='form-group col-12 mb-2'>
@@ -230,20 +210,23 @@ class AddUser extends Component {
                               id='type'
                               name='type'
                               required
-
+                              defaultValue='----'
                               className='form-control'
                               onChange={(e) => this.handleChange(e)}
                             >
+                              
                               <option
-                                selected={'SuperAdmin' === this.state.type}
-                                value='SuperAdmin'
+                              value={'SuperAdmin' === this.state.type}
+                                // selected={'SuperAdmin' === this.state.type}
+                                // value='SuperAdmin'
                               >
                                 {' '}
                                 Admin{' '}
                               </option>
                               <option
-                                selected={'Employee' === this.state.type}
-                                value='Employee'
+                              value={'Employee' === this.state.type}
+                                // selected={'Employee' === this.state.type}
+                                // value='Employee'
                               >
                                 {' '}
                                 Employee{' '}
@@ -297,51 +280,7 @@ class AddUser extends Component {
                                 >
                                   <i className='ft-chevron-right' /> Next
                                 </Link>
-                          {/* {this.state.id === '' ? (
-                            <>
-                              {this.state.saving ? (
-                                <button
-                                  type='button'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <div
-                                    className='spinner-grow spinner-grow-sm '
-                                    role='status'
-                                  ></div>
-                                  &nbsp; Adding
-                                </button>
-                              ) : (
-                                <button
-                                  type='submit'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <i className='ft-check' /> Add User
-                                </button>
-                              )}
-                            </>
-                          ) : (
-                            <>
-                              {this.state.saving ? (
-                                <button
-                                  type='button'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <div
-                                    className='spinner-grow spinner-grow-sm '
-                                    role='status'
-                                  ></div>
-                                  &nbsp; Updating
-                                </button>
-                              ) : (
-                                <button
-                                  type='submit'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <i className='ft-check' /> Update User
-                                </button>
-                              )}
-                            </>
-                          )} */}
+                       
                         </div>
                       </form>
                     </div>
@@ -373,20 +312,17 @@ class AddUser extends Component {
 }
 
 AddUser.propTypes = {
-  saved: PropTypes.bool,
-  addNewUser: PropTypes.func.isRequired,
+  
   getUser: PropTypes.func.isRequired,
   auth: PropTypes.object,
   updateUser: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
-  saved: state.user.saved,
   auth: state.auth,
   user: state.user.profile,
 })
 export default connect(mapStateToProps, {
-  addNewUser,
   updateUser,
   getUser,
 })(AddUser)

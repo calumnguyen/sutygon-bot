@@ -4,8 +4,6 @@ const auth = require("../../middleware/auth");
 const Product = require("../../models/Product");
 const { check, validationResult } = require("express-validator");
 var multer = require('multer')
-var upload = multer({ dest: 'client/public/uploads/products' })
-const FILE_PATH = 'client/public/uploads/products';
 var cloudinary = require('cloudinary')
 const config = require("config");
 
@@ -18,18 +16,22 @@ cloudinary.config({
 
 // multer configuration
 var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, FILE_PATH)
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, file.originalname)
+  filename: function(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+    }
+ 
+});
+const imageFilter = function(req, file, cb) {
+  // accept image files only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+  return cb(new Error("Only image files are accepted!"), false);
   }
-})
-var upload = multer({ storage: storage })
-router.post('/myroute', (req, res) => {
-  res.send('response from the server');
-})
+  cb(null, true);
+  };
+
+var upload = multer({ storage: storage, fileFilter: imageFilter });
+
+
 // @route   POST api/products/add
 // @desc    Add New Product
 // @access  private

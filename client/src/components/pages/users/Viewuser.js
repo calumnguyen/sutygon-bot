@@ -14,20 +14,25 @@ import Loader from "../../layout/Loader";
 class ViewUser extends Component {
 
   state = {
-    search: ""
+    // search: '',
+    activeUsers: false,
+    inactiveUsers: false,
+    users: "",
+    activeuser: "",
+    allusers: true
   }
 
   async componentDidMount() {
-    await this.props.getAllUsers();
-  }
+    await this.props.getAllUsers()
 
+  }
   getTAble = () => {
-    const { auth } = this.props;
-    const auth_user = auth.user;
-    const { users } = this.props;
-    let tbl_sno = 1;
-    if (users) {
-      if (users.length === 0) {
+    const { auth } = this.props
+    const auth_user = auth.user
+    this.getUser();
+    const userArr = this.getUser();
+    if (userArr) {
+      if (userArr.length === 0) {
         return (
           <tr>
             <td colSpan={6} className="text-center">
@@ -36,25 +41,23 @@ class ViewUser extends Component {
           </tr>
         );
       }
-      return users.map((user) => (
+      return userArr.map((user) => (
 
         <tr key={user._id}>
-          <td className="text-center text-muted">{tbl_sno++}</td>
           <td className="text-center">
             <img className="media-object round-media" src={`${user.avatar}`} alt="Profile" height={75} />
           </td>
+          <td className="text-center">{user.userID}</td>
 
-
-          <td className="text-center">{user.username}</td>
-          <td className="text-center">{user.contactnumber}</td>
-          <td className="text-center">{user.email}</td>
-          <td className="text-center">{user.gender}</td>
+          <td className="text-center">{user.fullname}</td>
+          <td className="text-center">{user.jobTitle}</td>
+          <td className="text-center">{user.type}</td>
           <td className="text-center">
             {user.accountStatus === "active" && (
-              <span className="badge badge-success">Active</span>
+              <span className="badge badge-success">ACTIVE</span>
             )}
             {user.accountStatus === "block" && (
-              <span className="badge badge-warning">Block</span>
+              <span className="badge badge-warning">INACTIVE</span>
             )}
           </td>
           <td className="text-center">
@@ -89,9 +92,48 @@ class ViewUser extends Component {
     }
   };
 
-  handleChange = (e, id = "") => {
-    this.setState({ 'search': e.target.value });
-  };
+  getUser = () => {
+    const { users } = this.props;
+    if (users) {
+      const activeUsers = users.filter(a => a.accountStatus === "active");
+      const inactiveUsers = users.filter(a => a.accountStatus === "inactive");
+
+      if (this.state.allusers === true) {
+        return users;
+      }
+
+      else if (this.state.activeUsers === true) {
+        return activeUsers;
+      }
+      else if (this.state.inactiveUsers === true) {
+        return inactiveUsers;
+      }
+
+    }
+  }
+  handleChange = () => {
+    this.setState({
+      allusers: false,
+      inactiveUsers: false,
+      activeUsers: true,
+    })
+  }
+
+  handleChange_Inactive = () => {
+    this.setState({
+      activeUsers: false,
+      allusers: false,
+      inactiveUsers: true,
+    })
+  }
+
+  handleChange_alluser = () => {
+    this.setState({
+      activeUsers: false,
+      inactiveUsers: false,
+      allusers: true
+    })
+  }
 
 
   onDelete = (id) => {
@@ -133,16 +175,6 @@ class ViewUser extends Component {
     });
   };
 
-  async searchTable() {
-    const searchVal = this.state.search;
-    if (searchVal) {
-      await this.props.findUsers(searchVal);
-    } else {
-      await this.props.getAllUsers();
-    }
-
-  }
-
 
 
   render() {
@@ -150,6 +182,8 @@ class ViewUser extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
+
+    const { users } = this.props
 
     return (
       <React.Fragment>
@@ -172,11 +206,45 @@ class ViewUser extends Component {
                         <div className="card-content">
                           <div className="card-body">
                             <div className="row">
-                              <div className="col-md-4"><input type="text" className="form-control" name="search" onChange={(e) => this.handleChange(e)} /></div>
-                              <div className="col-md-4">
-                                <a className="btn btn-success" href="" onClick={() => this.searchTable()}><i className="fa fa-search"></i> Search </a>
+                              <div className='col-md-8'>
+                                <label className='radio-inline' style={{ marginLeft: '10px' }} >
+                                  <input
+                                    type='radio'
+                                    name='activeUser'
+                                    checked={this.state.allusers}
+                                    onChange={(e) => this.handleChange_alluser(true)}
+                                    checked={this.state.allusers === true}
+
+                                  />{' '}
+                                  All Users
+                                </label>
+                                <label className='radio-inline' style={{ marginLeft: '10px' }} >
+                                  <input
+                                    type='radio'
+                                    name='activeUser'
+                                    checked={this.state.activeUsers}
+                                    onChange={(e) => this.handleChange(true)}
+                                    checked={this.state.activeUsers === true}
+                                  />{' '}
+                                  Active Users
+                                </label>
+                                <label
+                                  className='radio-inline'
+                                  style={{ marginLeft: '10px' }}
+                                >
+                                  <input
+                                    type='radio'
+                                    name='InactiveUser'
+                                    checked={this.state.inactiveUsers}
+                                    onChange={(e) => this.handleChange_Inactive(true)}
+                                    checked={this.state.inactiveUsers === true}
+                                  />{' '}
+                                  Inactive Users
+                                </label>
                               </div>
-                              <div className="col-md-4">
+
+                              <div className='col-md-4'>
+
                                 <Link to="/user/adduser" className="btn btn-primary pull-right"> <i className="fa fa-plus"></i> New User</Link>
                               </div>
                             </div>
@@ -184,15 +252,13 @@ class ViewUser extends Component {
                             <table className="table">
                               <thead>
                                 <tr>
-                                  <th className="text-center">#</th>
                                   <th className="text-center">Avatar</th>
-
+                                  <th className="text-center">ID#</th>
                                   <th className="text-center">Full Name</th>
-                                  <th className="text-center" >Contact</th>
-                                  <th className="text-center">E-mail</th>
-                                  <th className="text-center">Gender</th>
-                                  <th className="text-center">Account Status</th>
-                                  <th className="text-center">Actions</th>
+                                  <th className="text-center" >Job Title</th>
+                                  <th className="text-center">System Role</th>
+                                  <th className="text-center">Status</th>
+                                  <th className="text-center">View/Edit</th>
                                 </tr>
                               </thead>
                               <tbody>{this.getTAble()}</tbody>
@@ -208,7 +274,7 @@ class ViewUser extends Component {
           </div>
           <footer className="footer footer-static footer-light">
             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-            <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
           </footer>
         </div>
       </React.Fragment>

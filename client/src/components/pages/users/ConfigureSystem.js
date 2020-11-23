@@ -8,6 +8,9 @@ import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import shortid from "shortid";
+import { Button } from 'semantic-ui-react'
+
 
 class ConfigureSystem extends Component {
     state = {
@@ -15,33 +18,47 @@ class ConfigureSystem extends Component {
         fullname: '',
         username: '',
         jobTitle: '',
-        Inventory:'',
-        Rentproduct:'',
-        Barcode:'',
-        Orders:'',
-        Customer:'',
-        Appointment:'',
-        Returnproduct:'',
-        Calender:'', 
-        Report:'',
-        sections:[],
+        contactnumber: '',
+        email: '',
+        Inventory: false,
+        Rentproduct: false,
+        Barcode: false,
+        Orders: false,
+        Customers: false,
+        Appointments: false,
+        Returnproduct: false,
+        Calender: false,
+        Report: false,
+        sections: [],
         type: 'Admin',
+        gender: '',
+        avatar: '',
+        userID: '',
+        tempPwd: '',
+        saved: false,
+        saving: false,
 
     }
 
     async componentDidMount() {
         // check form is to Add or Edit
 
-        const { data } = this.props.location
-        console.log(data)
+        const { data } = this.props.location;
+        const userID = Math.floor(Math.random() * 8999999999 + 1000000000);
+        const tempPwd = shortid.generate();
         if (data) {
             this.setState({
                 fullname: data.fullname,
                 username: data.username,
-                jobTitle: data.jobTitle
+                jobTitle: data.jobTitle,
+                gender: data.gender,
+                avatar: data.avatar,
+                contactnumber: data.contactnumber,
+                email: data.email,
+                userID: userID,
+                tempPwd: tempPwd
             })
         }
-
     }
 
     _onChange = (e, id = '') => {
@@ -52,37 +69,73 @@ class ConfigureSystem extends Component {
         })
     }
 
-    handleChange = (e, id = '') => {
-        this.setState({ [e.target.name]: true })
+    selected = async () => {
+        const sections = [];
+        let value;
+        const checkeds = document.getElementsByTagName('input');
+        for (let i = 0; i < checkeds.length; i++) {
+            if (checkeds[i].checked) {
+                sections.push(checkeds[i].name);
+            }
+        }
+        value = sections;
+        this.setState({
+            sections: sections
+        })
+
+    }
+    handleChange = (e, name) => {
+        this.setState({ [e.target.name]: !this.state[name] })
     }
 
+
     onSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        await this.selected();
+        const sessionsArr = Object.values(this.state.sections);
+        this.setState({ saving: true });
+
         const formData = new FormData()
         formData.append('avatar', this.state.avatar)
         formData.append('username', this.state.username)
         formData.append('fullname', this.state.username)
         formData.append('contactnumber', this.state.contactnumber)
         formData.append('email', this.state.email)
-        formData.append('password', this.state.password)
+        formData.append('password', this.state.tempPwd)
         formData.append('type', this.state.type)
         formData.append('gender', this.state.gender)
+        formData.append('sections', sessionsArr)
+        formData.append('jobTitle', this.state.jobTitle)
+        formData.append('userID', this.state.userID)
+
 
         if (this.state.id === '') {
             await this.props.addNewUser(formData)
         } else {
             await this.props.updateUser(formData, this.state.id)
         }
-        this.setState({ saving: false })
+        return;
+        // this.setState({ saving: false, saved: true })
     }
     render() {
         const { auth } = this.props
+        if (this.props.location.data == undefined) {
+            return <Redirect to='/user/adduser' />
+        }
         if (!auth.loading && !auth.isAuthenticated) {
             return <Redirect to='/' />
         }
-        if (this.props.saved) {
-            return <Redirect to='/user' />
+        if (this.props.saved == true) {
+            return <Redirect push to={{
+                pathname: "/user/configuresystemuser",
+                data: { state: this.state, user: this.props.user },
+
+            }}
+            />
         }
+
+
+
         return (
             <React.Fragment>
                 <Loader />
@@ -104,8 +157,10 @@ class ConfigureSystem extends Component {
                                         <div className='card-body'>
                                             <Alert />
                                             <form
+                                                encType='multipart/form-data'
                                                 action='/upload'
                                                 method='POST'
+                                                onSubmit={(e) => this.onSubmit(e)}
                                             >
                                                 <div className="row ml-3">
 
@@ -114,10 +169,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='inventory'
-                                                                onChange={(e) => this.handleChange(e)}
+                                                                name='Inventory'
+                                                                onChange={(e) => this.handleChange(e, 'Inventory')}
                                                                 checked={this.state.Inventory === true}
-                                                                value={true}
+                                                                value={this.state.Inventory}
                                                             />{' '}
                               Inventory
                             </label>
@@ -129,10 +184,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='returnproduct'
-                                                                onChange={(e) => this.handleChange(e)}
+                                                                name='Returnproduct'
+                                                                onChange={(e) => this.handleChange(e, 'Returnproduct')}
                                                                 checked={this.state.Returnproduct === true}
-                                                                value={true}
+                                                                value={this.state.Returnproduct}
                                                             />{' '}
                               Return Product
                             </label>
@@ -150,10 +205,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='barcode'
-                                                                onChange={(e) => this.handleChange(e)}
+                                                                name='Barcode'
+                                                                onChange={(e) => this.handleChange(e, 'Barcode')}
                                                                 checked={this.state.Barcode === true}
-                                                                value={true}
+                                                                value={this.state.Barcode}
                                                             />{' '}
                       Barcode
                     </label>
@@ -165,10 +220,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='orders'
-                                                                onChange={(e) => this.handleChange(e)}
-                                                                checked={this.state.Orders ===true}
-                                                                value={true}
+                                                                name='Orders'
+                                                                onChange={(e) => this.handleChange(e, 'Orders')}
+                                                                checked={this.state.Orders === true}
+                                                                value={this.state.Orders}
                                                             />{' '}
                       Orders
                     </label>
@@ -185,10 +240,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='customer'
-                                                                onChange={(e) => this.handleChange(e)}
-                                                                checked={this.state.Customer ===true}
-                                                                value={true}
+                                                                name='Customers'
+                                                                onChange={(e) => this.handleChange(e, 'Customers')}
+                                                                checked={this.state.Customers === true}
+                                                                value={this.state.Customers}
                                                             />{' '}
                       Customers
                     </label>
@@ -200,10 +255,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='appointment'
-                                                                onChange={(e) => this.handleChange(e)}
-                                                                checked={this.state.Appointment === true}
-                                                                value={true}
+                                                                name='Appointments'
+                                                                onChange={(e) => this.handleChange(e, 'Appointments')}
+                                                                checked={this.state.Appointments === true}
+                                                                value={this.state.Appointments}
                                                             />{' '}
                       Appointments
                     </label>
@@ -220,10 +275,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='rentproduct'
-                                                                onChange={(e) => this.handleChange(e)}
+                                                                name='Rentproduct'
+                                                                onChange={(e) => this.handleChange(e, 'Rentproduct')}
                                                                 checked={this.state.Rentproduct === true}
-                                                                value={true}
+                                                                value={this.state.Rentproduct}
                                                             />{' '}
                       Rent a product
                     </label>
@@ -235,10 +290,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='calender'
-                                                                onChange={(e) => this.handleChange(e)}
+                                                                name='Calender'
+                                                                onChange={(e) => this.handleChange(e, 'Calender')}
                                                                 checked={this.state.Calender === true}
-                                                                value={true}
+                                                                value={this.state.Calender}
                                                             />{' '}
                       Calender
                     </label>
@@ -254,10 +309,10 @@ class ConfigureSystem extends Component {
                                                         <label className='radio-inline'>
                                                             <input
                                                                 type='checkbox'
-                                                                name='gender'
+                                                                name='Report'
                                                                 onChange={(e) => this.handleChange(e)}
                                                                 checked={this.state.Report === true}
-                                                                value={true}
+                                                                value={this.state.Report}
                                                             />{' '}
                       Report
                     </label>
@@ -269,61 +324,19 @@ class ConfigureSystem extends Component {
                                                 </div>
 
                                                 <div className='form-actions top'>
-                                                    <Link
-                                                        to={{
-                                                            pathname: "/user/configuresystemuser",
-                                                            data: this.state
-                                                        }}
-                                                        type='submit'
-                                                        className='mb-2 mr-2 btn btn-raised btn-primary'
-                                                    >
-                                                        <i className='ft-chevron-right' /> Next
-                                </Link>
-                                                    {/* {this.state.id === '' ? (
-                            <>
-                              {this.state.saving ? (
-                                <button
-                                  type='button'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <div
-                                    className='spinner-grow spinner-grow-sm '
-                                    role='status'
-                                  ></div>
-                                  &nbsp; Adding
-                                </button>
-                              ) : (
-                                <button
-                                  type='submit'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <i className='ft-check' /> Add User
-                                </button>
-                              )}
-                            </>
-                          ) : (
-                            <>
-                              {this.state.saving ? (
-                                <button
-                                  type='button'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <div
-                                    className='spinner-grow spinner-grow-sm '
-                                    role='status'
-                                  ></div>
-                                  &nbsp; Updating
-                                </button>
-                              ) : (
-                                <button
-                                  type='submit'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <i className='ft-check' /> Update User
-                                </button>
-                              )}
-                            </>
-                          )} */}
+                                                    {this.state.saving ? (
+                                                        <button
+                                                            type="button"
+                                                            className="mb-2 mr-2 btn btn-raised btn-primary" >
+                                                            <div
+                                                                className="spinner-grow spinner-grow-sm "
+                                                                role="status"></div>  &nbsp; Adding </button>
+                                                    ) : (
+                                                            <button
+                                                                type="submit"
+                                                                className="mb-2 mr-2 btn btn-raised btn-primary">
+                                                                <i className="ft-check" /> Add User </button>
+                                                        )}
                                                 </div>
 
                                             </form>
@@ -366,7 +379,6 @@ ConfigureSystem.propTypes = {
 const mapStateToProps = (state) => ({
     saved: state.user.saved,
     auth: state.auth,
-    user: state.user.profile,
 })
 export default connect(mapStateToProps, {
     addNewUser,

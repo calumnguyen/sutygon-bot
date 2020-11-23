@@ -5,26 +5,36 @@ const bcrypt = require('bcryptjs')
 const gravatar = require('gravatar')
 
 const jwt = require('jsonwebtoken')
-const config = require('config')
 const auth = require('../../middleware/auth')
 const User = require('../../models/User')
 var multer = require('multer')
-var upload = multer({ dest: 'client/public/uploads/user' })
 const { isAdmin } = require('../../middleware/isAdmin')
+var cloudinary = require('cloudinary')
+const config = require("config");
 
-const FILE_PATH = 'client/public/uploads/user'
+// cloundinary configuration
+cloudinary.config({
+  cloud_name: config.get("cloud_name"),
+  api_key: config.get("api_key"),
+  api_secret: config.get("api_secret")
+});
 
+// multer configuration
 var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, FILE_PATH)
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
-    cb(null, file.originalname)
-  },
-})
+  filename: function(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+    }
+ 
+});
+const imageFilter = function(req, file, cb) {
+  // accept image files only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+  return cb(new Error("Only image files are accepted!"), false);
+  }
+  cb(null, true);
+  };
 
-var upload = multer({ storage: storage })
+var upload = multer({ storage: storage, fileFilter: imageFilter })
 
 // @route   POST /api/users/add
 // @desc    Add new user
@@ -47,20 +57,20 @@ router.post(
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() })
-    }
 
-    const body = JSON.parse(JSON.stringify(req.body))
-
-    const salt = await bcrypt.genSalt(10)
-    const password = await bcrypt.hash(body.password, salt)
+   
+   const body = JSON.parse(JSON.stringify(req.body));
+    var sections = req.body.sections.split(",");
+    // const salt = await bcrypt.genSalt(10)
+    // const password = await bcrypt.hash(body.password, salt)
 
     try {
+
+      
       // check if there is any record with same email and username
       const userByEmail = await User.findOne({ email: body.email })
       const userByUsername = await User.findOne({ username: body.username })
+
       if (userByEmail) {
         return res
           .status(422)
@@ -72,6 +82,7 @@ router.post(
           .json({ errors: [{ msg: 'User with this Username already exists' }] })
       }
 
+      
       // save user record
       // const { avatar } = file.path;
       const avatar = gravatar.url(body.email, {
@@ -79,17 +90,39 @@ router.post(
         r: 'pg',
         d: 'mm',
       })
-      let userBody
+      let userBody;
+      
 
       if (req.file == undefined) {
-        userBody = { ...req.body, password, avatar }
+        userBody = { ...req.body, avatar ,sections}
+        let user = new User(userBody)
+        console.log(user)
+        await user.save()
+  
+        res.status(200).json({ user, msg: 'User Added Successfully' })
       } else {
+        const avatar = req.file.path
+
+        cloudinary.uploader.upload(avatar, async function (result) {
+         
         userBody = {
           ...req.body,
-          password,
-          avatar: `/uploads/user/${req.file.originalname}`,
+          avatar: result.secure_url,
+          sections
         }
-      }
+        let user = new User(userBody)
+        await user.save()
+  
+        res.status(200).json({ user, msg: 'User Added Successfully' })
+      })
+      
+    } 
+  }catch (err) {
+      res.status(500).json({ msg: err })
+    }
+  }
+)
+
       // if (req.file == undefined) {
       //   userBody = {
       //     username: body.username,
@@ -116,17 +149,7 @@ router.post(
       //   }
       // }
 
-      let user = new User(userBody)
-      await user.save()
-
-      res.status(200).json({ user, msg: 'User Added Successfully' })
-    } catch (err) {
-      console.log(err)
-      res.status(500).json({ msg: err })
-    }
-  }
-)
-
+ 
 // @route   GET api/users
 // @desc    Get all users
 // @access  Private
@@ -176,6 +199,8 @@ router.get('/search/:val', auth, async (req, res) => {
     res.status(500).send('Server Error!')
   }
 })
+
+
 
 // @route   GET /api/users/id
 // @desc    Get User by Id
