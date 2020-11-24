@@ -59,8 +59,10 @@ class AddUser extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  handleChangeNumber = (e) =>{
-    this.setState({ [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : ''})
+  handleChangeNumber = (e) => {
+    this.setState({
+      [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : '',
+    })
   }
   render() {
     const { auth } = this.props
@@ -108,16 +110,16 @@ class AddUser extends Component {
                             />
                             <br />
                             {this.state.isEdit === true &&
-                              this.state.imgUpd === false ? (
-                                <img
-                                  className='media-object round-media'
-                                  src={`${this.state.avatar}`}
-                                  alt='Product image'
-                                  height={100}
-                                />
-                              ) : (
-                                ''
-                              )}
+                            this.state.imgUpd === false ? (
+                              <img
+                                className='media-object round-media'
+                                src={`${this.state.avatar}`}
+                                alt='Product image'
+                                height={100}
+                              />
+                            ) : (
+                              ''
+                            )}
                             {this.state.imgUpd === true ? (
                               <img
                                 className='media-object round-media'
@@ -126,8 +128,8 @@ class AddUser extends Component {
                                 height={100}
                               />
                             ) : (
-                                ''
-                              )}
+                              ''
+                            )}
                           </div>
 
                           <div className='form-group col-12 mb-2'></div>
@@ -212,26 +214,22 @@ class AddUser extends Component {
                               id='type'
                               name='type'
                               required
-<<<<<<< HEAD
-=======
                               defaultValue='----'
->>>>>>> 4eb51da3b03744e5ff9da88895744413945231c6
                               className='form-control'
                               onChange={(e) => this.handleChange(e)}
                             >
-
                               <option
                                 value={'SuperAdmin' === this.state.type}
-                              // selected={'SuperAdmin' === this.state.type}
-                              // value='SuperAdmin'
+                                // selected={'SuperAdmin' === this.state.type}
+                                // value='SuperAdmin'
                               >
                                 {' '}
                                 Admin{' '}
                               </option>
                               <option
                                 value={'Employee' === this.state.type}
-                              // selected={'Employee' === this.state.type}
-                              // value='Employee'
+                                // selected={'Employee' === this.state.type}
+                                // value='Employee'
                               >
                                 {' '}
                                 Employee{' '}
@@ -275,78 +273,27 @@ class AddUser extends Component {
                         </div>
 
                         <div className='form-actions top'>
-<<<<<<< HEAD
-                          <Link
-                            to={{
-                              pathname: '/user/configuresystem',
-                              data: this.state,
-=======
-                          {(this.state.avatar == "" ||this.state.contactnumber == ""||this.state.email == ""||this.state.fullname == "" ||this.state.gender== "" ||this.state.jobTitle== "") ? 
-                          <button
- className="mb-2 mr-2 btn btn-raised btn-primary disabled">
- <i className='ft-chevron-right' /> Next
-                          </button> :
-                          <Link
-                            to={{
-                              pathname: "/user/configuresystem",
-                              data: this.state
->>>>>>> 4eb51da3b03744e5ff9da88895744413945231c6
-                            }}
-                            type='submit'
-                            className='mb-2 mr-2 btn btn-raised btn-primary'
-                          >
-                            <i className='ft-chevron-right' /> Next
-<<<<<<< HEAD
-                          </Link>
-                          {/* {this.state.id === '' ? (
-                            <>
-                              {this.state.saving ? (
-                                <button
-                                  type='button'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <div
-                                    className='spinner-grow spinner-grow-sm '
-                                    role='status'
-                                  ></div>
-                                  &nbsp; Adding
-                                </button>
-                              ) : (
-                                <button
-                                  type='submit'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <i className='ft-check' /> Add User
-                                </button>
-                              )}
-                            </>
+                          {this.state.avatar == '' ||
+                          this.state.contactnumber == '' ||
+                          this.state.email == '' ||
+                          this.state.fullname == '' ||
+                          this.state.gender == '' ||
+                          this.state.jobTitle == '' ? (
+                            <button className='mb-2 mr-2 btn btn-raised btn-primary disabled'>
+                              <i className='ft-chevron-right' /> Next
+                            </button>
                           ) : (
-                            <>
-                              {this.state.saving ? (
-                                <button
-                                  type='button'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <div
-                                    className='spinner-grow spinner-grow-sm '
-                                    role='status'
-                                  ></div>
-                                  &nbsp; Updating
-                                </button>
-                              ) : (
-                                <button
-                                  type='submit'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
-                                >
-                                  <i className='ft-check' /> Update User
-                                </button>
-                              )}
-                            </>
-                          )} */}
-=======
-                                </Link>
-  }
->>>>>>> 4eb51da3b03744e5ff9da88895744413945231c6
+                            <Link
+                              to={{
+                                pathname: '/user/configuresystem',
+                                data: this.state,
+                              }}
+                              type='submit'
+                              className='mb-2 mr-2 btn btn-raised btn-primary'
+                            >
+                              <i className='ft-chevron-right' /> Next
+                            </Link>
+                          )}
                         </div>
                       </form>
                     </div>
@@ -378,7 +325,6 @@ class AddUser extends Component {
 }
 
 AddUser.propTypes = {
-
   getUser: PropTypes.func.isRequired,
   auth: PropTypes.object,
   updateUser: PropTypes.func.isRequired,

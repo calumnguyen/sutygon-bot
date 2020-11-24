@@ -7,6 +7,7 @@ const { check, validationResult } = require('express-validator')
 const RentedProducts = require('../../models/RentedProducts')
 const mongoose = require('mongoose')
 const Invoice = require('../../models/Invoices')
+const Product = require('../../models/Product')
 var moment = require('moment')
 
 // @route   POST api/customers/add
@@ -285,7 +286,9 @@ router.get('/:id/insights', auth, async (req, res) => {
           // },
           // Used to count the documents. It should be the direct child of
           // the $group because it is an object accumulator...
-          // count: { $sum: 1 },
+
+          // It will give the total number of orders
+          total_orders: { $sum: 1 },
         },
       },
       // {
@@ -296,17 +299,47 @@ router.get('/:id/insights', auth, async (req, res) => {
       // }
     ])
 
-    // total orders gathered from Invoices collection.
-    const totalOrders = await Invoice.find({
-      customer_id: req.params.id,
-      createdAt: {
-        // get in range between $gte and $lte for the requested timeframe...
-        $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
-        $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
-      },
-    }).countDocuments()
+    let totalProducts = await RentedProducts.find({
+      customer: customerId,
+    }).select('barcodes')
 
-    return res.status(200).json({ msg: 'Insights found.', orders, totalOrders })
+    // console.log(totalProducts)
+
+    var productAmount = 0
+
+    totalProducts.forEach((prod) => {
+      // console.log(prod.barcodes)
+      prod.barcodes.forEach(async (bcode) => {
+        // console.log(bcode)
+
+        let singleProduct = await Product.findOne({
+          'color.sizes.barcodes': { $elemMatch: { barcode: parseInt(bcode) } },
+        })
+        // .lean()
+
+        // I set this check of null because whenever no barcode is matched, the returned value
+        // will be null...
+        if (singleProduct) {
+          console.log(parseInt(singleProduct.color[0].sizes[0].price))
+
+          productAmount += parseInt(singleProduct.color[0].sizes[0].price)
+        }
+      })
+    })
+
+    console.log(productAmount)
+
+    // total orders gathered from Invoices collection.
+    // const totalOrders = await Invoice.find({
+    //   customer_id: req.params.id,
+    //   createdAt: {
+    //     // get in range between $gte and $lte for the requested timeframe...
+    //     $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+    //     $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
+    //   },
+    // }).countDocuments()
+
+    return res.status(200).json({ msg: 'Insights found.', orders })
   } catch (error) {
     return res
       .status(500)
