@@ -301,33 +301,43 @@ router.get('/:id/insights', auth, async (req, res) => {
 
     let totalProducts = await RentedProducts.find({
       customer: customerId,
+      rentDate: {
+        // get in range between $gte and $lte for the requested timeframe...
+        $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+        $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
+      },
     }).select('barcodes')
 
-    // console.log(totalProducts)
-
     var productAmount = 0
+    const calculateProductAmt = new Promise(async (resolve, reject) => {
+      for (prod of totalProducts) {
+        // console.log(prod.barcodes)
+        for (bcode of prod.barcodes) {
+          let singleProduct = await Product.findOne({
+            'color.sizes.barcodes': {
+              $elemMatch: { barcode: parseInt(bcode) },
+            },
+          })
+            .lean() // anti-POJO
+            .select('color')
 
-    totalProducts.forEach((prod) => {
-      // console.log(prod.barcodes)
-      prod.barcodes.forEach(async (bcode) => {
-        // console.log(bcode)
-
-        let singleProduct = await Product.findOne({
-          'color.sizes.barcodes': { $elemMatch: { barcode: parseInt(bcode) } },
-        })
-        // .lean()
-
-        // I set this check of null because whenever no barcode is matched, the returned value
-        // will be null...
-        if (singleProduct) {
-          console.log(parseInt(singleProduct.color[0].sizes[0].price))
-
-          productAmount += parseInt(singleProduct.color[0].sizes[0].price)
+          // I set this check of null to prevent null value incase no barcode is matched...
+          if (singleProduct) {
+            // will sum the amount of each product..
+            productAmount += parseInt(singleProduct.color[0].sizes[0].price)
+          }
         }
-      })
+      }
+      return resolve(productAmount)
     })
 
-    console.log(productAmount)
+    const ProductTotal = await calculateProductAmt
+
+    const totalTax = orders[0].total - (ProductTotal + orders[0].insuranceAmt)
+
+    // Adding tax value.
+    orders[0]['tax'] = totalTax
+    // orders[0]['total'] += totalTax
 
     // total orders gathered from Invoices collection.
     // const totalOrders = await Invoice.find({
