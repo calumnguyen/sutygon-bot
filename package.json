@@ -35,6 +35,7 @@
     "jspdf": "^2.1.0",
     "moment": "^2.27.0",
     "moment-immutable-methods": "^1.0.9",
+    "mongodb": "^3.6.3",
     "mongoose": "^5.10.0",
     "mongoose-auto-increment": "^5.0.1",
     "mongoose-sequence": "^5.2.2",

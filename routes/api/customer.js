@@ -291,12 +291,6 @@ router.get('/:id/insights', auth, async (req, res) => {
           total_orders: { $sum: 1 },
         },
       },
-      // {
-      //   // want total documents with the customer_id in invoice collection.
-      //   $lookup: {
-      //     from:""
-      //   }
-      // }
     ])
 
     let totalProducts = await RentedProducts.find({
@@ -306,7 +300,9 @@ router.get('/:id/insights', auth, async (req, res) => {
         $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
         $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
       },
-    }).select('barcodes')
+    })
+      // .project({ barcodes: 1 })
+      .select('barcodes')
 
     var productAmount = 0
     const calculateProductAmt = new Promise(async (resolve, reject) => {
@@ -320,6 +316,7 @@ router.get('/:id/insights', auth, async (req, res) => {
           })
             .lean() // anti-POJO
             .select('color')
+          // .project({ color: 1 })
 
           // I set this check of null to prevent null value incase no barcode is matched...
           if (singleProduct) {
@@ -351,6 +348,7 @@ router.get('/:id/insights', auth, async (req, res) => {
 
     return res.status(200).json({ msg: 'Insights found.', orders })
   } catch (error) {
+    console.log(error)
     return res
       .status(500)
       .json({ errors: [{ msg: 'Server Error: Something went wrong.' }] })
