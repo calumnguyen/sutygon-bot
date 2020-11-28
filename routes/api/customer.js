@@ -293,29 +293,35 @@ router.get('/:id/insights', auth, async (req, res) => {
       },
     ])
 
-    let totalProducts = await RentedProducts.find({
-      customer: customerId,
-      rentDate: {
-        // get in range between $gte and $lte for the requested timeframe...
-        $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
-        $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
+    let totalProducts = await RentedProducts.find(
+      {
+        customer: customerId,
+        rentDate: {
+          // get in range between $gte and $lte for the requested timeframe...
+          $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+          $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
+        },
       },
-    })
-      // .project({ barcodes: 1 })
-      .select('barcodes')
+      { barcodes: 1, _id: 0 }
+    )
+
+    // .project({ barcodes: 1 })
+    // .select('barcodes')
 
     var productAmount = 0
     const calculateProductAmt = new Promise(async (resolve, reject) => {
       for (prod of totalProducts) {
         // console.log(prod.barcodes)
         for (bcode of prod.barcodes) {
-          let singleProduct = await Product.findOne({
-            'color.sizes.barcodes': {
-              $elemMatch: { barcode: parseInt(bcode) },
+          let singleProduct = await Product.findOne(
+            {
+              'color.sizes.barcodes': {
+                $elemMatch: { barcode: parseInt(bcode) },
+              },
             },
-          })
-            .lean() // anti-POJO
-            .select('color')
+            { color: 1, _id: 0 }
+          ).lean() // anti-POJO
+          // .select('color')
           // .project({ color: 1 })
 
           // I set this check of null to prevent null value incase no barcode is matched...

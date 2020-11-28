@@ -267,13 +267,6 @@ router.post(
           .json({ errors: [{ msg: 'User with this Username already exists' }] })
       }
 
-      // find user through req.params.id
-      var user = await User.findById(req.params.id).select('salary')
-      console.log(user)
-
-      //====================================//
-      // check if salary is there in req.body.
-      var salary
       if (req.body.salary) {
         if (!(req.body.code === process.env.salarySecretCode)) {
           return res
@@ -281,136 +274,35 @@ router.post(
             .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
         }
 
-        if (!user.salary.period) {
-          // then check if salary is already set there in db.
-          // if no salary is set then set salary.
+        var salary
+        // Period : Weekly
+        if (req.body.salary.period === 'weekly') {
+          const nextMonday = weekly()
+          salary = {
+            ...req.body.salary,
+            effective_date: nextMonday,
+          }
+        }
+
+        // Period : bi-weekly
+        if (req.body.salary.period === 'bi-weekly') {
+          const NextandThirdMon = biWeekly()
 
           salary = {
             ...req.body.salary,
+            effective_date: NextandThirdMon,
           }
-          // At starting date is null..
+        }
 
-          // Period : Weekly
-          if (salary.period === 'weekly') {
-            const nextMonday = weekly()
-            salary = {
-              ...req.body.salary,
-              effective_date: nextMonday,
-            }
-          }
+        // Period : monthly
+        if (req.body.salary.period === 'monthly') {
+          // grabbed the last monday of the month using momentjs..
 
-          // Period : bi-weekly
-          if (salary.period === 'bi-weekly') {
-            const NextandThirdMon = biWeekly()
-
-            salary = {
-              ...req.body.salary,
-              effective_date: NextandThirdMon,
-            }
-            console.log('bi-weekly', NextandThirdMon)
-          }
-
-          // Period : monthly
-          if (salary.period === 'monthly') {
-            // grabbed the last monday of the month using momentjs..
-
-            const lastMonOfMonth = monthly()
-
-            salary = {
-              ...req.body.salary,
-              effective_date: lastMonOfMonth,
-            }
-          }
-        } else {
-          // set the existing salary object again to the salary field in db until the cron-job runs...
+          const lastMonOfMonth = monthly()
 
           salary = {
-            ...user.salary,
-          }
-
-          // check if the salary period in req.body.salary is equal to the period in db
-          // if it is then no change
-          // else cron-job
-
-          if (req.body.salary.period !== salary.period) {
-            // apply cron job here.. in every if else depending on the given period in the req.body
-
-            console.log('apply cron job')
-
-            // make a updated_salary field in schema.
-
-            // populate it depending upon the requested time period
-            var updated_salary
-
-            if (req.body.salary.period === 'weekly') {
-              // check how many days are left in the effective date.
-
-              updated_salary = {
-                ...req.body.salary,
-                effective_date: weekly(
-                  user.salary.effective_date.length > 0
-                    ? user.salary.effective_date[1]
-                    : user.salary.effective_date[0]
-                ),
-              }
-
-              datePrompt(req.body.salary.period, user.salary.effective_date)
-
-              // run cron at the current set effective date.
-              // set the next effective date according to current effective date.
-              // instead of stars, the current effective date will come.
-
-              // cron.schedule('*/1 * * * *', async () => {
-              //   console.log('period updated!')
-
-              //   salary = {
-              //     ...req.body.salary,
-              //     effective_date: weekly(
-              //       user.salary.effective_date.length > 0
-              //         ? user.salary.effective_date[1]
-              //         : user.salary.effective_date[0]
-              //     ),
-              //   }
-
-              //   await User.findByIdAndUpdate(
-              //     req.params.id,
-              //     { $set: { salary } },
-              //     { new: true }
-              //   )
-              // })
-
-              // now apply 2nd logic :
-            }
-            if (req.body.salary.period === 'bi-weekly') {
-              updated_salary = {
-                ...req.body.salary,
-                effective_date: biWeekly(
-                  user.salary.effective_date.length > 0
-                    ? user.salary.effective_date[1]
-                    : user.salary.effective_date[0]
-                ),
-              }
-
-              // check how many days are left in the effective date.
-
-              datePrompt(req.body.salary.period, user.salary.effective_date)
-
-              // apply cron-job
-            }
-            if (req.body.salary.period === 'monthly') {
-              // check how many days are left in the effective date.
-
-              updated_salary = {
-                ...req.body.salary,
-                effective_date: monthly(
-                  user.salary.effective_date.length > 0
-                    ? user.salary.effective_date[1]
-                    : user.salary.effective_date[0]
-                ),
-              }
-
-              datePrompt(req.body.salary.period, user.salary.effective_date)
-            }
+            ...req.body.salary,
+            effective_date: lastMonOfMonth,
           }
         }
       }
@@ -446,7 +338,6 @@ router.post(
             avatar,
             inactivated_date,
             salary,
-            updated_salary,
           },
         },
         { new: true }
