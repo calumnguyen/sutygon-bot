@@ -21,7 +21,6 @@ import RentProduct from './components/pages/rentproduct'
 import Checkout from './components/pages/checkout'
 import ReturnProduct from './components/pages/returnproduct/returnproduct'
 import ScanBarcode from './components/pages/returnproduct/scanBarcode'
-
 import RentOrder from './components/pages/rentOrder'
 // import RentInvoice from './components/pages/RentInvoice'
 
@@ -35,6 +34,8 @@ import MatchBarcodes from './components/pages/returnproduct/matchBarcodes'
 import { Provider } from 'react-redux'
 import store from './store'
 import Barcode from './components/pages/Barcode'
+import ConfigureSystem from './components/pages/users/ConfigureSystem'
+import ConfigureSystemUser from './components/pages/users/ConfigureSystemUser'
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -57,6 +58,8 @@ const Main = () => {
 
           {/* users */}
           <PrivateRoute exact path='/user/adduser' component={AddUser} />
+          <PrivateRoute exact path='/user/configuresystem' component={ConfigureSystem} />
+          <PrivateRoute exact path='/user/configuresystemuser' component={ConfigureSystemUser} />
           <PrivateRoute exact path='/user' component={ViewUser} />
           <PrivateRoute exact path='/user/edituser/:id' component={AddUser} />
           <PrivateRoute exact path='/user/view/:id' component={View} />

@@ -16,8 +16,10 @@ const initialState = {
   users: null,
   loading: false,
   error: {},
+  saved: false,
+  user:null,
   resetToken: null,
-  passwordUpdated: false
+  passwordUpdated: false,
 };
 
 export default function (state = initialState, action) {
@@ -28,6 +30,8 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loading: true,
+        saved: false,
+
 
       };
      case GET_USERS:
@@ -35,19 +39,24 @@ export default function (state = initialState, action) {
         ...state,
         users: payload,
         loading: false,
+        saved: false,
+
       };
     case GET_USER:
       return {
         ...state,
         profile: payload,
         loading: false,
+        saved: false,
+
       };
 
       case USER_SAVED:
         return {
           ...state,
+          user:payload,
+          saved: true,
           loading: false,
-         saved: true,
          
         }
 
@@ -56,6 +65,8 @@ export default function (state = initialState, action) {
         ...state,
         error: payload,
         loading: false,
+        saved: false,
+
       };
 
     

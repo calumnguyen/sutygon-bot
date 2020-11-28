@@ -3,28 +3,45 @@ const router = express.Router()
 const { check, validationResult } = require('express-validator')
 const bcrypt = require('bcryptjs')
 const gravatar = require('gravatar')
+const moment = require('moment')
+const cron = require('node-cron')
 
 const jwt = require('jsonwebtoken')
-const config = require('config')
 const auth = require('../../middleware/auth')
 const User = require('../../models/User')
 var multer = require('multer')
-var upload = multer({ dest: 'client/public/uploads/user' })
+const { isAdmin } = require('../../middleware/isAdmin')
+var cloudinary = require('cloudinary')
+const config = require('config')
+const {
+  weekly,
+  biWeekly,
+  monthly,
+  datePrompt,
+} = require('../../helpers/timePeriod')
 
-const FILE_PATH = 'client/public/uploads/user'
-
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, FILE_PATH)
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
-    cb(null, file.originalname)
-  },
+// cloundinary configuration
+cloudinary.config({
+  cloud_name: config.get('cloud_name'),
+  api_key: config.get('api_key'),
+  api_secret: config.get('api_secret'),
 })
 
-var upload = multer({ storage: storage })
+// multer configuration
+var storage = multer.diskStorage({
+  filename: function (req, file, callback) {
+    callback(null, Date.now() + file.originalname)
+  },
+})
+const imageFilter = function (req, file, cb) {
+  // accept image files only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+    return cb(new Error('Only image files are accepted!'), false)
+  }
+  cb(null, true)
+}
 
+var upload = multer({ storage: storage, fileFilter: imageFilter })
 
 // @route   POST /api/users/add
 // @desc    Add new user
@@ -33,11 +50,12 @@ var upload = multer({ storage: storage })
 router.post(
   '/add',
   upload.single('avatar'),
+  auth,
+  isAdmin,
   [
     check('username', 'User Name is Required').not().isEmpty(),
     check('fullname', 'Full Name is Required').not().isEmpty(),
     check('email', 'Please Enter a Valid Email').isEmail(),
-    check('password', 'Password is Required').not().isEmpty(),
     check('contactnumber', 'Please Enter Contact Number').not().isEmpty(),
     check('gender', 'Please select your Gender').not().isEmpty(),
     check(
@@ -45,22 +63,19 @@ router.post(
       'Please Enter a password with 6 or more characters'
     ).isLength({ min: 6 }),
   ],
-  auth,
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() })
-    }
-
     const body = JSON.parse(JSON.stringify(req.body))
 
-    const salt = await bcrypt.genSalt(10)
-    const password = await bcrypt.hash(body.password, salt)
+    console.log(req.body.sections)
+    var sections = req.body.sections
+    // const salt = await bcrypt.genSalt(10)
+    // const password = await bcrypt.hash(body.password, salt)
 
     try {
       // check if there is any record with same email and username
       const userByEmail = await User.findOne({ email: body.email })
       const userByUsername = await User.findOne({ username: body.username })
+
       if (userByEmail) {
         return res
           .status(422)
@@ -80,39 +95,60 @@ router.post(
         d: 'mm',
       })
       let userBody
-      if (req.file === undefined) {
-        userBody = {
-          username: body.username,
-          fullname: body.username,
-          email: body.email,
-          password: password,
-          gender: body.gender,
-          contactnumber: body.contactnumber,
-          type: body.type,
-          avatar: avatar,
-        }
-      } else {
-        userBody = {
-          username: body.username,
-          fullname: body.fullname,
-          email: body.email,
-          password: password,
-          gender: body.gender,
-          contactnumber: body.contactnumber,
-          type: body.type,
-          avatar: `/uploads/user/${req.file.originalname}`,
-        }
-      }
-      let user = new User(userBody)
-      await user.save()
 
-      res.status(200).json({ user, msg: 'User Added Successfully' })
+      if (req.file == undefined) {
+        userBody = { ...req.body, avatar, sections }
+        let user = new User(userBody)
+        console.log(user)
+        await user.save()
+
+        res.status(200).json({ user, msg: 'User Added Successfully' })
+      } else {
+        const avatar = req.file.path
+
+        cloudinary.uploader.upload(avatar, async function (result) {
+          userBody = {
+            ...req.body,
+            avatar: result.secure_url,
+            sections,
+          }
+          let user = new User(userBody)
+          await user.save()
+
+          res.status(200).json({ user, msg: 'User Added Successfully' })
+        })
+      }
     } catch (err) {
-      console.log(err)
       res.status(500).json({ msg: err })
     }
   }
 )
+
+// if (req.file == undefined) {
+//   userBody = {
+//     username: body.username,
+//     fullname: body.fullname,
+//     email: body.email,
+//     password: password,
+//     gender: body.gender,
+//     contactnumber: body.contactnumber,
+//     type: body.type,
+//     avatar: avatar,
+//     sections: body.sections,
+//   }
+// } else {
+//   userBody = {
+//     username: body.username,
+//     fullname: body.fullname,
+//     email: body.email,
+//     password: password,
+//     gender: body.gender,
+//     contactnumber: body.contactnumber,
+//     type: body.type,
+//     sections: body.sections,
+//     avatar: `/uploads/user/${req.file.originalname}`,
+//   }
+// }
 
 // @route   GET api/users
 // @desc    Get all users
@@ -126,6 +162,19 @@ router.get('/', auth, async (req, res) => {
     res.status(500).send('Server Error!')
   }
 })
+
+// // @route   GET api/users/:status
+// // @desc    Get all users
+// // @access  Private
+// router.get('/', auth, async (req, res) => {
+//   try {
+//     const users = await User.find()
+//     res.json(users)
+//   } catch (err) {
+//     console.log(err)
+//     res.status(500).send('Server Error!')
+//   }
+// })
 
 // @route   GET api/users/search/sarchval
 // @desc    Search user
@@ -218,43 +267,191 @@ router.post(
           .json({ errors: [{ msg: 'User with this Username already exists' }] })
       }
 
+      // find user through req.params.id
+      var user = await User.findById(req.params.id).select('salary')
+      console.log(user)
+
+      //====================================//
+      // check if salary is there in req.body.
+      var salary
+      if (req.body.salary) {
+        if (!(req.body.code === process.env.salarySecretCode)) {
+          return res
+            .status(400)
+            .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
+        }
+
+        if (!user.salary.period) {
+          // then check if salary is already set there in db.
+          // if no salary is set then set salary.
+
+          salary = {
+            ...req.body.salary,
+          }
+          // At starting date is null..
+
+          // Period : Weekly
+          if (salary.period === 'weekly') {
+            const nextMonday = weekly()
+            salary = {
+              ...req.body.salary,
+              effective_date: nextMonday,
+            }
+          }
+
+          // Period : bi-weekly
+          if (salary.period === 'bi-weekly') {
+            const NextandThirdMon = biWeekly()
+
+            salary = {
+              ...req.body.salary,
+              effective_date: NextandThirdMon,
+            }
+            console.log('bi-weekly', NextandThirdMon)
+          }
+
+          // Period : monthly
+          if (salary.period === 'monthly') {
+            // grabbed the last monday of the month using momentjs..
+
+            const lastMonOfMonth = monthly()
+
+            salary = {
+              ...req.body.salary,
+              effective_date: lastMonOfMonth,
+            }
+          }
+        } else {
+          // set the existing salary object again to the salary field in db until the cron-job runs...
+
+          salary = {
+            ...user.salary,
+          }
+
+          // check if the salary period in req.body.salary is equal to the period in db
+          // if it is then no change
+          // else cron-job
+
+          if (req.body.salary.period !== salary.period) {
+            // apply cron job here.. in every if else depending on the given period in the req.body
+
+            console.log('apply cron job')
+
+            // make a updated_salary field in schema.
+
+            // populate it depending upon the requested time period
+            var updated_salary
+
+            if (req.body.salary.period === 'weekly') {
+              // check how many days are left in the effective date.
+
+              updated_salary = {
+                ...req.body.salary,
+                effective_date: weekly(
+                  user.salary.effective_date.length > 0
+                    ? user.salary.effective_date[1]
+                    : user.salary.effective_date[0]
+                ),
+              }
+
+              datePrompt(req.body.salary.period, user.salary.effective_date)
+
+              // run cron at the current set effective date.
+              // set the next effective date according to current effective date.
+              // instead of stars, the current effective date will come.
+
+              // cron.schedule('*/1 * * * *', async () => {
+              //   console.log('period updated!')
+
+              //   salary = {
+              //     ...req.body.salary,
+              //     effective_date: weekly(
+              //       user.salary.effective_date.length > 0
+              //         ? user.salary.effective_date[1]
+              //         : user.salary.effective_date[0]
+              //     ),
+              //   }
+
+              //   await User.findByIdAndUpdate(
+              //     req.params.id,
+              //     { $set: { salary } },
+              //     { new: true }
+              //   )
+              // })
+
+              // now apply 2nd logic :
+            }
+            if (req.body.salary.period === 'bi-weekly') {
+              updated_salary = {
+                ...req.body.salary,
+                effective_date: biWeekly(
+                  user.salary.effective_date.length > 0
+                    ? user.salary.effective_date[1]
+                    : user.salary.effective_date[0]
+                ),
+              }
+
+              // check how many days are left in the effective date.
+
+              datePrompt(req.body.salary.period, user.salary.effective_date)
+
+              // apply cron-job
+            }
+            if (req.body.salary.period === 'monthly') {
+              // check how many days are left in the effective date.
+
+              updated_salary = {
+                ...req.body.salary,
+                effective_date: monthly(
+                  user.salary.effective_date.length > 0
+                    ? user.salary.effective_date[1]
+                    : user.salary.effective_date[0]
+                ),
+              }
+
+              datePrompt(req.body.salary.period, user.salary.effective_date)
+            }
+          }
+        }
+      }
+
       const avatar = gravatar.url(body.email, {
         s: '200',
         r: 'pg',
         d: 'mm',
       })
 
-      if (req.file === undefined) {
-        await User.updateOne(
-          { _id: req.params.id },
-          {
-            $set: {
-              username: body.username,
-              fullname: body.fullname,
-              email: body.email,
-              gender: body.gender,
-              contactnumber: body.contactnumber,
-              type: body.type,
-              avatar: avatar,
-            },
-          }
-        )
+      // It will update any number of requested fields both by Employee and Admin...
+      let fieldsToUpdate
+      if (req.file == undefined) {
+        fieldsToUpdate = { ...req.body, avatar }
       } else {
-        await User.updateOne(
-          { _id: req.params.id },
-          {
-            $set: {
-              username: body.username,
-              fullname: body.fullname,
-              email: body.email,
-              gender: body.gender,
-              contactnumber: body.contactnumber,
-              type: body.type,
-              avatar: `/uploads/user/${req.file.originalname}`,
-            },
-          }
-        )
+        fieldsToUpdate = {
+          ...req.body,
+          avatar: `/uploads/user/${req.file.originalname}`,
+        }
       }
+
+      //check if the accountStatus is set to 'inactivated'..
+      let inactivated_date
+      if (req.body.accountStatus && req.body.accountStatus === 'inactive') {
+        inactivated_date = Date.now()
+      }
+
+      await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: {
+            ...req.body,
+            avatar,
+            inactivated_date,
+            salary,
+            updated_salary,
+          },
+        },
+        { new: true }
+      )
+
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
       console.log(err)
@@ -268,35 +465,31 @@ router.post(
 // @route  POST api/users/changestatus/:id
 // @desc   Change Account status (blocked/active)
 // @access Private
-router.post(
-
-  auth,
-  async (req, res) => {
-    try {
-      const errors = validationResult(req)
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() })
-      }
-
-      const user = await User.findById(req.params.id)
-
-      await User.updateOne(
-        { _id: user._id },
-        {
-          $set: {
-            accountStatus: 'block',
-          },
-        }
-      )
-      res.status(200).json({ msg: 'Status Updated Successfully' })
-    } catch (err) {
-      console.error(err.message)
-      res
-        .status(500)
-        .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+router.post(auth, async (req, res) => {
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
     }
+
+    const user = await User.findById(req.params.id)
+
+    await User.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          accountStatus: 'block',
+        },
+      }
+    )
+    res.status(200).json({ msg: 'Status Updated Successfully' })
+  } catch (err) {
+    console.error(err.message)
+    res
+      .status(500)
+      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
   }
-)
+})
 
 // @route   POST /api/users/updatePassword/:id
 // @desc    Update Password

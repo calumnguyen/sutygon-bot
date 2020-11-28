@@ -22,7 +22,9 @@ class AddCustomer extends Component {
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
   };
-
+  handleChangeNumber = (e) =>{
+    this.setState({ [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : ''})
+  }
   onSubmit = async (e) => {
     e.preventDefault();
     this.setState({ saving: true });
@@ -90,13 +92,13 @@ class AddCustomer extends Component {
                             </div>
                             <div className="form-group col-md-4 mb-2">
                               <label htmlFor="projectinput4">Contact Number</label>
-                              <input type="number"
+                              <input type="text"
                                 id="projectinput4"
                                 className="form-control"
                                 placeholder="Contact Number"
                                 name="contactnumber"
                                 value={this.state.contactnumber}
-                                onChange={(e) => this.handleChange(e)}
+                                onChange={(e) => this.handleChangeNumber(e)}
                                 required
                               />
                             </div>

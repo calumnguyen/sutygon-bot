@@ -24,13 +24,17 @@ export const addNewUser = (user) => async (dispatch) => {
           'content-type': 'multipart/form-data'
       }
   }
-    try {
-      const res = await axios.post("/api/users/add",user, config);
+  
 
+  try {
+      
+
+      const res = await axios.post("/api/users/add",user, config);
       dispatch({
         type: USER_SAVED,
+        payload:res.data
       });
-
+     
       dispatch(setAlert(res.data.msg, "success"));
 
     } catch (err) {
@@ -79,6 +83,7 @@ export const getAllUsers = () => async (dispatch) => {
       });
     }
   };
+
 
 
 

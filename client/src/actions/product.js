@@ -23,7 +23,6 @@ export const addNewProduct = (product) => async (dispatch) => {
       }
   }
   try {
-
       const res = await axios.post("/api/products/add", product, config);
 
       dispatch({
