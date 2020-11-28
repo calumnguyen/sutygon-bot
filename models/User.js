@@ -32,11 +32,6 @@ const UserSchema = new mongoose.Schema({
     period: { type: String, enum: ['weekly', 'bi-weekly', 'monthly'] },
     effective_date: { type: [Date] },
   },
-  updated_salary: {
-    base_rate: { type: Number },
-    period: { type: String },
-    effective_date: { type: [Date] },
-  },
   password: {
     type: String,
     requried: true,

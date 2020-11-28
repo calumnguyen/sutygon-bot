@@ -5,6 +5,7 @@ const dotenv = require('dotenv')
 const moment = require('moment')
 const cron = require('node-cron')
 const User = require('./models/User')
+const { weekly, biWeekly, monthly } = require('./helpers/timePeriod')
 
 const connectDB = require('./config/db')
 
@@ -17,23 +18,43 @@ connectDB()
 app.use(express.json({ extended: false }))
 app.use(express.static(path.join(__dirname, '/public')))
 
-// cron-jobs
+// cron-job
+//Run twice a dat at the start of 12am and 12pm.
+cron.schedule('0 */12 * * *', async () => {
+  console.log('salary effective date updated!')
 
-// cron.schedule('*/1 * * * *', async () => {
-//   console.log('period updated!')
-//   // let users = await User.findOne({ _id: '5fbb63b858121d1c7cc1ea96' })
-//   // console.log(users)
+  // Find only those users whose salary exist in db.
+  const users = await User.find({ salary: { $ne: '' } }).select('salary')
 
-//   let updSalUser = await User.findOne({ username: 'ibad_shaikh new' })
+  async function salaryCronJob() {
+    for (user of users) {
+      if (
+        // Matching only(date-month-year) excluding Time(h.m.s.ms) because the cron job will run only once in a day at night 12.00 , not every minute...
+        moment(
+          user.salary.effective_date[user.salary.effective_date.length - 1]
+        ).format(moment.HTML5_FMT.DATE) ===
+        moment().format(moment.HTML5_FMT.DATE)
+      ) {
+        if (user.salary.period === 'weekly') {
+          // check if weekly and update accordingly.
+          user.salary.effective_date = weekly(user.salary.effective_date[0])
+          await user.save()
+        } else if (user.salary.period === 'bi-weekly') {
+          // check if bi-weekly and update accordingly.
+          user.salary.effective_date = biWeekly(user.salary.effective_date[1])
+          await user.save()
+        } else if (user.salary.period === 'monthly') {
+          // check if monthly and update accordingly.
+          user.salary.effective_date = monthly(user.salary.effective_date[0])
+          await user.save()
+        }
+      }
+    }
+  }
 
-//   updSalUser.salary = updSalUser.updated_salary
-
-//   updSalUser.updated_salary = null
-
-//   updSalUser.save()
-
-//   console.log(updSalUser)
-// })
+  // Execute cronJob :)
+  salaryCronJob()
+})
 
 // Routes
 app.use('/api/dashboard', require('./routes/api/dashboard'))
