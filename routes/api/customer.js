@@ -2,7 +2,13 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../../middleware/auth')
 const Customer = require('../../models/Customer')
+const RentedProduct = require('../../models/RentedProducts')
 const { check, validationResult } = require('express-validator')
+const RentedProducts = require('../../models/RentedProducts')
+const mongoose = require('mongoose')
+const Invoice = require('../../models/Invoices')
+const Product = require('../../models/Product')
+var moment = require('moment')
 
 // @route   POST api/customers/add
 // @desc    Add New Customer
@@ -14,6 +20,7 @@ router.post(
     check('contactnumber', 'Contact Number Required').isLength({ min: 10 }),
     check('email', 'Email Required').not().isEmpty(),
     check('address', 'Address Required').not().isEmpty(),
+    check('birthday', 'Enter birth date.').not().isEmpty(),
   ],
   auth,
 
@@ -24,6 +31,18 @@ router.post(
     }
 
     try {
+      // Check if email already exist.
+      let emailExist = await Customer.findOne({ email: req.body.email })
+        .lean()
+        .select('_id')
+
+      if (emailExist) {
+        console.log(emailExist)
+        return res
+          .status(409)
+          .json({ errors: [{ msg: 'Email already exists' }] })
+      }
+
       let customer = new Customer(req.body)
       await customer.save()
       res.status(200).json({ msg: 'Customer Added Successfully' })
@@ -53,6 +72,42 @@ router.post('/:id', auth, async (req, res) => {
   } catch (err) {
     console.error(err.message)
     res
+      .status(500)
+      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+  }
+})
+
+// @route    PUT api/customers/update/:id
+//@desc      update customers.
+router.put('/update/:id', auth, async (req, res) => {
+  try {
+    let { name, birthday, online_account } = req.body
+
+    let { username } = { ...online_account }
+
+    // now remove those key:items from the req.body with are not editable.
+    if (name || birthday || username) {
+      delete req.body['name']
+      delete req.body['birthday']
+      delete online_account['username']
+    }
+
+    let customer = await Customer.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body },
+      { new: true, runValidators: true }
+    ).lean()
+
+    if (!customer) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: 'No customer found with this id.' }] })
+    }
+
+    return res.status(200).json({ msg: 'Customer updated successfully!' })
+  } catch (err) {
+    console.log(err)
+    return res
       .status(500)
       .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
   }
@@ -165,6 +220,155 @@ router.delete('/:id', auth, async (req, res) => {
       .status(500)
       .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
   }
+})
+
+// @route  GET api/customers/insights
+// @desc   Get customer insights
+// @access Private
+
+router.get('/:id/insights', auth, async (req, res) => {
+  let { year } = { ...req.body }
+
+  try {
+    //get year
+    var startDate = moment(year).format('YYYY-MM-DD')
+
+    //make last date of the current year
+    const lastDate = startDate.split('-')
+
+    lastDate[1] = '12'
+    lastDate[2] = '30'
+
+    let endDate = lastDate.join('-')
+
+    //converted to ObjectId because aggregator is type-sensitive.
+    var customerId = mongoose.Types.ObjectId(req.params.id)
+
+    let orders = await RentedProducts.aggregate([
+      {
+        $match: {
+          $and: [
+            { customer: customerId },
+            {
+              rentDate: {
+                // get in range between $gte and $lte for the requested timeframe...
+                $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+                $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
+              },
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: {
+              // double is used to convert string to number for performing addition.
+              $toDouble: '$total',
+            },
+          },
+          insuranceAmt: {
+            $sum: {
+              $toDouble: '$insuranceAmt',
+            },
+          },
+          Total_spent: {
+            $sum: {
+              $subtract: [
+                { $toDouble: '$total' },
+                { $toDouble: '$insuranceAmt' },
+              ],
+            },
+          },
+          // tax: {
+          //    total - (product + insurance)
+          // },
+          // Used to count the documents. It should be the direct child of
+          // the $group because it is an object accumulator...
+
+          // It will give the total number of orders
+          total_orders: { $sum: 1 },
+        },
+      },
+    ])
+
+    let totalProducts = await RentedProducts.find(
+      {
+        customer: customerId,
+        rentDate: {
+          // get in range between $gte and $lte for the requested timeframe...
+          $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+          $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
+        },
+      },
+      { barcodes: 1, _id: 0 }
+    )
+
+    // .project({ barcodes: 1 })
+    // .select('barcodes')
+
+    var productAmount = 0
+    const calculateProductAmt = new Promise(async (resolve, reject) => {
+      for (prod of totalProducts) {
+        // console.log(prod.barcodes)
+        for (bcode of prod.barcodes) {
+          let singleProduct = await Product.findOne(
+            {
+              'color.sizes.barcodes': {
+                $elemMatch: { barcode: parseInt(bcode) },
+              },
+            },
+            { color: 1, _id: 0 }
+          ).lean() // anti-POJO
+          // .select('color')
+          // .project({ color: 1 })
+
+          // I set this check of null to prevent null value incase no barcode is matched...
+          if (singleProduct) {
+            // will sum the amount of each product..
+            productAmount += parseInt(singleProduct.color[0].sizes[0].price)
+          }
+        }
+      }
+      return resolve(productAmount)
+    })
+
+    const ProductTotal = await calculateProductAmt
+
+    const totalTax = orders[0].total - (ProductTotal + orders[0].insuranceAmt)
+
+    // Adding tax value.
+    orders[0]['tax'] = totalTax
+    // orders[0]['total'] += totalTax
+
+    // total orders gathered from Invoices collection.
+    // const totalOrders = await Invoice.find({
+    //   customer_id: req.params.id,
+    //   createdAt: {
+    //     // get in range between $gte and $lte for the requested timeframe...
+    //     $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+    //     $lte: new Date(new Date(endDate).setHours(23, 59, 59)),
+    //   },
+    // }).countDocuments()
+
+    return res.status(200).json({ msg: 'Insights found.', orders })
+  } catch (error) {
+    console.log(error)
+    return res
+      .status(500)
+      .json({ errors: [{ msg: 'Server Error: Something went wrong.' }] })
+  }
+
+  // total orders.
+
+  // total discounts. (no)
+
+  // total insurance
+
+  // damage = missing
+
+  // late fees. (no)
 })
 
 module.exports = router

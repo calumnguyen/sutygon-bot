@@ -3,6 +3,8 @@ const router = express.Router()
 const { check, validationResult } = require('express-validator')
 const bcrypt = require('bcryptjs')
 const gravatar = require('gravatar')
+const moment = require('moment')
+const cron = require('node-cron')
 
 const jwt = require('jsonwebtoken')
 const auth = require('../../middleware/auth')
@@ -10,30 +12,34 @@ const User = require('../../models/User')
 var multer = require('multer')
 const { isAdmin } = require('../../middleware/isAdmin')
 var cloudinary = require('cloudinary')
-const config = require("config");
+const config = require('config')
+const {
+  weekly,
+  biWeekly,
+  monthly,
+  datePrompt,
+} = require('../../helpers/timePeriod')
 
 // cloundinary configuration
 cloudinary.config({
-  cloud_name: config.get("cloud_name"),
-  api_key: config.get("api_key"),
-  api_secret: config.get("api_secret")
-});
+  cloud_name: config.get('cloud_name'),
+  api_key: config.get('api_key'),
+  api_secret: config.get('api_secret'),
+})
 
 // multer configuration
 var storage = multer.diskStorage({
-  filename: function(req, file, callback) {
-    callback(null, Date.now() + file.originalname);
-    }
- 
-});
-
-const imageFilter = function(req, file, cb) {
+  filename: function (req, file, callback) {
+    callback(null, Date.now() + file.originalname)
+  },
+})
+const imageFilter = function (req, file, cb) {
   // accept image files only
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
-  return cb(new Error("Only image files are accepted!"), false);
+    return cb(new Error('Only image files are accepted!'), false)
   }
-  cb(null, true);
-  };
+  cb(null, true)
+}
 
 var upload = multer({ storage: storage, fileFilter: imageFilter })
 
@@ -58,6 +64,7 @@ router.post(
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
+    const body = JSON.parse(JSON.stringify(req.body))
 
    
    const body = JSON.parse(JSON.stringify(req.body));
@@ -68,8 +75,6 @@ router.post(
     // const password = await bcrypt.hash(body.password, salt)
    }
     try {
-
-      
       // check if there is any record with same email and username
       const userByEmail = await User.findOne({ email: body.email })
       const userByUsername = await User.findOne({ username: body.username })
@@ -85,7 +90,6 @@ router.post(
           .json({ errors: [{ msg: 'User with this Username already exists' }] })
       }
 
-      
       // save user record
       // const { avatar } = file.path;
       const avatar = gravatar.url(body.email, {
@@ -93,65 +97,61 @@ router.post(
         r: 'pg',
         d: 'mm',
       })
-      let userBody;
-      
+      let userBody
 
       if (req.file == undefined) {
-        userBody = { ...req.body, avatar ,sections}
+        userBody = { ...req.body, avatar, sections }
         let user = new User(userBody)
         await user.save()
-  
+
         res.status(200).json({ user, msg: 'User Added Successfully' })
       } else {
         const avatar = req.file.path
 
         cloudinary.uploader.upload(avatar, async function (result) {
-         
-        userBody = {
-          ...req.body,
-          avatar: result.secure_url,
-          sections
-        }
-        let user = new User(userBody)
-        await user.save()
-  
-        res.status(200).json({ user, msg: 'User Added Successfully' })
-      })
-      
-    } 
-  }catch (err) {
+          userBody = {
+            ...req.body,
+            avatar: result.secure_url,
+            sections,
+          }
+          let user = new User(userBody)
+          await user.save()
+
+          res.status(200).json({ user, msg: 'User Added Successfully' })
+        })
+      }
+    } catch (err) {
       res.status(500).json({ msg: err })
     }
   }
 )
 
-      // if (req.file == undefined) {
-      //   userBody = {
-      //     username: body.username,
-      //     fullname: body.fullname,
-      //     email: body.email,
-      //     password: password,
-      //     gender: body.gender,
-      //     contactnumber: body.contactnumber,
-      //     type: body.type,
-      //     avatar: avatar,
-      //     sections: body.sections,
-      //   }
-      // } else {
-      //   userBody = {
-      //     username: body.username,
-      //     fullname: body.fullname,
-      //     email: body.email,
-      //     password: password,
-      //     gender: body.gender,
-      //     contactnumber: body.contactnumber,
-      //     type: body.type,
-      //     sections: body.sections,
-      //     avatar: `/uploads/user/${req.file.originalname}`,
-      //   }
-      // }
+// if (req.file == undefined) {
+//   userBody = {
+//     username: body.username,
+//     fullname: body.fullname,
+//     email: body.email,
+//     password: password,
+//     gender: body.gender,
+//     contactnumber: body.contactnumber,
+//     type: body.type,
+//     avatar: avatar,
+//     sections: body.sections,
+//   }
+// } else {
+//   userBody = {
+//     username: body.username,
+//     fullname: body.fullname,
+//     email: body.email,
+//     password: password,
+//     gender: body.gender,
+//     contactnumber: body.contactnumber,
+//     type: body.type,
+//     sections: body.sections,
+//     avatar: `/uploads/user/${req.file.originalname}`,
+//   }
+// }
 
- 
 // @route   GET api/users
 // @desc    Get all users
 // @access  Private
@@ -201,8 +201,6 @@ router.get('/search/:val', auth, async (req, res) => {
     res.status(500).send('Server Error!')
   }
 })
-
-
 
 // @route   GET /api/users/id
 // @desc    Get User by Id
@@ -272,6 +270,46 @@ router.post(
           .json({ errors: [{ msg: 'User with this Username already exists' }] })
       }
 
+      if (req.body.salary) {
+        if (!(req.body.code === process.env.salarySecretCode)) {
+          return res
+            .status(400)
+            .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
+        }
+
+        var salary
+        // Period : Weekly
+        if (req.body.salary.period === 'weekly') {
+          const nextMonday = weekly()
+          salary = {
+            ...req.body.salary,
+            effective_date: nextMonday,
+          }
+        }
+
+        // Period : bi-weekly
+        if (req.body.salary.period === 'bi-weekly') {
+          const NextandThirdMon = biWeekly()
+
+          salary = {
+            ...req.body.salary,
+            effective_date: NextandThirdMon,
+          }
+        }
+
+        // Period : monthly
+        if (req.body.salary.period === 'monthly') {
+          // grabbed the last monday of the month using momentjs..
+
+          const lastMonOfMonth = monthly()
+
+          salary = {
+            ...req.body.salary,
+            effective_date: lastMonOfMonth,
+          }
+        }
+      }
+
       const avatar = gravatar.url(body.email, {
         s: '200',
         r: 'pg',
@@ -299,54 +337,22 @@ router.post(
         inactivated_date = Date.now()
       }
 
-      if (req.body.salary) {
-        if (!(req.body.code === process.env.salarySecretCode)) {
-          return res
-            .status(400)
-            .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
-        }
-      }
-
       await User.findByIdAndUpdate(
         req.params.id,
-        { $set: { ...req.body, avatar, inactivated_date } },
+        {
+          $set: {
+            ...req.body,
+            avatar,
+            inactivated_date,
+            salary,
+          },
+        },
         { new: true }
       )
 
-      // if (req.file == undefined) {
-      //   await User.updateOne(
-      //     { _id: req.params.id },
-      //     {
-      //       $set: {
-      //         username: body.username,
-      //         fullname: body.fullname,
-      //         email: body.email,
-      //         gender: body.gender,
-      //         contactnumber: body.contactnumber,
-      //         type: body.type,
-      //         avatar: avatar,
-      //       },
-      //     }
-      //   )
-      // } else {
-      //   await User.updateOne(
-      //     { _id: req.params.id },
-      //     {
-      //       $set: {
-      //         username: body.username,
-      //         fullname: body.fullname,
-      //         email: body.email,
-      //         gender: body.gender,
-      //         contactnumber: body.contactnumber,
-      //         type: body.type,
-      //         avatar: `/uploads/user/${req.file.originalname}`,
-      //       },
-      //     }
-      //   )
-      // }
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
-      console.log(err.message)
+      console.log(err)
       res
         .status(500)
         .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })

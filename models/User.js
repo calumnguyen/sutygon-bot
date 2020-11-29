@@ -17,7 +17,6 @@ const UserSchema = new mongoose.Schema({
   },
   jobTitle: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
@@ -29,9 +28,9 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
   salary: {
-    amount: { type: Number },
-    next_pay_day: { type: String },
-    pay_rise: { type: Number },
+    base_rate: { type: Number },
+    period: { type: String, enum: ['weekly', 'bi-weekly', 'monthly'] },
+    effective_date: { type: [Date] },
   },
   password: {
     type: String,
@@ -48,8 +47,8 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String,
   },
-  userID:{
-    type: Number
+  userID: {
+    type: Number,
   },
   systemRole: {
     type: String,

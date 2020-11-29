@@ -1,54 +1,51 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const autoIncrement = require("mongoose-auto-increment");
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const autoIncrement = require('mongoose-auto-increment')
 
-const RentedProductSchema = new mongoose.Schema({
+const RentedProductSchema = new mongoose.Schema(
+  {
     orderNumber: {
-        type: String,
+      type: String,
+      default: 001 - 00,
     },
     user: {
-        type: Schema.Types.ObjectId,
-        ref: "user",
+      type: Schema.Types.ObjectId,
+      ref: 'user',
     },
     customerContactNumber: {
-        type: String
+      type: String,
     },
     customer: {
-        type: Schema.Types.ObjectId,
-        ref: "customer",
+      type: Schema.Types.ObjectId,
+      ref: 'customer',
     },
     barcodes: {
-        type: Array
+      type: Array,
     },
+    // products id array banao:
     rentDate: {
-        type: Date,
-
+      type: Date,
     },
     returnDate: {
-        type: Date,
-
+      type: Date,
     },
     status: {
-        type: String,
-        default: "New"
+      type: String,
+      default: 'New',
     },
 
     insuranceAmt: {
-        type: String,
+      type: String,
     },
 
     total: {
-        type: String,
+      type: String,
     },
-    leaveID:{
-        type:Boolean,
+    leaveID: {
+      type: Boolean,
     },
-  
+  },
+  { timestamps: true }
+)
 
-},
-    { timestamps: true }
-
-
-);
-
-module.exports = RentedProduct = mongoose.model("orders", RentedProductSchema);
+module.exports = RentedProduct = mongoose.model('orders', RentedProductSchema)

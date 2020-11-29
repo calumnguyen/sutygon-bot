@@ -4,23 +4,45 @@ const Schema = mongoose.Schema
 const CutomerSchema = new mongoose.Schema({
   name: {
     type: String,
+    required: true,
   },
-  contactnumber: {
-    type: String,
-  },
-  online_account: {
-    type: String,
-  },
-  membership: {
-    type: String,
-  },
-  address: {
+  username: {
     type: String,
   },
   email: {
     type: String,
     required: true,
     unique: true,
+  },
+  contactnumber: {
+    type: String,
+    required: true,
+  },
+  block_account: {
+    type: Boolean,
+    default: false,
+  },
+  // when a user dont have an online account, the value of membership will be 'null'.
+  online_account: {
+    exist: { type: String, enum: ['yes', 'no'], default: 'no' },
+    membership: { type: String, enum: ['diamond', 'gold', null] },
+    username: { type: String },
+    email: {
+      type: String,
+      enum: ['verified', 'unverified'],
+      default: 'unverified',
+    },
+    deactivate: {
+      type: Boolean,
+      default: false,
+    },
+    account_created: {
+      type: Date,
+    },
+  },
+  address: {
+    type: String,
+    required: true,
   },
   company: {
     type: String,
@@ -30,6 +52,7 @@ const CutomerSchema = new mongoose.Schema({
   },
   birthday: {
     type: Date,
+    required: true,
   },
   noOfOrders: {
     type: String,

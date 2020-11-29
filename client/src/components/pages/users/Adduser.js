@@ -180,8 +180,8 @@ class AddUser extends Component {
                                 height={100}
                               />
                             ) : (
-                                ''
-                              )}
+                              ''
+                            )}
                           </div>
 
                         </div>
