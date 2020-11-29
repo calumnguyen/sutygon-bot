@@ -66,8 +66,7 @@ router.post(
   async (req, res) => {
     const body = JSON.parse(JSON.stringify(req.body))
 
-   
-   const body = JSON.parse(JSON.stringify(req.body));
+
    var sections;
    if(req.body.sections){
      sections = req.body.sections.split(",");
