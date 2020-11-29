@@ -12,6 +12,8 @@ import { changeShopStatus, getShop } from '../../actions/dashboard'
 import * as moment from 'moment'
 import '../../login.css'
 import '../../dashbaord.css'
+import UserModel from '../UserModel'
+import { Redirect } from 'react-router-dom'
 
 class Dashboard extends Component {
   async componentDidMount() {
@@ -19,6 +21,7 @@ class Dashboard extends Component {
     await this.props.getAllRentedProducts()
     await this.props.getAllProducts()
     await this.props.getShop()
+
   }
 
   async changeShopStatus(status) {
@@ -100,20 +103,26 @@ class Dashboard extends Component {
 
     const { shop } = this.props
     const { user } = this.props.auth
-    if (user && user.type === "User") {
+console.log(this.props)
+    if (user && user.systemRole === "Employee") {
 
       if (shop) {
         let openShop = shop[0]
         if (openShop && openShop.status === 'off') {
-          localStorage.clear()
-          this.props.history.push('/')
-          window.location.reload()
-
-          // setAlert("Shop is closed", "danger", 5000);
+          return <Redirect push to={{
+            pathname:'/storeclosed',
+            shop: shop[0]
+          }} />
         }
       }
     }
+    if (user) {
+      if (user.accountStatus === "inactive") {
+        return <Redirect to='/login' />
+      }
+    }
     return (
+
       <React.Fragment>
         <Loader />
         <div className='wrapper menu-collapsed'>
@@ -123,6 +132,10 @@ class Dashboard extends Component {
           <div className='main-panel'>
             <div className='main-content'>
               <div className='content-wrapper'>
+                <div className="row">
+
+                <h4 className="ml-2 text-bold-400">Hello {user && user.fullname && `${user.fullname}`}, hope you have a great day!</h4>
+                </div>
                 <div className='row'>
                   <div className='col-xl-4 col-lg-6 col-md-6 col-12'>
                     <div className='card gradient-red-pink'>
@@ -231,7 +244,7 @@ class Dashboard extends Component {
                         <div className='card-body pt-2 pb-0'>
                           <div className='media'>
                             <div className='media-body white text-left'>
-                              <h3 className='font-large-1 mb-0'>{}</h3>
+                              <h3 className='font-large-1 mb-0'>{ }</h3>
                               <span>Order Needs Alteration</span>
                             </div>
                             <div className='media-right white text-right'>

@@ -51,32 +51,28 @@ class ViewUser extends Component {
 
           <td className="text-center">{user.fullname}</td>
           <td className="text-center">{user.jobTitle}</td>
-          <td className="text-center">{user.type}</td>
+          <td className="text-center">{user.systemRole}</td>
           <td className="text-center">
             {user.accountStatus === "active" && (
               <span className="badge badge-success">ACTIVE</span>
             )}
-            {user.accountStatus === "block" && (
+            {user.accountStatus === "inactive" && (
               <span className="badge badge-warning">INACTIVE</span>
             )}
           </td>
           <td className="text-center">
-            <Link
+            {/* <Link
               to={{ pathname: `/user/view/${user._id}` }}
 
               className="info p-0">
               <i className="ft-user font-medium-3 mr-2" title="View Profile"></i>
-            </Link>
+            </Link> */}
             <Link
               to={{ pathname: `/user/edituser/${user._id}` }}
               className="success p-0">
-              <i className="ft-edit-2 font-medium-3 mr-2 " title="Edit User"></i>
+              <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit User"></i>
             </Link>
-            <Link to="/user"
-              onClick={() => this.onDelete(user._id)}
-              className="danger p-0">
-              <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
-            </Link>
+{/*            
             {auth_user && auth_user.type === "Admin" ?
               <Link
                 to={{ pathname: `/user` }}
@@ -85,7 +81,22 @@ class ViewUser extends Component {
                 <i className="ft-alert-triangle font-medium-3 mr-2" title="Block User"></i>
               </Link>
 
+              : ""} */}
+                {auth_user && auth_user.type === "Admin" ?
+              <Link
+                to={{ pathname: `/user/updatesalary/${user._id}` }}
+                className="warning p-0">
+                <i className="ft-pocket font-medium-3 mr-2" title="Update Salary"></i>
+              </Link>
+
               : ""}
+               {auth_user && auth_user.type === "Admin" ?
+            <Link to="/user"
+              onClick={() => this.onDelete(user._id)}
+              className="danger p-0">
+              <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
+            </Link>
+            :""}
           </td>
         </tr>
       ));

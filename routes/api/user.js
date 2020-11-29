@@ -26,6 +26,7 @@ var storage = multer.diskStorage({
     }
  
 });
+
 const imageFilter = function(req, file, cb) {
   // accept image files only
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
@@ -60,10 +61,12 @@ router.post(
 
    
    const body = JSON.parse(JSON.stringify(req.body));
-    var sections = req.body.sections.split(",");
+   var sections;
+   if(req.body.sections){
+     sections = req.body.sections.split(",");
     // const salt = await bcrypt.genSalt(10)
     // const password = await bcrypt.hash(body.password, salt)
-
+   }
     try {
 
       
@@ -96,7 +99,6 @@ router.post(
       if (req.file == undefined) {
         userBody = { ...req.body, avatar ,sections}
         let user = new User(userBody)
-        console.log(user)
         await user.save()
   
         res.status(200).json({ user, msg: 'User Added Successfully' })
@@ -242,6 +244,7 @@ router.post(
   auth,
   async (req, res) => {
     const body = JSON.parse(JSON.stringify(req.body))
+    
 
     try {
       const errors = validationResult(req)
@@ -280,11 +283,15 @@ router.post(
       if (req.file == undefined) {
         fieldsToUpdate = { ...req.body, avatar }
       } else {
+        const avatar = req.file.path
+
+        cloudinary.uploader.upload(avatar, async function (result) {
         fieldsToUpdate = {
           ...req.body,
-          avatar: `/uploads/user/${req.file.originalname}`,
+          avatar: result.secure_url,
         }
-      }
+      })
+    }
 
       //check if the accountStatus is set to 'inactivated'..
       let inactivated_date
@@ -339,7 +346,6 @@ router.post(
       // }
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
-      console.log('err message')
       console.log(err.message)
       res
         .status(500)

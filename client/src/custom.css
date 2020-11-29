@@ -54,6 +54,10 @@ body.modal-open .background-container {
   overflow-y: initial !important
 }
 
+.react-datepicker-wrapper{
+  width: 100%;
+}
+
 /* .react-datepicker__month-container {
   position: absolute !important;
   top: calc(100% + 2em) !important;

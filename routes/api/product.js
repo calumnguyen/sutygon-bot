@@ -95,6 +95,7 @@ router.post("/barcode_update/:id", auth, async (req, res) => {
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
 });
+
 // @route  POST api/products/index_update/:id
 // @desc   Update a Product after renting
 // @access Private
@@ -172,6 +173,7 @@ router.post("/:id",
   async (req, res) => {
     try {
       const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+    
       if (req.file === undefined) {
         await Product.updateOne(
           { _id: req.params.id },

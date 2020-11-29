@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { updateUser, getUser } from '../../../actions/user'
+import {
+  addNewUser,
+  updateUser, getUser
+} from '../../../actions/user'
 import Loader from '../../layout/Loader'
 import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import shortid from "shortid";
 
 class AddUser extends Component {
   state = {
@@ -15,7 +19,6 @@ class AddUser extends Component {
     username: '',
     email: '',
     contactnumber: '',
-    type: 'Admin',
     gender: '',
     avatar: '',
     jobTitle: '',
@@ -23,10 +26,18 @@ class AddUser extends Component {
     isEdit: false,
     imgUpd: false,
     src: '',
+    systemRole: '',
+    userID: ''
   }
 
   async componentDidMount() {
-    // check form is to Add or Edit
+    const userID = Math.floor(Math.random() * 8999999999 + 1000000000);
+    const tempPwd = shortid.generate();
+
+    this.setState({
+      userID: userID,
+      tempPwd: tempPwd
+    })
     if (this.props.match.params.id) {
       const id = this.props.match.params.id
       await this.props.getUser(id)
@@ -37,11 +48,14 @@ class AddUser extends Component {
           fullname: user.username,
           username: user.username,
           avatar: user.avatar,
+          tempPwd: tempPwd,
           email: user.email,
           contactnumber: user.contactnumber,
-          type: user.type,
+          systemRole: user.systemRole,
           gender: user.gender,
+          userID: userID,
           isEdit: true,
+
         })
       }
     }
@@ -59,16 +73,49 @@ class AddUser extends Component {
     this.setState({ [e.target.name]: e.target.value })
   }
 
-  handleChangeNumber = (e) =>{
-    this.setState({ [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : ''})
+  handleChangeNumber = (e) => {
+    this.setState({ [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : '' })
   }
+
+  onSubmit = async (e) => {
+    e.preventDefault();
+    this.setState({ saving: true });
+
+    const formData = new FormData()
+    formData.append('avatar', this.state.avatar)
+    formData.append('username', this.state.username)
+    formData.append('fullname', this.state.username)
+    formData.append('contactnumber', this.state.contactnumber)
+    formData.append('email', this.state.email)
+    formData.append('password', this.state.tempPwd)
+    formData.append('systemRole', this.state.systemRole)
+    formData.append('gender', this.state.gender)
+    formData.append('jobTitle', this.state.jobTitle)
+    formData.append('userID', this.state.userID)
+
+
+    if (this.state.id === '') {
+      await this.props.addNewUser(formData)
+    } else {
+      await this.props.updateUser(formData, this.state.id)
+    }
+    return;
+    // this.setState({ saving: false, saved: true })
+  }
+
+
   render() {
     const { auth } = this.props
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to='/' />
     }
-    if (this.props.saved) {
-      return <Redirect to='/user' />
+    if (this.props.saved == true) {
+      return <Redirect push to={{
+        pathname: "/user/configuresystemuser",
+        data: { state: this.state, user: this.props.user },
+
+      }}
+      />
     }
     return (
       <React.Fragment>
@@ -91,28 +138,35 @@ class AddUser extends Component {
 
                     <div className='card-body'>
                       <form
+                        className="form form-horizontal form-bordered"
                         encType='multipart/form-data'
                         action='/upload'
                         method='POST'
+                        onSubmit={(e) => this.onSubmit(e)}
+
                       >
                         <div className='row'>
-                          <div className='form-group col-12 mb-2'>
-                            <label>Select Profile Image</label>
-                            <input
-                              name='avatar'
-                              type='file'
-                              className='form-control-file'
-                              id='projectinput8'
-                              accept='image/jpeg,image/gif,image/jpg,image/png,image/x-eps'
-                              onChange={(e) => this._onChange(e)}
-                            />
+                          <div className='form-group col-md-6 mb-2'>
+                            <label className="col-md-3 label-control" htmlFor="inputGroupFile01">Profile Image</label>
+                            <div className="custom-file col-md-9">
+                              <input
+                                name='avatar'
+                                type='file'
+                                className="custom-file-input border-primary" id="inputGroupFile01"
+                                aria-describedby="inputGroupFileAddon01"
+                                accept='image/jpeg,image/gif,image/jpg,image/png,image/x-eps'
+                                onChange={(e) => this._onChange(e)}
+                              />
+                              <label className="custom-file-label" htmlFor="inputGroupFile01">Select Profile Image
+                       </label>
+                            </div>
                             <br />
                             {this.state.isEdit === true &&
                               this.state.imgUpd === false ? (
                                 <img
                                   className='media-object round-media'
-                                  src={`${this.state.avatar}`}
-                                  alt='Product image'
+                                  src={this.state.avatar}
+                                  alt='User'
                                   height={100}
                                 />
                               ) : (
@@ -122,7 +176,7 @@ class AddUser extends Component {
                               <img
                                 className='media-object round-media'
                                 src={`${this.state.src}`}
-                                alt='Product image'
+                                alt='User'
                                 height={100}
                               />
                             ) : (
@@ -130,164 +184,206 @@ class AddUser extends Component {
                               )}
                           </div>
 
-                          <div className='form-group col-12 mb-2'></div>
                         </div>
                         <div className='row'>
-                          <div className='form-group col-md-6 mb-2'>
-                            <label htmlFor='projectinput1'>User Name</label>
-                            <input
-                              type='text'
-                              id='projectinput1'
-                              className='form-control'
-                              placeholder='User Name'
-                              required data-validation-required-message="This field is required"
-                              name='username'
+                          <div class="col-md-6">
+                            <div className='form-group row'>
+                              <label class="col-md-3 label-control" htmlFor='userinput1'>User Name</label>
+                              <div class="col-md-9">
+                                <input
+                                  type='text'
+                                  id="userinput1" class="form-control border-primary" placeholder='User Name'
+                                  required data-validation-required-message="This field is required"
+                                  name='username'
 
-                              onChange={(e) => this.handleChange(e)}
-                              value={this.state.username}
-                            />
+                                  onChange={(e) => this.handleChange(e)}
+                                  value={this.state.username}
+                                />
+                              </div>
+                            </div>
                           </div>
-                          <div className='form-group col-md-6 mb-2'>
-                            <label htmlFor='projectinput2'>Full Name</label>
-                            <input
-                              type='text'
-                              id='projectinput2'
-                              className='form-control'
-                              placeholder='Full Name'
-                              name='fullname'
-                              required
-                              onChange={(e) => this.handleChange(e)}
-                              value={this.state.fullname}
-                            />
+                          <div className="col-md-6">
+                            <div className='form-group row'>
+                              <label class="col-md-3 label-control" htmlFor='userinput1'>Full Name</label>
+                              <div class="col-md-9">
+                                <input
+                                  type='text'
+                                  id="userinput1" class="form-control border-primary"
+                                  placeholder='Full Name'
+                                  name='fullname'
+                                  required
+                                  onChange={(e) => this.handleChange(e)}
+                                  value={this.state.fullname}
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
-
                         <div className='row'>
-                          <div className='form-group col-md-6 mb-2'>
-                            <label htmlFor='projectinput3'>E-mail</label>
-                            <input
-                              type='text'
-                              id='projectinput3'
-                              className='form-control'
-                              placeholder='E-mail'
-                              name='email'
-                              required
-                              onChange={(e) => this.handleChange(e)}
-                              value={this.state.email}
-                            />
+                          <div className="col-md-6">
+                            <div className='form-group row'>
+                              <label class="col-md-3 label-control" for="userinput1">E-mail</label>
+                              <div className="col-md-9">
+                                <input
+                                  type='text'
+                                  id="userinput2" class="form-control border-primary"
+                                  placeholder='E-mail'
+                                  name='email'
+                                  required
+                                  onChange={(e) => this.handleChange(e)}
+                                  value={this.state.email}
+                                />
+                              </div>
+                            </div>
                           </div>
-                          <div className='form-group col-md-6 mb-2'>
-                            <label htmlFor='projectinput4'>
-                              Contact Number
+                          <div className="col-md-6">
+
+                            <div className='form-group row'>
+                              <label class="col-md-3 label-control" for="userinput1">
+                                Contact Number
                             </label>
-                            <input
-                              type='text'
-                              id='projectinput4'
-                              className='form-control'
-                              required
-                              placeholder='Phone'
-                              name='contactnumber'
-                              onChange={(e) => this.handleChangeNumber(e)}
-                              value={this.state.contactnumber}
-                            />
-                          </div>
+                              <div className="col-md-9">
+                                <input
+                                  type='text'
+                                  id="userinput2" class="form-control border-primary"
+                                  required
+                                  placeholder='Phone'
+                                  name='contactnumber'
+                                  onChange={(e) => this.handleChangeNumber(e)}
+                                  value={this.state.contactnumber}
+                                />
+                              </div>
+                            </div></div>
                         </div>
                         <div className='row'>
-                          <div className='form-group col-md-6 mb-2'>
-                            <label htmlFor='projectinput3'>Job Title</label>
-                            <input
-                              type='text'
-                              id='projectinput3'
-                              className='form-control'
-                              placeholder='Job Title'
-                              name='jobTitle'
-                              required
-                              onChange={(e) => this.handleChange(e)}
-                              value={this.state.jobTitle}
-                            />
+                          <div className="col-md-6">
+                            <div className='form-group row'>
+                              <label class="col-md-3 label-control" for="userinput1">Job Title</label>
+                              <div className="col-md-9">
+                                <input
+                                  type='text'
+                                  id="userinput1" class="form-control border-primary"
+                                  placeholder='Job Title'
+                                  name='jobTitle'
+                                  required
+                                  onChange={(e) => this.handleChange(e)}
+                                  value={this.state.jobTitle}
+                                />
+                              </div></div>
                           </div>
-                          <div className='form-group col-md-6 mb-2'>
-                            <label htmlFor='projectinput6'>Select Type</label>
-                            <select
-                              id='type'
-                              name='type'
-                              required
-                              defaultValue='----'
-                              className='form-control'
-                              onChange={(e) => this.handleChange(e)}
-                            >
+                          <div className="col-md-6">
+                            <div className='form-group row'>
+                              <label class="col-md-3 label-control" for="userinput1">Select Type</label>
+                              <div className="col-md-9 ">
+                                <select
+                                  id='type'
+                                  name='systemRole'
+                                  required
+                                  defaultValue='----'
+                                  className='form-control border-primary'
+                                  onChange={(e) => this.handleChange(e)}
+                                >
 
-                              <option
-                                value={'SuperAdmin' === this.state.type}
-                              // selected={'SuperAdmin' === this.state.type}
-                              // value='SuperAdmin'
-                              >
-                                {' '}
+                                  <option
+                                    name="systemRole"
+
+                                    // value={'Admin' === this.state.type}
+                                    // selected={'SuperAdmin' === this.state.type}
+                                    value='Admin'
+                                  >
+                                    {' '}
                                 Admin{' '}
-                              </option>
-                              <option
-                                value={'Employee' === this.state.type}
-                              // selected={'Employee' === this.state.type}
-                              // value='Employee'
-                              >
-                                {' '}
+                                  </option>
+                                  <option
+                                    name="systemRole"
+
+                                    // value={'Employee' === this.state.type}
+                                    // selected={'Employee' === this.state.type}
+                                    value='Employee'
+                                  >
+                                    {' '}
                                 Employee{' '}
-                              </option>
-                            </select>
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
                           </div>
-                          <div className='form-group col-md-6 mb-2'>
-                            <label htmlFor='projectinput6'>Gender</label>
-                            <br></br>
-                            <label className='radio-inline'>
-                              <input
-                                type='radio'
-                                name='gender'
-                                onChange={(e) => this.handleChange(e)}
-                                checked={this.state.gender === 'male'}
-                                value='male'
-                              />{' '}
+
+                        </div>
+
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className='form-group row'>
+                              <label className="col-md-3 label-control" for="userinput1">Gender</label>
+                              <div className="col-md-9">
+                                <label className='radio-inline'>
+                                  <input
+                                    type='radio'
+                                    name='gender'
+                                    onChange={(e) => this.handleChange(e)}
+                                    // checked={this.state.gender === 'male'}
+                                    value='male'
+                                  />{' '}
                               Male
                             </label>
-                            <label className='radio-inline'>
-                              <input
-                                type='radio'
-                                name='gender'
-                                value='female'
-                                onChange={(e) => this.handleChange(e)}
-                                checked={this.state.gender === 'female'}
-                              />{' '}
+                                <label className='radio-inline'>
+                                  <input
+                                    type='radio'
+                                    name='gender'
+                                    value='female'
+                                    onChange={(e) => this.handleChange(e)}
+                                  // checked={this.state.gender === 'female'}
+                                  />{' '}
                               Female
                             </label>
-                            <label className='radio-inline'>
-                              <input
-                                type='radio'
-                                name='gender'
-                                value='other'
-                                onChange={(e) => this.handleChange(e)}
-                                checked={this.state.gender === 'other'}
-                              />{' '}
+                                <label className='radio-inline'>
+                                  <input
+                                    type='radio'
+                                    name='gender'
+                                    value='other'
+                                    onChange={(e) => this.handleChange(e)}
+                                  // checked={this.state.gender === 'other'}
+                                  />{' '}
                               Others
                             </label>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-md-6">
+
                           </div>
                         </div>
-
                         <div className='form-actions top'>
-                          {(this.state.avatar == "" ||this.state.contactnumber == ""||this.state.email == ""||this.state.fullname == "" ||this.state.gender== "" ||this.state.jobTitle== "") ? 
-                          <button
- className="mb-2 mr-2 btn btn-raised btn-primary disabled">
- <i className='ft-chevron-right' /> Next
+                          {(this.state.avatar === "" || this.state.contactnumber === "" || this.state.email === "" || this.state.fullname === "" || this.state.gender === "" || this.state.jobTitle === "") ?
+                            <button
+                              className="mb-2 mr-2 btn btn-raised btn-primary disabled">
+                              <i className='ft-chevron-right' /> Next
                           </button> :
-                          <Link
-                            to={{
-                              pathname: "/user/configuresystem",
-                              data: this.state
-                            }}
-                            type='submit'
-                            className='mb-2 mr-2 btn btn-raised btn-primary'
-                          >
-                            <i className='ft-chevron-right' /> Next
+                            <>
+                              {this.state.systemRole === "Employee" ?
+                                <Link
+                                  to={{
+
+                                    // pathname: this.state.systemRole ==="Employee" ? "/user/configuresystem" : "/user/configuresystemuser",
+                                    pathname: "/user/configuresystem",
+                                    data: this.state
+                                  }}
+                                  className='mb-2 mr-2 btn btn-raised btn-primary'
+                                >
+                                  <i className='ft-chevron-right' /> Next
                                 </Link>
-  }
+                                :
+
+                                <button
+
+                                  type='submit'
+                                  className='mb-2 mr-2 btn btn-raised btn-primary'
+                                >
+                                  <i className='ft-chevron-right' /> Next
+                         </button>
+                              }</>
+
+                          }
                         </div>
                       </form>
                     </div>
@@ -319,17 +415,21 @@ class AddUser extends Component {
 }
 
 AddUser.propTypes = {
-
   getUser: PropTypes.func.isRequired,
   auth: PropTypes.object,
+  saved: PropTypes.bool,
   updateUser: PropTypes.func.isRequired,
+  addNewUser: PropTypes.func.isRequired,
+
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
+  saved: state.user.saved,
   user: state.user.profile,
 })
 export default connect(mapStateToProps, {
-  updateUser,
+  updateUser, addNewUser,
+
   getUser,
 })(AddUser)

@@ -76,6 +76,7 @@ export default function (state = initialState, action) {
         // users: payload,
         loading: false,
         passwordUpdated: true,
+        saved:true
       };
     case USER_DELETED:
       return {

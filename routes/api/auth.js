@@ -52,7 +52,6 @@ router.post(
       }
       const salt = await bcrypt.genSalt(10)
       const passwordEntered = await bcrypt.hash(password, salt)
-
       const isMatch = await bcrypt.compare(password, user.password)
 
       if (!isMatch) {
@@ -66,7 +65,7 @@ router.post(
             {
               msg: `Sorry! User is not activated. Inactivated on ${moment(
                 user.inactivated_date
-              ).format('dddd MMMM D Y')}`,
+              ).format('DD-MMM-YYYY')}`,
             },
           ],
         })

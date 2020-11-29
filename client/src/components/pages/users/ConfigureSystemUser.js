@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { addNewUser, updateUser, getUser} from '../../../actions/user'
+import { addNewUser, updateUser, getUser } from '../../../actions/user'
 import Alert from '../../layout/Alert'
 import Loader from '../../layout/Loader'
 import { Redirect } from 'react-router-dom'
@@ -23,21 +23,22 @@ class ConfigureSystemUser extends Component {
     async componentDidMount() {
         // check form is to Add or Edit
 
-        const { user} = this.props
-        if(user) {
-        this.setState({
-            fullname: user.fullname,
-            username: user.username,
-            jobTitle: user.jobTitle,
-            userID: user.userID,
-            tempPwd: user.password
-        })
+        const { user } = this.props
+        console.log(user)
+        if (user) {
+            this.setState({
+                fullname: user.fullname,
+                username: user.username,
+                jobTitle: user.jobTitle,
+                userID: user.userID,
+                tempPwd: user.password
+            })
         }
 
 
     }
 
-   
+
 
     handleChange = (e, id = '') => {
         this.setState({ [e.target.name]: e.target.value })
@@ -49,7 +50,7 @@ class ConfigureSystemUser extends Component {
         if (!auth.loading && !auth.isAuthenticated) {
             return <Redirect to='/' />
         }
-        if (this.props.user ==  null){
+        if (this.props.user == null) {
             return <Redirect push to='/user' />
         }
         return (
@@ -65,9 +66,9 @@ class ConfigureSystemUser extends Component {
                                 <div className='form-body'>
                                     <div className='card'>
                                         <div className='card-header'>
-                                            <h4 className='form-section'>
+                                            <h3 className='form-section'>
                                                 {`${'Successfully added'} ${this.state.fullname} ${','} ${this.state.jobTitle}`}
-                                            </h4>
+                                            </h3>
                                         </div>
 
                                         <div className='card-body'>
@@ -76,17 +77,25 @@ class ConfigureSystemUser extends Component {
                                                 method='POST'
                                             >
 
-                                                <div className="row ml-2 mb-2">
-                                                    <label>User Name :</label>
-                                                    <label>{this.state.username}</label>
-                                                </div>
-                                                <div className="row ml-2 mb-2">
+                                                {/* <div className="row ml-2 mb-2"> */}
+                                                <dl class="row ml-2 mb-2">
+                                                    <dt class="col-sm-3">User Name :</dt>
+                                                    <dd class="col-sm-9">{this.state.username}</dd>
+                                                </dl>
+                                                {/* <label>User Name :</label>
+                                                    <label>{this.state.username}</label> */}
+                                                {/* </div> */}
+                                                <dl class="row ml-2 mb-2">
+                                                    <dt class="col-sm-3">ID# :</dt>
+                                                    <dd class="col-sm-9">{this.state.userID}</dd>
+                                                </dl>
+                                                {/* <div className="row ml-2 mb-2">
                                                     <label>ID# :</label>
                                                     <label>{this.state.userID}</label>
-                                                </div>
+                                                </div> */}
                                                 <div className="row ml-2">
 
-                                                    <p>Here is a temporary password. Please give it to {`${this.state.fullname}`} and they must change their password when they log in for the first time.</p>
+                                                    <p>Here is a temporary password. Please give it to <strong>{`${this.state.fullname}`}</strong> and they must change their password when they log in for the first time.</p>
                                                 </div>
 
 
@@ -101,8 +110,8 @@ class ConfigureSystemUser extends Component {
 
                                                 <div className='form-actions top'>
                                                     <Link
-to="/user"
-                                        className='mb-2 mr-2 btn btn-raised btn-primary'
+                                                        to="/user"
+                                                        className='mb-2 mr-2 btn btn-raised btn-primary'
                                                     >
                                                         <i className='ft-chevron-down' /> Done
                                                     </Link>
@@ -154,5 +163,5 @@ export default connect(mapStateToProps, {
     addNewUser,
     updateUser,
     getUser,
-    
+
 })(ConfigureSystemUser)

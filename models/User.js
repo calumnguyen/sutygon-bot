@@ -51,7 +51,7 @@ const UserSchema = new mongoose.Schema({
   userID:{
     type: Number
   },
-  type: {
+  systemRole: {
     type: String,
     default: 'Employee',
   },
