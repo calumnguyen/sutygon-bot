@@ -121,20 +121,20 @@ class ViewProduct extends Component {
 
             <li key={color_i}>
             <span>
-            <a className="s1" data-toggle="collapse" href="javascript:void(0)" aria-expanded="true" aria-controls="Web">
-            <i className="expanded"><i className="fa fa-arrow-right"></i></i> {color.colorname} : {color.total}</a></span>
+            <div className="s1" data-toggle="collapse" aria-expanded="true" aria-controls="Web">
+            <i className="expanded"><i className="fa fa-arrow-right"></i></i> {color.colorname} : {color.total}</div></span>
               <div id="Web" className="collapse show">
                 <ul>
                 {color.sizes &&
                   color.sizes.map((size, size_i) => (
 
                     <li key={size_i}>
-                    <span><i className="fa fa-arrow-right"></i><a href="javascript:void(0)"> {size.size} : {size.qty}</a></span>
+                    <span><i className="fa fa-arrow-right"></i>{size.size} : {size.qty}</span>
                       <ul>
                       {size.barcodes &&
                         size.barcodes.map(
                           (barcode, barcode_i) => (
-                            <li key={barcode_i}><span><i className="fa fa-arrow-right"></i><a href="javascript:void(0)"> BARCODE ID # {barcode.barcode}</a></span></li>
+                            <li key={barcode_i}><span><i className="fa fa-arrow-right"></i>BARCODE ID # {barcode.barcode}</span></li>
                           )
                         )}
                       </ul>
