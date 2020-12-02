@@ -227,19 +227,37 @@ router.delete('/:id', auth, async (req, res) => {
 // @access Private
 
 router.get('/:id/insights', auth, async (req, res) => {
-  let { year } = { ...req.body }
-
   try {
-    //get year
-    var startDate = moment(year).format('YYYY-MM-DD')
+    let { year, month, allTime } = { ...req.body }
 
-    //make last date of the current year
-    const lastDate = startDate.split('-')
+    var startDate
+    var endDate
+    if (year) {
+      //get year
+      startDate = moment(year).format('YYYY-MM-DD')
 
-    lastDate[1] = '12'
-    lastDate[2] = '30'
+      //make last date of the current year
+      const lastDate = startDate.split('-')
 
-    let endDate = lastDate.join('-')
+      lastDate[1] = '12'
+      lastDate[2] = '30'
+
+      endDate = lastDate.join('-')
+    }
+
+    if (month) {
+      startDate = moment(month).format('YYYY-MM-DD')
+
+      // gets the last day of month , whether it is 29,30 or 31 automatically!
+      endDate = moment(startDate).endOf('month').format(moment.HTML5_FMT.DATE)
+    }
+
+    if (allTime) {
+      // Initial period is set to 2012 by client.
+      startDate = moment('2012').format('YYYY-MM-DD')
+      // Till current moment.
+      endDate = moment().format(moment.HTML5_FMT.DATE)
+    }
 
     //converted to ObjectId because aggregator is type-sensitive.
     var customerId = mongoose.Types.ObjectId(req.params.id)
@@ -335,6 +353,8 @@ router.get('/:id/insights', auth, async (req, res) => {
     })
 
     const ProductTotal = await calculateProductAmt
+
+    console.log(orders)
 
     const totalTax = orders[0].total - (ProductTotal + orders[0].insuranceAmt)
 

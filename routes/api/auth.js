@@ -59,6 +59,8 @@ router.post(
         return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
       }
 
+      // check if
+
       // check if user is active or not...
       if (user.accountStatus !== 'active') {
         return res.status(403).json({
