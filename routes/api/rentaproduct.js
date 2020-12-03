@@ -3,6 +3,7 @@ const router = express.Router()
 const auth = require('../../middleware/auth')
 const RentedProduct = require('../../models/RentedProducts')
 const Customer = require('../../models/Customer')
+const Product = require('../../models/Product')
 const { check, validationResult } = require('express-validator')
 const shortid = require('shortid')
 
@@ -30,6 +31,14 @@ router.post(
         insuranceAmt: req.body.insuranceAmt,
         leaveID: req.body.leaveID,
         user: req.user.id,
+        authorization_logs: [
+          {
+            employee_id: req.user.id,
+            employee_name: req.user.name,
+            status: 'pending',
+            message: `Authorized order : ${req.body.orderNumber}. Status is now pending. `,
+          },
+        ],
       })
       await rentedProduct.save()
 
@@ -189,7 +198,7 @@ router.get('/searchstatus', auth, async (req, res) => {
   }
 })
 
-// @route  GET api/rentproducts/:id
+// @route  GET api/rentedproducts/:id
 // @desc   Get order by id.
 // @access Private
 router.get('/:id', auth, async (req, res) => {
@@ -204,6 +213,119 @@ router.get('/:id', auth, async (req, res) => {
   } catch (err) {
     console.log(err)
     res.status(500).send('Server Error!')
+  }
+})
+
+// @route  POST api/rentedproducts/:id/status/ready
+// @desc   Make status ready.
+// @access Private
+router.post('/:id/status/ready', auth, async (req, res) => {
+  try {
+    readyLog = {
+      employee_id: req.user.id,
+      employee_name: req.user.name,
+      status: 'ready',
+      message: `Authorized for Ready. Status is now "Ready".`,
+    }
+
+    const rentedProducts = await RentedProduct.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: { authorization_logs: readyLog },
+        status: 'ready',
+        readyForPickUp: true,
+      },
+      { new: true }
+    )
+      .select(
+        'readyForPickUp pickedUpStatus returnStatus status authorization_logs'
+      )
+      .lean()
+
+    return res.status(200).json(rentedProducts)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send('Server Error!')
+  }
+})
+
+// @route  POST api/rentedproducts/:id/status/active
+// @desc   Make status active.
+// @access Private
+router.post('/:id/status/active', auth, async (req, res) => {
+  try {
+    pickUpLog = {
+      employee_id: req.user.id,
+      employee_name: req.user.name,
+      status: 'active',
+      message: `Authorized for Pickup. Status is now "Active".`,
+    }
+
+    const rentedProducts = await RentedProduct.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: { authorization_logs: pickUpLog },
+        status: 'active',
+        pickedUpStatus: true,
+      },
+      { new: true }
+    )
+      .select(
+        'readyForPickUp pickedUpStatus returnStatus status authorization_logs'
+      )
+      .lean()
+
+    return res.status(200).json(rentedProducts)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send('Server Error!')
+  }
+})
+
+// @route  GET api/rentedproducts/:id/authlogs
+// @desc   get authorization logs.
+// @access Private
+router.get('/:id/authlogs', auth, async (req, res) => {
+  try {
+    const authLogs = await RentedProduct.findById(req.params.id)
+      .select('authorization_logs')
+      .lean()
+
+    return res.status(200).json(authLogs)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send('Server Error!')
+  }
+})
+
+// @route  GET api/rentedproducts/:id/orderitems
+// @desc   get product items of order by id.
+// @access Private
+router.get('/:id/orderitems', auth, async (req, res) => {
+  try {
+    const { barcodes } = await RentedProduct.findById(req.params.id).select(
+      'barcodes'
+    )
+
+    var orderItems = []
+
+    for (bcode of barcodes) {
+      let singleProduct = await Product.findOne(
+        {
+          'color.sizes.barcodes': {
+            $elemMatch: { barcode: parseInt(bcode) },
+          },
+        },
+        { color: 1, productId: 1, name: 1 }
+      ).lean() // anti-POJO
+
+      orderItems.push(singleProduct)
+    }
+
+    return res.status(200).json(orderItems)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send('Server Error!')
   }
 })
 

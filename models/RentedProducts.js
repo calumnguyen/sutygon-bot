@@ -77,6 +77,11 @@ const RentedProductSchema = new mongoose.Schema(
     },
     authorization_logs: [
       {
+        _id: false,
+        employee_id: {
+          type: Schema.Types.ObjectId,
+          ref: 'user',
+        },
         employee_name: String,
         status: String,
         date: { type: Date, default: Date.now },

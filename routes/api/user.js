@@ -64,14 +64,17 @@ router.post(
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
-    const body = JSON.parse(JSON.stringify(req.body))
-
-    console.log(req.body.sections)
-    var sections = req.body.sections
-    // const salt = await bcrypt.genSalt(10)
-    // const password = await bcrypt.hash(body.password, salt)
-
     try {
+      let body = JSON.parse(JSON.stringify(req.body))
+
+      var sections = req.body.sections
+      const salt = await bcrypt.genSalt(10)
+      body.password = await bcrypt.hash(body.password, salt)
+
+      console.log(body.password)
+
+      console.log(body)
+
       // check if there is any record with same email and username
       const userByEmail = await User.findOne({ email: body.email })
       const userByUsername = await User.findOne({ username: body.username })
@@ -97,7 +100,7 @@ router.post(
       let userBody
 
       if (req.file == undefined) {
-        userBody = { ...req.body, avatar, sections }
+        userBody = { ...body, avatar, sections }
         let user = new User(userBody)
         console.log(user)
         await user.save()
@@ -108,7 +111,7 @@ router.post(
 
         cloudinary.uploader.upload(avatar, async function (result) {
           userBody = {
-            ...req.body,
+            ...body,
             avatar: result.secure_url,
             sections,
           }
