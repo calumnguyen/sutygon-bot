@@ -78,16 +78,16 @@ class ConfigureSystemUser extends Component {
                                             >
 
                                                 {/* <div className="row ml-2 mb-2"> */}
-                                                <dl class="row ml-2 mb-2">
-                                                    <dt class="col-sm-3">User Name :</dt>
-                                                    <dd class="col-sm-9">{this.state.username}</dd>
+                                                <dl className="row ml-2 mb-2">
+                                                    <dt className="col-sm-3">User Name :</dt>
+                                                    <dd className="col-sm-9">{this.state.username}</dd>
                                                 </dl>
                                                 {/* <label>User Name :</label>
                                                     <label>{this.state.username}</label> */}
                                                 {/* </div> */}
-                                                <dl class="row ml-2 mb-2">
-                                                    <dt class="col-sm-3">ID# :</dt>
-                                                    <dd class="col-sm-9">{this.state.userID}</dd>
+                                                <dl className="row ml-2 mb-2">
+                                                    <dt className="col-sm-3">ID# :</dt>
+                                                    <dd className="col-sm-9">{this.state.userID}</dd>
                                                 </dl>
                                                 {/* <div className="row ml-2 mb-2">
                                                     <label>ID# :</label>

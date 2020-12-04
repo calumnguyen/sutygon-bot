@@ -115,11 +115,11 @@ class SalaryUpdate extends Component {
 
                                                                 </div>
 
-                                                                <div class="form-group row mb-2">
+                                                                <div className="form-group row mb-2">
                                                                     <label className="col-md-3 label-control" htmlFor="projectinput6">Period</label>
                                                                     <div className="col-md-9">
 
-                                                                        <select id="projectinput6" name="interested" class="form-control" onChange={(e) => this.handleChange(e)}
+                                                                        <select id="projectinput6" name="interested" className="form-control" onChange={(e) => this.handleChange(e)}
                                                                         >
                                                                             <option value="none" selected="" disabled="">---Select---</option>
                                                                             <option value="Weekly">Weekly</option>
@@ -188,17 +188,17 @@ class SalaryUpdate extends Component {
                         </footer>
 
                     </div>
-                    <div class="modal fade text-center" id="default" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
+                    <div className="modal fade text-center" id="default" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
                         aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header  text-center">
-                                    <h4 class="modal-title" id="myModalLabel1">Authorization</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <div className="modal-dialog" role="document">
+                            <div className="modal-content">
+                                <div className="modal-header  text-center">
+                                    <h4 className="modal-title" id="myModalLabel1">Authorization</h4>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <div class="modal-body">
+                                <div className="modal-body">
                                     <h5>Please enter the authorization code to make this change</h5>
                                     <input
                                         name="code"
@@ -208,9 +208,9 @@ class SalaryUpdate extends Component {
                                         onChange={(e)=>this._onChange(e)}
                                     />
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn grey btn-lg btn-outline-success">Authorize</button>
-                                    <button type="button" class="btn btn-outline-danger btn-lg" data-dismiss="modal">Cancel</button>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn grey btn-lg btn-outline-success">Authorize</button>
+                                    <button type="button" className="btn btn-outline-danger btn-lg" data-dismiss="modal">Cancel</button>
                                 </div>
                             </div>
                         </div>

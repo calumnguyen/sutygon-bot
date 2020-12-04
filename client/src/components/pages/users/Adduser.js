@@ -187,13 +187,13 @@ class AddUser extends Component {
 
                         </div>
                         <div className='row'>
-                          <div class="col-md-6">
+                          <div className="col-md-6">
                             <div className='form-group row'>
-                              <label class="col-md-3 label-control" htmlFor='userinput1'>User Name</label>
-                              <div class="col-md-9">
+                              <label className="col-md-3 label-control" htmlFor='userinput1'>User Name</label>
+                              <div className="col-md-9">
                                 <input
                                   type='text'
-                                  id="userinput1" class="form-control border-primary" placeholder='User Name'
+                                  id="userinput1" className="form-control border-primary" placeholder='User Name'
                                   required data-validation-required-message="This field is required"
                                   name='username'
 
@@ -205,11 +205,11 @@ class AddUser extends Component {
                           </div>
                           <div className="col-md-6">
                             <div className='form-group row'>
-                              <label class="col-md-3 label-control" htmlFor='userinput1'>Full Name</label>
-                              <div class="col-md-9">
+                              <label className="col-md-3 label-control" htmlFor='userinput1'>Full Name</label>
+                              <div className="col-md-9">
                                 <input
                                   type='text'
-                                  id="userinput1" class="form-control border-primary"
+                                  id="userinput1" className="form-control border-primary"
                                   placeholder='Full Name'
                                   name='fullname'
                                   required
@@ -223,11 +223,11 @@ class AddUser extends Component {
                         <div className='row'>
                           <div className="col-md-6">
                             <div className='form-group row'>
-                              <label class="col-md-3 label-control" for="userinput1">E-mail</label>
+                              <label className="col-md-3 label-control" for="userinput1">E-mail</label>
                               <div className="col-md-9">
                                 <input
                                   type='text'
-                                  id="userinput2" class="form-control border-primary"
+                                  id="userinput2" className="form-control border-primary"
                                   placeholder='E-mail'
                                   name='email'
                                   required
@@ -240,13 +240,13 @@ class AddUser extends Component {
                           <div className="col-md-6">
 
                             <div className='form-group row'>
-                              <label class="col-md-3 label-control" for="userinput1">
+                              <label className="col-md-3 label-control" for="userinput1">
                                 Contact Number
                             </label>
                               <div className="col-md-9">
                                 <input
                                   type='text'
-                                  id="userinput2" class="form-control border-primary"
+                                  id="userinput2" className="form-control border-primary"
                                   required
                                   placeholder='Phone'
                                   name='contactnumber'
@@ -259,11 +259,11 @@ class AddUser extends Component {
                         <div className='row'>
                           <div className="col-md-6">
                             <div className='form-group row'>
-                              <label class="col-md-3 label-control" for="userinput1">Job Title</label>
+                              <label className="col-md-3 label-control" for="userinput1">Job Title</label>
                               <div className="col-md-9">
                                 <input
                                   type='text'
-                                  id="userinput1" class="form-control border-primary"
+                                  id="userinput1" className="form-control border-primary"
                                   placeholder='Job Title'
                                   name='jobTitle'
                                   required
@@ -274,7 +274,7 @@ class AddUser extends Component {
                           </div>
                           <div className="col-md-6">
                             <div className='form-group row'>
-                              <label class="col-md-3 label-control" for="userinput1">Select Type</label>
+                              <label className="col-md-3 label-control" for="userinput1">Select Type</label>
                               <div className="col-md-9 ">
                                 <select
                                   id='type'
