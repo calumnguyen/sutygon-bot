@@ -58,3 +58,7 @@
  
   justify-content: space-evenly !important
 }
+
+.pass:hover{
+  text-decoration: underline;
+}

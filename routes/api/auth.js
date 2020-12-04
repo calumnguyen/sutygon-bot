@@ -48,32 +48,31 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Username does not exists' }] })
+          .json({ errors: [{ msg: 'User does not exists' }] })
       }
       const salt = await bcrypt.genSalt(10)
       const passwordEntered = await bcrypt.hash(password, salt)
+      const userInfo = {tempPass: user.password,userID:user._id};
+       // check if user is active or not...
+       if (user.accountStatus !== 'active') {
+        return res.status(403).json({userInfo,
+             errors:[{ msg: `Sorry! User is not activated. Inactivated on ${moment(
+                user.inactivated_date
+              ).format('DD-MMM-YYYY')}`,
+            }]
+        })
+      }
+
       const isMatch = await bcrypt.compare(password, user.password)
 
       if (!isMatch) {
         return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
       }
 
-      // check if user is active or not...
-      if (user.accountStatus !== 'active') {
-        return res.status(403).json({
-          errors: [
-            {
-              msg: `Sorry! User is not activated. Inactivated on ${moment(
-                user.inactivated_date
-              ).format('DD-MMM-YYYY')}`,
-            },
-          ],
-        })
-      }
-
+     
       const payload = {
         user: {
-          id: user.id,
+          id: user._id,
         },
       }
 
@@ -88,7 +87,8 @@ router.post(
       )
     } catch (err) {
       console.log(err)
-      res.status(500).send('Server error')
+      res.status(500)
+         .json({ errors: [{ msg: 'Server error' }] })
     }
   }
 )

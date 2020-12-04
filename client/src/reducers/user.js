@@ -6,7 +6,11 @@ import {
   USER_ERROR,
   USER_UPDATED,
   USER_SAVED,
-  GET_USERS
+  GET_USERS,
+  PASSWORD_ERROR,
+  PASSWORD_UPDATED,
+  CODE_VERIFIED,
+  VERIFCATION_ERROR
 
 } from "../actions/types";
 
@@ -17,9 +21,10 @@ const initialState = {
   loading: false,
   error: {},
   saved: false,
-  user:null,
+  user: null,
   resetToken: null,
   passwordUpdated: false,
+  codeverified:false
 };
 
 export default function (state = initialState, action) {
@@ -34,7 +39,7 @@ export default function (state = initialState, action) {
 
 
       };
-     case GET_USERS:
+    case GET_USERS:
       return {
         ...state,
         users: payload,
@@ -51,14 +56,14 @@ export default function (state = initialState, action) {
 
       };
 
-      case USER_SAVED:
-        return {
-          ...state,
-          user:payload,
-          saved: true,
-          loading: false,
-         
-        }
+    case USER_SAVED:
+      return {
+        ...state,
+        user: payload,
+        saved: true,
+        loading: false,
+
+      }
 
     case USER_ERROR:
       return {
@@ -66,23 +71,51 @@ export default function (state = initialState, action) {
         error: payload,
         loading: false,
         saved: false,
+        codeverified:false
+
 
       };
 
-    
+
     case USER_UPDATED:
       return {
         ...state,
         // users: payload,
         loading: false,
         passwordUpdated: true,
-        saved:true
+        saved: true
       };
     case USER_DELETED:
       return {
         ...state,
         loading: false,
       };
+    case PASSWORD_ERROR:
+      return {
+        ...state,
+        error: payload,
+        loading: false,
+        passwordUpdated: false
+      };
+    case PASSWORD_UPDATED:
+      return {
+        ...state,
+        // users: payload,
+        loading: false,
+        passwordUpdated: true,
+      };
+     case CODE_VERIFIED:
+      return{
+        ...state,
+        loading: false,
+        codeverified:true
+      };
+      case VERIFCATION_ERROR:
+        return{
+          ...state,
+          loading: false,
+          codeverified:false
+        }
     default:
       return state;
   }

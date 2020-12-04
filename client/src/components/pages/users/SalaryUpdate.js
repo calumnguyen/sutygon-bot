@@ -2,17 +2,12 @@ import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
 import { updateUser, getUser } from '../../../actions/user'
+
 import Loader from '../../layout/Loader'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import * as moment from 'moment'
-import DatePicker from "react-datepicker";
 import { Redirect } from 'react-router-dom'
 import "react-datepicker/dist/react-datepicker.css";
-import Moment from 'react-moment'
-import dateFormat from 'dateformat';
-import { Link } from 'react-router-dom'
-import Switch from "react-switch";
 
 class SalaryUpdate extends Component {
     state = {
@@ -206,8 +201,11 @@ class SalaryUpdate extends Component {
                                 <div class="modal-body">
                                     <h5>Please enter the authorization code to make this change</h5>
                                     <input
+                                        name="code"
+                                        value={this.state.code}
+                                        
                                         className="form-control border-primary"
-
+                                        onChange={(e)=>this._onChange(e)}
                                     />
                                 </div>
                                 <div class="modal-footer">

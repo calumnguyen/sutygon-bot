@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { updateUser, getUser } from '../../../actions/user'
+import { updateUser, getUser, codeVerify ,updatePassword} from '../../../actions/user'
 import Loader from '../../layout/Loader'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -14,11 +14,18 @@ import dateFormat from 'dateformat';
 import { Link } from 'react-router-dom'
 import Switch from "react-switch";
 import DatePicker from "react-datepicker";
- 
+import $ from 'jquery';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
 import "react-datepicker/dist/react-datepicker.css";
+import Alert from '../../layout/Alert'
+import Modal from 'react-awesome-modal';
+// import { compareSync } from 'bcryptjs'
+
 
 class EditUser extends Component {
   state = {
+    visible: false,
     isEdit: false,
     isEditO: false,
     isEditP: false,
@@ -33,7 +40,7 @@ class EditUser extends Component {
     Returnproduct: false,
     Calender: false,
     Report: false,
-    sections: [],
+    sections: '',
     id: '',
     firstname: '',
     userID: '',
@@ -42,17 +49,25 @@ class EditUser extends Component {
     systemRole: '',
     status: false,
     joinDate: '',
-    salary: '',
+    base_rate: '',
+    period: '',
     fullname: '',
     email: '',
     contactnumber: '',
     gender: '',
-    birthday: "4-Sept-1990",
+    birthday: "",
     address: '',
     avatar: '',
     statusChecked: '',
-    imgUpd:false,
-    src:false,
+    show:false,
+    code: '',
+    imgUpd: false,
+    src: false,
+    setIsOpen: false,
+    password:"",
+    newpassword:"",
+    confirmpassword:""
+
   }
 
   async componentDidMount() {
@@ -65,6 +80,7 @@ class EditUser extends Component {
           id: user._id,
           avatar: user.avatar,
           firstname: user.fullname,
+          fullname: user.fullname,
           userID: user.userID,
           jobTitle: user.jobTitle,
           username: user.username,
@@ -72,58 +88,147 @@ class EditUser extends Component {
           statusChecked: user.accountStatus,
           status: user.accountStatus === "active" ? true : false,
           // joinDate: user.createdOn,
-          // salary: user.salary,
-          fullname: user.fullname,
+          base_rate: user.salary && user.salary.base_rate ? user.salary.base_rate : "",
+          period: user.salary && user.salary.period ? user.salary.period : '',
           email: user.email,
           contactnumber: user.contactnumber,
           gender: user.gender,
           address: user.address,
-          // birthday: user.birthday,
+          birthday: user.birthday,
           avatar: user.avatar,
-
+          sections: user.sections
         })
       }
     }
   }
 
+  updatePassword = async (e)=>{
+    e.preventDefault();
+    e.preventDefault();
+    const state = { ...this.state }
+    const user = {
+      username: state.username,
+      currentpassword: (state.password).trim(),
+      newpassword: (state.newpassword).trim(),
+      confirmpassword: (state.confirmpassword).trim()
+    }
+    if (state.id !== "") {
+       await this.props.updatePassword(user, state.id) }
+  }
+  openModalforPassword = (e) =>{
+e.preventDefault();
+this.setState({
+  show:true
+})
+  }
+  handleCheck = (type) => {
+    var response = false;
+    const { sections } = this.state
+    if (sections) {
+      var s = sections.indexOf(type);
+      if (sections[s] === type) {
+        response = true;
+      }
+    }
+    return response
+  }
+
+  openModal = (e) => {
+    e.preventDefault();
+    this.setState({
+      visible: true
+    });
+  }
+  closeModal = (e) => {
+    e.preventDefault();
+    this.setState({
+      visible: false,
+      show:false
+    });
+  }
+  authorize = async (e) => {
+    e.preventDefault();
+    const { code } = this.state
+    await this.props.codeVerify(code)
+
+    if (this.props.codeverified === true) {
+      OCAlert.alertSuccess("Successfully Authorized")
+
+      this.setState({
+        // code: "",
+        visible: false
+      })
+    }
+    
+    if (this.props.codeverified === false) {
+      this.setState({
+        code: "",
+        visible: true
+      })
+      OCAlert.alertError("Wrong Authorization Code")
+
+    }
+    
+  }
+  setShow = (e) => {
+    e.preventDefault();
+    this.setState({ show: true });
+  }
+
   selected = async () => {
     const sections = [];
-    let value;
-    const checkeds = document.getElementsByTagName('input');
+    const checkeds = document.getElementsByClassName('input');
     for (let i = 0; i < checkeds.length; i++) {
       if (checkeds[i].checked) {
         sections.push(checkeds[i].name);
       }
     }
-    value = sections;
     this.setState({
       sections: sections
     })
 
   }
-
+  handleSalary = (e) => {
+    this.setState({ [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : '' })
+  }
   onSubmit = async (e) => {
     e.preventDefault();
+    const state = { ...this.state }
     await this.selected();
     const sessionsArr = Object.values(this.state.sections);
     this.setState({ saving: true });
+    const salary = [];
+    salary.push({
+      'period': this.state.period,
+      'base_rate': this.state.base_rate
+    })
 
     const formData = new FormData()
-    formData.append('avatar', this.state.avatar)
-    formData.append('jobTitle', this.state.jobTitle)
-    formData.append('systemRole', this.state.systemRole)
-    formData.append('accountStatus', this.state.statusChecked)
-    formData.append('username', this.state.username)
-    formData.append('salary', this.state.salary)
-    formData.append('fullname', this.state.fullname)
-    formData.append('email', this.state.email)
-    formData.append('contactnumber', this.state.contactnumber)
-    formData.append('birthday', this.state.birthday)
-    formData.append('gender', this.state.gender)
-    formData.append('address', this.state.address)
+    if (state.avatar !== "") {
+      formData.append('avatar', state.avatar)
+    }
+    else {
+      OCAlert.alertError("Please Upload Profile Image", { timeOut: 3000 })
+      this.setState({ saving: false });
+      return;
+    }
+    formData.append('jobTitle', state.jobTitle)
+    formData.append('systemRole', state.systemRole)
+    formData.append('accountStatus', state.statusChecked)
+    formData.append('username', state.username)
+    formData.append('salary', JSON.stringify(salary))
+    formData.append('fullname', state.fullname)
+    formData.append('email', state.email)
+    formData.append('contactnumber', state.contactnumber)
+    formData.append('birthday', state.birthday)
+    formData.append('gender', state.gender)
+    formData.append('address', state.address)
     formData.append('sections', sessionsArr)
+    formData.append('code', state.code)
+    formData.append('userID', state.userID)
+    await this.props.updateUser(formData, state.id)
+    this.setState({ saving: false });
 
-    await this.props.updateUser(formData, this.state.id)
   }
 
   formatDate(date) {
@@ -137,6 +242,7 @@ class EditUser extends Component {
 
     return [day, month, year].join('-');
   }
+
 
   _onChange = (e, id = '') => {
     this.setState({
@@ -166,6 +272,12 @@ class EditUser extends Component {
 
     this.setState({ [e.target.name]: !this.state[name] })
   }
+  _onEditSystemConfig = (e) => {
+    e.preventDefault();
+    this.setState({
+      isEditS: true
+    })
+  }
 
   _onEdit = (e) => {
     e.preventDefault();
@@ -182,7 +294,6 @@ class EditUser extends Component {
   }
   handleChangeForDate = (date, e) => {
     let formattedDate = this.formatDate(date);
-    console.log(formattedDate);
     this.setState({
       birthday: formattedDate
     });
@@ -239,6 +350,9 @@ class EditUser extends Component {
                           onSubmit={(e) => this.onSubmit(e)}
                         >
 
+                          <Alert />
+                          <OCAlertsProvider />
+
                           <div className="form-body">
                             <h4 className="form-section"><i className="ft-info"></i> Profile Picture </h4>
                             <div className="row">
@@ -247,14 +361,14 @@ class EditUser extends Component {
                                   <label className="col-md-4 label-control" htmlFor="inputGroupFile01">Profile Picture</label>
                                   <div className="col-md-8">
                                     <div className="custom-file">
-                                      <input 
-                                      name="avatar" 
-                                      type="file" 
-                                      className="custom-file-input border-primary"
-                                      id="inputGroupFile01"
-                                      aria-describedby="inputGroupFileAddon01"
-                                      accept='image/jpeg,image/gif,image/jpg,image/png,image/x-eps'
-                                      onChange={(e) => this._onChange(e)}
+                                      <input
+                                        name="avatar"
+                                        type="file"
+                                        className="custom-file-input border-primary"
+                                        id="inputGroupFile01"
+                                        aria-describedby="inputGroupFileAddon01"
+                                        accept='image/jpeg,image/gif,image/jpg,image/png,image/x-eps'
+                                        onChange={(e) => this._onChange(e)}
                                       />
                                       <label className="custom-file-label" htmlFor="inputGroupFile01">Choose
                        file</label>
@@ -263,20 +377,20 @@ class EditUser extends Component {
                                 </div>
                               </div>
                               <div className="col-md-6 text-center">
-                                {this.state.imgUpd === false&& this.state.src === false ?
-                                <img className='media-object round-media'
-                                  src={this.state.avatar}
-                                  alt='User'
-                                  height={80} />
+                                {this.state.imgUpd === false && this.state.src === false ?
+                                  <img className='media-object round-media'
+                                    src={this.state.avatar}
+                                    alt='User'
+                                    height={80} />
                                   :
                                   <img className='media-object round-media'
-                                  src={this.state.src}
-                                  alt='User'
-                                  height={80} />
-    }
+                                    src={this.state.src}
+                                    alt='User'
+                                    height={80} />
+                                }
                               </div>
                             </div>
-                            <h4 className="form-section"><i className="ft-info"></i> System Information <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEdit(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button></h4>
+                            <h4 className="form-section mt-4"><i className="ft-info"></i> System Information <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEdit(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button></h4>
 
                             <div className="row">
 
@@ -329,9 +443,9 @@ class EditUser extends Component {
                                         className="form-control border-primary"
                                         placeholder="Status"
                                         name="status"
-                                        value={this.state.status}
-                                        onChange={e => this._handleChange(e)}
-
+                                        value={this.state.status === true ? "Active" : "In-Active"}
+                                        // onChange={e => this._handleChange(e)}
+readOnly
                                       />
                                       :
                                       <input type="text"
@@ -339,7 +453,7 @@ class EditUser extends Component {
                                         className="form-control border-primary"
                                         placeholder="Status"
                                         name="status"
-                                        value={this.state.status}
+                                        value={this.state.status === true ? "Active" : "In-Active"}
                                         readOnly
                                       />
 
@@ -347,8 +461,13 @@ class EditUser extends Component {
                                   </div>
                                 </div>
                                 <div className="form-group row last">
+                                  <div className="col-md-4"></div>
                                   <div className="col-md-8">
-                                    <Link>Change Password</Link>
+                                    <Link
+                                  onClick={(e) => this.openModalforPassword(e)}
+                                  type='button'
+className="font-medium-3"
+                                    ><i className="ft-external-link"></i>  Change Password</Link>
                                   </div>
                                 </div>
 
@@ -427,13 +546,7 @@ class EditUser extends Component {
                                           </option>
                                         </select>
                                       </>
-                                      // <input type="text"
-                                      //   id="userinput4"
-                                      //   className="form-control border-primary"
-                                      //   placeholder="System Role"
-                                      //   name="systemRole"
-                                      //   value={this.state.systemRole}
-                                      // />
+
                                       :
                                       <input type="text"
                                         id="userinput4"
@@ -524,7 +637,9 @@ class EditUser extends Component {
 
                               </div>
                             </div>
-                            <h4 className="form-section mt-5"><i className="ft-info"></i> Personal Information <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEditPersonalInfo(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button></h4>
+                            <h4 className="form-section mt-5"><i className="ft-info"></i> Personal Information
+                            <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEditPersonalInfo(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button>
+                            </h4>
                             <div className="row">
                               <div className="col-md-6">
                                 <div className="form-group row">
@@ -599,56 +714,23 @@ class EditUser extends Component {
                               <div className="col-md-6">
                                 <div className="form-group row">
                                   <label className="col-md-4 label-control" htmlFor="userinput4">Birthday</label>
-                                  <div className="col-md-8">
+                                  <div className="col-md-8" data-date-format="dd/mm/yyyy">
+
                                     {this.state.isEditP === true ?
-                                    <DatePicker
-                                    dateFormat="yyyy/MM/dd"
-                                    selected={this.state.birthday}
-                                    // onSelect={handleDateSelect} //when day is clicked
-                                    onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
-                                  />
-                                      // <div className="input-group date" id="datetimepicker1" data-target-input="nearest">
-                                      //   <input type='text'
-                                      //     name="birthday"
-                                      //     data-target="#datetimepicker1" data-toggle="datetimepicker"
-                                      //     className="form-control pickadate-selectors"
-                                      //     placeholder="Month &amp; Year Dropdown"
-                                      //     onChange={(e) => this.handleChangeForDate(e)}
-                                      //     value={moment(this.state.birthday).format("DD-MMM-YYYY")}
-
-                                      //   />
-                                      //   <div className="input-group-append">
-                                      //     <span className="input-group-text">
-                                      //       <span className="fa fa-calendar-o"></span>
-                                      //     </span>
-                                      //   </div>
-                                      // </div>
-                                      // <DatePicker
-                                      //   id="issueinput3"
-                                      //   selected={this.state.birthday}
-                                      //   className="form-control border-primary"
-                                      //   dateFormat="dd-MM-yyyy"
-                                      //   onChange={(e) => this.handleChangeForDate(e)}
-                                      //   popperPlacement="top-start"
-                                      //   showMonthDropdown
-                                      //   showYearDropdown
-                                      // />
-                                      :
-                                      <div className="input-group">
-
-                                      <input
+                                      <DatePicker
+                                        dateFormat="dd/MM/yyyy" selected={Date.parse(this.state.birthday)}
                                         className="form-control border-primary"
-
-                                        value={moment(this.state.birthday).format("DD-MMM-YYYY")}
+                                        onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
+                                        peekNextMonth
+                                        showMonthDropdown
+                                        showYearDropdown
+                                      />
+                                      :
+                                      <DatePicker
+                                        dateFormat="dd/MM/yyyy" selected={Date.parse(this.state.birthday)}
+                                        className="form-control border-primary"
                                         readOnly
-                                      ></input>
-                                         <div className="input-group-append">
-                                          <span className="input-group-text">
-                                            <span className="fa fa-calendar-o"></span>
-                                          </span>
-                                        </div>
-                                      </div>
-
+                                      />
                                     }
                                   </div>
                                 </div>
@@ -732,7 +814,11 @@ class EditUser extends Component {
 
                           {user && user.systemRole === "Admin" && this.state.systemRole === "Employee" ?
                             <>
-                              <h4 className="form-section mt-5"><i className="ft-info"></i> System Configuration <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEditPersonalInfo(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button></h4>
+
+                              <h4 className="form-section mt-5"><i className="ft-info"></i> System Configuration
+                              <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEditSystemConfig(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button>
+
+                              </h4>
 
                               <h4 className=''>
                                 {`${'Configure system for'} ${this.state.fullname}`}
@@ -743,11 +829,13 @@ class EditUser extends Component {
                                   <br></br>
                                   <label className='radio-inline'>
                                     <input
+                                      className="input"
                                       type='checkbox'
                                       name='Inventory'
                                       onChange={(e) => this.handleChange(e, 'Inventory')}
-                                      checked={this.state.Inventory === true}
+                                      checked={this.state.isEditS === true ? this.state.Inventory === true : this.handleCheck('Inventory')}
                                       value={this.state.Inventory}
+
                                     />{' '}
 Inventory
 </label>
@@ -760,9 +848,11 @@ Inventory
                                     <input
                                       type='checkbox'
                                       name='Returnproduct'
+                                      className="input"
                                       onChange={(e) => this.handleChange(e, 'Returnproduct')}
-                                      checked={this.state.Returnproduct === true}
+                                      checked={this.state.isEditS === true ? this.state.Returnproduct === true : this.handleCheck('Returnproduct')}
                                       value={this.state.Returnproduct}
+
                                     />{' '}
 Return Product
 </label>
@@ -781,8 +871,10 @@ Return Product
                                     <input
                                       type='checkbox'
                                       name='Barcode'
+                                      className="input"
+
                                       onChange={(e) => this.handleChange(e, 'Barcode')}
-                                      checked={this.state.Barcode === true}
+                                      checked={this.state.isEditS === true ? this.state.Barcode === true : this.handleCheck('Barcode')}
                                       value={this.state.Barcode}
                                     />{' '}
 Barcode
@@ -796,8 +888,11 @@ Barcode
                                     <input
                                       type='checkbox'
                                       name='Orders'
+
+                                      className="input"
+
                                       onChange={(e) => this.handleChange(e, 'Orders')}
-                                      checked={this.state.Orders === true}
+                                      checked={this.state.isEditS === true ? this.state.Orders === true : this.handleCheck('Orders')}
                                       value={this.state.Orders}
                                     />{' '}
 Orders
@@ -815,9 +910,12 @@ Orders
                                   <label className='radio-inline'>
                                     <input
                                       type='checkbox'
+                                      className="input"
+
+
                                       name='Customers'
                                       onChange={(e) => this.handleChange(e, 'Customers')}
-                                      checked={this.state.Customers === true}
+                                      checked={this.state.isEditS === true ? this.state.Customers === true : this.handleCheck('Customers')}
                                       value={this.state.Customers}
                                     />{' '}
 Customers
@@ -830,9 +928,12 @@ Customers
                                   <label className='radio-inline'>
                                     <input
                                       type='checkbox'
+                                      className="input"
+
+
                                       name='Appointments'
                                       onChange={(e) => this.handleChange(e, 'Appointments')}
-                                      checked={this.state.Appointments === true}
+                                      checked={this.state.isEditS === true ? this.state.Appointments === true : this.handleCheck('Appointments')}
                                       value={this.state.Appointments}
                                     />{' '}
 Appointments
@@ -850,9 +951,12 @@ Appointments
                                   <label className='radio-inline'>
                                     <input
                                       type='checkbox'
+                                      className="input"
+
+
                                       name='Rentproduct'
                                       onChange={(e) => this.handleChange(e, 'Rentproduct')}
-                                      checked={this.state.Rentproduct === true}
+                                      checked={this.state.isEditS === true ? this.state.Rentproduct === true : this.handleCheck('Rentproduct')}
                                       value={this.state.Rentproduct}
                                     />{' '}
 Rent a product
@@ -865,9 +969,11 @@ Rent a product
                                   <label className='radio-inline'>
                                     <input
                                       type='checkbox'
+                                      className="input"
                                       name='Calender'
                                       onChange={(e) => this.handleChange(e, 'Calender')}
-                                      checked={this.state.Calender === true}
+                                      checked={this.state.isEditS === true ? this.state.Calender === true : this.handleCheck('Calender')}
+
                                       value={this.state.Calender}
                                     />{' '}
 Calender
@@ -885,9 +991,12 @@ Calender
                                   <label className='radio-inline'>
                                     <input
                                       type='checkbox'
+
+                                      className="input"
+
                                       name='Report'
                                       onChange={(e) => this.handleChange(e, 'Report')}
-                                      checked={this.state.Report === true}
+                                      checked={this.state.isEditS === true ? this.state.Report === true : this.handleCheck('Report')}
                                       value={this.state.Report}
                                     />{' '}
 Report
@@ -924,21 +1033,116 @@ Report
 
                             : ""}
 
-                          <div className='form-actions top'>
-                            {/* {(this.state.isEdit === true || this.state.isEditO === true || this.state.isEditP === true) ?
-                              <button
-                                className="mb-2 mr-2 btn btn-raised btn-primary">
-                                <i className='ft-chevron-right' /> Update
-                            </button> : */}
-                            <button
-                              type='submit'
-                              className='mb-2 mr-2 btn btn-raised btn-primary'
-                            >
-                              <i className='ft-chevron-right' /> Update
-                                </button>
-                            {/* } */}
-                          </div>
+                          {user && user.systemRole === "Admin" ?
+                            <>
+                              <h4 className="form-section mt-3"><i className="ft-info"></i> Salary </h4>
+                              <div className="row">
+                                <div className="col-md-12">
+                                  <div className="form-group row">
 
+                                    <label className="col-md-2 label-control" htmlFor="userinput1">Base Rate</label>
+                                    <div className="col-md-10">
+                                      <div className="position-relative has-icon-right">
+                                        {this.state.isEdit === true ?
+
+
+
+                                          <input type="text"
+                                            id="userinput1" className="form-control border-primary" placeholder="Base Rate"
+                                            name="base_rate"
+                                            value={this.state.base_rate}
+                                            onChange={e => this.handleSalary(e)}
+                                          />
+                                          : <input type="text" id="userinput1" className="form-control border-primary" placeholder="Base Rate"
+                                            name="base_rate"
+                                            value={this.state.base_rate}
+                                            readOnly />
+                                        }
+                                        <div className="form-control-position">
+                                          <button className="btn btn-default m-1 p-0" onClick={(e) => this._onEdit(e)} ><i className="ft-edit"></i></button>
+                                        </div>
+                                      </div>
+                                    </div>
+
+
+                                  </div>
+
+                                  <div className="form-group row">
+                                    <label className="col-md-2 label-control" htmlFor="projectinput6">Period</label>
+                                    <div className="col-md-10">
+
+                                      <select
+                                        id="projectinput6"
+                                        name="period"
+                                        className="form-control"
+                                        onChange={(e) => this._handleChange(e)}
+                                        defaultValue={this.state.period}
+                                      >
+                                        <option value="none" defaultValue={this.state.period} >---Select---</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="bi-weekly">Bi-Weekly</option>
+                                        <option value="monthly">Monthly</option>
+
+                                      </select>
+
+                                    </div>
+                                  </div>
+                                  {/* <div className="form-group row">
+                                    <label className="col-md-2 label-control" htmlFor="userinput4">Effective Date</label>
+                                    <div className="col-md-10">
+                                      <input type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Effective Date"
+                                        name="e_date"
+                                        value={""}
+                                        readOnly
+                                      />
+                                    </div>
+                                  </div> */}
+                                  <div className='form-actions top'>
+                                    <button
+                                      type='button'
+                                      onClick={(e) => this.openModal(e)}
+
+                                      className='mb-2 mr-2 btn btn-raised btn-primary btn-openModal'
+                                    >
+                                      <i className='ft-chevron-right' /> Update Salary
+</button>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </>
+
+
+                            : ""}
+                          <h4 className="form-section mt-3"> </h4>
+{/* {this.state.birthday === undefined ? <div className='form-actions top'>   <button
+                                  type='button'
+                                  className='mb-2 mr-2 btn btn-raised btn-primary disabled'
+                                >
+                                  <i className='ft-chevron-right' /> Save changes
+                                </button> </div> : */}
+
+                          <div className='form-actions top'>
+                            {this.state.saving ? (
+                              <button
+                                type="button"
+                                className="mb-2 mr-2 btn btn-raised btn-primary">
+                                <div
+                                  className="spinner-grow spinner-grow-sm "
+                                  role="status"></div> &nbsp; Saving</button>
+                            ) : (
+                                <button
+                                  type='submit'
+                                  className='mb-2 mr-2 btn btn-raised btn-primary'
+                                >
+                                  <i className='ft-chevron-right' /> Save changes
+                                </button>
+                              )}
+                          </div>
+  {/* } */}
                         </form>
                       </div>
                     </div>
@@ -946,6 +1150,7 @@ Report
                 </div>
               </div>
             </div>
+
             <footer className='footer footer-static footer-light'>
               <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
@@ -963,6 +1168,85 @@ Report
               </p>
             </footer>
           </div>
+          <Modal visible={this.state.visible} width="400" height="250" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
+            <div>
+            
+              <div className="modal-body">
+                <h4 className="text-center">Please enter the authorization code to make this change</h4>
+                <input
+                  name="code"
+                  value={this.state.code}
+                  onChange={(e) => this._handleChange(e)}
+                  placeholder="Enter Code here"
+                  className="form-control border-primary"
+
+
+                />
+              </div>
+              <div className="modal-footer">
+                <button type="button" onClick={(e) => this.authorize(e)}
+                  className="btn grey btn-lg btn-outline-success">Authorize</button>
+             <button type="button"  onClick={(e) => this.closeModal(e)}
+                  className="btn grey btn-lg btn-outline-danger">Close</button>
+              </div>
+              <div>
+            <OCAlertsProvider containerStyle={{width: '80%',height:'25%'}} />
+            </div>
+            </div>
+          </Modal>
+          <Modal visible={this.state.show} width="400" height="350" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
+            <div>
+            <div className="modal-header">
+                              <h3>Update Password</h3>
+</div>
+              <div className="modal-body">
+              <div className="form-group row">
+                                <div className="col-md-12">
+                                  <input
+                                    type="password"
+                                    className="form-control border-primary"
+                                    placeholder="Enter Current password here"
+                                    name="password"
+                                    value={this.state.password}
+                                    onChange={(e) => this._handleChange(e)}
+
+      /></div>
+                              </div>
+                              <div className="form-group row">
+
+                                <div className="col-md-12">
+                                  <input
+                                    type="password"
+                                    className="form-control border-primary"
+                                    placeholder="Enter New password here"
+                                    name="newpassword"
+                                    value={this.state.newpassword}
+                                    onChange={(e) => this._handleChange(e)}
+
+                                  /></div>
+                              </div>
+                              <div className="form-group row">
+                                <div className="col-md-12">
+                                  <input
+                                    type="password"
+
+                                    className="form-control border-primary"
+                                    placeholder="Re type password"
+                                    name="confirmpassword"
+                                    value={this.state.confirmpassword}
+                                    onChange={(e) => this._handleChange(e)}
+
+                                  /></div>
+                              </div>               
+              </div>
+              <div className="modal-footer">
+                <button type="button" onClick={(e) => this.updatePassword(e)}
+                  className="btn grey btn-lg btn-outline-success">Update Password</button>
+                   <button type="button"  onClick={(e) => this.closeModal(e)}
+                  className="btn grey btn-lg btn-outline-danger">Close</button>
+              </div>
+            </div>
+          </Modal>
         </div>
       </React.Fragment >
     )
@@ -973,16 +1257,20 @@ EditUser.propTypes = {
   user: PropTypes.object,
   auth: PropTypes.object,
   saved: PropTypes.bool,
-  getUser: PropTypes.func.isRequired
+  codeverified: PropTypes.bool,
+  getUser: PropTypes.func.isRequired,
+  codeVerify: PropTypes.func.isRequired,
+  updatePassword:PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   saved: state.user.saved,
-  user: state.user.profile
+  user: state.user.profile,
+  codeverified: state.user.codeverified
 })
 
 export default connect(mapStateToProps, {
-  updateUser,
-  getUser
+  updateUser, codeVerify,
+  getUser,updatePassword
 })(EditUser)

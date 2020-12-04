@@ -93,14 +93,7 @@ class ViewUser extends Component {
               </Link>
 
               : ""} */}
-                {auth_user && auth_user.type === "Admin" ?
-              <Link
-                to={{ pathname: `/user/updatesalary/${user._id}` }}
-                className="warning p-0">
-                <i className="ft-pocket font-medium-3 mr-2" title="Update Salary"></i>
-              </Link>
-
-              : ""}
+              
                {auth_user && auth_user.type === "Admin" ?
             <Link to="/user"
               onClick={() => this.onDelete(user._id)}
@@ -154,8 +147,11 @@ class ViewUser extends Component {
   }
 
   handleChange = (e, id = '') => {
-    this.setState({ search: e.target.value })
-  }
+    this.setState({
+      activeUsers:true,
+      inactiveUsers: false,
+      allusers: false,
+    })  }
 
   onDelete = (id) => {
     confirmAlert({

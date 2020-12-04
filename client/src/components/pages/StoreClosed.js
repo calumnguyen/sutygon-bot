@@ -54,7 +54,6 @@ class StoreClosed extends Component {
             return <Redirect to='/user' />
         }
         if(this.state.logout === true){
-            console.log("working")
             return <Redirect to='/login' />
             }
 

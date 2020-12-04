@@ -12,7 +12,7 @@ import { changeShopStatus, getShop } from '../../actions/dashboard'
 import * as moment from 'moment'
 import '../../login.css'
 import '../../dashbaord.css'
-import UserModel from '../UserModel'
+import UserModel from './ActivateAccount'
 import { Redirect } from 'react-router-dom'
 
 class Dashboard extends Component {
@@ -103,7 +103,6 @@ class Dashboard extends Component {
 
     const { shop } = this.props
     const { user } = this.props.auth
-console.log(this.props)
     if (user && user.systemRole === "Employee") {
 
       if (shop) {
@@ -115,12 +114,18 @@ console.log(this.props)
           }} />
         }
       }
+      if (user) {
+        if (user.isPasswordChanged === false) {
+          return <Redirect to='/ActivateAccount' />
+        }
     }
-    if (user) {
-      if (user.accountStatus === "inactive") {
-        return <Redirect to='/login' />
-      }
+    
     }
+  //   if (user) {
+  //     if (user.isPasswordChanged === false) {
+  //       return <Redirect to='/ActivateAccount' />
+  //     }
+  // }
     return (
 
       <React.Fragment>

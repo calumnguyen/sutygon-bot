@@ -160,7 +160,8 @@ class AddUser extends Component {
                               <label className="custom-file-label" htmlFor="inputGroupFile01">Select Profile Image
                        </label>
                             </div>
-                            <br />
+                          </div>
+                          <div className='form-group col-md-6 mb-2 text-center'>
                             {this.state.isEdit === true &&
                               this.state.imgUpd === false ? (
                                 <img

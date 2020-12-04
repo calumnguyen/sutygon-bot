@@ -17,7 +17,7 @@ router.post(
   '/add',
   [
     check('name', 'Customer Name Required').not().isEmpty(),
-    check('contactnumber', 'Contact Number Required').isLength({ min: 10 }),
+    check('contactnumber', 'Contact Number must be minimum of 10 digits').isLength({ min: 10 }),
     check('email', 'Email Required').not().isEmpty(),
     check('address', 'Address Required').not().isEmpty(),
     check('birthday', 'Enter birth date.').not().isEmpty(),
@@ -56,33 +56,34 @@ router.post(
 // @route  POST api/customers/:id
 // @desc   Update a Customer
 // @access Private
-router.post('/:id', auth, async (req, res) => {
-  try {
-    const body = req.body // req.body = [Object: null prototype] { title: 'product' }
+// router.post('/:id', auth, async (req, res) => {
+//   try {
+//     const body = req.body // req.body = [Object: null prototype] { title: 'product' }
 
-    await Product.updateOne(
-      { _id: req.params.id },
-      {
-        $set: {
-          name: body.orderNumber,
-        },
-      }
-    )
-    res.json({ msg: 'Product Updated Successfully' })
-  } catch (err) {
-    console.error(err.message)
-    res
-      .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
-  }
-})
+//     await Product.updateOne(
+//       { _id: req.params.id },
+//       {
+//         $set: {
+//           name: body.orderNumber,
+//         },
+//       }
+//     )
+//     res.json({ msg: 'Customer Updated Successfully' })
+//   } catch (err) {
+//     console.error(err.message)
+//     res
+//       .status(500)
+//       .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+//   }
+// })
 
-// @route    PUT api/customers/update/:id
+// @route    POST api/customers/:id
 //@desc      update customers.
-router.put('/update/:id', auth, async (req, res) => {
+router.post('/:id', auth, async (req, res) => {
+  console.log("working",req.body)
+
   try {
     let { name, birthday, online_account } = req.body
-
     let { username } = { ...online_account }
 
     // now remove those key:items from the req.body with are not editable.
@@ -153,15 +154,14 @@ router.get('/:id', auth, async (req, res) => {
 // @route  GET api/customer/:name
 // @desc   Get Customer (Search for customer)
 // @access Private
-router.get('/search/:name', auth, async (req, res) => {
+router.get('/search/:contactnumber', auth, async (req, res) => {
   try {
-    const customer = await Customer.findOne({ name: { $eq: req.params.name } })
-
+    const customer = await Customer.findOne({ contactnumber: { $eq: req.params.contactnumber } })
     if (!customer) {
       return status(404).json({ msg: 'No Customer found' })
     }
 
-    res.json(customer)
+  return res.status(200).json(customer)
   } catch (err) {
     console.error(err.message)
     // Check if id is not valid
