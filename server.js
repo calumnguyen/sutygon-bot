@@ -3,32 +3,11 @@ const path = require('path')
 const app = express()
 const dotenv = require('dotenv')
 const { salaryUpdateJob, lostOrderJob } = require('./cronJobs/jobs')
-const rentedProducts = require('./models/RentedProducts')
 const connectDB = require('./config/db')
-
-// async function yaya() {
-//   const result = await rentedProducts.aggregate([
-//     {
-//       $match: {
-//         status: 'active',
-//       },
-//     },
-//   ])
-//   console.log(result)
-// }
-
-// yaya()
 
 // cron Jobs
 salaryUpdateJob()
 lostOrderJob()
-
-// const startDate = '2020-01-01'
-// const endDate = '2020-01-15'
-
-// const diffInDays = moment(endDate).diff(moment(startDate), 'days')
-
-// console.log(diffInDays)
 
 // Load env vars
 dotenv.config({ path: './config/config.env' })

@@ -391,4 +391,49 @@ router.get('/:id/insights', auth, async (req, res) => {
   // late fees. (no)
 })
 
+// @route  GET api/customers/blocked
+// @desc   get blocked customers
+// @access Private
+router.get('/status/blocked', auth, async (req, res) => {
+  try {
+    const customer = await Customer.find({ block_account: true })
+      .select('name email')
+      .lean()
+
+    console.log(customer)
+
+    if (!customer) {
+      return res.status(404).json({ msg: 'No Customer found' })
+    }
+
+    res.json({ msg: 'Blocked Cutomers', customer })
+  } catch (err) {
+    console.error(err.message)
+    res
+      .status(500)
+      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+  }
+})
+
+// @route  GET api/customers/:id/unblock
+// @desc   un-block customer by id
+// @access Private
+router.post('/:id/unblock', auth, async (req, res) => {
+  try {
+    await Customer.updateOne(
+      { _id: req.params.id },
+      {
+        $set: { block_account: false },
+      }
+    )
+
+    res.json({ msg: 'Cutomers unblocked successfully!' })
+  } catch (err) {
+    console.error(err.message)
+    res
+      .status(500)
+      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+  }
+})
+
 module.exports = router

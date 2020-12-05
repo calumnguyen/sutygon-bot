@@ -2,6 +2,8 @@ const cron = require('node-cron')
 const moment = require('moment')
 const User = require('../models/User')
 const rentedProducts = require('../models/RentedProducts')
+const Customer = require('../models/Customer')
+const Product = require('../models/Product')
 const { weekly, biWeekly, monthly } = require('../helpers/timePeriod')
 
 // salary update cron-job
@@ -50,7 +52,57 @@ exports.salaryUpdateJob = () => {
 
 exports.lostOrderJob = () => {
   //check if return date is 6 days late.
-  cron.schedule('* * * * *', async function () {
-    console.log('running a task every minute')
+  cron.schedule('0 */12 * * *', async function () {
+    console.log('Lost Order Checker!')
+
+    // Cron-job
+    const results = await rentedProducts.find({ status: 'active' })
+
+    lateOrders = []
+
+    results.forEach((res) => {
+      const diffInDays = moment().diff(moment(res.returnDate), 'days')
+      if (diffInDays >= 6) {
+        lateOrders.push(res)
+      }
+    })
+
+    for (order of lateOrders) {
+      // consider order as lost.
+      order.status = 'lost'
+
+      await order.save()
+
+      // Block Customer
+      await Customer.findByIdAndUpdate(order.customer, {
+        $set: { block_account: true },
+      })
+
+      // make lost products disable for future scanning.
+      for (bcode of order.barcodes) {
+        let singleProduct = await Product.findOne(
+          {
+            'color.sizes.barcodes': {
+              $elemMatch: { barcode: parseInt(bcode) },
+            },
+          },
+          { color: 1 }
+        )
+
+        if (singleProduct) {
+          for (color of singleProduct.color) {
+            for (size of color.sizes) {
+              for (barcode of size.barcodes) {
+                if (barcode.barcode === bcode) {
+                  // now make isLost: true to the object of that barcode!!
+                  barcode.isLost = true
+                  await singleProduct.save()
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   })
 }
