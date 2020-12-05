@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logout } from "../../actions/auth";
 import loadjs from 'loadjs';
-
+import {Link} from 'react-router-dom'
 
 
 class Header extends Component {
@@ -70,13 +70,13 @@ class Header extends Component {
                        className="dropdown-item py-1"><i className="ft-edit mr-2"></i><span>Edit Profile</span></a>
                      
                     
-                    <a
-                          href="/"
+                    <Link
+                          push to="/"
                           onClick={() => this.props.logout()}
                           className="dropdown-item"
                         >
                           Logout
-                        </a>
+                        </Link>
                   </div>
                 </li>
      

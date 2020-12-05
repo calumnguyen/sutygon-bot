@@ -52,19 +52,19 @@ router.post(
       }
       const salt = await bcrypt.genSalt(10)
       const passwordEntered = await bcrypt.hash(password, salt)
-      const userInfo = {tempPass: user.password,userID:user._id};
        // check if user is active or not...
        if (user.accountStatus !== 'active') {
-        return res.status(403).json({userInfo,
+        return res.status(403).json({
              errors:[{ msg: `Sorry! User is not activated. Inactivated on ${moment(
                 user.inactivated_date
               ).format('DD-MMM-YYYY')}`,
             }]
         })
       }
-
+console.log(password)
+console.log(user.password)
       const isMatch = await bcrypt.compare(password, user.password)
-
+console.log(isMatch)
       if (!isMatch) {
         return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
       }

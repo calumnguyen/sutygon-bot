@@ -99,7 +99,7 @@ router.post(
       let userBody
 
       if (req.file == undefined) {
-        userBody = { ...req.body, avatar, sections }
+        userBody = { ...req.body, password, avatar, sections }
         let user = new User(userBody)
         await user.save()
 
@@ -240,9 +240,6 @@ router.get('/verifySalaryCode/:code', auth, async (req, res) => {
         .status(400)
         .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
     }
-
-    const user = await User.findById(req.user.id).select('-password')
-    res.json(user)
   } catch (err) {
     console.log(err)
     res.status(500).send({ msg: 'Server Error' })
@@ -301,13 +298,13 @@ router.post(
       var sections;
       if (req.body.sections) {
         sections = req.body.sections.split(",");
-        
+
       }
-     
+
 
       if (req.body.salary) {
         var parsedSalary = JSON.parse(req.body.salary)
-      
+
         var salary
         // Period : Weekly
         if (parsedSalary[0].period === 'weekly') {
@@ -353,7 +350,7 @@ router.post(
       let inactivated_date
       if (req.body.accountStatus && req.body.accountStatus === 'inactive') {
         inactivated_date = Date.now()
-      }     
+      }
       // It will update any number of requested fields both by Employee and Admin...
       let fieldsToUpdate
       if (req.file === undefined) {
@@ -443,7 +440,7 @@ router.post(auth, async (req, res) => {
 
 router.post(
   '/updatepassword/:id',
-  [check('currentpassword', 'Current Password Field Required').not().isEmpty()],
+  [check('password', 'Current Password Field Required').not().isEmpty()],
 
   async (req, res) => {
     try {
@@ -452,19 +449,28 @@ router.post(
         return res.status(422).json({ errors: errors.array() })
       }
       const user = await User.findById(req.params.id)
+
       if (req.body.username !== user.username) {
         return res.status(400).json({ errors: [{ msg: 'Wrong Username!!' }] })
       }
-      if (req.body.currentpassword !== user.password) {
-        return res.status(400).json({ errors: [{ msg: 'Wrong Password!!' }] })
+    
+      const salt = await bcrypt.genSalt(10)
+
+      const isMatch = await bcrypt.compare(req.body.password, user.password);
+      
+      if (req.body.password !== user.password) {
+        if (isMatch === false) {
+          return res
+            .status(400)
+            .json({ errors: [{ msg: "Wrong Password" }] })
+        }
       }
 
-      if (req.body.newpassword !== req.body.confirmpassword) {
+     if (req.body.newpassword !== req.body.confirmpassword) {
         return res
           .status(400)
           .json({ errors: [{ msg: "Confirm Password didn't match!!" }] })
       }
-      const salt = await bcrypt.genSalt(10)
 
       newpass = await bcrypt.hash(req.body.newpassword, salt)
 

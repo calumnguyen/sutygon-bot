@@ -1,26 +1,21 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { updateUser, getUser, codeVerify ,updatePassword} from '../../../actions/user'
+import { updateUser, getUser, codeVerify, updatePassword } from '../../../actions/user'
 import Loader from '../../layout/Loader'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import * as moment from 'moment'
-// import DatePicker from "react-datepicker";
 import { Redirect } from 'react-router-dom'
-// import "react-datepicker/dist/react-datepicker.css";
-import Moment from 'react-moment'
-import dateFormat from 'dateformat';
+
 import { Link } from 'react-router-dom'
 import Switch from "react-switch";
 import DatePicker from "react-datepicker";
-import $ from 'jquery';
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts';
 import "react-datepicker/dist/react-datepicker.css";
 import Alert from '../../layout/Alert'
 import Modal from 'react-awesome-modal';
-// import { compareSync } from 'bcryptjs'
 
 
 class EditUser extends Component {
@@ -59,14 +54,14 @@ class EditUser extends Component {
     address: '',
     avatar: '',
     statusChecked: '',
-    show:false,
+    show: false,
     code: '',
     imgUpd: false,
     src: false,
     setIsOpen: false,
-    password:"",
-    newpassword:"",
-    confirmpassword:""
+    password: "",
+    newpassword: "",
+    confirmpassword: ""
 
   }
 
@@ -102,24 +97,39 @@ class EditUser extends Component {
     }
   }
 
-  updatePassword = async (e)=>{
+  updatePassword = async (e) => {
     e.preventDefault();
     e.preventDefault();
     const state = { ...this.state }
     const user = {
       username: state.username,
-      currentpassword: (state.password).trim(),
+      password: (state.password).trim(),
       newpassword: (state.newpassword).trim(),
       confirmpassword: (state.confirmpassword).trim()
     }
     if (state.id !== "") {
-       await this.props.updatePassword(user, state.id) }
+      await this.props.updatePassword(user, state.id)
+    }
+    if(this.props.passwordUpdated === true){
+      this.setState({
+        password: "", newpassword:"",confirmpassword:"",
+        show: false
+      })
+    }
+    else if(this.props.passwordUpdated === false){
+      OCAlert.alertError('Password Update Failed', { timeOut: 3000 });
+      this.setState({
+        show: true
+      })
+
+    }
+
   }
-  openModalforPassword = (e) =>{
-e.preventDefault();
-this.setState({
-  show:true
-})
+  openModalforPassword = (e) => {
+    e.preventDefault();
+    this.setState({
+      show: true
+    })
   }
   handleCheck = (type) => {
     var response = false;
@@ -143,15 +153,23 @@ this.setState({
     e.preventDefault();
     this.setState({
       visible: false,
-      show:false
+      show: false,code:"", password: "", newpassword:"",confirmpassword:"",
+
     });
   }
   authorize = async (e) => {
     e.preventDefault();
     const { code } = this.state
     await this.props.codeVerify(code)
+     if(this.props.codeverified === false) {
+      OCAlert.alertError("Wrong Authorization Code", { timeOut: 3000 })
+      this.setState({
+        code: "",
+        visible: true
+      })
+    }
 
-    if (this.props.codeverified === true) {
+    else if(this.props.codeverified === true) {
       OCAlert.alertSuccess("Successfully Authorized")
 
       this.setState({
@@ -159,16 +177,9 @@ this.setState({
         visible: false
       })
     }
-    
-    if (this.props.codeverified === false) {
-      this.setState({
-        code: "",
-        visible: true
-      })
-      OCAlert.alertError("Wrong Authorization Code")
 
-    }
-    
+  
+
   }
   setShow = (e) => {
     e.preventDefault();
@@ -351,7 +362,6 @@ this.setState({
                         >
 
                           <Alert />
-                          <OCAlertsProvider />
 
                           <div className="form-body">
                             <h4 className="form-section"><i className="ft-info"></i> Profile Picture </h4>
@@ -445,7 +455,7 @@ this.setState({
                                         name="status"
                                         value={this.state.status === true ? "Active" : "In-Active"}
                                         // onChange={e => this._handleChange(e)}
-readOnly
+                                        readOnly
                                       />
                                       :
                                       <input type="text"
@@ -464,9 +474,9 @@ readOnly
                                   <div className="col-md-4"></div>
                                   <div className="col-md-8">
                                     <Link
-                                  onClick={(e) => this.openModalforPassword(e)}
-                                  type='button'
-className="font-medium-3"
+                                      onClick={(e) => this.openModalforPassword(e)}
+                                      type='button'
+                                      className="font-medium-3"
                                     ><i className="ft-external-link"></i>  Change Password</Link>
                                   </div>
                                 </div>
@@ -1118,7 +1128,7 @@ Report
 
                             : ""}
                           <h4 className="form-section mt-3"> </h4>
-{/* {this.state.birthday === undefined ? <div className='form-actions top'>   <button
+                          {/* {this.state.birthday === undefined ? <div className='form-actions top'>   <button
                                   type='button'
                                   className='mb-2 mr-2 btn btn-raised btn-primary disabled'
                                 >
@@ -1142,7 +1152,7 @@ Report
                                 </button>
                               )}
                           </div>
-  {/* } */}
+                          {/* } */}
                         </form>
                       </div>
                     </div>
@@ -1167,13 +1177,16 @@ Report
                 </span>
               </p>
             </footer>
+
           </div>
           <Modal visible={this.state.visible} width="400" height="250" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
             <div>
-            
+            <div className="modal-header">
+            <h4 className="text-center">Please enter the authorization code to make this change</h4>
+              </div>
+              <Alert />
               <div className="modal-body">
-                <h4 className="text-center">Please enter the authorization code to make this change</h4>
-                <input
+                 <input
                   name="code"
                   value={this.state.code}
                   onChange={(e) => this._handleChange(e)}
@@ -1186,68 +1199,73 @@ Report
               <div className="modal-footer">
                 <button type="button" onClick={(e) => this.authorize(e)}
                   className="btn grey btn-lg btn-outline-success">Authorize</button>
-             <button type="button"  onClick={(e) => this.closeModal(e)}
+                <button type="button" onClick={(e) => this.closeModal(e)}
                   className="btn grey btn-lg btn-outline-danger">Close</button>
               </div>
-              <div>
-            <OCAlertsProvider containerStyle={{width: '80%',height:'25%'}} />
-            </div>
+              <div>            <OCAlertsProvider />
+</div>
             </div>
           </Modal>
-          <Modal visible={this.state.show} width="400" height="350" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
+          <Modal visible={this.state.show} width="400" height="400" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
             <div>
-            <div className="modal-header">
-                              <h3>Update Password</h3>
-</div>
-              <div className="modal-body">
-              <div className="form-group row">
-                                <div className="col-md-12">
-                                  <input
-                                    type="password"
-                                    className="form-control border-primary"
-                                    placeholder="Enter Current password here"
-                                    name="password"
-                                    value={this.state.password}
-                                    onChange={(e) => this._handleChange(e)}
-
-      /></div>
-                              </div>
-                              <div className="form-group row">
-
-                                <div className="col-md-12">
-                                  <input
-                                    type="password"
-                                    className="form-control border-primary"
-                                    placeholder="Enter New password here"
-                                    name="newpassword"
-                                    value={this.state.newpassword}
-                                    onChange={(e) => this._handleChange(e)}
-
-                                  /></div>
-                              </div>
-                              <div className="form-group row">
-                                <div className="col-md-12">
-                                  <input
-                                    type="password"
-
-                                    className="form-control border-primary"
-                                    placeholder="Re type password"
-                                    name="confirmpassword"
-                                    value={this.state.confirmpassword}
-                                    onChange={(e) => this._handleChange(e)}
-
-                                  /></div>
-                              </div>               
+              <div className="modal-header">
+                <h3>Update Password</h3>
               </div>
+              <Alert />
+
+              <div className="modal-body">
+                <div className="form-group row">
+                  <div className="col-md-12">
+                    <input
+                      type="password"
+                      className="form-control border-primary"
+                      placeholder="Enter Current password here"
+                      name="password"
+                      value={this.state.password}
+                      onChange={(e) => this._handleChange(e)}
+
+                    /></div>
+                </div>
+                <div className="form-group row">
+
+                  <div className="col-md-12">
+                    <input
+                      type="password"
+                      className="form-control border-primary"
+                      placeholder="Enter New password here"
+                      name="newpassword"
+                      value={this.state.newpassword}
+                      onChange={(e) => this._handleChange(e)}
+
+                    /></div>
+                </div>
+                <div className="form-group row">
+                  <div className="col-md-12">
+                    <input
+                      type="password"
+
+                      className="form-control border-primary"
+                      placeholder="Re type password"
+                      name="confirmpassword"
+                      value={this.state.confirmpassword}
+                      onChange={(e) => this._handleChange(e)}
+
+                    /></div>
+                </div>
+
+              </div>
+
               <div className="modal-footer">
                 <button type="button" onClick={(e) => this.updatePassword(e)}
                   className="btn grey btn-lg btn-outline-success">Update Password</button>
-                   <button type="button"  onClick={(e) => this.closeModal(e)}
+                <button type="button" onClick={(e) => this.closeModal(e)}
                   className="btn grey btn-lg btn-outline-danger">Close</button>
               </div>
+
             </div>
           </Modal>
         </div>
+
       </React.Fragment >
     )
   }
@@ -1257,20 +1275,22 @@ EditUser.propTypes = {
   user: PropTypes.object,
   auth: PropTypes.object,
   saved: PropTypes.bool,
-  codeverified: PropTypes.bool,
+  saved: PropTypes.bool,
+  passwordUpdated: PropTypes.bool,
   getUser: PropTypes.func.isRequired,
   codeVerify: PropTypes.func.isRequired,
-  updatePassword:PropTypes.func.isRequired
+  updatePassword: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   saved: state.user.saved,
   user: state.user.profile,
-  codeverified: state.user.codeverified
+  codeverified: state.user.codeverified,
+  passwordUpdated: state.user.passwordUpdated
 })
 
 export default connect(mapStateToProps, {
   updateUser, codeVerify,
-  getUser,updatePassword
+  getUser, updatePassword
 })(EditUser)
