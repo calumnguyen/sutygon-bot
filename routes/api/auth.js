@@ -61,15 +61,13 @@ router.post(
             }]
         })
       }
-console.log(password)
-console.log(user.password)
+
       const isMatch = await bcrypt.compare(password, user.password)
-console.log(isMatch)
+
       if (!isMatch) {
         return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
       }
 
-     
       const payload = {
         user: {
           id: user._id,
@@ -87,8 +85,7 @@ console.log(isMatch)
       )
     } catch (err) {
       console.log(err)
-      res.status(500)
-         .json({ errors: [{ msg: 'Server error' }] })
+      res.status(500).json({ errors: [{ msg: 'Server error' }] })
     }
   }
 )

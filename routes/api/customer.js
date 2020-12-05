@@ -227,19 +227,37 @@ router.delete('/:id', auth, async (req, res) => {
 // @access Private
 
 router.get('/:id/insights', auth, async (req, res) => {
-  let { year } = { ...req.body }
-
   try {
-    //get year
-    var startDate = moment(year).format('YYYY-MM-DD')
+    let { year, month, allTime } = { ...req.body }
 
-    //make last date of the current year
-    const lastDate = startDate.split('-')
+    var startDate
+    var endDate
+    if (year) {
+      //get year
+      startDate = moment(year).format('YYYY-MM-DD')
 
-    lastDate[1] = '12'
-    lastDate[2] = '30'
+      //make last date of the current year
+      const lastDate = startDate.split('-')
 
-    let endDate = lastDate.join('-')
+      lastDate[1] = '12'
+      lastDate[2] = '30'
+
+      endDate = lastDate.join('-')
+    }
+
+    if (month) {
+      startDate = moment(month).format('YYYY-MM-DD')
+
+      // gets the last day of month , whether it is 29,30 or 31 automatically!
+      endDate = moment(startDate).endOf('month').format(moment.HTML5_FMT.DATE)
+    }
+
+    if (allTime) {
+      // Initial period is set to 2012 by client.
+      startDate = moment('2012').format('YYYY-MM-DD')
+      // Till current moment.
+      endDate = moment().format(moment.HTML5_FMT.DATE)
+    }
 
     //converted to ObjectId because aggregator is type-sensitive.
     var customerId = mongoose.Types.ObjectId(req.params.id)
@@ -336,6 +354,8 @@ router.get('/:id/insights', auth, async (req, res) => {
 
     const ProductTotal = await calculateProductAmt
 
+    console.log(orders)
+
     const totalTax = orders[0].total - (ProductTotal + orders[0].insuranceAmt)
 
     // Adding tax value.
@@ -369,6 +389,51 @@ router.get('/:id/insights', auth, async (req, res) => {
   // damage = missing
 
   // late fees. (no)
+})
+
+// @route  GET api/customers/blocked
+// @desc   get blocked customers
+// @access Private
+router.get('/status/blocked', auth, async (req, res) => {
+  try {
+    const customer = await Customer.find({ block_account: true })
+      .select('name email')
+      .lean()
+
+    console.log(customer)
+
+    if (!customer) {
+      return res.status(404).json({ msg: 'No Customer found' })
+    }
+
+    res.json({ msg: 'Blocked Cutomers', customer })
+  } catch (err) {
+    console.error(err.message)
+    res
+      .status(500)
+      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+  }
+})
+
+// @route  GET api/customers/:id/unblock
+// @desc   un-block customer by id
+// @access Private
+router.post('/:id/unblock', auth, async (req, res) => {
+  try {
+    await Customer.updateOne(
+      { _id: req.params.id },
+      {
+        $set: { block_account: false },
+      }
+    )
+
+    res.json({ msg: 'Cutomers unblocked successfully!' })
+  } catch (err) {
+    console.error(err.message)
+    res
+      .status(500)
+      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+  }
 })
 
 module.exports = router

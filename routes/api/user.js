@@ -64,16 +64,11 @@ router.post(
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
-    const body = JSON.parse(JSON.stringify(req.body))
-
-
-    var sections;
-    if (req.body.sections) {
-      sections = req.body.sections.split(",");
-      // const salt = await bcrypt.genSalt(10)
-      // const password = await bcrypt.hash(body.password, salt)
-    }
     try {
+      let body = JSON.parse(JSON.stringify(req.body))
+
+      var sections = req.body.sections
+     
       // check if there is any record with same email and username
       const userByEmail = await User.findOne({ email: body.email })
       const userByUsername = await User.findOne({ username: body.username })
@@ -99,7 +94,7 @@ router.post(
       let userBody
 
       if (req.file == undefined) {
-        userBody = { ...req.body, password, avatar, sections }
+        userBody = { ...body, avatar, sections }
         let user = new User(userBody)
         await user.save()
 
@@ -109,7 +104,7 @@ router.post(
 
         cloudinary.uploader.upload(avatar, async function (result) {
           userBody = {
-            ...req.body,
+            ...body,
             avatar: result.secure_url,
             sections,
           }
@@ -230,12 +225,9 @@ router.get('/:id', auth, async (req, res) => {
 // @access  Private
 router.get('/verifySalaryCode/:code', auth, async (req, res) => {
   try {
-
     if (req.params.code === process.env.salarySecretCode) {
-      return res
-        .status(200).json({ msg: 'Successfully Authorize' })
-    }
-    else {
+      return res.status(200).json({ msg: 'Successfully Authorize' })
+    } else {
       return res
         .status(400)
         .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
@@ -259,7 +251,6 @@ router.post(
     check('contactnumber', 'Please Enter Contact Number').not().isEmpty(),
     check('gender', 'Please select your Gender').not().isEmpty(),
     check('birthday', 'Please select your Birth Date').not().isEmpty(),
-
   ],
   auth,
   async (req, res) => {
@@ -295,12 +286,10 @@ router.post(
           .status(500)
           .json({ errors: [{ msg: 'Please select birthday' }] })
       }
-      var sections;
+      var sections
       if (req.body.sections) {
-        sections = req.body.sections.split(",");
-
+        sections = req.body.sections.split(',')
       }
-
 
       if (req.body.salary) {
         var parsedSalary = JSON.parse(req.body.salary)
@@ -362,12 +351,11 @@ router.post(
               ...req.body,
               inactivated_date,
               salary,
-              sections
+              sections,
             },
           },
           { new: true }
         )
-
       } else {
         const avatar = req.file.path
         cloudinary.uploader.upload(avatar, async function (result) {
@@ -375,7 +363,7 @@ router.post(
             ...req.body,
             avatar: result.secure_url,
             salary,
-            sections
+            sections,
           }
           await User.findByIdAndUpdate(
             req.params.id,
@@ -385,15 +373,13 @@ router.post(
                 avatar: result.secure_url,
                 inactivated_date,
                 salary,
-                sections
+                sections,
               },
             },
             { new: true }
           )
-
         })
       }
-
 
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
@@ -480,7 +466,7 @@ router.post(
           $set: {
             password: newpass,
             isPasswordChanged: true,
-            accountStatus: "active"
+            accountStatus: 'active',
           },
         }
       )
