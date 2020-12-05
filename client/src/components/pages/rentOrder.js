@@ -436,18 +436,18 @@ class RentOrder extends Component {
       return <Redirect to="/" />;
     }
 
-    if (this.state.redirect === true) {
-      return <Redirect to="/rentproduct" />;
-    }
+    // if (this.state.redirect === true) {
+    //   return <Redirect to="/rentproduct" />;
+    // }
 
-    if (this.props.location.data === undefined) {
-      return <Redirect to="/rentproduct" />;
+    // if (this.props.location.data === undefined) {
+    //   return <Redirect to="/rentproduct" />;
 
-    }
-    if (this.props.saved === true) {
-      return <Redirect to="/rentproduct" />;
+    // }
+    // if (this.props.saved === true) {
+    //   return <Redirect to="/rentproduct" />;
 
-    }
+    // }
 
     const { customer } = this.props;
     return (
@@ -495,7 +495,7 @@ class RentOrder extends Component {
                                       to="/checkout"
                                       className="btn "
                                     >
-                                      <i className="fa fa-plus"></i>
+                                      <i className="fa fa-external-link"></i>
                                       Go Back To Add Products
                                     </Link>
 
@@ -686,7 +686,7 @@ class RentOrder extends Component {
                                     <div className="row justify-content-center">
                                       <div className="col-md-6 text-center">
                                         <DatePicker
-                                          id="issueinput3"
+                                          id="issueinput4"
                                           selected={this.state.rentDate}
                                           className="form-control round text-center"
                                           onChange={(e) => this.handleChangeForDate(e)}
@@ -716,7 +716,7 @@ class RentOrder extends Component {
                                       <div className="col-md-6 text-center">
                                         <input
                                           id="issueinput4"
-                                          className="round text-center"
+                                          className="form-control round text-center"
                                           name="returnDate"
                                           style={{ 'border': '1px solid #A6A9AE', 'color': '#75787d', 'padding': '0.375rem 0.75rem', 'lineHeight': '1.5' }}
                                           required

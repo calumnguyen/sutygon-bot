@@ -58,8 +58,13 @@ body.modal-open .background-container {
   width: 100%;
 }
 
-/* .react-datepicker__month-container {
-  position: absolute !important;
-  top: calc(100% + 2em) !important;
-  /* left: 50%;                        Comment these out */  
-  /* transform: translateX(-50%);          Comment these out */
+.react-bootstrap-table>table, td, th {  
+  border: 0px solid #ddd !important;
+  text-align: center !important
+}
+
+
+.react-bootstrap-table>thead ,tr{  
+  border: 1px solid #ddd !important;
+  text-align: center !important
+}
