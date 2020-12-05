@@ -46,7 +46,6 @@ router.post(
   async (req, res) => {
     const body = JSON.parse(JSON.stringify(req.body)) // req.body = [Object: null prototype] { title: 'product' }
     const image = req.file.path
-    console.log('req.path', req.path)
     try {
       cloudinary.uploader.upload(image, async function (result) {
         const productBody = {
@@ -278,7 +277,6 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json(product)
   } catch (err) {
-    console.error(err.message)
     // Check if id is not valid
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ msg: 'No Product found' })

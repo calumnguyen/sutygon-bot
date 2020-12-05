@@ -57,7 +57,6 @@ export const login = (username, password) => async (dispatch) => {
       type: LOGIN_SUCCESS,
       payload: res.data,
     })
-
     dispatch(loadUser())
   } catch (err) {
     if (err.response) {
@@ -68,6 +67,7 @@ export const login = (username, password) => async (dispatch) => {
     }
     dispatch({
       type: LOGIN_FAIL,
+      payload:err.response.data
     })
   }
 }

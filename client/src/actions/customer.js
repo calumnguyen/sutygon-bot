@@ -9,7 +9,8 @@ import {
   CUSTOMERS_ERROR,
   CUSTOMERS_LOADING,
   CUSTOMER_DELETED,
-  CUSTOMER_UPDATED
+  CUSTOMER_UPDATED,
+  SEARCHED_CUSTOMER
  
 
 } from "./types";
@@ -87,7 +88,7 @@ export const getCustomer = (id) => async (dispatch) => {
 
 
 // Update User
-export const updateCustomer = (product, id) => async (dispatch) => {
+export const updateCustomer = (customer, id) => async (dispatch) => {
   dispatch({ type: CUSTOMERS_LOADING });
   const config = {
     headers: {
@@ -95,7 +96,7 @@ export const updateCustomer = (product, id) => async (dispatch) => {
     },
   };
 
-  const body = JSON.stringify(product);
+  const body = JSON.stringify(customer);
   try {
     const res = await axios.post(`/api/customers/${id}`, body, config);
 
@@ -150,6 +151,23 @@ export const getCustomerbyCN = (customernumber) => async (dispatch) => {
     const res = await axios.get(`/api/customers/${customernumber}`);
     dispatch({
       type: GET_CUSTOMER,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: CUSTOMERS_ERROR,
+      payload: err.response,
+    });
+  }
+};
+
+// Find customer
+export const findCustomers = (searchVal) => async (dispatch) => {
+  dispatch({ type: CUSTOMERS_LOADING });
+  try {
+    const res = await axios.get(`/api/customers/search/${searchVal}`);
+    dispatch({
+      type: SEARCHED_CUSTOMER,
       payload: res.data,
     });
   } catch (err) {

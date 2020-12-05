@@ -102,7 +102,6 @@ router.post(
       if (req.file == undefined) {
         userBody = { ...body, avatar, sections }
         let user = new User(userBody)
-        console.log(user)
         await user.save()
 
         res.status(200).json({ user, msg: 'User Added Successfully' })
@@ -227,6 +226,27 @@ router.get('/:id', auth, async (req, res) => {
   }
 })
 
+// @route   GET api/users/verifySalaryCode/:code
+// @desc    Verify Salary Code
+// @access  Private
+router.get('/verifySalaryCode/:code', auth, async (req, res) => {
+  try {
+    if (req.params.code === process.env.salarySecretCode) {
+      return res.status(200).json({ msg: 'Successfully Authorize' })
+    } else {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
+    }
+
+    const user = await User.findById(req.user.id).select('-password')
+    res.json(user)
+  } catch (err) {
+    console.log(err)
+    res.status(500).send({ msg: 'Server Error' })
+  }
+})
+
 // @route  PUT api/users/:id
 // @desc   Update a user
 // @access Private
@@ -239,6 +259,7 @@ router.post(
     check('email', 'Please Enter a Valid Email').isEmail(),
     check('contactnumber', 'Please Enter Contact Number').not().isEmpty(),
     check('gender', 'Please select your Gender').not().isEmpty(),
+    check('birthday', 'Please select your Birth Date').not().isEmpty(),
   ],
   auth,
   async (req, res) => {
@@ -269,42 +290,49 @@ router.post(
           .status(500)
           .json({ errors: [{ msg: 'User with this Username already exists' }] })
       }
+      if (body.birthday === 'undefined') {
+        return res
+          .status(500)
+          .json({ errors: [{ msg: 'Please select birthday' }] })
+      }
+      var sections
+      if (req.body.sections) {
+        sections = req.body.sections.split(',')
+      }
 
       if (req.body.salary) {
-        if (!(req.body.code === process.env.salarySecretCode)) {
-          return res
-            .status(400)
-            .json({ errors: [{ msg: 'Wrong Authorization code.' }] })
-        }
+        var parsedSalary = JSON.parse(req.body.salary)
 
         var salary
         // Period : Weekly
-        if (req.body.salary.period === 'weekly') {
+        if (parsedSalary[0].period === 'weekly') {
           const nextMonday = weekly()
           salary = {
-            ...req.body.salary,
+            period: parsedSalary[0].period,
+            base_rate: parsedSalary[0].base_rate,
             effective_date: nextMonday,
           }
         }
-
         // Period : bi-weekly
-        if (req.body.salary.period === 'bi-weekly') {
+        if (parsedSalary[0].period === 'bi-weekly') {
           const NextandThirdMon = biWeekly()
 
           salary = {
-            ...req.body.salary,
+            period: parsedSalary[0].period,
+            base_rate: parsedSalary[0].base_rate,
             effective_date: NextandThirdMon,
           }
         }
 
         // Period : monthly
-        if (req.body.salary.period === 'monthly') {
+        if (parsedSalary[0].period === 'monthly') {
           // grabbed the last monday of the month using momentjs..
 
           const lastMonOfMonth = monthly()
 
           salary = {
-            ...req.body.salary,
+            period: parsedSalary[0].period,
+            base_rate: parsedSalary[0].base_rate,
             effective_date: lastMonOfMonth,
           }
         }
@@ -316,35 +344,51 @@ router.post(
         d: 'mm',
       })
 
-      // It will update any number of requested fields both by Employee and Admin...
-      let fieldsToUpdate
-      if (req.file == undefined) {
-        fieldsToUpdate = { ...req.body, avatar }
-      } else {
-        fieldsToUpdate = {
-          ...req.body,
-          avatar: `/uploads/user/${req.file.originalname}`,
-        }
-      }
-
       //check if the accountStatus is set to 'inactivated'..
       let inactivated_date
       if (req.body.accountStatus && req.body.accountStatus === 'inactive') {
         inactivated_date = Date.now()
       }
-
-      await User.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: {
-            ...req.body,
-            avatar,
-            inactivated_date,
-            salary,
+      // It will update any number of requested fields both by Employee and Admin...
+      let fieldsToUpdate
+      if (req.file === undefined) {
+        fieldsToUpdate = { ...req.body }
+        await User.findByIdAndUpdate(
+          req.params.id,
+          {
+            $set: {
+              ...req.body,
+              inactivated_date,
+              salary,
+              sections,
+            },
           },
-        },
-        { new: true }
-      )
+          { new: true }
+        )
+      } else {
+        const avatar = req.file.path
+        cloudinary.uploader.upload(avatar, async function (result) {
+          fieldsToUpdate = {
+            ...req.body,
+            avatar: result.secure_url,
+            salary,
+            sections,
+          }
+          await User.findByIdAndUpdate(
+            req.params.id,
+            {
+              $set: {
+                ...req.body,
+                avatar: result.secure_url,
+                inactivated_date,
+                salary,
+                sections,
+              },
+            },
+            { new: true }
+          )
+        })
+      }
 
       res.status(200).json({ msg: 'User Updated Successfully' })
     } catch (err) {
@@ -399,21 +443,18 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() })
       }
-
       const user = await User.findById(req.params.id)
-      const isMacth = await bcrypt.compare(
-        req.body.currentpassword,
-        user.password
-      )
-
-      if (!isMacth) {
-        return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
+      if (req.body.username !== user.username) {
+        return res.status(400).json({ errors: [{ msg: 'Wrong Username!!' }] })
+      }
+      if (req.body.currentpassword !== user.password) {
+        return res.status(400).json({ errors: [{ msg: 'Wrong Password!!' }] })
       }
 
       if (req.body.newpassword !== req.body.confirmpassword) {
         return res
           .status(400)
-          .json({ errors: [{ msg: "Confirm Password didn't match" }] })
+          .json({ errors: [{ msg: "Confirm Password didn't match!!" }] })
       }
       const salt = await bcrypt.genSalt(10)
 
@@ -424,10 +465,12 @@ router.post(
         {
           $set: {
             password: newpass,
+            isPasswordChanged: true,
+            accountStatus: 'active',
           },
         }
       )
-      res.json({ type: 'success', msg: 'Password Updated Successfully' })
+      res.json({ type: 'success', msg: 'Password Updated Successfully!!' })
     } catch (err) {
       console.error(err.message)
       res

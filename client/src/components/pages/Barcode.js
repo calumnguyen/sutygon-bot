@@ -9,9 +9,7 @@ import { connect } from "react-redux";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts';
 import { confirmAlert } from "react-confirm-alert";
-
-
-
+import BootstrapTable from 'react-bootstrap-table-next';
 import "../../custom.css";
 
 var JsBarcode = require('jsbarcode');
@@ -91,107 +89,305 @@ class Barcode extends Component {
     this.setState({ 'dataType': type });
   };
 
-  getTAbleRows = () => {
-
+  getTable = () => {
     let products = this.props.products;
     if (products) {
-      let sortedProducts = this.getSortedData(products);
-      // let tbl_sno = 1;
-      if (sortedProducts) {
-        if (sortedProducts.length === 0) {
-          return (
-            <tr>
-              <td colSpan={10} className="text-center">
-                No product Found
-            </td>
-            </tr>
-          );
-        }
-        return sortedProducts.map((product, i) => {
-          return (
-            <tr key={i}>
-              <td>
-                {product.short_product_id}
-              </td>
-              <td>
-                <div className="form-group">
-                  <div className="">
-                    {product.title}
-                  </div>
-                </div>
-              </td>
-              {(this.state.dataType === 'with_barcode') && (
-                <td>
-                  <span className="badge badge-secondary">{product.barcodes[product.barcodeIndex].barcode}</span>
-                </td>
-              )}
-              <td>
-                {(this.state.dataType === 'without_barcode') ? (
-                  <button
-                    type="button"
-                    className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                    onClick={(e) => this.genPrintRandBarcode(e, product.product_id, product.color_id, product.size_id)}
-                  >
-                    Generate &amp; PRINT random barcode
-                  </button>
-                ) : (
-                    <button
-                      type="button"
-                      className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                      onClick={(e) => this.changeBarcode(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}
-                    >
-                      Change Barcode
-                    </button>
-                  )}
-              </td>
-              <td>
-                {(this.state.dataType === 'without_barcode') ? (
-                  <form onSubmit={(e) => this.OnSubmitScanBarcode(e, product.product_id, product.color_id, product.size_id)}>
-                    <input
-                      type="text"
-                      className="form-control mm-input"
-                      placeholder={"Scan existing Barcode"}
-                      maxLength={8}
-                      minLength={8}
-                    />
-                  </form>
-                ) : (
-                    <button
-                      type="button"
-                      className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                      onClick={(e) => this.printBarcode(product.barcodes[product.barcodeIndex].barcode)}
-                    >
-                      Print Barcode
-                    </button>
-                  )}
-              </td>
-              <td>
-                {(this.state.dataType === 'without_barcode') ? (
-                  <button
-                    type="button"
-                    className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                    onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id)}
-                  >
-                    Delete Item
-                  </button>
-                ) : (
-                    <button
-                      type="button"
-                      className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                      onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}
-                    >
-                      Delete Item
-                    </button>
-                  )}
-              </td>
-            </tr>
-          );
-        });
-      }
+      var m_prod = [];
+      var m_wprod = [];
+
+      var sortedProducts = this.getSortedData(products);
+      sortedProducts.forEach((product, p_index) => {
+        m_prod.push({
+          'prodID': product.short_product_id,
+          'product': product.title,
+          'barcodeID': this.state.dataType === 'with_barcode' ? product.barcodes[product.barcodeIndex].barcode :"",
+          'changeBarcode': (this.state.dataType === 'without_barcode') ? (
+            <button
+              type="button"
+              className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+              onClick={(e) => this.genPrintRandBarcode(e, product.product_id, product.color_id, product.size_id)}
+            >
+              Generate &amp; PRINT random barcode
+            </button>
+          ) : (
+              <button
+                type="button"
+                className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                onClick={(e) => this.changeBarcode(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}
+              >
+                Change Barcode
+              </button>
+            ),
+          'scanBarcode': (this.state.dataType === 'without_barcode') ? (
+            <form onSubmit={(e) => this.OnSubmitScanBarcode(e, product.product_id, product.color_id, product.size_id)}>
+              <input
+                type="text"
+                className="form-control mm-input"
+                placeholder={"Scan existing Barcode"}
+                maxLength={8}
+                minLength={8}
+              />
+            </form>
+          ) : (
+              <button
+                type="button"
+                className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                onClick={(e) => this.printBarcode(product.barcodes[product.barcodeIndex].barcode)}
+              >
+                Print Barcode
+              </button>
+            ),
+          'deleteItem':(this.state.dataType === 'without_barcode') ? (
+            <button
+              type="button"
+              className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+              onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id)}
+            >
+              Delete Item
+            </button>
+          ) : (
+              <button
+                type="button"
+                className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}
+              >
+                Delete Item
+              </button>
+            )
+  
+        })
+      })
     }
+    if (sortedProducts) {
+      const columns = [{
+        dataField: 'prodID',
+        text: 'Product ID',
+        sort: true,
 
-  };
+      }, {
+        dataField: 'product',
+        text: 'Product',
+        sort: true,
 
+      },
+      this.state.dataType === "with_barcode" ? 
+        {
+          dataField: 'barcodeID',
+          text: 'Barcode',
+          sort: true,
+        }:'',
+       {
+        dataField: 'changeBarcode',
+        text: this.state.dataType === "with_barcode" ? 'Change Barcode': 'Print Barcode',
+        sort: true,
+      },
+      {
+        dataField: 'scanBarcode',
+        text: 'Scan Barcode',
+        sort: true,
+      },
+      {
+        dataField: 'deleteItem',
+        text: 'Delete',
+        sort: true,
+      }
+      ];
+      const defaultSorted = [{
+        dataField: 'prodID',
+        order: 'desc'
+      }];
+
+      return (
+        <BootstrapTable
+          // bootstrap4
+          keyField="id"
+          data={m_prod}
+          columns={columns}
+          defaultSortDirection="asc"
+
+        />
+      )
+
+    }
+  }
+
+
+  // getTAbleRows = () => {
+  //   let products = this.props.products;
+  //   if (products) {
+  //     let sortedProducts = this.getSortedData(products);
+  //     // let tbl_sno = 1;
+  //     if (sortedProducts) {
+  //       if (sortedProducts.length === 0) {
+  //         return (
+  //           <tr>
+  //             <td colSpan={10} className="text-center">
+  //               No product Found
+  //           </td>
+  //           </tr>
+  //         );
+  //       }
+  //       return sortedProducts.map((product, i) => {
+  //         console.log(product)
+  //         if (this.state.dataType === 'with_barcode')
+  //         {
+  //          const productsArr = [{
+  //             prodID: product.short_product_id,
+  //             product: product.title,
+  //             barcodeID: product.barcodes.barcode,
+  //             changeBarcode: <button
+  //               type="button"
+  //               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+  //               onClick={(e) => this.changeBarcode(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}>
+  //               Change Barcode
+  //                          </button>,
+  //             scanBarcode: <button
+  //               type="button"
+  //               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+  //               onClick={(e) => this.printBarcode(product.barcodes[product.barcodeIndex].barcode)}>
+  //               Print Barcode
+  //                           </button>,
+  //             deleteItem: <button
+  //               type="button"
+  //               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+  //               onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}>
+  //               Delete Item
+  //                           </button>
+
+  //           }
+  //           ];
+
+  //      const defaultSorted = [{
+  //           dataField: 'prodID',
+  //           order: 'desc'
+  //         }];
+
+  //         const  columns = [{
+  //           dataField: 'prodID',
+  //           text: 'Product ID',
+  //           sort: true,
+
+  //         }, {
+  //           dataField: 'Product',
+  //           text: 'pridyct id',
+  //           sort: true,
+
+  //         }, {
+  //           dataField: 'barcodeID',
+  //           text: 'Product Price',
+  //           sort: true,
+  //         }, {
+  //           dataField: 'changeBarcode',
+  //           text: 'Product Price',
+  //           sort: true,
+  //         },
+  //         {
+  //           dataField: 'scanBarcode',
+  //           text: 'Product Price',
+  //           sort: true,
+  //         },
+  //         {
+  //           dataField: 'deleteItem',
+  //           text: 'Product Price',
+  //           sort: true,
+  //         }
+  //         ];
+
+  //       }
+  // return (
+
+  //   <tr key={i}>
+  //     <td>
+  //       {product.short_product_id}
+  //     </td>
+  //     <td>
+  //       <div className="form-group">
+  //         <div className="">
+  //           {product.title}
+  //         </div>
+  //       </div>
+  //     </td>
+  //     {(this.state.dataType === 'with_barcode') && (
+  //       <td>
+  //         <span className="badge badge-secondary">{product.barcodes[product.barcodeIndex].barcode}</span>
+  //       </td>
+  //     )}
+  //     <td>
+  //       {(this.state.dataType === 'without_barcode') ? (
+  //         <button
+  //           type="button"
+  //           className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+  //           onClick={(e) => this.genPrintRandBarcode(e, product.product_id, product.color_id, product.size_id)}
+  //         >
+  //           Generate &amp; PRINT random barcode
+  //         </button>
+  //       ) : (
+  //           <button
+  //             type="button"
+  //             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+  //             onClick={(e) => this.changeBarcode(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}
+  //           >
+  //             Change Barcode
+  //           </button>
+  //         )}
+  //     </td>
+  //     <td>
+  //       {(this.state.dataType === 'without_barcode') ? (
+  //         <form onSubmit={(e) => this.OnSubmitScanBarcode(e, product.product_id, product.color_id, product.size_id)}>
+  //           <input
+  //             type="text"
+  //             className="form-control mm-input"
+  //             placeholder={"Scan existing Barcode"}
+  //             maxLength={8}
+  //             minLength={8}
+  //           />
+  //         </form>
+  //       ) : (
+  //           <button
+  //             type="button"
+  //             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+  //             onClick={(e) => this.printBarcode(product.barcodes[product.barcodeIndex].barcode)}
+  //           >
+  //             Print Barcode
+  //           </button>
+  //         )}
+  //     </td>
+  //     <td>
+  //       {(this.state.dataType === 'without_barcode') ? (
+  //         <button
+  //           type="button"
+  //           className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+  //           onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id)}
+  //         >
+  //           Delete Item
+  //         </button>
+  //       ) : (
+  //           <button
+  //             type="button"
+  //             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+  //             onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}
+  //           >
+  //             Delete Item
+  //           </button>
+  //         )}
+  //     </td>
+  //   </tr>
+  // );
+  //   });
+  // }
+  // return (
+  //   <BootstrapTable
+  //   bootstrap4
+  //   keyField="id"
+  //   data={sortedProducts}
+  //   columns={this.columns}
+  //   defaultSorted={this.defaultSorted}
+
+  // />
+  // )
+  //     }
+  //   };
+  // }
   // return sorted products for barcodes
   getBarcodeData = (products) => {
     // looping through prducts
@@ -413,6 +609,7 @@ class Barcode extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
+
     // if (this.props.saved) {
     //   return <Redirect to="/barcode" />;
     // }
@@ -472,7 +669,17 @@ class Barcode extends Component {
 
                         <br />
                         <br />
-                        <table className="table text-center">
+
+                        {/* <BootstrapTable
+                          bootstrap4
+                          keyField="id"
+                          data={prodArr}
+                          columns={this.columns}
+                          defaultSorted={this.defaultSorted}
+
+                        /> */}
+                        {/* <table className="table text-center">
+
                           <thead>
                             <tr>
                               <th>Product ID</th>
@@ -485,11 +692,11 @@ class Barcode extends Component {
                               <th>Delete item</th>
                             </tr>
                           </thead>
-                          <tbody>
-                            {this.getTAbleRows()}
-                          </tbody>
+                          <tbody>*/}
+                        {this.getTable()}
+                        {/* </tbody>
                           <tbody></tbody>
-                        </table>
+                        </table>  */}
                       </div>
                     </div>
                   </div>

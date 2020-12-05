@@ -50,7 +50,7 @@ const UserSchema = new mongoose.Schema({
   userID: {
     type: Number,
   },
-  type: {
+  systemRole: {
     type: String,
     default: 'Employee',
   },
@@ -83,6 +83,7 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  
 })
 
 module.exports = User = mongoose.model('user', UserSchema)

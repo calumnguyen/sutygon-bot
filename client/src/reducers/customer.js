@@ -5,12 +5,14 @@ import {
    CUSTOMER_SAVED,
     GET_CUSTOMER,
    CUSTOMER_DELETED,
+   SEARCHED_CUSTOMER,
   } from "../actions/types";
   const initialState = {
     customer: null,
     customers: null,
     loading: false,
     saved: false,
+    searchedCustomer:null,
     error: {},
   };
   
@@ -31,6 +33,13 @@ import {
           loading: false,
           saved: false,
         };
+        case SEARCHED_CUSTOMER:
+          return {
+            ...state,
+            searchedCustomer: payload,
+            loading: false,
+            saved: false,
+          };
   
       case GET_CUSTOMER:
         return {

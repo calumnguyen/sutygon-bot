@@ -6,10 +6,8 @@ import Alert from '../../layout/Alert'
 import Loader from '../../layout/Loader'
 import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import shortid from "shortid";
-import { Button } from 'semantic-ui-react'
 
 
 class ConfigureSystem extends Component {
@@ -30,7 +28,6 @@ class ConfigureSystem extends Component {
         Calender: false,
         Report: false,
         sections: [],
-        type: 'Admin',
         gender: '',
         avatar: '',
         userID: '',

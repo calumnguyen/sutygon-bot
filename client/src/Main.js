@@ -22,7 +22,8 @@ import Checkout from './components/pages/checkout'
 import ReturnProduct from './components/pages/returnproduct/returnproduct'
 import ScanBarcode from './components/pages/returnproduct/scanBarcode'
 import RentOrder from './components/pages/rentOrder'
-// import RentInvoice from './components/pages/RentInvoice'
+import ActivateAccount from './components/pages/ActivateAccount'
+import Test from './components/pages/users/test'
 
 import Report from './components/pages/report/report'
 import ReportOrder from './components/pages/report/reportOrder'
@@ -36,6 +37,9 @@ import store from './store'
 import Barcode from './components/pages/Barcode'
 import ConfigureSystem from './components/pages/users/ConfigureSystem'
 import ConfigureSystemUser from './components/pages/users/ConfigureSystemUser'
+import EditUser from './components/pages/users/EditUser'
+import SalaryUpdate from './components/pages/users/SalaryUpdate'
+import StoreClosed from './components/pages/StoreClosed'
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -61,8 +65,11 @@ const Main = () => {
           <PrivateRoute exact path='/user/configuresystem' component={ConfigureSystem} />
           <PrivateRoute exact path='/user/configuresystemuser' component={ConfigureSystemUser} />
           <PrivateRoute exact path='/user' component={ViewUser} />
-          <PrivateRoute exact path='/user/edituser/:id' component={AddUser} />
+          <PrivateRoute exact path='/user/edituser/:id' component={EditUser} />
           <PrivateRoute exact path='/user/view/:id' component={View} />
+          <PrivateRoute exact path='/user/updatesalary/:id' component={SalaryUpdate} />
+          <PrivateRoute exact path='/storeclosed' component={StoreClosed} />
+          <PrivateRoute exact path='/ActivateAccount' component={ActivateAccount} />
 
           {/* customers */}
           <PrivateRoute
@@ -71,6 +78,8 @@ const Main = () => {
             component={AddCustomer}
           />
           <PrivateRoute exact path='/customer' component={ViewCustomer} />
+          <PrivateRoute exact path='/customer/editcustomer/:id' component={AddCustomer} />
+
           {/* products */}
           <PrivateRoute
             exact
@@ -88,6 +97,8 @@ const Main = () => {
             path='/product/viewproduct/:id'
             component={Product}
           />
+                    <PrivateRoute exact path='/test' component={Test} />
+
 
           {/* rent product */}
           <PrivateRoute exact path='/rentproduct' component={RentProduct} />

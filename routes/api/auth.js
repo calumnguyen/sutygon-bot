@@ -48,10 +48,26 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Username does not exists' }] })
+          .json({ errors: [{ msg: 'User does not exists' }] })
       }
       const salt = await bcrypt.genSalt(10)
       const passwordEntered = await bcrypt.hash(password, salt)
+      const userInfo = { tempPass: user.password, userID: user._id }
+      // check if user is active or not...
+      if (user.accountStatus !== 'active') {
+        return res
+          .status(403)
+          .json({
+            userInfo,
+            errors: [
+              {
+                msg: `Sorry! User is not activated. Inactivated on ${moment(
+                  user.inactivated_date
+                ).format('DD-MMM-YYYY')}`,
+              },
+            ],
+          })
+      }
 
       const isMatch = await bcrypt.compare(password, user.password)
 
@@ -63,32 +79,16 @@ router.post(
         return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
       }
 
-      // check if
-
-      // check if user is active or not...
-      if (user.accountStatus !== 'active') {
-        return res.status(403).json({
-          errors: [
-            {
-              msg: `Sorry! User is not activated. Inactivated on ${moment(
-                user.inactivated_date
-              ).format('dddd MMMM D Y')}`,
-            },
-          ],
-        })
-      }
-
       const payload = {
         user: {
-          id: user.id,
-          name: user.username,
+          id: user._id,
         },
       }
 
       jwt.sign(
         payload,
         config.get('jwtSecret'),
-        { expiresIn: 3600 },
+        { expiresIn: '1D' },
         (err, token) => {
           if (err) throw err
           res.json({ token })
@@ -96,7 +96,7 @@ router.post(
       )
     } catch (err) {
       console.log(err)
-      res.status(500).send('Server error')
+      res.status(500).json({ errors: [{ msg: 'Server error' }] })
     }
   }
 )

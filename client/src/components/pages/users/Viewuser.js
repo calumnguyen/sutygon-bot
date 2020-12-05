@@ -56,44 +56,31 @@ class ViewUser extends Component {
           </td>
           <td className='text-center'>{user.userID}</td>
 
-          <td className='text-center'>{user.fullname}</td>
-          <td className='text-center'>{user.jobTitle}</td>
-          <td className='text-center'>{user.type}</td>
-          <td className='text-center'>
-            {user.accountStatus === 'active' && (
-              <span className='badge badge-success'>ACTIVE</span>
+          <td className="text-center">{user.fullname}</td>
+          <td className="text-center">{user.jobTitle}</td>
+          <td className="text-center">{user.systemRole}</td>
+          <td className="text-center">
+            {user.accountStatus === "active" && (
+              <span className="badge badge-success">ACTIVE</span>
             )}
-            {user.accountStatus === 'block' && (
-              <span className='badge badge-warning'>INACTIVE</span>
+            {user.accountStatus === "inactive" && (
+              <span className="badge badge-warning">INACTIVE</span>
             )}
           </td>
-          <td className='text-center'>
-            <Link
+          <td className="text-center">
+            {/* <Link
               to={{ pathname: `/user/view/${user._id}` }}
-              className='info p-0'
-            >
-              <i
-                className='ft-user font-medium-3 mr-2'
-                title='View Profile'
-              ></i>
-            </Link>
+
+              className="info p-0">
+              <i className="ft-user font-medium-3 mr-2" title="View Profile"></i>
+            </Link> */}
             <Link
               to={{ pathname: `/user/edituser/${user._id}` }}
-              className='success p-0'
-            >
-              <i
-                className='ft-edit-2 font-medium-3 mr-2 '
-                title='Edit User'
-              ></i>
+              className="success p-0">
+              <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit User"></i>
             </Link>
-            <Link
-              to='/user'
-              onClick={() => this.onDelete(user._id)}
-              className='danger p-0'
-            >
-              <i className='ft-x font-medium-3 mr-2' title='Delete'></i>
-            </Link>
-            {auth_user && auth_user.type === 'Admin' ? (
+{/*            
+            {auth_user && auth_user.type === "Admin" ?
               <Link
                 to={{ pathname: `/user` }}
                 onClick={() => this.onBlock(user._id)}
@@ -104,9 +91,16 @@ class ViewUser extends Component {
                   title='Block User'
                 ></i>
               </Link>
-            ) : (
-              ''
-            )}
+
+              : ""} */}
+              
+               {auth_user && auth_user.type === "Admin" ?
+            <Link to="/user"
+              onClick={() => this.onDelete(user._id)}
+              className="danger p-0">
+              <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
+            </Link>
+            :""}
           </td>
         </tr>
       ))
@@ -153,8 +147,11 @@ class ViewUser extends Component {
   }
 
   handleChange = (e, id = '') => {
-    this.setState({ search: e.target.value })
-  }
+    this.setState({
+      activeUsers:true,
+      inactiveUsers: false,
+      allusers: false,
+    })  }
 
   onDelete = (id) => {
     confirmAlert({
