@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import * as moment from 'moment'
 import { Redirect } from 'react-router-dom'
-
+import { setAlert } from "../../../actions/alert";
 import { Link } from 'react-router-dom'
 import Switch from "react-switch";
 import DatePicker from "react-datepicker";
@@ -35,6 +35,7 @@ class EditUser extends Component {
     Returnproduct: false,
     Calender: false,
     Report: false,
+    isbirthdaySelected:false,
     sections: '',
     id: '',
     firstname: '',
@@ -110,13 +111,13 @@ class EditUser extends Component {
     if (state.id !== "") {
       await this.props.updatePassword(user, state.id)
     }
-    if(this.props.passwordUpdated === true){
+    if (this.props.passwordUpdated === true) {
       this.setState({
-        password: "", newpassword:"",confirmpassword:"",
+        password: "", newpassword: "", confirmpassword: "",
         show: false
       })
     }
-    else if(this.props.passwordUpdated === false){
+    else if (this.props.passwordUpdated === false) {
       OCAlert.alertError('Password Update Failed', { timeOut: 3000 });
       this.setState({
         show: true
@@ -153,7 +154,7 @@ class EditUser extends Component {
     e.preventDefault();
     this.setState({
       visible: false,
-      show: false,code:"", password: "", newpassword:"",confirmpassword:"",
+      show: false, code: "", password: "", newpassword: "", confirmpassword: "",
 
     });
   }
@@ -161,7 +162,7 @@ class EditUser extends Component {
     e.preventDefault();
     const { code } = this.state
     await this.props.codeVerify(code)
-     if(this.props.codeverified === false) {
+    if (this.props.codeverified === false) {
       OCAlert.alertError("Wrong Authorization Code", { timeOut: 3000 })
       this.setState({
         code: "",
@@ -169,7 +170,7 @@ class EditUser extends Component {
       })
     }
 
-    else if(this.props.codeverified === true) {
+    else if (this.props.codeverified === true) {
       OCAlert.alertSuccess("Successfully Authorized")
 
       this.setState({
@@ -178,7 +179,7 @@ class EditUser extends Component {
       })
     }
 
-  
+
 
   }
   setShow = (e) => {
@@ -223,6 +224,15 @@ class EditUser extends Component {
       this.setState({ saving: false });
       return;
     }
+    if (state.birthday !== undefined) {
+      formData.append('birthday', state.birthday)
+      this.setState({ isbirthdaySelected : false});
+
+    }
+    else {
+      this.setState({ saving: false, isbirthdaySelected : true});
+      return;
+    }
     formData.append('jobTitle', state.jobTitle)
     formData.append('systemRole', state.systemRole)
     formData.append('accountStatus', state.statusChecked)
@@ -231,7 +241,6 @@ class EditUser extends Component {
     formData.append('fullname', state.fullname)
     formData.append('email', state.email)
     formData.append('contactnumber', state.contactnumber)
-    formData.append('birthday', state.birthday)
     formData.append('gender', state.gender)
     formData.append('address', state.address)
     formData.append('sections', sessionsArr)
@@ -535,7 +544,7 @@ class EditUser extends Component {
                                           id='type'
                                           name='systemRole'
                                           required
-                                          defaultValue='----'
+                                          defaultValue={this.state.systemRole}
                                           className='form-control border-primary'
                                           onChange={(e) => this._handleChange(e)}
                                         >
@@ -1088,7 +1097,7 @@ Report
                                         onChange={(e) => this._handleChange(e)}
                                         defaultValue={this.state.period}
                                       >
-                                        <option value="none" defaultValue={this.state.period} >---Select---</option>
+                                        <option value="none" defaultValue={this.state.period !== "" && this.state.period} >---Select---</option>
                                         <option value="weekly">Weekly</option>
                                         <option value="bi-weekly">Bi-Weekly</option>
                                         <option value="monthly">Monthly</option>
@@ -1134,7 +1143,9 @@ Report
                                 >
                                   <i className='ft-chevron-right' /> Save changes
                                 </button> </div> : */}
-
+                          {this.state.isbirthdaySelected === true && (
+                            <div className='alert alert-danger'>Please select birthday</div>
+                          )}
                           <div className='form-actions top'>
                             {this.state.saving ? (
                               <button
@@ -1161,6 +1172,7 @@ Report
               </div>
             </div>
 
+
             <footer className='footer footer-static footer-light'>
               <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
@@ -1181,12 +1193,12 @@ Report
           </div>
           <Modal visible={this.state.visible} width="400" height="250" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
             <div>
-            <div className="modal-header">
-            <h4 className="text-center">Please enter the authorization code to make this change</h4>
+              <div className="modal-header">
+                <h4 className="text-center">Please enter the authorization code to make this change</h4>
               </div>
               <Alert />
               <div className="modal-body">
-                 <input
+                <input
                   name="code"
                   value={this.state.code}
                   onChange={(e) => this._handleChange(e)}
@@ -1203,7 +1215,7 @@ Report
                   className="btn grey btn-lg btn-outline-danger">Close</button>
               </div>
               <div>            <OCAlertsProvider />
-</div>
+              </div>
             </div>
           </Modal>
           <Modal visible={this.state.show} width="400" height="400" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
@@ -1272,6 +1284,7 @@ Report
 }
 
 EditUser.propTypes = {
+  setAlert: PropTypes.func.isRequired,
   user: PropTypes.object,
   auth: PropTypes.object,
   saved: PropTypes.bool,
