@@ -54,3 +54,11 @@
   opacity: 0.6;
   transition: 0.3s;
 }
+.modal-footer {
+ 
+  justify-content: space-evenly !important
+}
+
+.pass:hover{
+  text-decoration: underline;
+}

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
-import { deleteCustomer, getAllCustomers } from "../../../actions/customer";
+import { deleteCustomer, getAllCustomers ,findCustomers} from "../../../actions/customer";
 import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -13,13 +13,33 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 
 
 class ViewCustomer extends Component {
+  
+  state = {
+    filter: "",
+    search:'',
+  };
   async componentDidMount() {
     await this.props.getAllCustomers();
   }
 
+  
+  handleChange = (e, id = "") => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  async searchTable() {
+    // e.preventDefault();
+    const searchVal = this.state.search;
+    if (searchVal) {
+      await this.props.findCustomers(searchVal);
+    } else {
+      await this.props.getAllCustomers();
+    }
+  }
+
   getTAble = () => {
-    const { customers } = this.props;
-    let tbl_sno = 1;
+    const { customers,searchedCustomer } = this.props;
+    
     if (customers) {
       if (customers.length === 0) {
         return (
@@ -33,19 +53,23 @@ class ViewCustomer extends Component {
       return customers.map((customer, i) => (
         <tr key={i}>
 
-          <td className="text-center text-muted">{tbl_sno++}</td>
           <td className="text-center">{""}</td>
 
           <td className="text-center">{customer.name}</td>
           <td className="text-center">{customer.contactnumber}</td>
-          <td className="text-center">{customer.email}</td>
-          <td className="text-center">{customer.address}</td>
+           <td className="text-center">{customer.online_account.exist}</td>
+         <td className="text-center">{"Diamond"}</td>
           <td className="text-center">
+          <Link to= {{ pathname: `/customer/editcustomer/${customer._id}`}}
+              className="success p-0">
+              <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit User"></i>
+            </Link>
             <Link to="/customer"
               onClick={() => this.onDelete(customer._id)}
               className="danger p-0">
               <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
             </Link>
+
           </td>
 
         </tr>
@@ -103,7 +127,24 @@ class ViewCustomer extends Component {
                         <div className="card-content">
                           <div className="card-body table-responsive">
                             <div className="row">
-                              <div className="col-md-12">
+                            <div className="col-md-4">
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  name="search"
+                                  onChange={(e) => this.handleChange(e)}
+                                />
+                              </div>
+                            <div className="col-md-4">
+                                <button
+                                  // href="/customer"
+                                  className="btn btn-success"
+                                  onClick={() => this.searchTable()}
+                                >
+                                  <i className="fa fa-search"></i> Search{" "}
+                                </button>
+                              </div>
+                              <div className="col-md-4">
                                 <Link to="/customer/addcustomer" className="btn btn-primary pull-right"> <i className="fa fa-plus"></i> New Customer</Link>
                               </div>
                             </div>
@@ -111,12 +152,11 @@ class ViewCustomer extends Component {
                             <table className="table text-center">
                               <thead>
                                 <tr>
-                                  <th>#</th>
                                   <th></th>
-                                  <th>Tên</th>
-                                  <th>SĐT</th>
-                                  <th>Địa Chỉ</th>
-                                  <th>Email</th>
+                                  <th>Contact Number</th>
+                                  <th>Full Name</th>
+                                  <th>Online Account</th>
+                                  <th>Membership</th>
                                   <th>Actions</th>
                                 </tr>
                               </thead>
@@ -146,13 +186,15 @@ ViewCustomer.propTypes = {
   auth: PropTypes.object,
   getAllCustomers: PropTypes.func.isRequired,
   deleteCustomer: PropTypes.func.isRequired,
+  findCustomers:PropTypes.func.isRequired,
   customers: PropTypes.array,
 };
 const mapStateToProps = (state) => ({
-  customers: state.customer.customers,
+  customers: state.customer.customers ,
+  searchedCustomer:state.customer.searchedCustomer,
   auth: state.auth,
 });
 export default connect(mapStateToProps, {
   getAllCustomers,
-  deleteCustomer
+  deleteCustomer,findCustomers
 })(ViewCustomer);

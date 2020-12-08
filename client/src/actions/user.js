@@ -9,7 +9,11 @@ import {
   USERS_ERROR,
   USERS_LOADING,
   USER_DELETED,
-  USER_UPDATED
+  USER_UPDATED,
+  PASSWORD_ERROR,
+  PASSWORD_UPDATED,
+  CODE_VERIFIED,
+  VERIFCATION_ERROR
 
 
 } from "./types";
@@ -24,13 +28,17 @@ export const addNewUser = (user) => async (dispatch) => {
           'content-type': 'multipart/form-data'
       }
   }
-    try {
-      const res = await axios.post("/api/users/add",user, config);
+  
 
+  try {
+      
+
+      const res = await axios.post("/api/users/add",user, config);
       dispatch({
         type: USER_SAVED,
+        payload:res.data
       });
-
+     
       dispatch(setAlert(res.data.msg, "success"));
 
     } catch (err) {
@@ -80,8 +88,6 @@ export const getAllUsers = () => async (dispatch) => {
     }
   };
 
-
-
 // Get User by ID
 export const getUser = (id) => async (dispatch) => {
   dispatch({ type: USERS_LOADING });
@@ -99,7 +105,6 @@ export const getUser = (id) => async (dispatch) => {
     });
   }
 };
-
 
 // Update User
 export const updateUser = (user, id) => async (dispatch) => {
@@ -127,6 +132,36 @@ export const updateUser = (user, id) => async (dispatch) => {
     }
     dispatch({
       type: USERS_ERROR,
+    });
+  }
+};
+
+
+// Update Password
+export const updatePassword = (user, id) => async (dispatch) => {
+  dispatch({ type: USER_LOADING })
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify(user);
+  
+  try {
+    const res = await axios.post(`/api/users/updatepassword/${id}`, body, config);
+    dispatch({
+      type: PASSWORD_UPDATED,
+      payload: res.data,
+    });
+    dispatch(setAlert(res.data.msg, "success"));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+      type:  PASSWORD_ERROR,
     });
   }
 };
@@ -184,3 +219,24 @@ export const deleteUser = (id) => async (dispatch) => {
     });
   }
 };
+
+
+// Load user
+export const codeVerify = (code) => async (dispatch) => {
+  dispatch({
+    type: USER_LOADING,
+  })
+  
+   try {
+    const res = await axios.get(`/api/users/verifySalaryCode/${code}`)
+
+    dispatch({
+      type: CODE_VERIFIED,
+      payload: res.data,
+    })
+  } catch (err) {
+    dispatch({
+      type: VERIFCATION_ERROR,
+    })
+  }
+}
