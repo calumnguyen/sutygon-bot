@@ -93,14 +93,13 @@ class Barcode extends Component {
     let products = this.props.products;
     if (products) {
       var m_prod = [];
-      var m_wprod = [];
 
       var sortedProducts = this.getSortedData(products);
       sortedProducts.forEach((product, p_index) => {
         m_prod.push({
           'prodID': product.short_product_id,
           'product': product.title,
-          'barcodeID': this.state.dataType === 'with_barcode' ? product.barcodes[product.barcodeIndex].barcode :"",
+          'barcodeID': this.state.dataType === 'with_barcode' ? product.barcodes[product.barcodeIndex].barcode : "",
           'changeBarcode': (this.state.dataType === 'without_barcode') ? (
             <button
               type="button"
@@ -137,7 +136,7 @@ class Barcode extends Component {
                 Print Barcode
               </button>
             ),
-          'deleteItem':(this.state.dataType === 'without_barcode') ? (
+          'deleteItem': (this.state.dataType === 'without_barcode') ? (
             <button
               type="button"
               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
@@ -154,7 +153,7 @@ class Barcode extends Component {
                 Delete Item
               </button>
             )
-  
+
         })
       })
     }
@@ -170,15 +169,15 @@ class Barcode extends Component {
         sort: true,
 
       },
-      this.state.dataType === "with_barcode" ? 
+      this.state.dataType === "with_barcode" ?
         {
           dataField: 'barcodeID',
           text: 'Barcode',
           sort: true,
-        }:'',
-       {
+        } : '',
+      {
         dataField: 'changeBarcode',
-        text: this.state.dataType === "with_barcode" ? 'Change Barcode': 'Print Barcode',
+        text: this.state.dataType === "with_barcode" ? 'Change Barcode' : 'Print Barcode',
         sort: true,
       },
       {
@@ -198,14 +197,28 @@ class Barcode extends Component {
       }];
 
       return (
-        <BootstrapTable
-          // bootstrap4
-          keyField="id"
-          data={m_prod}
-          columns={columns}
-          defaultSortDirection="asc"
+        <>
+          {m_prod && m_prod.length === 0 ?
+            <BootstrapTable
+              keyField='id'
+              data={[]}
+              columns={columns}
+              noDataIndication="No product found"
+            /> :
 
-        />
+            <BootstrapTable
+              // bootstrap4
+              keyField="id"
+              data={m_prod}
+              columns={columns}
+              defaultSortDirection="asc"
+              headerClasses="hoveredheader"
+
+            />
+          }
+
+
+        </>
       )
 
     }

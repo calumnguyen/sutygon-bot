@@ -61,6 +61,8 @@ const CutomerSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-})
+ 
+},  { timestamps: true }
+)
 
 module.exports = Customer = mongoose.model('customer', CutomerSchema)

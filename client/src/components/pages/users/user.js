@@ -28,9 +28,9 @@ const auth_user = auth.user;
       if (users.length === 0) {
         return (
           <tr>
-            <td colSpan={6} className="text-center">
-              No User Found
-            </td>
+            {/* <td colSpan={} className="text-center"> */}
+              {/* No User Found */}
+            {/* </td> */}
           </tr>
         );
       }

@@ -10,7 +10,10 @@ import {
   CUSTOMERS_LOADING,
   CUSTOMER_DELETED,
   CUSTOMER_UPDATED,
-  SEARCHED_CUSTOMER
+  SEARCHED_CUSTOMER,
+  GET_INSIGHT,
+  INSIGHT_LOADING,
+  INSIGHT_ERROR
  
 
 } from "./types";
@@ -61,6 +64,31 @@ export const getAllCustomers = () => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: CUSTOMERS_ERROR,
+      payload: err.response,
+    });
+  }
+};
+
+ // get insights
+ export const getInsight = (id,customer) => async (dispatch) => {
+  dispatch({ type: INSIGHT_LOADING });
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const body = JSON.stringify(customer);
+  try {
+    const res = await axios.get(`/api/customers/${id}/insights`);
+
+    dispatch({
+      type: GET_INSIGHT,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: INSIGHT_ERROR,
       payload: err.response,
     });
   }

@@ -62,3 +62,7 @@
 .pass:hover{
   text-decoration: underline;
 }
+
+.hoveredheader:hover{
+  cursor: pointer;
+}

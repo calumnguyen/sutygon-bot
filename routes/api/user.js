@@ -292,6 +292,7 @@ router.post(
       }
 
       if (req.body.salary) {
+       
         var parsedSalary = JSON.parse(req.body.salary)
 
         var salary
