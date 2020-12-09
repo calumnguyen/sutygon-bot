@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
-import { addNewCustomer, getCustomer, updateCustomer } from "../../../actions/customer";
-import { Redirect,Link } from "react-router-dom";
+import { addNewCustomer, getCustomer, updateCustomer, getInsight } from "../../../actions/customer";
+import { Redirect, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
@@ -11,6 +11,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
 import * as moment from 'moment'
 import Switch from "react-switch";
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
+import { timers } from "jquery";
 
 
 class AddCustomer extends Component {
@@ -25,9 +28,12 @@ class AddCustomer extends Component {
     company_address: '',
     block_account: '',
     online_account: '',
-    membership:'',
+    membership: '',
     saving: false,
-    isEdit: false
+    isEdit: false,
+    year: false,
+    month: false,
+    alltime: false,
   };
 
   async componentDidMount() {
@@ -35,6 +41,12 @@ class AddCustomer extends Component {
 
       const id = this.props.match.params.id;
       await this.props.getCustomer(id);
+      const timeframe = {
+        year:"2020",
+      
+      }
+      console.log("timeframe",timeframe)
+      await this.props.getInsight(id,timeframe);
       const { customer } = this.props;
       if (customer) {
         this.setState({
@@ -48,9 +60,12 @@ class AddCustomer extends Component {
           company_address: customer.company_address,
           block_account: customer.block_account,
           online_account: customer.online_account,
-          membership:customer.online_account.membership,
+          membership: customer.online_account.membership,
           birthday: moment(customer.birthday).format("DD/MM/YYYY"),
         });
+      }
+      if(this.props.insight){
+        console.log(this.props.insight)
       }
 
     }
@@ -74,14 +89,16 @@ class AddCustomer extends Component {
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  handleChangeNumber = (e) => {
+
+   handleChangeNumber = (e) => {
     this.setState({ [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : '' })
   }
   onSubmit = async (e) => {
     e.preventDefault();
     this.setState({ saving: true });
     const state = { ...this.state };
-    const customer = {
+
+    var customer = {
       name: state.name,
       email: state.email,
       contactnumber: state.contactnumber,
@@ -89,17 +106,33 @@ class AddCustomer extends Component {
       birthday: moment(state.birthday),
       company: state.company,
       company_address: state.company_address,
-      online_account: state.online_account,
-      block_account: state.block_account
+      // online_account: state.online_account,
+      // block_account: state.block_account
     };
+
     if (state.id === "") {
       await this.props.addNewCustomer(customer);
-
     }
     else {
       await this.props.updateCustomer(customer, state.id)
     }
     this.setState({ saving: false });
+  }
+  onCheck = async (e) =>{
+    e.preventDefault();
+    if(this.props.match.params.id){
+      const id = this.props.match.params.id;
+       
+      const timeframe = {
+        year:this.state.all_year,
+        month:this.state.one_month,
+        alltime:this.state.one_month,
+      }
+      console.log("timeframe",timeframe)
+      await this.props.getInsight(id,timeframe);
+
+    }
+
   }
   render() {
     const { auth } = this.props;
@@ -131,7 +164,8 @@ class AddCustomer extends Component {
                           {this.state.id === "" ? "Đăng Ký Khách Hàng Mới" : "Update Customer"}
                         </h4>
                       </div>
-
+                      <div>            <OCAlertsProvider />
+                      </div>
 
                       <div className="card-body">
                         <form
@@ -180,6 +214,8 @@ class AddCustomer extends Component {
                                     value={this.state.contactnumber}
                                     onChange={(e) => this.handleChangeNumber(e)}
                                     required
+                                    minLength={10}
+                                    maxLength={10}
                                   />
                                 </div>
                               </div>
@@ -224,7 +260,7 @@ class AddCustomer extends Component {
                                     value={this.state.address}
                                     onChange={(e) => this.handleChange(e)}
                                     required
-                                    textarea />
+                                    />
                                 </div></div>
                               <div className="form-group row">
                                 <label className="col-md-3 label-control" htmlFor="projectinput3">Birthday</label>
@@ -234,7 +270,8 @@ class AddCustomer extends Component {
                                       dateFormat="dd/MM/yyyy" selected={this.state.birthday}
                                       className="form-control border-primary"
                                       onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
-                                      peekNextMonth
+                                      // popperPlacement="top-end"
+                                      // peekNextMonth  
                                       showMonthDropdown
                                       showYearDropdown
                                     />
@@ -288,87 +325,138 @@ class AddCustomer extends Component {
 
 
                             : ""}
+                          {this.state.isEdit === true ? <>
+                            <h4 className="form-section mt-4"><i className="ft-info"></i> Online Account Information</h4>
+                            {this.state.online_account.exist === 'no' ?
+                              <div className="row">
+                                <div className="col-md-6">
+                                  <div className="form-group row">
+                                    <h4 className="ml-4 alert alert-secondary"> No online account found.</h4>
+                                  </div></div></div>
+                              :
+                              <>
+                                <div className="row">
+                                  <div className="col-md-6">
+                                    <div className="form-group row">
+                                      <label className="col-md-3 label-control" htmlFor="projectinput1">Username</label>
 
-<h4 className="form-section "><i className="ft-info"></i> Online Account Information</h4>
-                      {this.state.online_account.exist === 'no' ?  
-                      <div className="row">
-                        <div className="col-md-6">
-                        <div className="form-group row">
-                        <h4 className="ml-4 alert alert-secondary"> No online account found.</h4>
-                      </div></div></div>
-                      :
-<>
-                          <div className="row">
-                            <div className="col-md-6">
-                              <div className="form-group row">
-                                <label className="col-md-3 label-control" htmlFor="projectinput1">Username</label>
+                                      <div className="col-md-9">
+                                        <input type="text" id="projectinput1"
+                                          className="form-control border-primary"
+                                          placeholder="Name"
+                                          name="name"
+                                          required
+                                          value={this.state.name}
+                                          onChange={(e) => this.handleChange(e)}
+                                          readOnly
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="form-group row">
+                                      <label className="col-md-3 label-control" htmlFor="projectinput4">Date Account Created</label>
 
-                                <div className="col-md-9">
-                                    <input type="text" id="projectinput1"
-                                      className="form-control border-primary"
-                                      placeholder="Name"
-                                      name="name"
-                                      required
-                                      value={this.state.name}
-                                      onChange={(e) => this.handleChange(e)}
-                                      readOnly
-                                    />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label className="col-md-3 label-control" htmlFor="projectinput4">Date Account Created</label>
-
-                                <div className="col-md-9">
-                                  <input type="text"
-                                    id="projectinput4"
-                                    className="form-control border-primary"
-                                    placeholder="Contact Number"
-                                    name="contactnumber"
-                                    value={this.state.acc_createDate}
-                                    onChange={(e) => this.handleChangeNumber(e)}
-                                    required
-                                  />
-                                </div>
-                              </div>
-                             <div>
-                               <Link><i className="ft-arrow-up-right"></i>Deactivate online account
+                                      <div className="col-md-9">
+                                        <input type="text"
+                                          id="projectinput4"
+                                          className="form-control border-primary"
+                                          placeholder="Contact Number"
+                                          name="contactnumber"
+                                          value={this.state.acc_createDate}
+                                          onChange={(e) => this.handleChangeNumber(e)}
+                                          required
+                                        />
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <Link><i className="ft-arrow-up-right"></i>Deactivate online account
 </Link>
-                             </div>
-                            </div>
-                            <div className="col-md-6">
-                            <div className="form-group row">
-                                <label className="col-md-3 label-control" htmlFor="projectinput3">Membership</label>
-                                <div className="col-md-9">
-                                  <input type="text"
-                                    id="projectinput3"
-                                    className="form-control border-primary"
-                                    placeholder="Membership"
-                                    name="membership"
-                                    value={this.state.membership}
-                                    onChange={(e) => this.handleChange(e)}
-                                    required
-                                  />
+                                    </div>
+                                  </div>
+                                  <div className="col-md-6">
+                                    <div className="form-group row">
+                                      <label className="col-md-3 label-control" htmlFor="projectinput3">Membership</label>
+                                      <div className="col-md-9">
+                                        <input type="text"
+                                          id="projectinput3"
+                                          className="form-control border-primary"
+                                          placeholder="Membership"
+                                          name="membership"
+                                          value={this.state.membership}
+                                          onChange={(e) => this.handleChange(e)}
+                                          required
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="form-group row">
+                                      <label className="col-md-3 label-control" htmlFor="projectinput3">Email</label>
+                                      <div className="col-md-9">
+                                        <input type="text"
+                                          id="projectinput3"
+                                          className="form-control border-primary"
+                                          placeholder="Email"
+                                          name="email"
+                                          value={this.state.online_account.email === "unverified" ? "Unverified. Resend verification link?" : "Verified"}
+                                          onChange={(e) => this.handleChange(e)}
+                                          readOnly
+                                        />
+                                      </div>
+                                    </div>
+
+                                  </div>
+
                                 </div>
-                              </div>
-                              <div className="form-group row">
-                                <label className="col-md-3 label-control" htmlFor="projectinput3">Email</label>
-                                <div className="col-md-9">
-                                  <input type="text"
-                                    id="projectinput3"
-                                    className="form-control border-primary"
-                                    placeholder="Email"
-                                    name="email"
-                                    value={this.state.online_account.email === "unverified" ?"Unverified. Resend verification link?":"Verified"}
-                                    onChange={(e) => this.handleChange(e)}
-                                    readOnly
-                                  />
+                              </>}
+                          </> : ""}
+                          {this.state.isEdit === true ? <>
+                            <h4 className="form-section mt-4"><i className="ft-info"></i> Insight</h4>
+                            <div className="row">
+                              <div className="col-md-12">
+                                <div className='form-group row'>
+                                  <label className="col-md-3 label-control" for="userinput1">Choose a timeframe</label>
+                                  <div className="col-md-9">
+                                    <label className='radio-inline' htmlFor="one_year">
+                                      <input
+                                        type='radio'
+                                        name='year'
+                                        id="one_year"
+                                        onChange={(e) => this.handleChange(e)}
+                                        // checked={this.state.one_year === "year"}
+                                        
+                                        value={"year"}
+                                      />{' '}
+                              One Year
+                            </label> {'          '}
+                                    <label className='radio-inline' htmlFor="one_month">
+                                      <input
+                                        type='radio'
+                                        name='month'
+                                        id="one_month"
+                                        value={"month"}
+                                        onChange={(e) => this.handleChange(e)}
+                                      />{' '}
+                              One Month
+                            </label> {'          '}
+                                    <label className='radio-inline' htmlFor="all_year">
+                                      <input
+                                        type='radio'
+                                        name='alltime'
+                                        id="all_year"
+                                        onChange={(e) => this.handleChange(e)}
+                                        // checked={this.state.allTime === ""}
+                                        value={"alltime"}
+
+                                      />{' '}
+                              All Year
+                            </label> {'          '}
+                                  </div>
+
                                 </div>
                               </div>
 
                             </div>
 
-                          </div>
-                          </>}
+                          </>
+                            : ""}
                           <div className="form-actions top">
                             {this.state.id === ""
                               ?
@@ -400,6 +488,7 @@ class AddCustomer extends Component {
                                 )}
                               </>}
                           </div>
+
                         </form>
                       </div>
                     </div>
@@ -425,16 +514,18 @@ AddCustomer.propTypes = {
   getCustomer: PropTypes.func.isRequired,
   auth: PropTypes.object,
   customer: PropTypes.object,
-  updateCustomer: PropTypes.func.isRequired
+  updateCustomer: PropTypes.func.isRequired,
+  getInsight: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
   saved: state.customer.saved,
   auth: state.auth,
   customer: state.customer.customer,
+  insight: state.customer.insight,
 
 });
 export default connect(mapStateToProps, {
   addNewCustomer, updateCustomer,
-  getCustomer
+  getCustomer, getInsight
 })(AddCustomer);

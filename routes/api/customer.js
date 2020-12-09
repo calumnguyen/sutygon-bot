@@ -17,7 +17,7 @@ router.post(
   '/add',
   [
     check('name', 'Customer Name Required').not().isEmpty(),
-    check('contactnumber', 'Contact Number must be minimum of 10 digits').isLength({ min: 10 }),
+    // check('contactnumber', 'Contact Number must be minimum of 10 digits').isLength({ min: 10 }),
     check('email', 'Email Required').not().isEmpty(),
     check('address', 'Address Required').not().isEmpty(),
     check('birthday', 'Enter birth date.').not().isEmpty(),
@@ -80,7 +80,6 @@ router.post(
 // @route    POST api/customers/:id
 //@desc      update customers.
 router.post('/:id', auth, async (req, res) => {
-  console.log("working",req.body)
 
   try {
     let { name, birthday, online_account } = req.body
@@ -228,6 +227,7 @@ router.delete('/:id', auth, async (req, res) => {
 
 router.get('/:id/insights', auth, async (req, res) => {
   try {
+    console.log("123",req.body)
     let { year, month, allTime } = { ...req.body }
 
     var startDate

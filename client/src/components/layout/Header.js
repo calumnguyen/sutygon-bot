@@ -71,7 +71,8 @@ class Header extends Component {
                      
                     
                     <Link
-                          push to="/"
+                          push={true}
+                           to="/"
                           onClick={() => this.props.logout()}
                           className="dropdown-item"
                         >

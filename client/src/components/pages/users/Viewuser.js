@@ -18,7 +18,6 @@ import Loader from '../../layout/Loader'
 
 class ViewUser extends Component {
   state = {
-    // search: '',
     activeUsers: false,
     inactiveUsers: false,
     users: '',
@@ -28,14 +27,29 @@ class ViewUser extends Component {
 
   async componentDidMount() {
     await this.props.getAllUsers()
+    const { users } = this.props;
+    if (users) {
+      this.setState({
+        users: users
+      })
+    }
   }
+//   async componentDidUpdate(prevProps,prevState){
+//     if(prevProps.users !== this.props.users)
+//     await this.props.getAllUsers()
+//     const { users } = this.props;
+//     if (users) {
+//       this.setState({
+//         users: users
+//       })
+//     }
+// }
   getTAble = () => {
     const { auth } = this.props
     const auth_user = auth.user
-    this.getUser()
-    const userArr = this.getUser()
-    if (userArr) {
-      if (userArr.length === 0) {
+    const { users } = this.state
+    if (users) {
+      if (users.length === 0) {
         return (
           <tr>
             <td colSpan={6} className='text-center'>
@@ -44,12 +58,12 @@ class ViewUser extends Component {
           </tr>
         )
       }
-      return userArr.map((user) => (
+      return users.map((user) => (
         <tr key={user._id}>
           <td className='text-center'>
             <img
               className='media-object round-media'
-              src={`${user.avatar}`}
+              src={user.avatar}
               alt='Profile'
               height={75}
             />
@@ -70,7 +84,6 @@ class ViewUser extends Component {
           <td className="text-center">
             {/* <Link
               to={{ pathname: `/user/view/${user._id}` }}
-
               className="info p-0">
               <i className="ft-user font-medium-3 mr-2" title="View Profile"></i>
             </Link> */}
@@ -79,7 +92,7 @@ class ViewUser extends Component {
               className="success p-0">
               <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit User"></i>
             </Link>
-{/*            
+            {/*            
             {auth_user && auth_user.type === "Admin" ?
               <Link
                 to={{ pathname: `/user` }}
@@ -91,67 +104,78 @@ class ViewUser extends Component {
                   title='Block User'
                 ></i>
               </Link>
-
               : ""} */}
-              
-               {auth_user && auth_user.type === "Admin" ?
-            <Link to="/user"
-              onClick={() => this.onDelete(user._id)}
-              className="danger p-0">
-              <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
-            </Link>
-            :""}
+
+            {auth_user && auth_user.type === "Admin" ?
+              <Link to="/user"
+                onClick={() => this.onDelete(user._id)}
+                className="danger p-0">
+                <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
+              </Link>
+              : ""}
           </td>
         </tr>
       ))
     }
   }
-
   getUser = () => {
-    const { users } = this.props
-    if (users) {
-      const activeUsers = users.filter((a) => a.accountStatus === 'active')
-      const inactiveUsers = users.filter((a) => a.accountStatus === 'inactive')
+    // const { users } = this.props
+    // if (users) {
+    //   const activeUsers = users.filter((a) => a.accountStatus === 'active')
+    //   const inactiveUsers = users.filter((a) => a.accountStatus === 'inactive')
 
-      if (this.state.allusers === true) {
-        return users
-      } else if (this.state.activeUsers === true) {
-        return activeUsers
-      } else if (this.state.inactiveUsers === true) {
-        return inactiveUsers
-      }
-    }
+    //   if (this.state.allusers === true) {
+    //     this.setState({
+    //       users: users
+    //     })
+    //     // return users
+    //   } else if (this.state.activeUsers === true) {
+    //     this.setState({
+    //       users: activeUsers
+    //     })
+    //     // return activeUsers
+    //   } else if (this.state.inactiveUsers === true) {
+    //     this.setState({
+    //       users: inactiveUsers
+    //     })
+    //     // return inactiveUsers
+    //   }
+    // }
   }
   handleChange = () => {
-    this.setState({
-      allusers: false,
-      inactiveUsers: false,
-      activeUsers: true,
-    })
-  }
+    // const { users } = this.props
+    // const activeUsers = users.filter((a) => a.accountStatus === 'active')
+    // this.setState({
+    //   allusers: false,
+    //   inactiveUsers: false,
+    //   activeUsers: true,
+    //   users: activeUsers
 
+    // })
+
+  }
   handleChange_Inactive = () => {
-    this.setState({
-      activeUsers: false,
-      allusers: false,
-      inactiveUsers: true,
-    })
+    // const { users } = this.props
+    // const inactiveUsers = users.filter((a) => a.accountStatus === 'inactive')
+    // this.setState({
+    //   activeUsers: false,
+    //   allusers: false,
+    //   inactiveUsers: true,
+    //   users: inactiveUsers
+    // })
   }
 
   handleChange_alluser = () => {
-    this.setState({
-      activeUsers: false,
-      inactiveUsers: false,
-      allusers: true,
-    })
+    // const { users } = this.props
+    // console.log(users)
+    // this.setState({
+    //   activeUsers: false,
+    //   inactiveUsers: false,
+    //   allusers: true,
+    //   users: users
+    // })
   }
 
-  handleChange = (e, id = '') => {
-    this.setState({
-      activeUsers:true,
-      inactiveUsers: false,
-      allusers: false,
-    })  }
 
   onDelete = (id) => {
     confirmAlert({
@@ -166,7 +190,7 @@ class ViewUser extends Component {
         },
         {
           label: 'No',
-          onClick: () => {},
+          onClick: () => { },
         },
       ],
     })
@@ -185,7 +209,7 @@ class ViewUser extends Component {
         },
         {
           label: 'No',
-          onClick: () => {},
+          onClick: () => { },
         },
       ],
     })
