@@ -1,26 +1,21 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { updateUser, getUser, codeVerify ,updatePassword} from '../../../actions/user'
+import { updateUser, getUser, codeVerify, updatePassword } from '../../../actions/user'
 import Loader from '../../layout/Loader'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import * as moment from 'moment'
-// import DatePicker from "react-datepicker";
 import { Redirect } from 'react-router-dom'
-// import "react-datepicker/dist/react-datepicker.css";
-import Moment from 'react-moment'
-import dateFormat from 'dateformat';
+import { setAlert } from "../../../actions/alert";
 import { Link } from 'react-router-dom'
 import Switch from "react-switch";
 import DatePicker from "react-datepicker";
-import $ from 'jquery';
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts';
 import "react-datepicker/dist/react-datepicker.css";
 import Alert from '../../layout/Alert'
 import Modal from 'react-awesome-modal';
-// import { compareSync } from 'bcryptjs'
 
 
 class EditUser extends Component {
@@ -40,6 +35,7 @@ class EditUser extends Component {
     Returnproduct: false,
     Calender: false,
     Report: false,
+    isbirthdaySelected: false,
     sections: '',
     id: '',
     firstname: '',
@@ -59,14 +55,14 @@ class EditUser extends Component {
     address: '',
     avatar: '',
     statusChecked: '',
-    show:false,
+    show: false,
     code: '',
     imgUpd: false,
     src: false,
     setIsOpen: false,
-    password:"",
-    newpassword:"",
-    confirmpassword:""
+    password: "",
+    newpassword: "",
+    confirmpassword: ""
 
   }
 
@@ -87,7 +83,7 @@ class EditUser extends Component {
           systemRole: user.systemRole,
           statusChecked: user.accountStatus,
           status: user.accountStatus === "active" ? true : false,
-          // joinDate: user.createdOn,
+          joinDate: user.createdAt,
           base_rate: user.salary && user.salary.base_rate ? user.salary.base_rate : "",
           period: user.salary && user.salary.period ? user.salary.period : '',
           email: user.email,
@@ -96,37 +92,63 @@ class EditUser extends Component {
           address: user.address,
           birthday: user.birthday,
           avatar: user.avatar,
-          sections: user.sections
+          sections: user.sections,
+          Inventory: user.sections.includes('Inventory') ? true : false,
+          Appointments: user.sections.includes('Appointments') ? true : false,
+          Barcode: user.sections.includes('Barcode') ? true : false,
+          Calender: user.sections.includes('Calender') ? true : false,
+          Customers: user.sections.includes('Customers') ? true : false,
+          Orders: user.sections.includes('Orders') ? true : false,
+          Rentproduct: user.sections.includes('Rentproduct') ? true : false,
+          Report: user.sections.includes('Report') ? true : false,
+          Returnproduct: user.sections.includes('Returnproduct') ? true : false,
+
         })
       }
     }
   }
 
-  updatePassword = async (e)=>{
+ 
+
+  updatePassword = async (e) => {
     e.preventDefault();
     e.preventDefault();
     const state = { ...this.state }
     const user = {
       username: state.username,
-      currentpassword: (state.password).trim(),
+      password: (state.password).trim(),
       newpassword: (state.newpassword).trim(),
       confirmpassword: (state.confirmpassword).trim()
     }
     if (state.id !== "") {
-       await this.props.updatePassword(user, state.id) }
+      await this.props.updatePassword(user, state.id)
+    }
+    if (this.props.passwordUpdated === true) {
+      this.setState({
+        password: "", newpassword: "", confirmpassword: "",
+        show: false
+      })
+    }
+    else if (this.props.passwordUpdated === false) {
+      OCAlert.alertError('Password Update Failed', { timeOut: 3000 });
+      this.setState({
+        show: true
+      })
+
+    }
+
   }
-  openModalforPassword = (e) =>{
-e.preventDefault();
-this.setState({
-  show:true
-})
+  openModalforPassword = (e) => {
+    e.preventDefault();
+    this.setState({
+      show: true
+    })
   }
   handleCheck = (type) => {
     var response = false;
     const { sections } = this.state
     if (sections) {
-      var s = sections.indexOf(type);
-      if (sections[s] === type) {
+      if (sections.includes(type)) {
         response = true;
       }
     }
@@ -143,15 +165,23 @@ this.setState({
     e.preventDefault();
     this.setState({
       visible: false,
-      show:false
+      show: false, code: "", password: "", newpassword: "", confirmpassword: "",
+
     });
   }
   authorize = async (e) => {
     e.preventDefault();
     const { code } = this.state
     await this.props.codeVerify(code)
+    if (this.props.codeverified === false) {
+      OCAlert.alertError("Wrong Authorization Code", { timeOut: 3000 })
+      this.setState({
+        code: "",
+        visible: true
+      })
+    }
 
-    if (this.props.codeverified === true) {
+    else if (this.props.codeverified === true) {
       OCAlert.alertSuccess("Successfully Authorized")
 
       this.setState({
@@ -159,16 +189,9 @@ this.setState({
         visible: false
       })
     }
-    
-    if (this.props.codeverified === false) {
-      this.setState({
-        code: "",
-        visible: true
-      })
-      OCAlert.alertError("Wrong Authorization Code")
 
-    }
-    
+
+
   }
   setShow = (e) => {
     e.preventDefault();
@@ -196,6 +219,7 @@ this.setState({
     const state = { ...this.state }
     await this.selected();
     const sessionsArr = Object.values(this.state.sections);
+
     this.setState({ saving: true });
     const salary = [];
     salary.push({
@@ -212,6 +236,15 @@ this.setState({
       this.setState({ saving: false });
       return;
     }
+    if (state.birthday !== undefined) {
+      formData.append('birthday', state.birthday)
+      this.setState({ isbirthdaySelected: false });
+
+    }
+    else {
+      this.setState({ saving: false, isbirthdaySelected: true });
+      return;
+    }
     formData.append('jobTitle', state.jobTitle)
     formData.append('systemRole', state.systemRole)
     formData.append('accountStatus', state.statusChecked)
@@ -220,7 +253,6 @@ this.setState({
     formData.append('fullname', state.fullname)
     formData.append('email', state.email)
     formData.append('contactnumber', state.contactnumber)
-    formData.append('birthday', state.birthday)
     formData.append('gender', state.gender)
     formData.append('address', state.address)
     formData.append('sections', sessionsArr)
@@ -351,7 +383,6 @@ this.setState({
                         >
 
                           <Alert />
-                          <OCAlertsProvider />
 
                           <div className="form-body">
                             <h4 className="form-section"><i className="ft-info"></i> Profile Picture </h4>
@@ -378,6 +409,7 @@ this.setState({
                               </div>
                               <div className="col-md-6 text-center">
                                 {this.state.imgUpd === false && this.state.src === false ?
+
                                   <img className='media-object round-media'
                                     src={this.state.avatar}
                                     alt='User'
@@ -445,7 +477,7 @@ this.setState({
                                         name="status"
                                         value={this.state.status === true ? "Active" : "In-Active"}
                                         // onChange={e => this._handleChange(e)}
-readOnly
+                                        readOnly
                                       />
                                       :
                                       <input type="text"
@@ -464,9 +496,10 @@ readOnly
                                   <div className="col-md-4"></div>
                                   <div className="col-md-8">
                                     <Link
-                                  onClick={(e) => this.openModalforPassword(e)}
-                                  type='button'
-className="font-medium-3"
+                                      to=""
+                                      onClick={(e) => this.openModalforPassword(e)}
+                                      type='button'
+                                      className="font-medium-3"
                                     ><i className="ft-external-link"></i>  Change Password</Link>
                                   </div>
                                 </div>
@@ -525,7 +558,7 @@ className="font-medium-3"
                                           id='type'
                                           name='systemRole'
                                           required
-                                          defaultValue='----'
+                                          defaultValue={this.state.systemRole}
                                           className='form-control border-primary'
                                           onChange={(e) => this._handleChange(e)}
                                         >
@@ -582,7 +615,7 @@ className="font-medium-3"
                                     <input
                                       className="form-control border-primary"
                                       type="text" placeholder="Join Date" id="userinput5" name="joinDate" readOnly
-                                    // value={this.state.joinDate}
+                                      value={moment(this.state.joinDate).format("DD-MM-YYYY")}
 
                                     />
                                   </div>
@@ -593,22 +626,39 @@ className="font-medium-3"
                                   <div className="col-md-8">
                                     {this.state.isEditO === true ?
                                       <input className="form-control border-primary"
-                                        type="salary"
+                                        type="text"
                                         placeholder="Salary"
                                         id="userinput6"
-                                      // value={this.state.salary}
-                                      // onChange={e => this._handleChange(e)}
+                                        value={this.state.salary}
+                                        onChange={e => this.handleSalary(e)}
                                       />
                                       :
                                       <input className="form-control border-primary"
                                         type="salary"
                                         placeholder="Salary"
                                         id="userinput6"
-                                        // value={this.state.salary}
+                                        value={this.state.salary}
                                         // onChange={e => this._handleChange(e)}
                                         readOnly
                                       />
                                     }
+
+
+                                  </div>
+                                </div>
+                                <div className="form-group row">
+                                  <label className="col-md-4 label-control" htmlFor="userinput6">Pay Raise</label>
+                                  <div className="col-md-8">
+
+                                    <input className="form-control border-primary"
+                                      type="text"
+                                      placeholder="Pay raise"
+                                      id="userinput6"
+                                      value={"5%"}
+                                      // onChange={e => this._handleChange(e)}
+                                      readOnly
+                                    />
+
 
 
                                   </div>
@@ -620,7 +670,7 @@ className="font-medium-3"
                                   <div className="col-md-8">
                                     <input className="form-control border-primary"
                                       type="number" placeholder="Next pay day" id="userinput7"
-                                      readOnly value={""}
+                                      readOnly value={"5%"}
 
                                     />
                                   </div>
@@ -630,7 +680,7 @@ className="font-medium-3"
                                   <label className="col-md-4 label-control">Last Review</label>
                                   <div className="col-md-8">
                                     <input className="form-control border-primary"
-                                      type="number" placeholder="Last Review" id="userinput7" readOnly value={""}
+                                      type="number" placeholder="Last Review" id="userinput7" readOnly value={"N/A"}
                                     />
                                   </div>
                                 </div>
@@ -640,7 +690,7 @@ className="font-medium-3"
                             <h4 className="form-section mt-5"><i className="ft-info"></i> Personal Information
                             <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEditPersonalInfo(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button>
                             </h4>
-                            <div className="row">
+                            <div className="row h-25">
                               <div className="col-md-6">
                                 <div className="form-group row">
                                   <label className="col-md-4 label-control" htmlFor="userinput1">Full Name</label>
@@ -663,6 +713,81 @@ className="font-medium-3"
                                         readOnly
                                       />
 
+                                    }
+                                  </div>
+                                </div>
+
+                                <div className="form-group row">
+                                  <label className="col-md-4 label-control" htmlFor="userinput4">Phone Number</label>
+                                  <div className="col-md-8">
+                                    {this.state.isEditP === true ?
+                                      <input type="text" id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Phone Number"
+                                        name="contactnumber"
+                                        value={this.state.contactnumber}
+                                        onChange={e => this._handleChange(e)}
+                                      />
+                                      :
+                                      <input type="text" id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Phone Number"
+                                        name="contactnumber"
+                                        value={this.state.contactnumber}
+                                        readOnly />
+                                    }
+                                  </div>
+                                </div>
+                                <div className="form-group row">
+                                  <label className="col-md-4 label-control" htmlFor="userinput3">Address</label>
+                                  <div className="col-md-8">
+                                    {this.state.isEditP === true ?
+                                      <textarea type="text"
+                                        id="userinput3"
+                                        className="form-control border-primary"
+                                        placeholder="Address"
+                                        name="address"
+                                        rows="7"
+                                        value={this.state.address}
+                                        onChange={e => this._handleChange(e)}
+                                      />
+                                      :
+                                      <textarea type="text"
+                                        id="userinput3"
+                                        className="form-control border-primary"
+                                        placeholder="Address"
+                                        name="address"
+                                        rows="7"
+                                        value={this.state.address == undefined ? "" : this.state.address}
+                                        readOnly />
+                                    }
+
+
+                                  </div>
+                                </div>
+
+                              </div>
+                              <div className="col-md-6">
+                                <div className="form-group row">
+                                  <label className="col-md-4 label-control" htmlFor="userinput4">Birthday</label>
+                                  <div className="col-md-8" data-date-format="dd/mm/yyyy">
+
+                                    {this.state.isEditP === true ?
+                                      <DatePicker
+                                        dateFormat="dd/MM/yyyy" selected={Date.parse(this.state.birthday)}
+                                        className="form-control border-primary"
+                                        onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
+                                        popperPlacement="top-start"
+                                        // peekNextMonth
+                                        showMonthDropdown
+                                        showYearDropdown
+                                      />
+                                      :
+                                      <DatePicker
+                                        dateFormat="dd/MM/yyyy" selected={Date.parse(this.state.birthday)}
+                                        className="form-control border-primary"
+                                        readOnly
+                                      />
                                     }
                                   </div>
                                 </div>
@@ -689,52 +814,6 @@ className="font-medium-3"
                                     }
                                   </div>
                                 </div>
-                                <div className="form-group row">
-                                  <label className="col-md-4 label-control" htmlFor="userinput4">Phone Number</label>
-                                  <div className="col-md-8">
-                                    {this.state.isEditP === true ?
-                                      <input type="text" id="userinput4"
-                                        className="form-control border-primary"
-                                        placeholder="Phone Number"
-                                        name="contactnumber"
-                                        value={this.state.contactnumber}
-                                        onChange={e => this._handleChange(e)}
-                                      />
-                                      :
-                                      <input type="text" id="userinput4"
-                                        className="form-control border-primary"
-                                        placeholder="Phone Number"
-                                        name="contactnumber"
-                                        value={this.state.contactnumber}
-                                        readOnly />
-                                    }
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-md-6">
-                                <div className="form-group row">
-                                  <label className="col-md-4 label-control" htmlFor="userinput4">Birthday</label>
-                                  <div className="col-md-8" data-date-format="dd/mm/yyyy">
-
-                                    {this.state.isEditP === true ?
-                                      <DatePicker
-                                        dateFormat="dd/MM/yyyy" selected={Date.parse(this.state.birthday)}
-                                        className="form-control border-primary"
-                                        onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
-                                        peekNextMonth
-                                        showMonthDropdown
-                                        showYearDropdown
-                                      />
-                                      :
-                                      <DatePicker
-                                        dateFormat="dd/MM/yyyy" selected={Date.parse(this.state.birthday)}
-                                        className="form-control border-primary"
-                                        readOnly
-                                      />
-                                    }
-                                  </div>
-                                </div>
-
                                 <div className="form-group row">
                                   <label className="col-md-4 label-control" htmlFor="userinput4">Gender</label>
                                   <div className="col-md-8">
@@ -783,31 +862,8 @@ className="font-medium-3"
                                     }
                                   </div>
                                 </div>
-                                <div className="form-group row last">
-                                  <label className="col-md-4 label-control" htmlFor="userinput4">Address</label>
-                                  <div className="col-md-8">
-                                    {this.state.isEditP === true ?
-                                      <input type="text"
-                                        id="userinput4"
-                                        className="form-control border-primary"
-                                        placeholder="Address"
-                                        name="address"
-                                        value={this.state.address}
-                                        onChange={e => this._handleChange(e)}
-                                      />
-                                      :
-                                      <input type="text"
-                                        id="userinput4"
-                                        className="form-control border-primary"
-                                        placeholder="Address"
-                                        name="address"
-                                        value={this.state.address}
-                                        readOnly />
-                                    }
 
 
-                                  </div>
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -816,7 +872,7 @@ className="font-medium-3"
                             <>
 
                               <h4 className="form-section mt-5"><i className="ft-info"></i> System Configuration
-                              <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEditSystemConfig(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button>
+                              {/* <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEditSystemConfig(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button> */}
 
                               </h4>
 
@@ -833,7 +889,7 @@ className="font-medium-3"
                                       type='checkbox'
                                       name='Inventory'
                                       onChange={(e) => this.handleChange(e, 'Inventory')}
-                                      checked={this.state.isEditS === true ? this.state.Inventory === true : this.handleCheck('Inventory')}
+                                      checked={this.state.Inventory}
                                       value={this.state.Inventory}
 
                                     />{' '}
@@ -850,7 +906,7 @@ Inventory
                                       name='Returnproduct'
                                       className="input"
                                       onChange={(e) => this.handleChange(e, 'Returnproduct')}
-                                      checked={this.state.isEditS === true ? this.state.Returnproduct === true : this.handleCheck('Returnproduct')}
+                                      checked={this.state.Returnproduct}
                                       value={this.state.Returnproduct}
 
                                     />{' '}
@@ -874,7 +930,7 @@ Return Product
                                       className="input"
 
                                       onChange={(e) => this.handleChange(e, 'Barcode')}
-                                      checked={this.state.isEditS === true ? this.state.Barcode === true : this.handleCheck('Barcode')}
+                                      checked={this.state.Barcode}
                                       value={this.state.Barcode}
                                     />{' '}
 Barcode
@@ -892,7 +948,7 @@ Barcode
                                       className="input"
 
                                       onChange={(e) => this.handleChange(e, 'Orders')}
-                                      checked={this.state.isEditS === true ? this.state.Orders === true : this.handleCheck('Orders')}
+                                      checked={this.state.Orders}
                                       value={this.state.Orders}
                                     />{' '}
 Orders
@@ -915,7 +971,7 @@ Orders
 
                                       name='Customers'
                                       onChange={(e) => this.handleChange(e, 'Customers')}
-                                      checked={this.state.isEditS === true ? this.state.Customers === true : this.handleCheck('Customers')}
+                                      checked={this.state.Customers}
                                       value={this.state.Customers}
                                     />{' '}
 Customers
@@ -933,7 +989,7 @@ Customers
 
                                       name='Appointments'
                                       onChange={(e) => this.handleChange(e, 'Appointments')}
-                                      checked={this.state.isEditS === true ? this.state.Appointments === true : this.handleCheck('Appointments')}
+                                      checked={this.state.Appointments}
                                       value={this.state.Appointments}
                                     />{' '}
 Appointments
@@ -952,11 +1008,9 @@ Appointments
                                     <input
                                       type='checkbox'
                                       className="input"
-
-
                                       name='Rentproduct'
                                       onChange={(e) => this.handleChange(e, 'Rentproduct')}
-                                      checked={this.state.isEditS === true ? this.state.Rentproduct === true : this.handleCheck('Rentproduct')}
+                                      checked={this.state.Rentproduct}
                                       value={this.state.Rentproduct}
                                     />{' '}
 Rent a product
@@ -972,8 +1026,7 @@ Rent a product
                                       className="input"
                                       name='Calender'
                                       onChange={(e) => this.handleChange(e, 'Calender')}
-                                      checked={this.state.isEditS === true ? this.state.Calender === true : this.handleCheck('Calender')}
-
+                                      checked={this.state.Calender}
                                       value={this.state.Calender}
                                     />{' '}
 Calender
@@ -996,7 +1049,7 @@ Calender
 
                                       name='Report'
                                       onChange={(e) => this.handleChange(e, 'Report')}
-                                      checked={this.state.isEditS === true ? this.state.Report === true : this.handleCheck('Report')}
+                                      // checked={this.state.isEditS === true ? this.state.Report === true : this.handleCheck('Report')}
                                       value={this.state.Report}
                                     />{' '}
 Report
@@ -1078,7 +1131,7 @@ Report
                                         onChange={(e) => this._handleChange(e)}
                                         defaultValue={this.state.period}
                                       >
-                                        <option value="none" defaultValue={this.state.period} >---Select---</option>
+                                        <option value="none" defaultValue={this.state.period !== "" && this.state.period} >---Select---</option>
                                         <option value="weekly">Weekly</option>
                                         <option value="bi-weekly">Bi-Weekly</option>
                                         <option value="monthly">Monthly</option>
@@ -1100,14 +1153,17 @@ Report
                                       />
                                     </div>
                                   </div> */}
-                                  <div className='form-actions top'>
+                                  <div className='form-actions text-center top'>
+                                    <p className="text-muted text-center">
+                                      To make changes in salary, you have to authorize yourself
+                                      </p>
                                     <button
                                       type='button'
                                       onClick={(e) => this.openModal(e)}
 
-                                      className='mb-2 mr-2 btn btn-raised btn-primary btn-openModal'
+                                      className='mb-2 mr-2 btn btn-raised btn-danger btn-openModal'
                                     >
-                                      <i className='ft-chevron-right' /> Update Salary
+                                      <i className='fa fa-gear' /> Authorize
 </button>
                                   </div>
 
@@ -1118,12 +1174,21 @@ Report
 
                             : ""}
                           <h4 className="form-section mt-3"> </h4>
-{/* {this.state.birthday === undefined ? <div className='form-actions top'>   <button
+                          {/* {this.state.birthday === undefined ? <div className='form-actions top'>   <button
                                   type='button'
                                   className='mb-2 mr-2 btn btn-raised btn-primary disabled'
                                 >
                                   <i className='ft-chevron-right' /> Save changes
                                 </button> </div> : */}
+                          {this.state.isbirthdaySelected === true && (
+                            <div className="alert alert-warning alert-dismissible fade show" role="alert">
+                              <strong></strong> Please select birthday.
+                              <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            // <div className='alert alert-danger'>Please select birthday</div>
+                          )}
 
                           <div className='form-actions top'>
                             {this.state.saving ? (
@@ -1142,7 +1207,7 @@ Report
                                 </button>
                               )}
                           </div>
-  {/* } */}
+                          {/* } */}
                         </form>
                       </div>
                     </div>
@@ -1150,6 +1215,7 @@ Report
                 </div>
               </div>
             </div>
+
 
             <footer className='footer footer-static footer-light'>
               <p className='clearfix text-muted text-sm-center px-2'>
@@ -1167,12 +1233,15 @@ Report
                 </span>
               </p>
             </footer>
+
           </div>
           <Modal visible={this.state.visible} width="400" height="250" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
             <div>
-            
-              <div className="modal-body">
+              <div className="modal-header">
                 <h4 className="text-center">Please enter the authorization code to make this change</h4>
+              </div>
+              <Alert />
+              <div className="modal-body">
                 <input
                   name="code"
                   value={this.state.code}
@@ -1186,91 +1255,99 @@ Report
               <div className="modal-footer">
                 <button type="button" onClick={(e) => this.authorize(e)}
                   className="btn grey btn-lg btn-outline-success">Authorize</button>
-             <button type="button"  onClick={(e) => this.closeModal(e)}
+                <button type="button" onClick={(e) => this.closeModal(e)}
                   className="btn grey btn-lg btn-outline-danger">Close</button>
               </div>
-              <div>
-            <OCAlertsProvider containerStyle={{width: '80%',height:'25%'}} />
-            </div>
+              <div>            <OCAlertsProvider />
+              </div>
             </div>
           </Modal>
-          <Modal visible={this.state.show} width="400" height="350" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
+          <Modal visible={this.state.show} width="400" height="400" effect="fadeInUp" onClickAway={(e) => this.closeModal(e)}>
             <div>
-            <div className="modal-header">
-                              <h3>Update Password</h3>
-</div>
-              <div className="modal-body">
-              <div className="form-group row">
-                                <div className="col-md-12">
-                                  <input
-                                    type="password"
-                                    className="form-control border-primary"
-                                    placeholder="Enter Current password here"
-                                    name="password"
-                                    value={this.state.password}
-                                    onChange={(e) => this._handleChange(e)}
-
-      /></div>
-                              </div>
-                              <div className="form-group row">
-
-                                <div className="col-md-12">
-                                  <input
-                                    type="password"
-                                    className="form-control border-primary"
-                                    placeholder="Enter New password here"
-                                    name="newpassword"
-                                    value={this.state.newpassword}
-                                    onChange={(e) => this._handleChange(e)}
-
-                                  /></div>
-                              </div>
-                              <div className="form-group row">
-                                <div className="col-md-12">
-                                  <input
-                                    type="password"
-
-                                    className="form-control border-primary"
-                                    placeholder="Re type password"
-                                    name="confirmpassword"
-                                    value={this.state.confirmpassword}
-                                    onChange={(e) => this._handleChange(e)}
-
-                                  /></div>
-                              </div>               
+              <div className="modal-header">
+                <h3>Update Password</h3>
               </div>
+              <Alert />
+
+              <div className="modal-body">
+                <div className="form-group row">
+                  <div className="col-md-12">
+                    <input
+                      type="password"
+                      className="form-control border-primary"
+                      placeholder="Enter Current password here"
+                      name="password"
+                      value={this.state.password}
+                      onChange={(e) => this._handleChange(e)}
+
+                    /></div>
+                </div>
+                <div className="form-group row">
+
+                  <div className="col-md-12">
+                    <input
+                      type="password"
+                      className="form-control border-primary"
+                      placeholder="Enter New password here"
+                      name="newpassword"
+                      value={this.state.newpassword}
+                      onChange={(e) => this._handleChange(e)}
+
+                    /></div>
+                </div>
+                <div className="form-group row">
+                  <div className="col-md-12">
+                    <input
+                      type="password"
+
+                      className="form-control border-primary"
+                      placeholder="Re type password"
+                      name="confirmpassword"
+                      value={this.state.confirmpassword}
+                      onChange={(e) => this._handleChange(e)}
+
+                    /></div>
+                </div>
+
+              </div>
+              
               <div className="modal-footer">
                 <button type="button" onClick={(e) => this.updatePassword(e)}
                   className="btn grey btn-lg btn-outline-success">Update Password</button>
-                   <button type="button"  onClick={(e) => this.closeModal(e)}
+                <button type="button" onClick={(e) => this.closeModal(e)}
                   className="btn grey btn-lg btn-outline-danger">Close</button>
               </div>
+
             </div>
           </Modal>
         </div>
+
       </React.Fragment >
     )
   }
 }
 
 EditUser.propTypes = {
+  // setAlert: PropTypes.func.isRequired,
   user: PropTypes.object,
   auth: PropTypes.object,
   saved: PropTypes.bool,
-  codeverified: PropTypes.bool,
+  saved: PropTypes.bool,
+  passwordUpdated: PropTypes.bool,
   getUser: PropTypes.func.isRequired,
   codeVerify: PropTypes.func.isRequired,
-  updatePassword:PropTypes.func.isRequired
+  updatePassword: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
   saved: state.user.saved,
   user: state.user.profile,
-  codeverified: state.user.codeverified
+  codeverified: state.user.codeverified,
+  passwordUpdated: state.user.passwordUpdated
 })
 
 export default connect(mapStateToProps, {
   updateUser, codeVerify,
-  getUser,updatePassword
+  getUser, updatePassword
 })(EditUser)

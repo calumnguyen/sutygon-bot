@@ -6,6 +6,9 @@ import {
     GET_CUSTOMER,
    CUSTOMER_DELETED,
    SEARCHED_CUSTOMER,
+   GET_INSIGHT,
+   INSIGHT_ERROR,
+   INSIGHT_LOADING
   } from "../actions/types";
   const initialState = {
     customer: null,
@@ -13,6 +16,7 @@ import {
     loading: false,
     saved: false,
     searchedCustomer:null,
+    insight:null,
     error: {},
   };
   
@@ -20,6 +24,7 @@ import {
     const { type, payload } = action;
   
     switch (type) {
+      case INSIGHT_LOADING:
       case CUSTOMER_LOADING:
         return {
           ...state,
@@ -47,6 +52,12 @@ import {
           customer: payload,
           loading: false,
         };
+        case GET_INSIGHT:
+          return {
+            ...state,
+            insight: payload,
+            loading: false,
+          };
   
       case CUSTOMER_SAVED:
         return {
@@ -54,6 +65,7 @@ import {
           saved: true,
           loading: false,
         };
+        case INSIGHT_ERROR:
       case CUSTOMERS_ERROR:
         return {
           ...state,

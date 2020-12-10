@@ -107,7 +107,6 @@ class Sidebar extends Component {
                 </Link>
               </li>
               <li
-                className=' nav-item'
                 className={'nav-item ' + this.getClassName('orders')}
               >
                 <Link to='/orders' onClick={() => this.handleClick('orders')}>
@@ -143,11 +142,11 @@ class Sidebar extends Component {
                   <i className='ft-clipboard' /> Báo Cáo Thống Kê
                 </Link>
               </li>
-              <li className={'nav-item ' + this.getClassName('reports')}>
+              {/* <li className={'nav-item ' + this.getClassName('reports')}>
                 <Link to='/reports' onClick={() => this.handleClick('reports')}>
                   <i className='ft-clipboard' /> Báo Cáo Thống Kê
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
