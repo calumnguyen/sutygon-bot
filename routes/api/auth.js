@@ -55,18 +55,16 @@ router.post(
       const userInfo = { tempPass: user.password, userID: user._id }
       // check if user is active or not...
       if (user.accountStatus !== 'active') {
-        return res
-          .status(403)
-          .json({
-            userInfo,
-            errors: [
-              {
-                msg: `Sorry! User is not activated. Inactivated on ${moment(
-                  user.inactivated_date
-                ).format('DD-MMM-YYYY')}`,
-              },
-            ],
-          })
+        return res.status(403).json({
+          userInfo,
+          errors: [
+            {
+              msg: `Sorry! User is not activated. Inactivated on ${moment(
+                user.inactivated_date
+              ).format('DD-MMM-YYYY')}`,
+            },
+          ],
+        })
       }
 
       const isMatch = await bcrypt.compare(password, user.password)
@@ -82,6 +80,7 @@ router.post(
       const payload = {
         user: {
           id: user._id,
+          name: user.username,
         },
       }
 
