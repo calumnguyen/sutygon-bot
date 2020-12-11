@@ -68,7 +68,7 @@ router.post(
       let body = JSON.parse(JSON.stringify(req.body))
 
       var sections = req.body.sections
-     
+
       // check if there is any record with same email and username
       const userByEmail = await User.findOne({ email: body.email })
       const userByUsername = await User.findOne({ username: body.username })
@@ -92,9 +92,12 @@ router.post(
         d: 'mm',
       })
       let userBody
+      const salt = await bcrypt.genSalt(10)
+
+      const password = await bcrypt.hash(body.password, salt)
 
       if (req.file == undefined) {
-        userBody = { ...body, avatar, sections }
+        userBody = { ...body, avatar, sections,password }
         let user = new User(userBody)
         await user.save()
 
@@ -105,12 +108,13 @@ router.post(
         cloudinary.uploader.upload(avatar, async function (result) {
           userBody = {
             ...body,
+            password,
             avatar: result.secure_url,
             sections,
           }
           let user = new User(userBody)
           await user.save()
-
+console.log(user.password)
           res.status(200).json({ user, msg: 'User Added Successfully' })
         })
       }
@@ -152,7 +156,9 @@ router.post(
 router.get('/', auth, async (req, res) => {
   try {
     const users = await User.find()
-    res.json(users)
+    console.log(users)
+    res.status(200).json(users)
+    
   } catch (err) {
     console.log(err)
     res.status(500).send('Server Error!')
@@ -281,6 +287,7 @@ router.post(
           .status(500)
           .json({ errors: [{ msg: 'User with this Username already exists' }] })
       }
+      
       if (body.birthday === 'undefined') {
         return res
           .status(500)
@@ -292,7 +299,7 @@ router.post(
       }
 
       if (req.body.salary) {
-       
+
         var parsedSalary = JSON.parse(req.body.salary)
 
         var salary
@@ -360,17 +367,19 @@ router.post(
       } else {
         const avatar = req.file.path
         cloudinary.uploader.upload(avatar, async function (result) {
-          fieldsToUpdate = {
-            ...req.body,
-            avatar: result.secure_url,
-            salary,
-            sections,
-          }
-          await User.findByIdAndUpdate(
-            req.params.id,
+       console.log("result",result)
+          // fieldsToUpdate = {
+          //   ...body,
+          //   avatar: result.secure_url,
+          //   salary,
+          //   sections,
+          // }
+          console.log(body)
+          await User.updateOne(
+            { _id: req.params.id },
             {
               $set: {
-                ...req.body,
+                ...body,
                 avatar: result.secure_url,
                 inactivated_date,
                 salary,
@@ -427,39 +436,36 @@ router.post(auth, async (req, res) => {
 
 router.post(
   '/updatepassword/:id',
-  [check('password', 'Current Password Field Required').not().isEmpty()],
+  [check('currentpassword', 'Current Password Field Required').not().isEmpty()],
 
   async (req, res) => {
     try {
-      const errors = validationResult(req)
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() })
-      }
+      // const errors = validationResult(req)
+      // if (!errors.isEmpty()) {
+      //   return res.status(422).json({ errors: errors.array() })
+      // }
       const user = await User.findById(req.params.id)
 
       if (req.body.username !== user.username) {
         return res.status(400).json({ errors: [{ msg: 'Wrong Username!!' }] })
       }
-    
+      // console.log(user)
+      // return
       const salt = await bcrypt.genSalt(10)
-
-      const isMatch = await bcrypt.compare(req.body.password, user.password);
-      
-      if (req.body.password !== user.password) {
-        if (isMatch === false) {
+     
+      const isMatch = await bcrypt.compare(req.body.currentpassword, user.password);
+        if (!isMatch) {
           return res
             .status(400)
-            .json({ errors: [{ msg: "Wrong Password" }] })
+            .json({ errors: [{ msg: "Wrong Password!!" }] })
         }
-      }
 
-     if (req.body.newpassword !== req.body.confirmpassword) {
+      if(req.body.newpassword !== req.body.confirmpassword)  {
         return res
-          .status(400)
-          .json({ errors: [{ msg: "Confirm Password didn't match!!" }] })
-      }
-
-      newpass = await bcrypt.hash(req.body.newpassword, salt)
+        .status(400)
+        .json({ errors: [{ msg: "Confrim Password didn't match!!" }] })
+      } 
+     const newpass = await bcrypt.hash(req.body.newpassword, salt)
 
       await User.updateOne(
         { _id: req.params.id },

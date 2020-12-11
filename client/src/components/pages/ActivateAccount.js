@@ -46,8 +46,9 @@ class ActivateAccount extends Component {
       newpassword: (state.newpassword).trim(),
       confirmpassword: (state.confirmpassword).trim()
     }
-    if (state.id !== "") { await this.props.updatePassword(user, state.id) }
-  }
+    if(state.id !== ""){
+     await this.props.updatePassword(user, state.id) 
+  }}
 
   logout = async (e) => {
     e.preventDefault();

@@ -52,37 +52,44 @@ router.post(
       }
       const salt = await bcrypt.genSalt(10)
       const passwordEntered = await bcrypt.hash(password, salt)
-       // check if user is active or not...
-       if (user.accountStatus !== 'active') {
+      // check if user is active or not...
+      if (user.accountStatus !== 'active') {
         return res.status(403).json({
-             errors:[{ msg: `Sorry! User is not activated. Inactivated on ${moment(
-                user.inactivated_date
-              ).format('DD-MMM-YYYY')}`,
-            }]
+          errors: [{
+            msg: `Sorry! User is not activated. Inactivated on ${moment(
+              user.inactivated_date
+            ).format('DD-MMM-YYYY')}`,
+          }]
         })
       }
+      // if (user.isPasswordChanged === true) {
+        const isMatch = await bcrypt.compare(password, user.password)
+      //   console.log(password,user.password)
+      //   console.log(isMatch)
 
-      const isMatch = await bcrypt.compare(password, user.password)
-
-      if (!isMatch) {
-        return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
-      }
-
-      const payload = {
-        user: {
-          id: user._id,
-        },
-      }
-
-      jwt.sign(
-        payload,
-        config.get('jwtSecret'),
-        { expiresIn: '1D' },
-        (err, token) => {
-          if (err) throw err
-          res.json({ token })
+        if (!isMatch) {
+          return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
         }
-      )
+      // }
+      // else if (user.isPasswordChanged === false) {
+        // if (password === user.password) {
+          const payload = {
+            user: {
+              id: user._id,
+            },
+          }
+
+          jwt.sign(
+            payload,
+            config.get('jwtSecret'),
+            { expiresIn: '1D' },
+            (err, token) => {
+              if (err) throw err
+              res.json({ token })
+            }
+          )
+        // }
+      // }
     } catch (err) {
       console.log(err)
       res.status(500).json({ errors: [{ msg: 'Server error' }] })

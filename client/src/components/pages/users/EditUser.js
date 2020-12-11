@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import { updateUser, getUser, codeVerify, updatePassword } from '../../../actions/user'
+import {getAllUsers, updateUser, getUser, codeVerify, updatePassword } from '../../../actions/user'
 import Loader from '../../layout/Loader'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -16,6 +16,7 @@ import { OCAlert } from '@opuscapita/react-alerts';
 import "react-datepicker/dist/react-datepicker.css";
 import Alert from '../../layout/Alert'
 import Modal from 'react-awesome-modal';
+import { logout } from "../../../actions/auth";
 
 
 class EditUser extends Component {
@@ -51,7 +52,7 @@ class EditUser extends Component {
     email: '',
     contactnumber: '',
     gender: '',
-    birthday: "",
+    birthday: '',
     address: '',
     avatar: '',
     statusChecked: '',
@@ -66,10 +67,12 @@ class EditUser extends Component {
 
   }
 
+  
   async componentDidMount() {
     if (this.props.match.params.id) {
       const id = this.props.match.params.id
       await this.props.getUser(id)
+      await this.props.getAllUsers()
       const { user } = this.props
       if (user) {
         this.setState({
@@ -93,21 +96,27 @@ class EditUser extends Component {
           birthday: user.birthday,
           avatar: user.avatar,
           sections: user.sections,
-          Inventory: user.sections.includes('Inventory') ? true : false,
-          Appointments: user.sections.includes('Appointments') ? true : false,
-          Barcode: user.sections.includes('Barcode') ? true : false,
-          Calender: user.sections.includes('Calender') ? true : false,
-          Customers: user.sections.includes('Customers') ? true : false,
-          Orders: user.sections.includes('Orders') ? true : false,
-          Rentproduct: user.sections.includes('Rentproduct') ? true : false,
-          Report: user.sections.includes('Report') ? true : false,
-          Returnproduct: user.sections.includes('Returnproduct') ? true : false,
+          Inventory: user.sections && user.sections.includes('Inventory') ? true : false,
+          Appointments:user.sections &&  user.sections.includes('Appointments') ? true : false,
+          Barcode: user.sections && user.sections.includes('Barcode') ? true : false,
+          Calender:user.sections &&  user.sections.includes('Calender') ? true : false,
+          Customers: user.sections && user.sections.includes('Customers') ? true : false,
+          Orders:user.sections &&  user.sections.includes('Orders') ? true : false,
+          Rentproduct: user.sections && user.sections.includes('Rentproduct') ? true : false,
+          Report: user.sections && user.sections.includes('Report') ? true : false,
+          Returnproduct:user.sections &&  user.sections.includes('Returnproduct') ? true : false,
 
         })
       }
     }
   }
+async componentDidUpdate(prevProps,prevState){
+  if(prevProps.passwordUpdated !==this.props.passwordUpdated ){
+    await this.props.logout()
+    // this.setState({ logout: true })
+  }
 
+}
  
 
   updatePassword = async (e) => {
@@ -116,7 +125,7 @@ class EditUser extends Component {
     const state = { ...this.state }
     const user = {
       username: state.username,
-      password: (state.password).trim(),
+      currentpassword: (state.password).trim(),
       newpassword: (state.newpassword).trim(),
       confirmpassword: (state.confirmpassword).trim()
     }
@@ -237,7 +246,7 @@ class EditUser extends Component {
       return;
     }
     if (state.birthday !== undefined) {
-      formData.append('birthday', state.birthday)
+      formData.append('birthday', moment(state.birthday))
       this.setState({ isbirthdaySelected: false });
 
     }
@@ -348,11 +357,26 @@ class EditUser extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to='/' />
     }
+    if (this.props.passwordUpdated === true) {
+      if(window.localstorage){ window.localstorage.clear();
+      return <Redirect to='/login' />
+    }
+    }
     const { user } = auth
     if (this.props.saved) {
-      return <Redirect to='/user' />
-    }
 
+      if(user.systemRole==="Employee"){
+      return <Redirect push to='/' />
+    }
+    else if(user.systemRole=="Admin"){
+      return <Redirect to='/user' />
+
+    }
+  }
+    // else if(this.props.saved && auth.systemRole=="Admin") {
+    //   return <Redirect to='/user' />
+    // }
+  
 
     return (
       <React.Fragment>
@@ -1332,11 +1356,12 @@ EditUser.propTypes = {
   user: PropTypes.object,
   auth: PropTypes.object,
   saved: PropTypes.bool,
-  saved: PropTypes.bool,
   passwordUpdated: PropTypes.bool,
   getUser: PropTypes.func.isRequired,
   codeVerify: PropTypes.func.isRequired,
-  updatePassword: PropTypes.func.isRequired
+  updatePassword: PropTypes.func.isRequired,
+  logout:PropTypes.func.isRequired,
+  getAllUsers:PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -1345,9 +1370,10 @@ const mapStateToProps = (state) => ({
   user: state.user.profile,
   codeverified: state.user.codeverified,
   passwordUpdated: state.user.passwordUpdated
+
 })
 
 export default connect(mapStateToProps, {
-  updateUser, codeVerify,
-  getUser, updatePassword
+  updateUser, codeVerify,getAllUsers,
+  getUser, updatePassword,logout
 })(EditUser)

@@ -34,6 +34,12 @@ class ViewUser extends Component {
       })
     }
   }
+//  async componentDidUpdate() {
+// this.setState({users:this.props.users})    // await this.props.getAllUsers()
+    // this.setState({ users: this.props.users });
+  // }
+
+
 //   async componentDidUpdate(prevProps,prevState){
 //     if(prevProps.users !== this.props.users)
 //     await this.props.getAllUsers()
@@ -52,7 +58,7 @@ class ViewUser extends Component {
       if (users.length === 0) {
         return (
           <tr>
-            <td colSpan={6} className='text-center'>
+            <td colSpan={9} className='text-center'>
               No User Found
             </td>
           </tr>
@@ -143,37 +149,37 @@ class ViewUser extends Component {
     // }
   }
   handleChange = () => {
-    // const { users } = this.props
-    // const activeUsers = users.filter((a) => a.accountStatus === 'active')
-    // this.setState({
-    //   allusers: false,
-    //   inactiveUsers: false,
-    //   activeUsers: true,
-    //   users: activeUsers
+    const { users } = this.props
+    const activeUsers = users.filter((a) => a.accountStatus === 'active')
+    this.setState({
+      allusers: false,
+      inactiveUsers: false,
+      activeUsers: true,
+      users: activeUsers
 
-    // })
+    })
 
   }
   handleChange_Inactive = () => {
-    // const { users } = this.props
-    // const inactiveUsers = users.filter((a) => a.accountStatus === 'inactive')
-    // this.setState({
-    //   activeUsers: false,
-    //   allusers: false,
-    //   inactiveUsers: true,
-    //   users: inactiveUsers
-    // })
+    const { users } = this.props
+    const inactiveUsers = users.filter((a) => a.accountStatus === 'inactive')
+    this.setState({
+      activeUsers: false,
+      allusers: false,
+      inactiveUsers: true,
+      users: inactiveUsers
+    })
   }
 
   handleChange_alluser = () => {
-    // const { users } = this.props
-    // console.log(users)
-    // this.setState({
-    //   activeUsers: false,
-    //   inactiveUsers: false,
-    //   allusers: true,
-    //   users: users
-    // })
+    const { users } = this.props
+    console.log(users)
+    this.setState({
+      activeUsers: false,
+      inactiveUsers: false,
+      allusers: true,
+      users: users
+    })
   }
 
 

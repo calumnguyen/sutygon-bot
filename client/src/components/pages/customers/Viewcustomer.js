@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
-import { deleteCustomer, getAllCustomers, findCustomers } from "../../../actions/customer";
+import {
+  deleteCustomer,
+  getAllCustomers,
+  findCustomers,
+} from "../../../actions/customer";
 import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -10,19 +14,17 @@ import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import BootstrapTable from 'react-bootstrap-table-next';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import BootstrapTable from "react-bootstrap-table-next";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 
 class ViewCustomer extends Component {
-
   state = {
     filter: "",
-    search: '',
+    search: "",
   };
   async componentDidMount() {
     await this.props.getAllCustomers();
   }
-
 
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
@@ -45,23 +47,32 @@ class ViewCustomer extends Component {
       var m_cust = [];
       customers.forEach((customer, c_index) => {
         m_cust.push({
-          'contactnumber': customer.contactnumber,
-          'name': customer.name,
-          'online_acc': customer.online_account.exist,
-          'membership': "Diamond",
-          'actions': <><Link to={{ pathname: `/customer/editcustomer/${customer._id}` }}
-            className="success p-0">
-            <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit User"></i>
-          </Link>
-            <Link to="/customer"
-              onClick={() => this.onDelete(customer._id)}
-              className="danger p-0">
-              <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
-            </Link></>
-
-        })
-      })
-
+          contactnumber: customer.contactnumber,
+          name: customer.name,
+          online_acc: customer.online_account[0] &&  customer.online_account[0].exist && customer.online_account[0].exist,
+          membership:customer.online_account&&customer.online_account[0] &&  customer.online_account[0].membership && customer.online_account[0].membership ,
+          actions: (
+            <>
+              <Link
+                to={{ pathname: `/customer/editcustomer/${customer._id}` }}
+                className="success p-0"
+              >
+                <i
+                  className="ft-edit-3 font-medium-3 mr-2 "
+                  title="Edit User"
+                ></i>
+              </Link>
+              <Link
+                to="/customer"
+                onClick={() => this.onDelete(customer._id)}
+                className="danger p-0"
+              >
+                <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
+              </Link>
+            </>
+          ),
+        });
+      });
 
       // if (customers.length === 0) {
       //   return (
@@ -100,34 +111,37 @@ class ViewCustomer extends Component {
     if (customers) {
       const columns = [
         {
-          dataField: 'contactnumber',
-          text: 'Contact Number',
+          dataField: "contactnumber",
+          text: "Contact Number",
           sort: true,
         },
         {
-          dataField: 'name',
-          text: 'Customer Name',
+          dataField: "name",
+          text: "Customer Name",
           sort: true,
         },
         {
-          dataField: 'online_acc',
-          text: 'Online Account',
+          dataField: "online_acc",
+          text: "Online Account",
           sort: true,
         },
         {
-          dataField: 'membership',
-          text: 'Membership',
+          dataField: "membership",
+          text: "Membership",
           sort: true,
         },
         {
-          dataField: 'actions',
-          text: 'Actions',
+          dataField: "actions",
+          text: "Actions",
           sort: true,
-        }]
-      const defaultSorted = [{
-        dataField: 'contactnumber',
-        order: 'asc'
-      }];
+        },
+      ];
+      const defaultSorted = [
+        {
+          dataField: "contactnumber",
+          order: "asc",
+        },
+      ];
       const MySearch = (props) => {
         let input;
         const handleClick = () => {
@@ -139,19 +153,27 @@ class ViewCustomer extends Component {
               <div className="col-md-4">
                 <input
                   className="form-control"
-                  style={{ backgroundColor: 'white' }}
-                  ref={n => input = n}
+                  style={{ backgroundColor: "white" }}
+                  ref={(n) => (input = n)}
                   type="text"
                 />
               </div>
               <div className="col-md-4">
                 <button className="btn btn-success" onClick={handleClick}>
-                <i className="fa fa-search"></i> Search{" "}
-                  </button>
+                  <i className="fa fa-search"></i> Search{" "}
+                </button>
               </div>
               <div className="col-md-4">
-                                <Link to="/customer/addcustomer" className="btn btn-primary pull-right"> <i className="fa fa-plus"></i> New Customer</Link>
-                              </div>              </div></>
+                <Link
+                  to="/customer/addcustomer"
+                  className="btn btn-primary pull-right"
+                >
+                  {" "}
+                  <i className="fa fa-plus"></i> New Customer
+                </Link>
+              </div>{" "}
+            </div>
+          </>
         );
       };
 
@@ -159,27 +181,22 @@ class ViewCustomer extends Component {
         <ToolkitProvider
           // bootstrap4
           keyField="id"
-          data={m_cust}
+          data={m_cust.length === 0 ? [] : m_cust}
           columns={columns}
           defaultSorted={defaultSorted}
           search
         >
-          {
-            props => (
-              <div>      
-                <MySearch {...props.searchProps} />
-                <BootstrapTable
-                  {...props.baseProps}
-                />
-                <br />
-              </div>
-            )
-          }
+          {(props) => (
+            <div>
+              <MySearch {...props.searchProps} />
+              <BootstrapTable {...props.baseProps} />
+              <br />
+            </div>
+          )}
         </ToolkitProvider>
-      )
+      );
     }
   };
-
 
   onDelete = (id) => {
     confirmAlert({
@@ -194,13 +211,11 @@ class ViewCustomer extends Component {
         },
         {
           label: "No",
-          onClick: () => { },
+          onClick: () => {},
         },
       ],
     });
   };
-
-
 
   render() {
     const { auth } = this.props;
@@ -212,10 +227,8 @@ class ViewCustomer extends Component {
       <React.Fragment>
         <Loader />
         <div className="wrapper menu-collapsed">
-          <Sidebar location={this.props.location} >
-          </Sidebar>
-          <Header>
-          </Header>
+          <Sidebar location={this.props.location}></Sidebar>
+          <Header></Header>
 
           <div className="main-panel">
             <div className="main-content">
@@ -227,30 +240,12 @@ class ViewCustomer extends Component {
                         <div className="card-header">
                           <h4 className="card-title">Tất Cả Khách Hàng</h4>
                         </div>
+
                         <div className="card-content">
                           <div className="card-body table-responsive">
-                            {/* <div className="row">
+                          <Alert />
 
-                              <div className="col-md-4">
-                                <Link to="/customer/addcustomer" className="btn btn-primary pull-right"> <i className="fa fa-plus"></i> New Customer</Link>
-                              </div>
-                            </div> */}
-                            <Alert />
-                            {/* <table className="table text-center">
-                              <thead>
-                                <tr>
-                                  <th></th>
-                                  <th>Contact Number</th>
-                                  <th>Full Name</th>
-                                  <th>Online Account</th>
-                                  <th>Membership</th>
-                                  <th>Actions</th>
-                                </tr>
-                              </thead> 
-                              <tbody> */}
                             {this.getTAble()}
-                            {/* </tbody>
-                            </table> */}
                           </div>
                         </div>
                       </div>
@@ -260,13 +255,25 @@ class ViewCustomer extends Component {
               </div>
             </div>
             <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <p className="clearfix text-muted text-sm-center px-2">
+                <span>
+                  Quyền sở hữu của &nbsp;{" "}
+                  <a
+                    href="https://www.sutygon.com"
+                    rel="noopener noreferrer"
+                    id="pixinventLink"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
+                  >
+                    SUTYGON-BOT{" "}
+                  </a>
+                  , All rights reserved.{" "}
+                </span>
+              </p>
             </footer>
           </div>
         </div>
       </React.Fragment>
-
     );
   }
 }
@@ -285,5 +292,6 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   getAllCustomers,
-  deleteCustomer, findCustomers
+  deleteCustomer,
+  findCustomers,
 })(ViewCustomer);

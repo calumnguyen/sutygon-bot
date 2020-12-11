@@ -8,7 +8,8 @@ import {
    SEARCHED_CUSTOMER,
    GET_INSIGHT,
    INSIGHT_ERROR,
-   INSIGHT_LOADING
+   INSIGHT_LOADING,
+   CUSTOMER_UPDATED
   } from "../actions/types";
   const initialState = {
     customer: null,
@@ -60,6 +61,12 @@ import {
           };
   
       case CUSTOMER_SAVED:
+        return {
+          ...state,
+          saved: true,
+          loading: false,
+        };
+        case CUSTOMER_UPDATED:
         return {
           ...state,
           saved: true,

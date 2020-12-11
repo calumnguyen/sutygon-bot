@@ -62,7 +62,7 @@ class Header extends Component {
             <div id="navbarSupportedContent" className="collapse navbar-collapse">
               <ul className="navbar-nav">
                 <li className="dropdown nav-item">
-                  <a id="dropdownBasic3"  href="/dashboard"  data-toggle="dropdown" className="nav-link position-relative dropdown-toggle"><i className="ft-user font-medium-3 blue-grey darken-4"></i>
+                  <a id="dropdownBasic3"  href="/dashboard"  data-toggle="dropdown" className="nav-link position-relative dropdown-toggle"><img style={{'height':'40px'}}src={this.state.avatar} />
                     <p className="d-none">User Settings</p></a>
                   <div ngbdropdownmenu="" aria-labelledby="dropdownBasic3" className="dropdown-menu text-left dropdown-menu-right">
                   
