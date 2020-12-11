@@ -284,12 +284,8 @@ class AddUser extends Component {
                                   className='form-control border-primary'
                                   onChange={(e) => this.handleChange(e)}
                                 >
-
                                   <option
                                     name="systemRole"
-
-                                    // value={'Admin' === this.state.type}
-                                    // selected={'SuperAdmin' === this.state.type}
                                     value='Admin'
                                   >
                                     {' '}
@@ -297,9 +293,6 @@ class AddUser extends Component {
                                   </option>
                                   <option
                                     name="systemRole"
-
-                                    // value={'Employee' === this.state.type}
-                                    // selected={'Employee' === this.state.type}
                                     value='Employee'
                                   >
                                     {' '}

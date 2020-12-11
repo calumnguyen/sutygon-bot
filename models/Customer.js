@@ -25,7 +25,7 @@ const CutomerSchema = new mongoose.Schema({
   // when a user dont have an online account, the value of membership will be 'null'.
   online_account: {
     exist: { type: String, enum: ['yes', 'no'], default: 'no' },
-    membership: { type: String, enum: ['diamond', 'gold', null] },
+    membership: { type: String, enum: ['Diamond', 'Gold', null] },
     username: { type: String },
     email: {
       type: String,

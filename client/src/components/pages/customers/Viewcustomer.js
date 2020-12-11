@@ -41,7 +41,7 @@ class ViewCustomer extends Component {
   }
 
   getTAble = () => {
-    const { customers, searchedCustomer } = this.props;
+    const { customers } = this.props;
 
     if (customers) {
       var m_cust = [];

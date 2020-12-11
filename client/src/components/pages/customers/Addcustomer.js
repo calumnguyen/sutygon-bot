@@ -18,7 +18,7 @@ import * as moment from "moment";
 import Switch from "react-switch";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
-import { noConflict } from "jquery";
+// import { noConflict } from "jquery";
 
 class AddCustomer extends Component {
   state = {
@@ -61,7 +61,10 @@ class AddCustomer extends Component {
           company_address: customer.company_address,
           block_account: customer.block_account,
           online_account: customer.online_account,
-          membership: customer.online_account.membership,
+          membership:
+            customer.online_account[0] && customer.online_account[0].membership
+              ? customer.online_account[0].membership
+              : "",
           year: customer.year ? moment(customer.year).format("DD/MM/YYYY") : "",
           createdAt: moment(customer.createdAt).format("DD/MM/YYYY"),
           birthday: moment(customer.birthday).format("DD/MM/YYYY"),
@@ -135,15 +138,15 @@ class AddCustomer extends Component {
     e.preventDefault();
     this.setState({ saving: true });
     const state = { ...this.state };
-let m_oc = [];
-m_oc.push({
-  'exist':"no",
-  "membership":this.state.membership,
-  'username':this.state.name,
-  'email':this.state.email,
-  'deactivate':false,
-  'account_created':this.state.createdAt,
-})
+    let m_oc = [];
+    m_oc.push({
+      exist: "no",
+      membership: this.state.membership,
+      username: this.state.name,
+      email: "unverified",
+      deactivate: false,
+      account_created: this.state.createdAt,
+    });
     var customer = {
       name: state.name,
       email: state.email,
@@ -153,7 +156,7 @@ m_oc.push({
       company: state.company,
       company_address: state.company_address,
 
-      online_account:m_oc,
+      online_account: m_oc,
       // block_account: state.block_account
     };
 
@@ -187,9 +190,9 @@ m_oc.push({
     if (this.props.saved) {
       return <Redirect to="/customer" />;
     }
-    
+
     if (this.props.insight) {
-      var {orders} = this.props.insight;
+      var { orders } = this.props.insight;
     }
 
     return (
@@ -366,9 +369,7 @@ m_oc.push({
                                       className="form-control border-primary"
                                       onChange={(e) =>
                                         this.handleChangeForDate(e, "birthday")
-                                      } //only when value has changed
-                                      // popperPlacement="top-end"
-                                      // peekNextMonth
+                                      }
                                       showMonthDropdown
                                       showYearDropdown
                                       dropdownMode="scroll"
@@ -440,7 +441,7 @@ m_oc.push({
                                 <i className="ft-info"></i> Online Account
                                 Information
                               </h4>
-                              {this.state.online_account.exist === "no" ? (
+                              {this.state.online_account && this.state.online_account[0].exist === "no" ? (
                                 <div className="row">
                                   <div className="col-md-6">
                                     <div className="form-group row">
@@ -498,6 +499,7 @@ m_oc.push({
                                             onChange={(e) =>
                                               this.handleChangeNumber(e)
                                             }
+                                            readOnly
                                             required
                                           />
                                         </div>
@@ -506,16 +508,19 @@ m_oc.push({
                                         <label
                                           className="col-md-3 label-control"
                                           htmlFor="projectinput3"
-                                        >
-                                         
-                                        </label>
+                                        ></label>
                                         <div className="col-md-9">
-                                         <Link
-                                      to=""
-                                      onClick={(e) => this.openModalforPassword(e)}
-                                      type='button'
-                                      className="font-medium-3"
-                                    ><i className="ft-external-link"></i>  De-Activate online account</Link>
+                                          <Link
+                                            to=""
+                                            onClick={(e) =>
+                                              this.openModalforPassword(e)
+                                            }
+                                            type="button"
+                                            className="font-medium-3"
+                                          >
+                                            <i className="ft-external-link"></i>{" "}
+                                            De-Activate online account
+                                          </Link>
                                         </div>
                                       </div>
                                     </div>
@@ -528,7 +533,7 @@ m_oc.push({
                                           Membership
                                         </label>
                                         <div className="col-md-9">
-                                          <input
+                                          {/* <input
                                             type="text"
                                             id="projectinput3"
                                             className="form-control border-primary"
@@ -539,7 +544,33 @@ m_oc.push({
                                               this.handleChange(e)
                                             }
                                             required
-                                          />
+                                          /> */}
+                                          <select
+                                            id="projectinput3"
+                                            name="membership"
+                                            placeholder="Membership"
+                                            required
+                                            defaultValue={"-----"}
+                                            className="form-control border-primary"
+                                            onChange={(e) =>
+                                              this.handleChange(e)
+                                            }
+                                          >
+                                            <option
+                                              name="membership"
+                                              value="Gold"
+                                            >
+                                              {" "}
+                                              Gold{" "}
+                                            </option>
+                                            <option
+                                              name="membership"
+                                              value="Diamond"
+                                            >
+                                              {" "}
+                                              Diamond{" "}
+                                            </option>
+                                          </select>
                                         </div>
                                       </div>
                                       <div className="form-group row">
@@ -557,9 +588,9 @@ m_oc.push({
                                             placeholder="Email"
                                             name="email"
                                             value={
-                                              this.state.online_account
+                                              this.state.online_account[0]
                                                 .email === "unverified"
-                                                ? "Unverified"
+                                                ? "Un-Verified"
                                                 : "Verified"
                                             }
                                             onChange={(e) =>
@@ -569,23 +600,30 @@ m_oc.push({
                                           />
                                         </div>
                                       </div>
-                                      {this.state.online_account
-                                                .email === "unverified" ? 
-                                      <div className="form-group row">
-                                        <label
-                                          className="col-md-3 label-control"
-                                          htmlFor="projectinput3"
-                                        >
-                                        </label>
-                                        <div className="col-md-9">
-                                        <Link
-                                      to=""
-                                      onClick={(e) => this.openModalforPassword(e)}
-                                      type='button'
-                                      className="font-medium-3"
-                                    ><i className="ft-external-link"></i>Resend Verification Link?</Link>
+                                      {this.state.online_account[0].email ===
+                                      "unverified" ? (
+                                        <div className="form-group row">
+                                          <label
+                                            className="col-md-3 label-control"
+                                            htmlFor="projectinput3"
+                                          ></label>
+                                          <div className="col-md-9">
+                                            <Link
+                                              to=""
+                                              onClick={(e) =>
+                                                this.openModalforPassword(e)
+                                              }
+                                              type="button"
+                                              className="font-medium-3"
+                                            >
+                                              <i className="ft-external-link"></i>
+                                              Resend Verification Link?
+                                            </Link>
+                                          </div>
                                         </div>
-                                      </div>:""}
+                                      ) : (
+                                        ""
+                                      )}
                                     </div>
                                   </div>
                                 </>
@@ -784,7 +822,10 @@ m_oc.push({
                                                     ).format("MMMM-yyyy")}`
                                                   : ""}
                                               </dt>
-                                              <dd className="col-md-3" style={{textAlignLast:'end'}}>
+                                              <dd
+                                                className="col-md-3"
+                                                style={{ textAlignLast: "end" }}
+                                              >
                                                 {orders[0].Total_spent}
                                               </dd>
                                             </dl>
@@ -800,7 +841,10 @@ m_oc.push({
                                                     ).format("MMMM-yyyy")}`
                                                   : ""}
                                               </dt>
-                                              <dd className="col-md-3" style={{textAlignLast:'end'}}>
+                                              <dd
+                                                className="col-md-3"
+                                                style={{ textAlignLast: "end" }}
+                                              >
                                                 {orders[0].total_orders}
                                               </dd>
                                             </dl>
@@ -817,7 +861,10 @@ m_oc.push({
                                                     ).format("MMMM-yyyy")}`
                                                   : ""}
                                               </dt>
-                                              <dd className="col-md-3" style={{textAlignLast:'end'}}></dd>
+                                              <dd
+                                                className="col-md-3"
+                                                style={{ textAlignLast: "end" }}
+                                              ></dd>
                                             </dl>
                                             <dl className="row">
                                               <dt className="col-md-9">
@@ -831,7 +878,10 @@ m_oc.push({
                                                     ).format("MMMM-yyyy")}`
                                                   : ""}
                                               </dt>
-                                              <dd className="col-md-3" style={{textAlignLast:'end'}}>
+                                              <dd
+                                                className="col-md-3"
+                                                style={{ textAlignLast: "end" }}
+                                              >
                                                 {orders[0].insuranceAmt}
                                               </dd>
                                             </dl>
@@ -847,7 +897,10 @@ m_oc.push({
                                                     ).format("MMMM-yyyy")}`
                                                   : ""}
                                               </dt>
-                                              <dd className="col-md-3"style={{textAlignLast:'end'}}>
+                                              <dd
+                                                className="col-md-3"
+                                                style={{ textAlignLast: "end" }}
+                                              >
                                                 {""}
                                               </dd>
                                             </dl>
@@ -863,7 +916,10 @@ m_oc.push({
                                                     ).format("MMMM-yyyy")}`
                                                   : ""}
                                               </dt>
-                                              <dd className="col-md-3" style={{textAlignLast:'end'}}></dd>
+                                              <dd
+                                                className="col-md-3"
+                                                style={{ textAlignLast: "end" }}
+                                              ></dd>
                                             </dl>
                                             <dl className="row">
                                               <dt className="col-md-9">
@@ -877,7 +933,10 @@ m_oc.push({
                                                     ).format("MMMM-yyyy")}`
                                                   : ""}
                                               </dt>
-                                              <dd className="col-md-3" style={{textAlignLast:'end'}}></dd>
+                                              <dd
+                                                className="col-md-3"
+                                                style={{ textAlignLast: "end" }}
+                                              ></dd>
                                             </dl>
                                             <dl className="row">
                                               <dt className="col-md-9">
@@ -891,7 +950,10 @@ m_oc.push({
                                                     ).format("MMMM-yyyy")}`
                                                   : ""}{" "}
                                               </dt>
-                                              <dd className="col-md-3" style={{textAlignLast:'end'}}>
+                                              <dd
+                                                className="col-md-3"
+                                                style={{ textAlignLast: "end" }}
+                                              >
                                                 {orders[0].tax}
                                               </dd>
                                             </dl>
