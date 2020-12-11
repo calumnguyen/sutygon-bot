@@ -57,11 +57,12 @@ export const getAllUsers = () => async (dispatch) => {
   dispatch({ type: USER_LOADING });
   try {
     const res = await axios.get(`/api/users`);
-
-    dispatch({
-      type: GET_USERS,
-      payload: res.data,
-    });
+    if(res.data) {
+      dispatch({
+        type: GET_USERS,
+        payload: res.data,
+      });
+    }
   } catch (err) {
     dispatch({
       type: USERS_ERROR,

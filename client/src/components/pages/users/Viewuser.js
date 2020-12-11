@@ -26,6 +26,12 @@ class ViewUser extends Component {
   }
 
   async componentDidMount() {
+    this.getUsers();
+    await new Promise(resolve => setTimeout(resolve, 3000)); // 3 sec
+    this.getUsers(); // getting users again for updated image in case of edit
+  }
+
+  async getUsers() {
     await this.props.getAllUsers()
     const { users } = this.props;
     if (users) {

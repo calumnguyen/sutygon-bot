@@ -115,12 +115,10 @@ async componentDidUpdate(prevProps,prevState){
     await this.props.logout()
     // this.setState({ logout: true })
   }
-
 }
  
 
   updatePassword = async (e) => {
-    e.preventDefault();
     e.preventDefault();
     const state = { ...this.state }
     const user = {
@@ -268,7 +266,6 @@ async componentDidUpdate(prevProps,prevState){
     formData.append('code', state.code)
     formData.append('userID', state.userID)
     await this.props.updateUser(formData, state.id)
-    this.setState({ saving: false });
 
   }
 
@@ -309,10 +306,12 @@ async componentDidUpdate(prevProps,prevState){
       [e.target.name]: e.target.value
     })
   }
+
   handleChange = (e, name) => {
 
     this.setState({ [e.target.name]: !this.state[name] })
   }
+
   _onEditSystemConfig = (e) => {
     e.preventDefault();
     this.setState({
@@ -333,18 +332,21 @@ async componentDidUpdate(prevProps,prevState){
       isEditO: true
     })
   }
+
   handleChangeForDate = (date, e) => {
     let formattedDate = this.formatDate(date);
     this.setState({
       birthday: formattedDate
     });
   }
+
   _onEditPersonalInfo = (e) => {
     e.preventDefault();
     this.setState({
       isEditP: true
     })
   }
+
   _onChange = (e, id = '') => {
     this.setState({
       [e.target.name]: e.target.files[0],
@@ -352,6 +354,7 @@ async componentDidUpdate(prevProps,prevState){
       src: URL.createObjectURL(e.target.files[0]),
     })
   }
+
   render() {
     const { auth } = this.props
     if (!auth.loading && !auth.isAuthenticated) {
