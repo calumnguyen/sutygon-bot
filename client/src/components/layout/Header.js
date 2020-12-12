@@ -5,13 +5,12 @@ import { logout } from "../../actions/auth";
 import loadjs from 'loadjs';
 import {Link} from 'react-router-dom'
 
-
 class Header extends Component {
   state = {
     username: "",
     userType: "",
-    id:"",
-    avatar:""
+    id: "",
+    avatar: ""
   };
   
 

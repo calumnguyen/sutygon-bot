@@ -1,33 +1,27 @@
 import React, { Component } from 'react'
-import Sidebar from '../layout/Sidebar'
-import Header from '../layout/Header'
-import { updateUser, getUser } from '../../actions/user'
 import Loader from '../layout/Loader'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import * as moment from 'moment'
-import DatePicker from "react-datepicker";
 import { Redirect } from 'react-router-dom'
 import "react-datepicker/dist/react-datepicker.css";
-import Moment from 'react-moment'
-import dateFormat from 'dateformat';
-import { Link } from 'react-router-dom'
-import Switch from "react-switch";
+import { logout } from "../../actions/auth";
 
 class StoreClosed extends Component {
     state = {
         id: '',
         status: '',
         shopStartTime: '',
-        logout:false
-       
+        logout: false
     }
+
     onLogout = (e) => {
         e.preventDefault();
-        window.localStorage.clear();
-        this.setState({
-            logout:true
-        })
+        this.props.logout()
+        // window.localStorage.clear();
+        // this.setState({
+        //     logout:true
+        // })
     }
     async componentDidMount() {
             const { shop } = this.props.location;
@@ -99,7 +93,8 @@ Take a nap and comeback later!.</p>
 }
 
 StoreClosed.propTypes = {
-   auth: PropTypes.object,
+    logout: PropTypes.func.isRequired,
+    auth: PropTypes.object,
 }
 
 const mapStateToProps = (state) => ({
@@ -107,5 +102,5 @@ const mapStateToProps = (state) => ({
 })
 
 export default connect(mapStateToProps, {
-   
+    logout
 })(StoreClosed)
