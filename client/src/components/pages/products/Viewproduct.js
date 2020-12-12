@@ -22,6 +22,7 @@ import {Image} from 'cloudinary-react';
 class ViewProduct extends Component {
   state = {
     filter: "",
+    modal_product: null,
   };
 
   async componentDidMount() {
@@ -94,6 +95,62 @@ class ViewProduct extends Component {
     return rows;
   };
 
+  setModalProduct = (id) => {
+    const { formated_products } = this.state;
+
+    if(formated_products) {
+      formated_products.forEach((product, p_index) => {
+        if(product._id == id) {
+          this.setState({modal_product: product});
+        }
+      });
+    }
+  }
+  getViewModal = () => {
+    let product = this.state.modal_product;
+
+    if(product) {
+      return (
+
+        <div>
+        <p>Colors, Sizes & Barcodes</p>
+        <div className="tree ">
+          <ul>
+        {product.color &&
+          product.color.map((color, color_i) => (
+
+            <li key={color_i}>
+            <span>
+            <div className="s1" data-toggle="collapse" aria-expanded="true" aria-controls="Web">
+            <i className="expanded"><i className="fa fa-arrow-right"></i></i> {color.colorname} : {color.total}</div></span>
+              <div id="Web" className="collapse show">
+                <ul>
+                {color.sizes &&
+                  color.sizes.map((size, size_i) => (
+
+                    <li key={size_i}>
+                    <span><i className="fa fa-arrow-right"></i>{size.size} : {size.qty}</span>
+                      <ul>
+                      {size.barcodes &&
+                        size.barcodes.map(
+                          (barcode, barcode_i) => (
+                            <li key={barcode_i}><span><i className="fa fa-arrow-right"></i>BARCODE ID # {barcode.barcode}</span></li>
+                          )
+                        )}
+                      </ul>
+                     </li>
+
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+        </div>
+      )
+    }
+  }
   calculateTotals = (products) => {
     // looping through prducts
     let rows = [];
@@ -189,11 +246,11 @@ class ViewProduct extends Component {
                   {" "}
                   <i className="icon-pencil"></i> Edit{" "}
                 </Link>
-                <a href="#" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="card-link default">
+                <a href="javascript:void(0)" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="card-link default">
                   {" "}
                   <i className={"icon-control-" + ((product.disabled === "true") ? "play" : "pause")}></i> {(product.disabled === "true") ? "Reactivate" : "Disable"}
                 </a>
-                  <a className="card-link default"><i class="icon-eye"></i> View Details</a>
+                  <a href="javascript:void(0)" className="card-link default" data-toggle="modal" data-target="#viewModal" onClick={(e) => this.setModalProduct(product._id)}><i className="icon-eye"></i> View Details</a>
                   </div>
               </div>
             </div>
@@ -293,6 +350,24 @@ class ViewProduct extends Component {
             </div>
           </div>
           <div style={{clear: "both"}}></div>
+
+          <div className="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="viewModalLabel">Product Details</h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                {this.getViewModal()}
+                <br />
+                <br />
+              </div>
+            </div>
+          </div>
+        </div>
 
           {/*<footer className="footer footer-static footer-light">
             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
