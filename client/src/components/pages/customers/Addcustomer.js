@@ -18,6 +18,8 @@ import * as moment from "moment";
 import Switch from "react-switch";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
+import Modal from "react-awesome-modal";
+
 // import { noConflict } from "jquery";
 
 class AddCustomer extends Component {
@@ -41,6 +43,7 @@ class AddCustomer extends Component {
     selectedMonth: "",
     alltime: false,
     selectedAllyear: "",
+    visible: false,
   };
 
   async componentDidMount() {
@@ -72,6 +75,21 @@ class AddCustomer extends Component {
       }
     }
   }
+  closeModal = (e) => {
+    e.preventDefault();
+    this.setState({
+      visible: false,
+    });
+  };
+  static getDerivedStateFromProps(props, state) {
+    return { orders: props.insight && props.insight.orders };
+  }
+  openModal = (e) => {
+    e.preventDefault();
+    this.setState({
+      visible: true,
+    });
+  };
   handleChangeForDate = (date, name, e) => {
     if (this.state.id === "") {
       this.setState({
@@ -105,6 +123,7 @@ class AddCustomer extends Component {
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
   };
+
   handleCheck = (e, name) => {
     if (name === "month") {
       this.setState({
@@ -138,15 +157,14 @@ class AddCustomer extends Component {
     e.preventDefault();
     this.setState({ saving: true });
     const state = { ...this.state };
-    let m_oc = [];
-    m_oc.push({
+    let m_oc = {
       exist: "no",
-      membership: this.state.membership,
+      membership: this.state.membership !=="" ? this.state.membership:null,
       username: this.state.name,
       email: "unverified",
       deactivate: false,
       account_created: this.state.createdAt,
-    });
+    };
     var customer = {
       name: state.name,
       email: state.email,
@@ -155,7 +173,6 @@ class AddCustomer extends Component {
       birthday: moment(state.birthday),
       company: state.company,
       company_address: state.company_address,
-
       online_account: m_oc,
       // block_account: state.block_account
     };
@@ -190,9 +207,11 @@ class AddCustomer extends Component {
     if (this.props.saved) {
       return <Redirect to="/customer" />;
     }
-
+    // if (this.props.insight) {
+    //   var { orders } = this.props.insight;
+    // }
     if (this.props.insight) {
-      var { orders } = this.props.insight;
+      var { orders } = this.state;
     }
 
     return (
@@ -228,7 +247,6 @@ class AddCustomer extends Component {
                           method="POST"
                           onSubmit={(e) => this.onSubmit(e)}
                         >
-                          <Alert />
                           <h4 className="form-section ">
                             <i className="ft-info"></i> Personal information
                           </h4>
@@ -441,7 +459,8 @@ class AddCustomer extends Component {
                                 <i className="ft-info"></i> Online Account
                                 Information
                               </h4>
-                              {this.state.online_account && this.state.online_account[0].exist === "no" ? (
+                              {this.state.online_account &&
+                              this.state.online_account.exist === "no" ? (
                                 <div className="row">
                                   <div className="col-md-6">
                                     <div className="form-group row">
@@ -588,7 +607,7 @@ class AddCustomer extends Component {
                                             placeholder="Email"
                                             name="email"
                                             value={
-                                              this.state.online_account[0]
+                                              this.state.online_account
                                                 .email === "unverified"
                                                 ? "Un-Verified"
                                                 : "Verified"
@@ -600,7 +619,7 @@ class AddCustomer extends Component {
                                           />
                                         </div>
                                       </div>
-                                      {this.state.online_account[0].email ===
+                                      {this.state.online_account.email ===
                                       "unverified" ? (
                                         <div className="form-group row">
                                           <label
@@ -635,25 +654,13 @@ class AddCustomer extends Component {
                           <div className="form-actions top">
                             {this.state.id === "" ? (
                               <>
-                                {this.state.saving ? (
-                                  <button
-                                    type="button"
-                                    className="mb-2 mr-2 btn btn-raised btn-primary"
-                                  >
-                                    <div
-                                      className="spinner-grow spinner-grow-sm "
-                                      role="status"
-                                    ></div>{" "}
-                                    &nbsp; Adding{" "}
-                                  </button>
-                                ) : (
-                                  <button
-                                    type="submit"
-                                    className="mb-2 mr-2 btn btn-raised btn-primary"
-                                  >
-                                    <i className="ft-check" /> Add Customer
-                                  </button>
-                                )}
+                                <button
+                                  type="submit"
+                                  className="mb-2 mr-2 btn btn-raised btn-primary"
+                                  onClick={(e) => this.openModal(e)}
+                                >
+                                  <i className="ft-chevron-right" /> Next
+                                </button>
                               </>
                             ) : (
                               <>
@@ -805,13 +812,15 @@ class AddCustomer extends Component {
                                   </div>
                                 </div>{" "}
                                 <div className="col-md-6">
-                                  {this.props.insight ? (
-                                    <div className="card card-outline-success box-shadow-0">
+                                  {this.props.insight &&
+                                  this.props.insightFound === true ? (
+                                    <div className="card card-outline-primary box-shadow-1">
                                       <div className="card-body">
-                                        <div className="card-content">
-                                          <div className="card-text">
-                                            <dl className="row">
-                                              <dt className="col-md-9">
+                                        <table className="table table-bordered table-striped">
+                                          <thead> </thead>
+                                          <tbody>
+                                            <tr>
+                                              <th scope="row">
                                                 {this.state.year === true
                                                   ? `Total spent in ${moment(
                                                       this.state.selectedYear
@@ -820,17 +829,14 @@ class AddCustomer extends Component {
                                                   ? `Total spent in ${moment(
                                                       this.state.selectedMonth
                                                     ).format("MMMM-yyyy")}`
-                                                  : ""}
-                                              </dt>
-                                              <dd
-                                                className="col-md-3"
-                                                style={{ textAlignLast: "end" }}
-                                              >
-                                                {orders[0].Total_spent}
-                                              </dd>
-                                            </dl>
-                                            <dl className="row">
-                                              <dt className="col-md-9">
+                                                  : "Total spent in all time"}
+                                              </th>
+
+                                              <td>{orders[0].Total_spent}</td>
+                                            </tr>
+                                            <tr>
+                                              <th scope="row">
+                                                {" "}
                                                 {this.state.year === true
                                                   ? `Total order in ${moment(
                                                       this.state.selectedYear
@@ -839,18 +845,13 @@ class AddCustomer extends Component {
                                                   ? `Total orders in ${moment(
                                                       this.state.selectedMonth
                                                     ).format("MMMM-yyyy")}`
-                                                  : ""}
-                                              </dt>
-                                              <dd
-                                                className="col-md-3"
-                                                style={{ textAlignLast: "end" }}
-                                              >
-                                                {orders[0].total_orders}
-                                              </dd>
-                                            </dl>
-
-                                            <dl className="row">
-                                              <dt className="col-md-9">
+                                                  : "Total orders in all time"}
+                                              </th>
+                                              <td> {orders[0].total_orders}</td>
+                                            </tr>
+                                            <tr>
+                                              <th scope="row">
+                                                {" "}
                                                 {this.state.year === true
                                                   ? `Total discounts in ${moment(
                                                       this.state.selectedYear
@@ -859,15 +860,13 @@ class AddCustomer extends Component {
                                                   ? `Total discounts in ${moment(
                                                       this.state.selectedMonth
                                                     ).format("MMMM-yyyy")}`
-                                                  : ""}
-                                              </dt>
-                                              <dd
-                                                className="col-md-3"
-                                                style={{ textAlignLast: "end" }}
-                                              ></dd>
-                                            </dl>
-                                            <dl className="row">
-                                              <dt className="col-md-9">
+                                                  : "Total discounts in all time"}
+                                              </th>
+                                              <td></td>
+                                            </tr>
+                                            <tr>
+                                              <th scope="row">
+                                                {" "}
                                                 {this.state.year === true
                                                   ? `Total insurance paid in ${moment(
                                                       this.state.selectedYear
@@ -876,17 +875,13 @@ class AddCustomer extends Component {
                                                   ? `Total insuarance paid in ${moment(
                                                       this.state.selectedMonth
                                                     ).format("MMMM-yyyy")}`
-                                                  : ""}
-                                              </dt>
-                                              <dd
-                                                className="col-md-3"
-                                                style={{ textAlignLast: "end" }}
-                                              >
-                                                {orders[0].insuranceAmt}
-                                              </dd>
-                                            </dl>
-                                            <dl className="row">
-                                              <dt className="col-md-9">
+                                                  : "Total insurance paid in all time"}
+                                              </th>
+
+                                              <td> {orders[0].insuranceAmt}</td>
+                                            </tr>
+                                            <tr>
+                                              <th scope="row">
                                                 {this.state.year === true
                                                   ? `Total insurance returned in ${moment(
                                                       this.state.selectedYear
@@ -895,17 +890,14 @@ class AddCustomer extends Component {
                                                   ? `Total insurance returned in ${moment(
                                                       this.state.selectedMonth
                                                     ).format("MMMM-yyyy")}`
-                                                  : ""}
-                                              </dt>
-                                              <dd
-                                                className="col-md-3"
-                                                style={{ textAlignLast: "end" }}
-                                              >
-                                                {""}
-                                              </dd>
-                                            </dl>
-                                            <dl className="row">
-                                              <dt className="col-md-9">
+                                                  : "Total insurance returned in all time"}
+                                              </th>
+
+                                              <td>{""}</td>
+                                            </tr>
+                                            <tr>
+                                              <th scope="row">
+                                                {" "}
                                                 {this.state.year === true
                                                   ? `Total damage-fee paid in ${moment(
                                                       this.state.selectedYear
@@ -914,15 +906,14 @@ class AddCustomer extends Component {
                                                   ? `Total damage-fee paid in ${moment(
                                                       this.state.selectedMonth
                                                     ).format("MMMM-yyyy")}`
-                                                  : ""}
-                                              </dt>
-                                              <dd
-                                                className="col-md-3"
-                                                style={{ textAlignLast: "end" }}
-                                              ></dd>
-                                            </dl>
-                                            <dl className="row">
-                                              <dt className="col-md-9">
+                                                  : "Total damage-fee paid in all time"}
+                                              </th>
+
+                                              <td>{""}</td>
+                                            </tr>
+                                            <tr>
+                                              <th scope="row">
+                                                {" "}
                                                 {this.state.year === true
                                                   ? `Total late-fee in ${moment(
                                                       this.state.selectedYear
@@ -931,15 +922,13 @@ class AddCustomer extends Component {
                                                   ? `Total late-fee in ${moment(
                                                       this.state.selectedMonth
                                                     ).format("MMMM-yyyy")}`
-                                                  : ""}
-                                              </dt>
-                                              <dd
-                                                className="col-md-3"
-                                                style={{ textAlignLast: "end" }}
-                                              ></dd>
-                                            </dl>
-                                            <dl className="row">
-                                              <dt className="col-md-9">
+                                                  : "Total late-fee in all time "}
+                                              </th>
+                                              <td>{""}</td>
+                                            </tr>
+                                            <tr>
+                                              <th scope="row">
+                                                {" "}
                                                 {this.state.year === true
                                                   ? `Total tax paid in ${moment(
                                                       this.state.selectedYear
@@ -948,17 +937,12 @@ class AddCustomer extends Component {
                                                   ? `Total tax paid in ${moment(
                                                       this.state.selectedMonth
                                                     ).format("MMMM-yyyy")}`
-                                                  : ""}{" "}
-                                              </dt>
-                                              <dd
-                                                className="col-md-3"
-                                                style={{ textAlignLast: "end" }}
-                                              >
-                                                {orders[0].tax}
-                                              </dd>
-                                            </dl>
-                                          </div>
-                                        </div>
+                                                  : "Total tax paid in all time"}{" "}
+                                              </th>
+                                              <td> {orders[0].tax}</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
                                       </div>
                                     </div>
                                   ) : (
@@ -966,6 +950,25 @@ class AddCustomer extends Component {
                                   )}
                                 </div>
                               </div>
+                              {this.props.insightFound === false ? (
+                                <div
+                                  className="alert alert-danger alert-dismissible mb-2"
+                                  role="alert"
+                                >
+                                  <button
+                                    type="button"
+                                    className="close"
+                                    data-dismiss="alert"
+                                    aria-label="Close"
+                                  >
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                  <strong>Oh snap!</strong> Something is wrong
+                                  with the server.
+                                </div>
+                              ) : (
+                                ""
+                              )}
                             </>
                           ) : (
                             ""
@@ -995,6 +998,75 @@ class AddCustomer extends Component {
               </p>
             </footer>
           </div>
+          <Modal
+            visible={this.state.visible}
+            width="600"
+            height="290"
+            effect="fadeInUp"
+            onClickAway={(e) => this.closeModal(e)}
+          >
+            <div>
+              <div className="modal-header text-center">
+                <h5>
+                  Please check their ID to make sure the name and birthday match
+                  with the name on screen, then click confirm.
+                </h5>
+              </div>
+              <Alert />
+
+              <div className="modal-body">
+                <div className="form-group row mx-5">
+                  <div className="col-md-12">
+                    <input
+                      value={this.state.name}
+                      className="form-control border-primary text-center"
+                      readOnly
+                    />
+                  </div>
+                </div>
+                <div className="form-group row mx-5">
+                  <div className="col-md-12">
+                    <input
+                      value={moment(this.state.birthday).format("DD-MM-YYYY")}
+                      className="form-control border-primary text-center"
+                      readOnly
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                {this.state.saving ? (
+                  <button
+                    type="button"
+                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                  >
+                    <div
+                      className="spinner-grow spinner-grow-sm "
+                      role="status"
+                    ></div>{" "}
+                    &nbsp; Confirm{" "}
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    onClick={(e) => this.onSubmit(e)}
+                    className="btn grey btn-lg btn-outline-success"
+                  >
+                    Confirm
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={(e) => this.closeModal(e)}
+                  className="btn grey btn-lg btn-outline-danger"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </Modal>
         </div>
       </React.Fragment>
     );
@@ -1003,10 +1075,11 @@ class AddCustomer extends Component {
 
 AddCustomer.propTypes = {
   saved: PropTypes.bool,
-  addNewCustomer: PropTypes.func.isRequired,
-  getCustomer: PropTypes.func.isRequired,
   auth: PropTypes.object,
   customer: PropTypes.object,
+  insightFound: PropTypes.bool,
+  addNewCustomer: PropTypes.func.isRequired,
+  getCustomer: PropTypes.func.isRequired,
   updateCustomer: PropTypes.func.isRequired,
   getInsight: PropTypes.func.isRequired,
 };
@@ -1016,6 +1089,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   customer: state.customer.customer,
   insight: state.customer.insight,
+  insightFound: state.customer.insightFound,
 });
 export default connect(mapStateToProps, {
   addNewCustomer,

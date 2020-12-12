@@ -67,8 +67,10 @@ router.post(
     try {
       let body = JSON.parse(JSON.stringify(req.body))
 
-      var sections = req.body.sections
-
+      var sections
+      if (req.body.sections) {
+        sections = req.body.sections.split(',')
+      }
       // check if there is any record with same email and username
       const userByEmail = await User.findOne({ email: body.email })
       const userByUsername = await User.findOne({ username: body.username })
@@ -114,7 +116,6 @@ router.post(
           }
           let user = new User(userBody)
           await user.save()
-console.log(user.password)
           res.status(200).json({ user, msg: 'User Added Successfully' })
         })
       }
@@ -156,7 +157,6 @@ console.log(user.password)
 router.get('/', auth, async (req, res) => {
   try {
     const users = await User.find()
-    console.log(users)
     res.status(200).json(users)
     
   } catch (err) {
@@ -367,14 +367,7 @@ router.post(
       } else {
         const avatar = req.file.path
         cloudinary.uploader.upload(avatar, async function (result) {
-       console.log("result",result)
-          // fieldsToUpdate = {
-          //   ...body,
-          //   avatar: result.secure_url,
-          //   salary,
-          //   sections,
-          // }
-          console.log(body)
+       
           await User.updateOne(
             { _id: req.params.id },
             {
@@ -446,11 +439,7 @@ router.post(
       // }
       const user = await User.findById(req.params.id)
 
-      if (req.body.username !== user.username) {
-        return res.status(400).json({ errors: [{ msg: 'Wrong Username!!' }] })
-      }
-      // console.log(user)
-      // return
+      
       const salt = await bcrypt.genSalt(10)
      
       const isMatch = await bcrypt.compare(req.body.currentpassword, user.password);

@@ -24,7 +24,6 @@ class ConfigureSystemUser extends Component {
         // check form is to Add or Edit
 
         const { user } = this.props
-        console.log(this.props.location)
         const {state } = this.props.location.data
         if (user) {
             this.setState({

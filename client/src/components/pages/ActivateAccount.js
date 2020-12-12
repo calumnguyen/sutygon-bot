@@ -4,31 +4,25 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../layout/Alert";
 import { getShop } from "../../actions/dashboard";
-import Loader from '../layout/Loader'
+import Loader from "../layout/Loader";
 import { updatePassword, getUser } from "../../actions/user";
 import { logout } from "../../actions/auth";
-import Sidebar from '../layout/Sidebar'
-import Header from '../layout/Header'
+
 class ActivateAccount extends Component {
   state = {
-    id: '',
+    id: "",
     username: "",
     accountStatus: "",
-    password: '',
-    newpassword: '',
-    confirmpassword: '',
+    password: "",
+    newpassword: "",
+    confirmpassword: "",
     logout: false,
   };
 
+ 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.props.auth !== prevProps.auth) {
-      const { user } = this.props.auth
-      if (user) {
-        this.setState({
-          id: user._id,
-        })
-        await this.props.getUser(user._id)
-      }
+    if (prevProps.passwordUpdated !== this.props.passwordUpdated) {
+      await this.props.getUser(this.state.id);
     }
   }
 
@@ -39,22 +33,21 @@ class ActivateAccount extends Component {
   };
   onUpdatePassword = async (e) => {
     e.preventDefault();
-    const state = { ...this.state }
-    const user = {
-      username: state.username,
-      currentpassword: (state.password).trim(),
-      newpassword: (state.newpassword).trim(),
-      confirmpassword: (state.confirmpassword).trim()
-    }
-    if(state.id !== ""){
-     await this.props.updatePassword(user, state.id) 
-  }}
+    const state = { ...this.state };
+    const { user } = this.props.auth;
+
+    const data  = {
+      currentpassword: state.password.trim(),
+      newpassword: state.newpassword.trim(),
+      confirmpassword: state.confirmpassword.trim(),
+    };
+    await this.props.updatePassword(data, user._id);
+  };
 
   logout = async (e) => {
     e.preventDefault();
-    await this.props.logout()
-    this.setState({ logout: true })
-  }
+    await this.props.logout();
+  };
   render() {
     const { user } = this.props.auth;
 
@@ -64,22 +57,20 @@ class ActivateAccount extends Component {
       }
     }
 
-    if (this.props.passwordUpdated === true) {
-      return <Redirect to="/dashboard" />;
+    if (this.props.passwordUpdated  && this.props.passwordUpdated === true) {
+        return <Redirect to="/dashboard" />;
+      
     }
-    if (this.props.user && this.props.user.isPasswordChanged === true) {
-      return <Redirect to="/dashboard" />;
-    }
+   
     if (this.state.logout === true) {
       return <Redirect to="/login" />;
     }
 
     return (
-
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
-          <div className='main-panel'>
+        <div className="wrapper menu-collapsed">
+          <div className="main-panel">
             {/* <div className='main-content'> */}
             {/* <div className='content-wrapper'> */}
             <section id="maintenance" className="full-height-vh">
@@ -93,23 +84,18 @@ class ActivateAccount extends Component {
                             <div className="logo-img text-center align-middle mt-n3">
                               <img
                                 alt={"Sutygon-bot"}
-                                src="assets/img/logos/logo.png" height={100} width={150} />
+                                src="assets/img/logos/logo.png"
+                                height={100}
+                                width={150}
+                              />
                             </div>
                             <h3 className="card-text mb-1 mt-n2 text-center align-middle">
-                              Update Password                  </h3>
+                              Update Password{" "}
+                            </h3>
                             <form onSubmit={(e) => this.onUpdatePassword(e)}>
                               <Alert />
 
-                              <div className="form-group row">
-                                <div className="col-md-12">
-                                  <input type="text"
-                                    className="form-control border-primary"
-                                    placeholder="Username"
-                                    required
-                                    onChange={(e) => this.onChange(e)}
-                                    name="username" />
-                                </div>
-                              </div>
+                             
                               <div className="form-group row">
                                 <div className="col-md-12">
                                   <input
@@ -119,10 +105,10 @@ class ActivateAccount extends Component {
                                     name="password"
                                     value={this.state.password}
                                     onChange={(e) => this.onChange(e)}
-                                  /></div>
+                                  />
+                                </div>
                               </div>
                               <div className="form-group row">
-
                                 <div className="col-md-12">
                                   <input
                                     type="password"
@@ -131,21 +117,20 @@ class ActivateAccount extends Component {
                                     name="newpassword"
                                     value={this.state.newpassword}
                                     onChange={(e) => this.onChange(e)}
-
-                                  /></div>
+                                  />
+                                </div>
                               </div>
                               <div className="form-group row">
                                 <div className="col-md-12">
                                   <input
                                     type="password"
-
                                     className="form-control border-primary"
                                     placeholder="Re-type password"
                                     name="confirmpassword"
                                     value={this.state.confirmpassword}
                                     onChange={(e) => this.onChange(e)}
-
-                                  /></div>
+                                  />
+                                </div>
                               </div>
                               <div className="fg-actions justify-content-between">
                                 <div className="form-group row">
@@ -164,10 +149,9 @@ class ActivateAccount extends Component {
                                       onClick={(e) => this.logout(e)}
                                     />
                                   </div>
-                                </div></div>
-
+                                </div>
+                              </div>
                             </form>
-
                           </div>
                         </div>
                       </div>
@@ -178,16 +162,12 @@ class ActivateAccount extends Component {
             </section>
             {/* </div> */}
             {/* </div> */}
-
-
           </div>
-
         </div>
-      </React.Fragment >
+      </React.Fragment>
     );
   }
 }
-
 
 ActivateAccount.propTypes = {
   auth: PropTypes.object,
@@ -195,7 +175,7 @@ ActivateAccount.propTypes = {
   user: PropTypes.object,
   getUser: PropTypes.func.isRequired,
   updatePassword: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired
+  logout: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -203,11 +183,11 @@ const mapStateToProps = (state) => ({
   AuthLoading: state.auth.loading,
   auth: state.auth,
   passwordUpdated: state.user.passwordUpdated,
-  user: state.user.profile
-
-
+  user: state.user.profile,
 });
 
 export default connect(mapStateToProps, {
-  getUser, updatePassword, logout
+  getUser,
+  updatePassword,
+  logout,
 })(ActivateAccount);

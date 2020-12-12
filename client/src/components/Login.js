@@ -7,10 +7,8 @@ import { updatePassword, getUser } from "../actions/user";
 
 import Alert from "./layout/Alert";
 import { getShop } from "../actions/dashboard";
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
-;
-
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
 class Login extends Component {
   state = {
     username: "",
@@ -18,10 +16,9 @@ class Login extends Component {
     password: "",
     newpassword: "",
     confirmpassword: "",
-    id: '',
-    tempPass: '',
-    userID: '',
-
+    id: "",
+    tempPass: "",
+    userID: "",
   };
 
   async componentDidMount() {
@@ -36,12 +33,10 @@ class Login extends Component {
       if (userInfo) {
         this.setState({
           tempPass: userInfo.tempPass,
-          userID: userInfo.userID
-        })
+          userID: userInfo.userID,
+        });
       }
-
     }
-
   }
   onChange = (e) => {
     // let { formData } = this.state;
@@ -55,29 +50,27 @@ class Login extends Component {
 
     const { username, password } = this.state;
     login(username, password);
-
-  }
+  };
 
   onUpdatePassword = async (e) => {
     e.preventDefault();
-    const state = { ...this.state }
+    const state = { ...this.state };
     const user = {
       currentpassword: state.password,
       newpassword: state.newpassword,
-      confirmpassword: state.confirmpassword
-    }
-    await this.props.updatePassword(user,state.userID)
-  }
+      confirmpassword: state.confirmpassword,
+    };
+    await this.props.updatePassword(user, state.userID);
+  };
 
   valideTemppass = (password, e) => {
     e.preventDefault();
     const { tempPass } = this.state;
     if (tempPass !== password) {
-      OCAlert.alertError('Wrong Password', { timeOut: 3000 });
+      OCAlert.alertError("Wrong Password", { timeOut: 3000 });
       return;
     }
-
-  }
+  };
   valideConfrmpass = (password, e) => {
     e.preventDefault();
     const { confirmpassword, newpassword } = this.state;
@@ -85,8 +78,7 @@ class Login extends Component {
       OCAlert.alertError(`Confirm password is wrong`, { timeOut: 3000 });
       return;
     }
-
-  }
+  };
 
   render() {
     const { shop } = this.props;
@@ -94,36 +86,41 @@ class Login extends Component {
 
     if (user && user.systemRole === "Employee") {
       if (shop) {
-        let openShop = shop[0]
+        let openShop = shop[0];
         if (openShop) {
           if (this.props.AuthLoading === false && this.props.isAuthenticated) {
-            if (openShop.status === "on") {
+            if (openShop.status === "on" && user.isPasswordChanged === true) {
               return <Redirect to="/dashboard" />;
-            }
-
-            else if (openShop.status === "off") {
-              return <Redirect to={{ pathname:'/storeclosed',
-            }} />;
+            } else if (
+              openShop.status === "on" &&
+              user.isPasswordChanged === false
+            ) {
+              return <Redirect to="/ActivateAccount" />;
+            } else if (openShop.status === "off") {
+             return <Redirect
+                push
+                to={{
+                  pathname: "/storeclosed",
+                  shop: shop[0],
+                }}
+              />;
             }
           }
-
         }
       }
-    }
-    if (user && user.systemRole === "Admin") {
+    } else if (user && user.systemRole === "Admin") {
       if (this.props.AuthLoading === false && this.props.isAuthenticated) {
         return <Redirect to="/dashboard" />;
       }
     }
 
     return (
-
       <div className="wrapper menu-collapsed">
         <div className="main-panel">
-          <div className=""  >
-            <div className="" >
-              <section id="login"  >
-                <div className="container-fluid" >
+          <div className="">
+            <div className="">
+              <section id="login">
+                <div className="container-fluid">
                   <div className="row full-height-vh m-0">
                     <div className="col-12 d-flex align-items-center justify-content-center">
                       <div className="card m-5">
@@ -131,37 +128,50 @@ class Login extends Component {
                           <div className="card-body login-img">
                             <div className="row m-0">
                               <div className="col-lg-6 d-lg-block d-none py-2 text-center align-middle mt-5 mb-n5 img-block">
-                                <img alt=""
+                                <img
+                                  alt=""
                                   className="img-fluid imglogin"
                                   width="400"
-                                  height="230">
-                                </img>
+                                  height="230"
+                                ></img>
                               </div>
                               <div className="col-lg-6 col-md-12 bg-white px-4 pt-3">
                                 <div className="logo-img text-center align-middle">
                                   <img
                                     alt={"Sutygon-bot"}
-                                    src="assets/img/logos/logo.png" height={100} width={100} />
+                                    src="assets/img/logos/logo.png"
+                                    height={100}
+                                    width={100}
+                                  />
                                 </div>
-                                <h4 className="mb-2 card-title text-center align-middle" style={{}}>Đăng Nhập</h4>
+                                <h4
+                                  className="mb-2 card-title text-center align-middle"
+                                  style={{}}
+                                >
+                                  Đăng Nhập
+                                </h4>
                                 <p className="card-text mb-3 text-center align-middle">
                                   Đăng Nhập Với Một Nụ Cười Nào
-                  </p>
+                                </p>
                                 <form onSubmit={(e) => this.onSubmit(e)}>
                                   <Alert />
 
-                                  <input type="text"
+                                  <input
+                                    type="text"
                                     className="form-control mb-3"
                                     placeholder="Username"
                                     required
                                     onChange={(e) => this.onChange(e)}
-                                    name="username" />
-                                  <input type="password"
+                                    name="username"
+                                  />
+                                  <input
+                                    type="password"
                                     className="form-control mb-1"
                                     placeholder="Password"
                                     required
                                     onChange={(e) => this.onChange(e)}
-                                    name="password" />
+                                    name="password"
+                                  />
                                   <div className="fg-actions justify-content-between">
                                     <div className="recover-pass">
                                       <input
@@ -172,7 +182,6 @@ class Login extends Component {
                                     </div>
                                   </div>
                                 </form>
-                              
                               </div>
                             </div>
                           </div>
@@ -182,17 +191,29 @@ class Login extends Component {
                   </div>
                 </div>
               </section>
-
             </div>
           </div>
         </div>
-        <div className="modal fade text-center" id="default" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel1"
-          aria-hidden="true">
+        <div
+          className="modal fade text-center"
+          id="default"
+          tabIndex="-1"
+          role="dialog"
+          aria-labelledby="myModalLabel1"
+          aria-hidden="true"
+        >
           <div className="modal-dialog" role="document">
-            <div className="modal-content" style={{ marginTop: '170px' }}>
+            <div className="modal-content" style={{ marginTop: "170px" }}>
               <div className="modal-header  text-center">
-                <h4 className="modal-title" id="myModalLabel1">Update Password</h4>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                <h4 className="modal-title" id="myModalLabel1">
+                  Update Password
+                </h4>
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
@@ -213,7 +234,9 @@ class Login extends Component {
                           /></div>
                       </div> */}
                       <div className="form-group row">
-                        <label className="col-md-3 label-control">Current</label>
+                        <label className="col-md-3 label-control">
+                          Current
+                        </label>
                         <div className="col-md-9">
                           <input
                             className="form-control border-primary"
@@ -221,8 +244,11 @@ class Login extends Component {
                             name="password"
                             value={this.state.password}
                             onChange={(e) => this.onChange(e)}
-                            onBlur={(e) => this.valideTemppass(this.state.password, e)}
-                          /></div>
+                            onBlur={(e) =>
+                              this.valideTemppass(this.state.password, e)
+                            }
+                          />
+                        </div>
                       </div>
                       <div className="form-group row">
                         <label className="col-md-3 label-control">New</label>
@@ -233,11 +259,13 @@ class Login extends Component {
                             name="newpassword"
                             value={this.state.newpassword}
                             onChange={(e) => this.onChange(e)}
-
-                          /></div>
+                          />
+                        </div>
                       </div>
                       <div className="form-group row">
-                        <label className="col-md-3 label-control">Re-type New</label>
+                        <label className="col-md-3 label-control">
+                          Re-type New
+                        </label>
                         <div className="col-md-9">
                           <input
                             className="form-control border-primary"
@@ -245,31 +273,43 @@ class Login extends Component {
                             name="confirmpassword"
                             value={this.state.confirmpassword}
                             onChange={(e) => this.onChange(e)}
-                            onBlur={(e) => this.valideConfrmpass(this.state.confirmpassword, e)}
-
-                          /></div>
+                            onBlur={(e) =>
+                              this.valideConfrmpass(
+                                this.state.confirmpassword,
+                                e
+                              )
+                            }
+                          />
+                        </div>
                       </div>
-                    </div></div>
-                    <div className="modal-footer">
-                <button
-                  type="submit"
-                  className="btn grey btn-lg btn-outline-success"
-                >Save Changes</button>
-                <button type="button" className="btn btn-outline-danger btn-lg" data-dismiss="modal">Cancel</button>
-              </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      type="submit"
+                      className="btn grey btn-lg btn-outline-success"
+                    >
+                      Save Changes
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger btn-lg"
+                      data-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </form>
               </div>
-          
+
               <OCAlertsProvider />
             </div>
           </div>
         </div>
       </div>
-
     );
   }
 }
-
 
 Login.propTypes = {
   auth: PropTypes.object,
@@ -290,11 +330,12 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   shop: state.dashboard.shop,
   passwordUpdated: state.user.passwordUpdated,
-  user: state.user.user
-
+  user: state.user.user,
 });
 
 export default connect(mapStateToProps, {
-  login, updatePassword, getUser,
-  getShop
+  login,
+  updatePassword,
+  getUser,
+  getShop,
 })(Login);

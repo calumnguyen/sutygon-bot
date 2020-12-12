@@ -49,8 +49,8 @@ class ViewCustomer extends Component {
         m_cust.push({
           contactnumber: customer.contactnumber,
           name: customer.name,
-          online_acc: customer.online_account[0] &&  customer.online_account[0].exist && customer.online_account[0].exist,
-          membership:customer.online_account&&customer.online_account[0] &&  customer.online_account[0].membership && customer.online_account[0].membership ,
+          online_acc: customer.online_account && customer.online_account.exist,
+          membership:customer.online_account && customer.online_account.membership ,
           actions: (
             <>
               <Link

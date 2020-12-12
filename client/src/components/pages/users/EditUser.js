@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Sidebar from '../../layout/Sidebar'
 import Header from '../../layout/Header'
-import {getAllUsers, updateUser, getUser, codeVerify, updatePassword } from '../../../actions/user'
+import { updateUser, getUser, codeVerify, updatePassword } from '../../../actions/user'
 import Loader from '../../layout/Loader'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -72,7 +72,6 @@ class EditUser extends Component {
     if (this.props.match.params.id) {
       const id = this.props.match.params.id
       await this.props.getUser(id)
-      await this.props.getAllUsers()
       const { user } = this.props
       if (user) {
         this.setState({
@@ -113,9 +112,7 @@ class EditUser extends Component {
 async componentDidUpdate(prevProps,prevState){
   if(prevProps.passwordUpdated !==this.props.passwordUpdated ){
     await this.props.logout()
-    // this.setState({ logout: true })
   }
-
 }
  
 
@@ -1213,6 +1210,15 @@ Report
                             </div>
                             // <div className='alert alert-danger'>Please select birthday</div>
                           )}
+                           {this.state.systemRole === "Employee" && this.state.sections === ""? (
+                            <div className="alert alert-warning alert-dismissible fade show" role="alert">
+                              <strong></strong> Please Configure Employee Permission.
+                              <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            // <div className='alert alert-danger'>Please select birthday</div>
+                          ):""}
 
                           <div className='form-actions top'>
                             {this.state.saving ? (
@@ -1352,7 +1358,6 @@ Report
 }
 
 EditUser.propTypes = {
-  // setAlert: PropTypes.func.isRequired,
   user: PropTypes.object,
   auth: PropTypes.object,
   saved: PropTypes.bool,
@@ -1361,7 +1366,6 @@ EditUser.propTypes = {
   codeVerify: PropTypes.func.isRequired,
   updatePassword: PropTypes.func.isRequired,
   logout:PropTypes.func.isRequired,
-  getAllUsers:PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -1374,6 +1378,6 @@ const mapStateToProps = (state) => ({
 })
 
 export default connect(mapStateToProps, {
-  updateUser, codeVerify,getAllUsers,
+  updateUser, codeVerify,
   getUser, updatePassword,logout
 })(EditUser)

@@ -18,6 +18,7 @@ import {
     saved: false,
     searchedCustomer:null,
     insight:null,
+    insightFound:null,
     error: {},
   };
   
@@ -58,6 +59,8 @@ import {
             ...state,
             insight: payload,
             loading: false,
+            insightFound:true
+
           };
   
       case CUSTOMER_SAVED:
@@ -78,6 +81,7 @@ import {
           ...state,
           error: payload,
           loading: false,
+          insightFound:false
         };
   
       case CUSTOMER_DELETED:

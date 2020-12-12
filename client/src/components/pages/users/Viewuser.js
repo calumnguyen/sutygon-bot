@@ -34,6 +34,7 @@ class ViewUser extends Component {
       })
     }
   }
+
 //  async componentDidUpdate() {
 // this.setState({users:this.props.users})    // await this.props.getAllUsers()
     // this.setState({ users: this.props.users });
@@ -93,11 +94,13 @@ class ViewUser extends Component {
               className="info p-0">
               <i className="ft-user font-medium-3 mr-2" title="View Profile"></i>
             </Link> */}
+            {auth_user && auth_user.systemRole === "Admin" ?
             <Link
               to={{ pathname: `/user/edituser/${user._id}` }}
               className="success p-0">
               <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit User"></i>
             </Link>
+            :""}
             {/*            
             {auth_user && auth_user.type === "Admin" ?
               <Link
@@ -112,7 +115,7 @@ class ViewUser extends Component {
               </Link>
               : ""} */}
 
-            {auth_user && auth_user.type === "Admin" ?
+            {auth_user && auth_user.systemRole === "Admin" ?
               <Link to="/user"
                 onClick={() => this.onDelete(user._id)}
                 className="danger p-0">
@@ -124,30 +127,7 @@ class ViewUser extends Component {
       ))
     }
   }
-  getUser = () => {
-    // const { users } = this.props
-    // if (users) {
-    //   const activeUsers = users.filter((a) => a.accountStatus === 'active')
-    //   const inactiveUsers = users.filter((a) => a.accountStatus === 'inactive')
-
-    //   if (this.state.allusers === true) {
-    //     this.setState({
-    //       users: users
-    //     })
-    //     // return users
-    //   } else if (this.state.activeUsers === true) {
-    //     this.setState({
-    //       users: activeUsers
-    //     })
-    //     // return activeUsers
-    //   } else if (this.state.inactiveUsers === true) {
-    //     this.setState({
-    //       users: inactiveUsers
-    //     })
-    //     // return inactiveUsers
-    //   }
-    // }
-  }
+ 
   handleChange = () => {
     const { users } = this.props
     const activeUsers = users.filter((a) => a.accountStatus === 'active')
@@ -173,7 +153,6 @@ class ViewUser extends Component {
 
   handleChange_alluser = () => {
     const { users } = this.props
-    console.log(users)
     this.setState({
       activeUsers: false,
       inactiveUsers: false,
@@ -226,8 +205,12 @@ class ViewUser extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to='/' />
     }
+    const {user} = auth;
+    
+    if(user && user.systemRole ==="Employee"){
+      return <Redirect to="/Error"/>
+    }
 
-    const { users } = this.props
 
     return (
       <React.Fragment>

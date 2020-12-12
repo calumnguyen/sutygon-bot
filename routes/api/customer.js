@@ -37,7 +37,6 @@ router.post(
         .select('_id')
 
       if (emailExist) {
-        console.log(emailExist)
         return res
           .status(409)
           .json({ errors: [{ msg: 'Email already exists' }] })
@@ -84,7 +83,6 @@ router.post('/:id', auth, async (req, res) => {
   try {
     let { name, birthday, online_account } = req.body
     let { username } = { ...online_account }
-    console.log(req.body)
     // now remove those key:items from the req.body with are not editable.
     if (name || birthday) {
       delete req.body['name']
@@ -227,7 +225,6 @@ router.delete('/:id', auth, async (req, res) => {
 
 router.post('/:id/insights', auth, async (req, res) => {
   try {
-    console.log("123", req.body)
     let { year, month, allTime } = { ...req.body }
 
     var startDate
@@ -256,7 +253,6 @@ router.post('/:id/insights', auth, async (req, res) => {
       startDate = moment('2012').format('YYYY-MM-DD')
       // Till current moment.
       endDate = moment().format(moment.HTML5_FMT.DATE)
-      console.log("123",endDate)
     }
 
     //converted to ObjectId because aggregator is type-sensitive.
@@ -400,7 +396,6 @@ router.get('/status/blocked', auth, async (req, res) => {
       .select('name email')
       .lean()
 
-    console.log(customer)
 
     if (!customer) {
       return res.status(404).json({ msg: 'No Customer found' })
