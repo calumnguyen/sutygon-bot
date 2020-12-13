@@ -180,7 +180,6 @@ router.post('/:id', auth, upload.single('image'), async (req, res) => {
     } else {
       const image = req.file.path
       cloudinary.uploader.upload(image, async function (result) {
-        console.log(result)
         await Product.updateOne(
           { _id: req.params.id },
           {

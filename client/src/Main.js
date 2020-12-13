@@ -24,6 +24,8 @@ import ScanBarcode from './components/pages/returnproduct/scanBarcode'
 import RentOrder from './components/pages/rentOrder'
 import ActivateAccount from './components/pages/ActivateAccount'
 import Test from './components/pages/users/test'
+import Error from './components/pages/Error'
+
 import Report from './components/pages/report/report'
 import ReportOrder from './components/pages/report/reportOrder'
 import MatchBarcodes from './components/pages/returnproduct/matchBarcodes'
@@ -125,6 +127,8 @@ const Main = () => {
 
           {/* barcode */}
           <PrivateRoute exact path='/barcode' component={Barcode} />
+          <PrivateRoute exact path='/Error' component={Error} />
+
         </Switch>
       </Router>
     </Provider>

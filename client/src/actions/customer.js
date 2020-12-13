@@ -80,7 +80,7 @@ export const getAllCustomers = () => async (dispatch) => {
 
   const body = JSON.stringify(customer);
   try {
-    const res = await axios.get(`/api/customers/${id}/insights`);
+    const res = await axios.post(`/api/customers/${id}/insights`,body,config);
 
     dispatch({
       type: GET_INSIGHT,

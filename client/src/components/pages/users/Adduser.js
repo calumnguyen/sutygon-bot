@@ -84,7 +84,7 @@ class AddUser extends Component {
     const formData = new FormData()
     formData.append('avatar', this.state.avatar)
     formData.append('username', this.state.username)
-    formData.append('fullname', this.state.username)
+    formData.append('fullname', this.state.fullname)
     formData.append('contactnumber', this.state.contactnumber)
     formData.append('email', this.state.email)
     formData.append('password', this.state.tempPwd)
@@ -284,12 +284,8 @@ class AddUser extends Component {
                                   className='form-control border-primary'
                                   onChange={(e) => this.handleChange(e)}
                                 >
-
                                   <option
                                     name="systemRole"
-
-                                    // value={'Admin' === this.state.type}
-                                    // selected={'SuperAdmin' === this.state.type}
                                     value='Admin'
                                   >
                                     {' '}
@@ -297,9 +293,6 @@ class AddUser extends Component {
                                   </option>
                                   <option
                                     name="systemRole"
-
-                                    // value={'Employee' === this.state.type}
-                                    // selected={'Employee' === this.state.type}
                                     value='Employee'
                                   >
                                     {' '}

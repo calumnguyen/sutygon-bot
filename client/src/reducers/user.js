@@ -36,7 +36,7 @@ export default function (state = initialState, action) {
         ...state,
         loading: true,
         saved: false,
-
+        passwordUpdated: false
 
       };
     case GET_USERS:
@@ -53,6 +53,7 @@ export default function (state = initialState, action) {
         profile: payload,
         loading: false,
         saved: false,
+        passwordUpdated: false
 
       };
 
@@ -71,7 +72,9 @@ export default function (state = initialState, action) {
         error: payload,
         loading: false,
         saved: false,
-        codeverified:false
+        codeverified:false,
+        passwordUpdated: false
+
 
 
       };
@@ -82,7 +85,7 @@ export default function (state = initialState, action) {
         ...state,
         // users: payload,
         loading: false,
-        passwordUpdated: true,
+        // passwordUpdated: true,
         saved: true
       };
     case USER_DELETED:

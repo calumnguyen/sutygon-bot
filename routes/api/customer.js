@@ -37,7 +37,6 @@ router.post(
         .select('_id')
 
       if (emailExist) {
-        console.log(emailExist)
         return res
           .status(409)
           .json({ errors: [{ msg: 'Email already exists' }] })
@@ -84,9 +83,8 @@ router.post('/:id', auth, async (req, res) => {
   try {
     let { name, birthday, online_account } = req.body
     let { username } = { ...online_account }
-
     // now remove those key:items from the req.body with are not editable.
-    if (name || birthday || username) {
+    if (name || birthday) {
       delete req.body['name']
       delete req.body['birthday']
       delete online_account['username']
@@ -160,7 +158,7 @@ router.get('/search/:contactnumber', auth, async (req, res) => {
       return status(404).json({ msg: 'No Customer found' })
     }
 
-  return res.status(200).json(customer)
+    return res.status(200).json(customer)
   } catch (err) {
     console.error(err.message)
     // Check if id is not valid
@@ -221,13 +219,12 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
-// @route  GET api/customers/insights
-// @desc   Get customer insights
+// @route  POST api/customers/insights
+// @desc   Post customer insights
 // @access Private
 
-router.get('/:id/insights', auth, async (req, res) => {
+router.post('/:id/insights', auth, async (req, res) => {
   try {
-    console.log("123",req.body)
     let { year, month, allTime } = { ...req.body }
 
     var startDate
@@ -247,7 +244,6 @@ router.get('/:id/insights', auth, async (req, res) => {
 
     if (month) {
       startDate = moment(month).format('YYYY-MM-DD')
-
       // gets the last day of month , whether it is 29,30 or 31 automatically!
       endDate = moment(startDate).endOf('month').format(moment.HTML5_FMT.DATE)
     }
@@ -400,7 +396,6 @@ router.get('/status/blocked', auth, async (req, res) => {
       .select('name email')
       .lean()
 
-    console.log(customer)
 
     if (!customer) {
       return res.status(404).json({ msg: 'No Customer found' })
