@@ -70,7 +70,8 @@ class AddCustomer extends Component {
               : "",
           year: customer.year ? moment(customer.year).format("DD/MM/YYYY") : "",
           createdAt: moment(customer.createdAt).format("DD/MM/YYYY"),
-          birthday: moment(customer.birthday).format("DD/MM/YYYY"),
+          birthday:
+            customer.birthday && moment(customer.birthday).format("DD/MM/YYYY"),
         });
       }
     }
@@ -157,20 +158,21 @@ class AddCustomer extends Component {
     e.preventDefault();
     this.setState({ saving: true });
     const state = { ...this.state };
+    const { customer } = this.props;
     let m_oc = {
       exist: "no",
-      membership: this.state.membership !=="" ? this.state.membership:null,
+      membership: this.state.membership !== "" ? this.state.membership : null,
       username: this.state.name,
       email: "unverified",
       deactivate: false,
-      account_created: this.state.createdAt,
+      // account_created: this.state.createdAt,
     };
-    var customer = {
+    var customerData = {
       name: state.name,
       email: state.email,
       contactnumber: state.contactnumber,
       address: state.address,
-      birthday: moment(state.birthday),
+      birthday: state.id === "" ? moment(state.birthday) : customer.birthday,
       company: state.company,
       company_address: state.company_address,
       online_account: m_oc,
@@ -178,9 +180,9 @@ class AddCustomer extends Component {
     };
 
     if (state.id === "") {
-      await this.props.addNewCustomer(customer);
+      await this.props.addNewCustomer(customerData);
     } else {
-      await this.props.updateCustomer(customer, state.id);
+      await this.props.updateCustomer(customerData, state.id);
     }
     this.setState({ saving: false });
   };

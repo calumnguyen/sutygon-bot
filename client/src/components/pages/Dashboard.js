@@ -285,7 +285,7 @@ class Dashboard extends Component {
                     </div>
                   </div>
                 </div>
-                {user && user.type === "Admin" ? (
+                {user && user.systemRole === "Admin" ? (
                   <>
                     <div className="row">
                       <div className="col-md-12">
