@@ -52,12 +52,9 @@ router.post(
       }
       const salt = await bcrypt.genSalt(10)
       const passwordEntered = await bcrypt.hash(password, salt)
-<<<<<<< HEAD
-      const userInfo = { tempPass: user.password, userID: user._id }
       // check if user is active or not...
       if (user.accountStatus !== 'active') {
         return res.status(403).json({
-          userInfo,
           errors: [
             {
               msg: `Sorry! User is not activated. Inactivated on ${moment(
@@ -65,15 +62,6 @@ router.post(
               ).format('DD-MMM-YYYY')}`,
             },
           ],
-=======
-       // check if user is active or not...
-       if (user.accountStatus !== 'active') {
-        return res.status(403).json({
-             errors:[{ msg: `Sorry! User is not activated. Inactivated on ${moment(
-                user.inactivated_date
-              ).format('DD-MMM-YYYY')}`,
-            }]
->>>>>>> fb2ee98810379d7040b66460109f103eee8dab7f
         })
       }
 

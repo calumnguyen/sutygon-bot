@@ -51,7 +51,7 @@ router.get('/', auth, async (req, res) => {
       let eachProdSizeArr = []
 
       // Each product details of single order is pushed into it.
-      let singleProdDetailsArr = []
+      let singleProdDetailsArr = new Array()
 
       // check if order consists of order_id else ignore it.
       if (alteration.order_id) {
@@ -97,7 +97,7 @@ router.get('/', auth, async (req, res) => {
                   // Traverse through each barcode inside the barcode array inside the sizes array...
                   for (barcode of psize.barcodes) {
                     // If barcode is matched.
-                    if (barcode.barcode === bcode) {
+                    if (barcode.barcode == bcode) {
                       // Updating details of single product..
                       // Created new object to avoid references.
                       let singleProdDetails = new Object()
