@@ -176,7 +176,7 @@ class AddCustomer extends Component {
       company: state.company,
       company_address: state.company_address,
       online_account: m_oc,
-      // block_account: state.block_account
+      block_account: state.block_account
     };
 
     if (state.id === "") {
