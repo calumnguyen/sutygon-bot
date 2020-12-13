@@ -284,6 +284,13 @@ class AddUser extends Component {
                                   className='form-control border-primary'
                                   onChange={(e) => this.handleChange(e)}
                                 >
+                                   <option
+                                    name="systemRole"
+                                    value=''
+                                  >
+                                    {' '}
+                                --- Select --- {' '}
+                                  </option>
                                   <option
                                     name="systemRole"
                                     value='Admin'
