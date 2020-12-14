@@ -36,7 +36,7 @@ class Error extends Component {
                         <img
                           src="assets/img/logo.png"
                           alt=""
-                          className="img-fluid maintenance-img mb-n2"
+                          className="img-fluid maintenance-img mb-2"
                           height="250"
                           width="300"
                         />
@@ -44,7 +44,7 @@ class Error extends Component {
                      ACCESS DENIED..
                         </h1>
 
-                        <button className="btn btn-danger btn-lg mt-n3">
+                        <button className="btn btn-danger btn-lg mt-3">
                           <a
                             href="/dashboard"
                             className="text-decoration-none text-white"
