@@ -622,7 +622,12 @@ class Barcode extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-
+    const { user } = auth;
+    if (user && user.systemRole === "Employee") {
+      if (user && !user.sections.includes("Barcode")) {
+        return <Redirect to="/Error" />;
+      }
+    }
     // if (this.props.saved) {
     //   return <Redirect to="/barcode" />;
     // }

@@ -6,7 +6,7 @@ exports.isAdmin = async (req, res, next) => {
       .lean() // To avoid making hydrated POJO obj...
 
     // checks if the user is 'Admin'
-    if (!(user.type === 'Admin')) {
+    if (!(user.systemRole === 'Admin')) {
       return res
         .status(401)
         .json({ msg: 'Access denied. Only Admins are allowed.' })

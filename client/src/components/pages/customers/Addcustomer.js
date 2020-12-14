@@ -205,7 +205,13 @@ class AddCustomer extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
+    const {user} = auth;
+    if(user && user.systemRole ==="Employee"){
+      if(user && !user.sections.includes("Customers")){
+        return <Redirect to="/Error"/>
 
+      }
+    }
     if (this.props.saved) {
       return <Redirect to="/customer" />;
     }

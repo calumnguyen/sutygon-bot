@@ -435,7 +435,13 @@ class RentOrder extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
+    const {user} = auth;
+    if(user && user.systemRole ==="Employee"){
+      if(user && !user.sections.includes("Rentproduct")){
+        return <Redirect to="/Error"/>
 
+      }
+    }
     // if (this.state.redirect === true) {
     //   return <Redirect to="/rentproduct" />;
     // }

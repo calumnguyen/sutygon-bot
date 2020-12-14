@@ -208,6 +208,13 @@ class Checkout extends Component {
       return <Redirect to="/rentproduct" />;
 
     }
+    const {user} = auth;
+    if(user && user.systemRole ==="Employee"){
+      if(user && !user.sections.includes("Rentproduct")){
+        return <Redirect to="/Error"/>
+
+      }
+    }
     // if (this.props.saved) {
     //   return <Redirect to="/orders" />;
     // }

@@ -205,6 +205,13 @@ class RentProduct extends Component {
 
   render() {
     const { auth } = this.props;
+    const {user} = auth;
+    if(user && user.systemRole ==="Employee"){
+      if(user && !user.sections.includes("Rentproduct")){
+        return <Redirect to="/Error"/>
+
+      }
+    }
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
