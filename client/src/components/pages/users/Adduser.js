@@ -42,7 +42,7 @@ class AddUser extends Component {
       if (user) {
         this.setState({
           id: id,
-          fullname: user.username,
+          fullname: user.fullname,
           username: user.username,
           avatar: user.avatar,
           tempPwd: tempPwd,
@@ -70,9 +70,10 @@ class AddUser extends Component {
   };
 
   handleChangeNumber = (e) => {
-    this.setState({
-      [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : "",
-    });
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === "" || re.test(e.target.value)) {
+      this.setState({ [e.target.name]: e.target.value });
+    }
   };
 
   onSubmit = async (e) => {
@@ -249,7 +250,7 @@ class AddUser extends Component {
                             <div className="form-group row">
                               <label
                                 className="col-md-3 label-control"
-                                for="userinput1"
+                                htmlFor="userinput1"
                               >
                                 E-mail
                               </label>
@@ -271,7 +272,7 @@ class AddUser extends Component {
                             <div className="form-group row">
                               <label
                                 className="col-md-3 label-control"
-                                for="userinput1"
+                                htmlFor="userinput1"
                               >
                                 Contact Number
                               </label>
@@ -283,6 +284,7 @@ class AddUser extends Component {
                                   required
                                   placeholder="Phone"
                                   name="contactnumber"
+                                  // onKeyPress={(e)=>this.isNumberKey(e)}
                                   onChange={(e) => this.handleChangeNumber(e)}
                                   value={this.state.contactnumber}
                                 />
@@ -295,7 +297,7 @@ class AddUser extends Component {
                             <div className="form-group row">
                               <label
                                 className="col-md-3 label-control"
-                                for="userinput1"
+                                htmlFor="userinput1"
                               >
                                 Job Title
                               </label>
@@ -317,7 +319,7 @@ class AddUser extends Component {
                             <div className="form-group row">
                               <label
                                 className="col-md-3 label-control"
-                                for="userinput1"
+                                htmlFor="userinput1"
                               >
                                 Select Type
                               </label>
@@ -353,7 +355,7 @@ class AddUser extends Component {
                             <div className="form-group row">
                               <label
                                 className="col-md-3 label-control"
-                                for="userinput1"
+                                htmlFor="userinput1"
                               >
                                 Gender
                               </label>

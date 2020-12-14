@@ -644,7 +644,7 @@ to customer</h4>
 
           </div>
           {/* Invoice Modal */}
-          <div class="modal fade text-left" id="primary" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
+          <div class="modal fade text-left" id="primary" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel8"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">

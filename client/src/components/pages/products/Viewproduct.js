@@ -358,7 +358,7 @@ class ViewProduct extends Component {
           </div>
           <div style={{clear: "both"}}></div>
 
-          <div className="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+          <div className="modal fade" id="viewModal" tabIndex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">

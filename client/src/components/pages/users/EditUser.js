@@ -287,6 +287,12 @@ async componentDidUpdate(prevProps,prevState){
       src: URL.createObjectURL(e.target.files[0]),
     })
   }
+  handleChangeNumber = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === "" || re.test(e.target.value)) {
+      this.setState({ [e.target.name]: e.target.value });
+    }
+  };
 
   togglehandleChange = (status) => {
     if (status === true) {
@@ -751,7 +757,7 @@ async componentDidUpdate(prevProps,prevState){
                                         placeholder="Phone Number"
                                         name="contactnumber"
                                         value={this.state.contactnumber}
-                                        onChange={e => this._handleChange(e)}
+                                        onChange={e => this.handleChangeNumber(e)}
                                       />
                                       :
                                       <input type="text" id="userinput4"

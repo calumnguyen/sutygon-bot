@@ -12,7 +12,6 @@ import { changeShopStatus, getShop } from "../../actions/dashboard";
 import * as moment from "moment";
 import "../../login.css";
 import "../../dashbaord.css";
-import UserModel from "./ActivateAccount";
 import { Redirect } from "react-router-dom";
 
 class Dashboard extends Component {
@@ -117,11 +116,7 @@ class Dashboard extends Component {
         }
       }
     }
-    //   if (user) {
-    //     if (user.isPasswordChanged === false) {
-    //       return <Redirect to='/ActivateAccount' />
-    //     }
-    // }
+ 
     return (
       <React.Fragment>
         <Loader />

@@ -95,7 +95,7 @@ class ConfigureSystem extends Component {
         const formData = new FormData()
         formData.append('avatar', this.state.avatar)
         formData.append('username', this.state.username)
-        formData.append('fullname', this.state.username)
+        formData.append('fullname', this.state.fullname)
         formData.append('contactnumber', this.state.contactnumber)
         formData.append('email', this.state.email)
         formData.append('password', this.state.tempPwd)
