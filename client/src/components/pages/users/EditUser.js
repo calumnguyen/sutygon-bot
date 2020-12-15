@@ -52,7 +52,7 @@ class EditUser extends Component {
     email: '',
     contactnumber: '',
     gender: '',
-    birthday: '',
+    birthday: moment(),
     address: '',
     avatar: '',
     statusChecked: '',
@@ -338,9 +338,8 @@ async componentDidUpdate(prevProps,prevState){
   }
 
   handleChangeForDate = (date, e) => {
-    let formattedDate = this.formatDate(date);
-    this.setState({
-      birthday: formattedDate
+        this.setState({
+      birthday: date
     });
   }
 
@@ -805,13 +804,15 @@ async componentDidUpdate(prevProps,prevState){
 
                                     {this.state.isEditP === true ?
                                       <DatePicker
-                                        dateFormat="dd/MM/yyyy" selected={Date.parse(this.state.birthday)}
+                                        dateFormat="dd/MM/yyyy"
+                                        selected={(this.state.birthday)}
                                         className="form-control border-primary"
                                         onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
                                         popperPlacement="top-start"
                                         // peekNextMonth
                                         showMonthDropdown
                                         showYearDropdown
+                                        dropdownMode="select"
                                       />
                                       :
                                       <DatePicker
