@@ -52,7 +52,7 @@ class EditUser extends Component {
     email: '',
     contactnumber: '',
     gender: '',
-    birthday: moment(),
+    birthday: '',
     address: '',
     avatar: '',
     statusChecked: '',
@@ -92,7 +92,7 @@ class EditUser extends Component {
           contactnumber: user.contactnumber,
           gender: user.gender,
           address: user.address,
-          birthday: user.birthday,
+          birthday:user.birthday=== undefined ?null:user.birthday,
           avatar: user.avatar,
           sections: user.sections,
           Inventory: user.sections && user.sections.includes('Inventory') ? true : false,
@@ -242,7 +242,7 @@ async componentDidUpdate(prevProps,prevState){
       return;
     }
     if (state.birthday !== undefined) {
-      formData.append('birthday', moment(state.birthday))
+      formData.append('birthday', new Date(state.birthday))
       this.setState({ isbirthdaySelected: false });
 
     }
@@ -276,7 +276,7 @@ async componentDidUpdate(prevProps,prevState){
     if (month.length < 2) month = '0' + month;
     if (day.length < 2) day = '0' + day;
 
-    return [day, month, year].join('-');
+    return [day, month, year].join('/');
   }
 
 
@@ -336,13 +336,13 @@ async componentDidUpdate(prevProps,prevState){
       isEditO: true
     })
   }
-
-  handleChangeForDate = (date, e) => {
-        this.setState({
+  handleChangeForDate = (date) => {
+    let formattedDate = this.formatDate(date);
+   
+    this.setState({
       birthday: date
     });
   }
-
   _onEditPersonalInfo = (e) => {
     e.preventDefault();
     this.setState({
@@ -802,10 +802,9 @@ async componentDidUpdate(prevProps,prevState){
                                   <label className="col-md-4 label-control" htmlFor="userinput4">Birthday</label>
                                   <div className="col-md-8" data-date-format="dd/mm/yyyy">
 
-                                    {this.state.isEditP === true ?
+                                  {this.state.isEditP === true ?
                                       <DatePicker
-                                        dateFormat="dd/MM/yyyy"
-                                        selected={(this.state.birthday)}
+                                        dateFormat="dd/MM/yyyy" selected={new Date(this.state.birthday)}
                                         className="form-control border-primary"
                                         onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
                                         popperPlacement="top-start"
