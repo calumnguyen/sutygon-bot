@@ -104,7 +104,7 @@ class AddCustomer extends Component {
         birthday: date,
       });
     }
-    if (this.state.id !== "") {
+    if (this.state.id === "") {
       if (name === "selectedYear") {
         this.setState({
           selectedYear: date,
@@ -169,7 +169,7 @@ class AddCustomer extends Component {
     const { customer } = this.props;
     let m_oc = {
       exist: "no",
-      membership: this.state.membership !== "" ? this.state.membership : null,
+      membership: this.state.membership === "" ? null:this.state.membership,
       username: this.state.name,
       email: "unverified",
       deactivate: false,
@@ -184,7 +184,7 @@ class AddCustomer extends Component {
       company: state.company,
       company_address: state.company_address,
       online_account: m_oc,
-      block_account: state.block_account,
+      block_account: state.block_account === "" ? false : state.block_account,
     };
 
     if (state.id === "") {
@@ -207,14 +207,14 @@ class AddCustomer extends Component {
         allTime: this.state.alltime,
       };
       await this.props.getInsight(id, timeframe);
-      if(this.props.insightFound===true){
+      if (this.props.insightFound === true) {
         this.setState({
           show: true,
-        })
+        });
       }
-      if(this.props.insightFound === false){
-        OCAlert.alertError("Something Went Wrong", { timeOut: 3000 })
-     } 
+      if (this.props.insightFound === false) {
+        OCAlert.alertError("Something Went Wrong", { timeOut: 3000 });
+      }
     }
   };
   render() {
@@ -297,18 +297,18 @@ class AddCustomer extends Component {
                                       onChange={(e) => this.handleChange(e)}
                                     />
                                   ) : (
-                                      <input
-                                        type="text"
-                                        id="projectinput1"
-                                        className="form-control border-primary"
-                                        placeholder="Name"
-                                        name="name"
-                                        required
-                                        value={this.state.name}
-                                        onChange={(e) => this.handleChange(e)}
-                                        readOnly
-                                      />
-                                    )}
+                                    <input
+                                      type="text"
+                                      id="projectinput1"
+                                      className="form-control border-primary"
+                                      placeholder="Name"
+                                      name="name"
+                                      required
+                                      value={this.state.name}
+                                      onChange={(e) => this.handleChange(e)}
+                                      readOnly
+                                    />
+                                  )}
                                 </div>
                               </div>
                               <div className="form-group row">
@@ -350,7 +350,6 @@ class AddCustomer extends Component {
                                     name="email"
                                     value={this.state.email}
                                     onChange={(e) => this.handleChange(e)}
-                                    required
                                   />
                                 </div>
                               </div>
@@ -414,15 +413,15 @@ class AddCustomer extends Component {
                                       }
                                       showMonthDropdown
                                       showYearDropdown
-                                      dropdownMode="scroll"
+                                      dropdownMode="select"
                                     />
                                   ) : (
-                                      <input
-                                        value={this.state.birthday}
-                                        className="form-control border-primary"
-                                        readOnly
-                                      />
-                                    )}
+                                    <input
+                                      value={this.state.birthday}
+                                      className="form-control border-primary"
+                                      readOnly
+                                    />
+                                  )}
                                 </div>
                               </div>
                               <div className="form-group row">
@@ -475,8 +474,8 @@ class AddCustomer extends Component {
                               </div>
                             </>
                           ) : (
-                              ""
-                            )}
+                            ""
+                          )}
                           {this.state.isEdit === true ? (
                             <>
                               <h4 className="form-section mt-4">
@@ -484,64 +483,166 @@ class AddCustomer extends Component {
                                 Information
                               </h4>
                               {this.state.online_account &&
-                                this.state.online_account.exist === "no" ? (
+                              this.state.online_account.exist === "no" ? (
+                                <div className="row">
+                                  <div className="col-md-6">
+                                    <div className="form-group row">
+                                      <h4 className="ml-4 alert alert-secondary">
+                                        {" "}
+                                        No online account found.
+                                      </h4>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
                                   <div className="row">
                                     <div className="col-md-6">
                                       <div className="form-group row">
-                                        <h4 className="ml-4 alert alert-secondary">
-                                          {" "}
-                                        No online account found.
-                                      </h4>
+                                        <label
+                                          className="col-md-3 label-control"
+                                          htmlFor="projectinput1"
+                                        >
+                                          Username
+                                        </label>
+
+                                        <div className="col-md-9">
+                                          <input
+                                            type="text"
+                                            id="projectinput1"
+                                            className="form-control border-primary"
+                                            placeholder="Name"
+                                            name="name"
+                                            required
+                                            value={this.state.name}
+                                            onChange={(e) =>
+                                              this.handleChange(e)
+                                            }
+                                            readOnly
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="form-group row">
+                                        <label
+                                          className="col-md-3 label-control"
+                                          htmlFor="projectinput4"
+                                        >
+                                          Account Created
+                                        </label>
+
+                                        <div className="col-md-9">
+                                          <input
+                                            type="text"
+                                            id="projectinput4"
+                                            className="form-control border-primary"
+                                            value={this.state.createdAt}
+                                            readOnly
+                                            required
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="form-group row">
+                                        <label
+                                          className="col-md-3 label-control"
+                                          htmlFor="projectinput3"
+                                        ></label>
+                                        <div className="col-md-9">
+                                          <Link
+                                            to=""
+                                            onClick={(e) =>
+                                              this.openModalforPassword(e)
+                                            }
+                                            type="button"
+                                            className="font-medium-3"
+                                          >
+                                            <i className="ft-external-link"></i>{" "}
+                                            De-Activate online account
+                                          </Link>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                ) : (
-                                  <>
-                                    <div className="row">
-                                      <div className="col-md-6">
-                                        <div className="form-group row">
-                                          <label
-                                            className="col-md-3 label-control"
-                                            htmlFor="projectinput1"
-                                          >
-                                            Username
+                                    <div className="col-md-6">
+                                      <div className="form-group row">
+                                        <label
+                                          className="col-md-3 label-control"
+                                          htmlFor="projectinput3"
+                                        >
+                                          Membership
                                         </label>
-
-                                          <div className="col-md-9">
-                                            <input
-                                              type="text"
-                                              id="projectinput1"
-                                              className="form-control border-primary"
-                                              placeholder="Name"
-                                              name="name"
-                                              required
-                                              value={this.state.name}
-                                              onChange={(e) =>
-                                                this.handleChange(e)
-                                              }
-                                              readOnly
-                                            />
-                                          </div>
-                                        </div>
-                                        <div className="form-group row">
-                                          <label
-                                            className="col-md-3 label-control"
-                                            htmlFor="projectinput4"
+                                        <div className="col-md-9">
+                                          {/* <input
+                                            type="text"
+                                            id="projectinput3"
+                                            className="form-control border-primary"
+                                            placeholder="Membership"
+                                            name="membership"
+                                            value={this.state.membership}
+                                            onChange={(e) =>
+                                              this.handleChange(e)
+                                            }
+                                            required
+                                          /> */}
+                                          <select
+                                            id="projectinput3"
+                                            name="membership"
+                                            placeholder="Membership"
+                                            required
+                                            defaultValue={"-----"}
+                                            className="form-control border-primary"
+                                            onChange={(e) =>
+                                              this.handleChange(e)
+                                            }
                                           >
-                                            Account Created
-                                        </label>
+                                            <option name="membership" value="">
+                                              ---select---{" "}
+                                            </option>
+                                            <option
+                                              name="membership"
+                                              value="Gold"
+                                            >
+                                              {" "}
+                                              Gold{" "}
+                                            </option>
 
-                                          <div className="col-md-9">
-                                            <input
-                                              type="text"
-                                              id="projectinput4"
-                                              className="form-control border-primary"
-                                              value={this.state.createdAt}
-                                              readOnly
-                                              required
-                                            />
-                                          </div>
+                                            <option
+                                              name="membership"
+                                              value="Diamond"
+                                            >
+                                              {" "}
+                                              Diamond{" "}
+                                            </option>
+                                          </select>
                                         </div>
+                                      </div>
+                                      <div className="form-group row">
+                                        <label
+                                          className="col-md-3 label-control"
+                                          htmlFor="projectinput3"
+                                        >
+                                          Email
+                                        </label>
+                                        <div className="col-md-9">
+                                          <input
+                                            type="text"
+                                            id="projectinput3"
+                                            className="form-control border-primary"
+                                            placeholder="Email"
+                                            name="email"
+                                            value={
+                                              this.state.online_account
+                                                .email === "unverified"
+                                                ? "Un-Verified"
+                                                : "Verified"
+                                            }
+                                            onChange={(e) =>
+                                              this.handleChange(e)
+                                            }
+                                            readOnly
+                                          />
+                                        </div>
+                                      </div>
+                                      {this.state.online_account.email ===
+                                      "unverified" ? (
                                         <div className="form-group row">
                                           <label
                                             className="col-md-3 label-control"
@@ -556,158 +657,69 @@ class AddCustomer extends Component {
                                               type="button"
                                               className="font-medium-3"
                                             >
-                                              <i className="ft-external-link"></i>{" "}
-                                            De-Activate online account
-                                          </Link>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="col-md-6">
-                                        <div className="form-group row">
-                                          <label
-                                            className="col-md-3 label-control"
-                                            htmlFor="projectinput3"
-                                          >
-                                            Membership
-                                        </label>
-                                          <div className="col-md-9">
-                                            {/* <input
-                                            type="text"
-                                            id="projectinput3"
-                                            className="form-control border-primary"
-                                            placeholder="Membership"
-                                            name="membership"
-                                            value={this.state.membership}
-                                            onChange={(e) =>
-                                              this.handleChange(e)
-                                            }
-                                            required
-                                          /> */}
-                                            <select
-                                              id="projectinput3"
-                                              name="membership"
-                                              placeholder="Membership"
-                                              required
-                                              defaultValue={"-----"}
-                                              className="form-control border-primary"
-                                              onChange={(e) =>
-                                                this.handleChange(e)
-                                              }
-                                            >
-                                              <option name="membership" value="">
-                                                ---select---{" "}
-                                              </option>
-                                              <option
-                                                name="membership"
-                                                value="Gold"
-                                              >
-                                                {" "}
-                                              Gold{" "}
-                                              </option>
-
-                                              <option
-                                                name="membership"
-                                                value="Diamond"
-                                              >
-                                                {" "}
-                                              Diamond{" "}
-                                              </option>
-                                            </select>
-                                          </div>
-                                        </div>
-                                        <div className="form-group row">
-                                          <label
-                                            className="col-md-3 label-control"
-                                            htmlFor="projectinput3"
-                                          >
-                                            Email
-                                        </label>
-                                          <div className="col-md-9">
-                                            <input
-                                              type="text"
-                                              id="projectinput3"
-                                              className="form-control border-primary"
-                                              placeholder="Email"
-                                              name="email"
-                                              value={
-                                                this.state.online_account
-                                                  .email === "unverified"
-                                                  ? "Un-Verified"
-                                                  : "Verified"
-                                              }
-                                              onChange={(e) =>
-                                                this.handleChange(e)
-                                              }
-                                              readOnly
-                                            />
-                                          </div>
-                                        </div>
-                                        {this.state.online_account.email ===
-                                          "unverified" ? (
-                                            <div className="form-group row">
-                                              <label
-                                                className="col-md-3 label-control"
-                                                htmlFor="projectinput3"
-                                              ></label>
-                                              <div className="col-md-9">
-                                                <Link
-                                                  to=""
-                                                  onClick={(e) =>
-                                                    this.openModalforPassword(e)
-                                                  }
-                                                  type="button"
-                                                  className="font-medium-3"
-                                                >
-                                                  <i className="ft-external-link"></i>
+                                              <i className="ft-external-link"></i>
                                               Resend Verification Link?
                                             </Link>
-                                              </div>
-                                            </div>
-                                          ) : (
-                                            ""
-                                          )}
-                                      </div>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        ""
+                                      )}
                                     </div>
-                                  </>
-                                )}
+                                  </div>
+                                </>
+                              )}
                             </>
                           ) : (
-                              ""
-                            )}
+                            ""
+                          )}
                           <div className="form-actions top">
                             {this.state.id === "" ? (
                               <>
-                                <button
-                                  type="submit"
-                                  className="mb-2 mr-2 btn btn-raised btn-primary"
-                                  onClick={(e) => this.openModal(e)}
-                                >
-                                  <i className="ft-chevron-right" /> Next
-                                </button>
+                                {this.state.name === "" ||
+                                this.state.address === "" ||
+                                this.state.birthday === "" ||
+                                this.state.contactnumber === "" ? (
+                                  <button
+                                    type="submit"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary disabled"
+                                    onClick={(e) => this.openModal(e)}
+                                  >
+                                    <i className="ft-chevron-right" /> Next
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="submit"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                                    onClick={(e) => this.openModal(e)}
+                                  >
+                                    <i className="ft-chevron-right" /> Next
+                                  </button>
+                                )}{" "}
                               </>
                             ) : (
-                                <>
-                                  {this.state.saving ? (
-                                    <button
-                                      type="button"
-                                      className="mb-2 mr-2 btn btn-raised btn-primary"
-                                    >
-                                      <div
-                                        className="spinner-grow spinner-grow-sm "
-                                        role="status"
-                                      ></div>{" "}
+                              <>
+                                {this.state.saving ? (
+                                  <button
+                                    type="button"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                                  >
+                                    <div
+                                      className="spinner-grow spinner-grow-sm "
+                                      role="status"
+                                    ></div>{" "}
                                     &nbsp; Save{" "}
-                                    </button>
-                                  ) : (
-                                      <button
-                                        type="submit"
-                                        className="mb-2 mr-2 btn btn-raised btn-primary"
-                                      >
-                                        <i className="ft-check" /> Save Changes
-                                      </button>
-                                    )}
-                                </>
-                              )}
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="submit"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                                  >
+                                    <i className="ft-check" /> Save Changes
+                                  </button>
+                                )}
+                              </>
+                            )}
                           </div>
 
                           {this.state.isEdit === true ? (
@@ -783,8 +795,8 @@ class AddCustomer extends Component {
                                       {this.state.year === true
                                         ? "Pick a year from 2012"
                                         : this.state.month === true
-                                          ? "Pick a month from 2012"
-                                          : ""}
+                                        ? "Pick a month from 2012"
+                                        : ""}
                                     </label>
                                     <div className="col-md-9">
                                       {this.state.year === true ? (
@@ -821,8 +833,8 @@ class AddCustomer extends Component {
                                           dropdownMode="scroll"
                                         />
                                       ) : (
-                                            ""
-                                          )}
+                                        ""
+                                      )}
                                       <div className="mt-2 top">
                                         <button
                                           type="submit"
@@ -835,7 +847,6 @@ class AddCustomer extends Component {
                                     </div>
                                   </div>
                                 </div>{" "}
-
                               </div>
                               {/* {this.props.insightFound === false ? (
                                 <div
@@ -858,8 +869,8 @@ class AddCustomer extends Component {
                               )} */}
                             </>
                           ) : (
-                              ""
-                            )}
+                            ""
+                          )}
                         </form>
                       </div>
                     </div>
@@ -913,13 +924,13 @@ class AddCustomer extends Component {
                       <th scope="row" style={{ textAlign: "left" }}>
                         {this.state.year === true
                           ? `Total spent in ${moment(
-                            this.state.selectedYear
-                          ).format("yyyy")}`
+                              this.state.selectedYear
+                            ).format("yyyy")}`
                           : this.state.month === true
-                            ? `Total spent in ${moment(
+                          ? `Total spent in ${moment(
                               this.state.selectedMonth
                             ).format("MMMM-yyyy")}`
-                            : "Total spent in all time"}
+                          : "Total spent in all time"}
                       </th>
 
                       <td>{orders && orders && orders[0].Total_spent}</td>
@@ -929,13 +940,13 @@ class AddCustomer extends Component {
                         {" "}
                         {this.state.year === true
                           ? `Total order in ${moment(
-                            this.state.selectedYear
-                          ).format("yyyy")}`
+                              this.state.selectedYear
+                            ).format("yyyy")}`
                           : this.state.month === true
-                            ? `Total orders in ${moment(
+                          ? `Total orders in ${moment(
                               this.state.selectedMonth
                             ).format("MMMM-yyyy")}`
-                            : "Total orders in all time"}
+                          : "Total orders in all time"}
                       </th>
                       <td> {orders && orders[0].total_orders}</td>
                     </tr>
@@ -944,13 +955,13 @@ class AddCustomer extends Component {
                         {" "}
                         {this.state.year === true
                           ? `Total discounts in ${moment(
-                            this.state.selectedYear
-                          ).format("yyyy")}`
+                              this.state.selectedYear
+                            ).format("yyyy")}`
                           : this.state.month === true
-                            ? `Total discounts in ${moment(
+                          ? `Total discounts in ${moment(
                               this.state.selectedMonth
                             ).format("MMMM-yyyy")}`
-                            : "Total discounts in all time"}
+                          : "Total discounts in all time"}
                       </th>
                       <td></td>
                     </tr>
@@ -959,13 +970,13 @@ class AddCustomer extends Component {
                         {" "}
                         {this.state.year === true
                           ? `Total insurance paid in ${moment(
-                            this.state.selectedYear
-                          ).format("yyyy")}`
+                              this.state.selectedYear
+                            ).format("yyyy")}`
                           : this.state.month === true
-                            ? `Total insuarance paid in ${moment(
+                          ? `Total insuarance paid in ${moment(
                               this.state.selectedMonth
                             ).format("MMMM-yyyy")}`
-                            : "Total insurance paid in all time"}
+                          : "Total insurance paid in all time"}
                       </th>
 
                       <td> {orders && orders[0].insuranceAmt}</td>
@@ -974,13 +985,13 @@ class AddCustomer extends Component {
                       <th scope="row" style={{ textAlign: "left" }}>
                         {this.state.year === true
                           ? `Total insurance returned in ${moment(
-                            this.state.selectedYear
-                          ).format("yyyy")}`
+                              this.state.selectedYear
+                            ).format("yyyy")}`
                           : this.state.month === true
-                            ? `Total insurance returned in ${moment(
+                          ? `Total insurance returned in ${moment(
                               this.state.selectedMonth
                             ).format("MMMM-yyyy")}`
-                            : "Total insurance returned in all time"}
+                          : "Total insurance returned in all time"}
                       </th>
 
                       <td>{""}</td>
@@ -990,13 +1001,13 @@ class AddCustomer extends Component {
                         {" "}
                         {this.state.year === true
                           ? `Total damage-fee paid in ${moment(
-                            this.state.selectedYear
-                          ).format("yyyy")}`
+                              this.state.selectedYear
+                            ).format("yyyy")}`
                           : this.state.month === true
-                            ? `Total damage-fee paid in ${moment(
+                          ? `Total damage-fee paid in ${moment(
                               this.state.selectedMonth
                             ).format("MMMM-yyyy")}`
-                            : "Total damage-fee paid in all time"}
+                          : "Total damage-fee paid in all time"}
                       </th>
 
                       <td>{""}</td>
@@ -1006,13 +1017,13 @@ class AddCustomer extends Component {
                         {" "}
                         {this.state.year === true
                           ? `Total late-fee in ${moment(
-                            this.state.selectedYear
-                          ).format("yyyy")}`
+                              this.state.selectedYear
+                            ).format("yyyy")}`
                           : this.state.month === true
-                            ? `Total late-fee in ${moment(
+                          ? `Total late-fee in ${moment(
                               this.state.selectedMonth
                             ).format("MMMM-yyyy")}`
-                            : "Total late-fee in all time "}
+                          : "Total late-fee in all time "}
                       </th>
                       <td>{""}</td>
                     </tr>
@@ -1021,13 +1032,13 @@ class AddCustomer extends Component {
                         {" "}
                         {this.state.year === true
                           ? `Total tax paid in ${moment(
-                            this.state.selectedYear
-                          ).format("yyyy")}`
+                              this.state.selectedYear
+                            ).format("yyyy")}`
                           : this.state.month === true
-                            ? `Total tax paid in ${moment(
+                          ? `Total tax paid in ${moment(
                               this.state.selectedMonth
                             ).format("MMMM-yyyy")}`
-                            : "Total tax paid in all time"}{" "}
+                          : "Total tax paid in all time"}{" "}
                       </th>
                       <td> {orders && orders[0].tax}</td>
                     </tr>
@@ -1087,14 +1098,14 @@ class AddCustomer extends Component {
                     &nbsp; Confirm{" "}
                   </button>
                 ) : (
-                    <button
-                      type="submit"
-                      onClick={(e) => this.onSubmit(e)}
-                      className="btn grey btn-lg btn-outline-success"
-                    >
-                      Confirm
-                    </button>
-                  )}
+                  <button
+                    type="submit"
+                    onClick={(e) => this.onSubmit(e)}
+                    className="btn grey btn-lg btn-outline-success"
+                  >
+                    Confirm
+                  </button>
+                )}
 
                 <button
                   type="button"
