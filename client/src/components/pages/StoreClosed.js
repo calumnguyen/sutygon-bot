@@ -1,15 +1,11 @@
 import React, { Component } from "react";
-
 import { logout } from "../../actions/auth";
 import Loader from "../layout/Loader";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as moment from "moment";
-import DatePicker from "react-datepicker";
 import { Redirect } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
-import Moment from "react-moment";
-import { Link } from "react-router-dom";
 
 class StoreClosed extends Component {
   state = {
@@ -46,8 +42,7 @@ class StoreClosed extends Component {
     if (this.state.logout === true) {
       return <Redirect to="/login" />;
     }
-    // const {shopStartTime} = this.state
-    const momentshopStartTime = moment(this.state.shopStartTime)
+    const momentshopStartTime = this.state.shopStartTime && moment(this.state.shopStartTime)
    
     return (
       <React.Fragment>

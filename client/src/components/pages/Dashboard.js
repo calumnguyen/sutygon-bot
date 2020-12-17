@@ -116,7 +116,8 @@ class Dashboard extends Component {
         }
       }
     }
- 
+const startTime= this.props.shop[0] && moment(this.props.shop[0].shopStartTime)
+
     return (
       <React.Fragment>
         <Loader />
@@ -300,17 +301,13 @@ class Dashboard extends Component {
                                   {" "}
                                   <span className="badge badge-info">
                                     {this.props.shop[0] &&
-                                      moment(
-                                        this.props.shop[0].shopStartTime
-                                      ).format("hh:mm a")}
+                                      startTime.tz("Asia/Vientiane").format("hh:mm a")}
                                   </span>
                                 </h1>
                                 <p>
                                   <span className="badge badge-pill badge-light">
                                     {this.props.shop[0] &&
-                                      moment(
-                                        this.props.shop[0].shopStartTime
-                                      ).format("DD-MMM-YY")}
+                                      startTime.tz("Asia/Vientiane").format("DD-MMM-YY")}
                                   </span>{" "}
                                 </p>
                               </div>
