@@ -15,7 +15,6 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
-import {Image} from 'cloudinary-react';
 
 
 

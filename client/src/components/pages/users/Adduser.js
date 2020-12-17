@@ -110,7 +110,7 @@ class AddUser extends Component {
     if (user && user.systemRole === "Employee") {
       return <Redirect to="/Error" />;
     }
-    if (this.props.saved == true) {
+    if (this.props.saved === true) {
       return (
         <Redirect
           push

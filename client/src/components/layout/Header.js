@@ -4,11 +4,7 @@ import { connect } from "react-redux";
 import { logout } from "../../actions/auth";
 import loadjs from "loadjs";
 import { Link } from "react-router-dom";
-// import Dropdown from "react-bootstrap/Dropdown";
-// import DropdownButton from "react-bootstrap/DropdownButton";
-// import ButtonGroup from "react-bootstrap/ButtonGroup";
 import {
-  Dropdown,
   ButtonDropdown,
   DropdownToggle,
   DropdownMenu,
@@ -61,7 +57,6 @@ class Header extends Component {
         {user && user.avatar ? (
           <ButtonDropdown
             isOpen={this.state.dropdownOpen}
-            // direction="left"
             toggle={(e) => this.setDropdownOpen(e)}
             style={{ marginLeft: "1170px", marginTop: "10px" }}
           >
@@ -69,6 +64,7 @@ class Header extends Component {
               <img
                 style={{ height: "40px" }}
                 src={user && user.avatar && user && user.avatar}
+                alt={"User"}
               />
               {user && user.username && user && user.username}
             </DropdownToggle>

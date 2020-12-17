@@ -191,10 +191,7 @@ class Barcode extends Component {
         sort: true,
       }
       ];
-      const defaultSorted = [{
-        dataField: 'prodID',
-        order: 'desc'
-      }];
+    
 
       return (
         <>

@@ -17,8 +17,10 @@ import { getOrderbyOrderNumber } from "../../actions/returnproduct";
 import { addNewInvoice } from "../../actions/invoices";
 import { OCAlertsProvider } from '@opuscapita/react-alerts';
 import { OCAlert } from '@opuscapita/react-alerts'
-import { cookie } from "express-validator";
-var JsBarcode = require('jsbarcode');
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import {vi} from 'date-fns/esm/locale'
+registerLocale("vi", vi);
+setDefaultLocale("vi");var JsBarcode = require('jsbarcode');
 
 
 class RentOrder extends Component {
@@ -69,11 +71,11 @@ class RentOrder extends Component {
       }
     }
 
-    const { data } = this.props.location;
-    if (data) {
+    const { state } = this.props.location;
+    if (state) {
       this.setState({
-        customer_id: data.customer_id,
-        barcode_Array: data.barcode,
+        customer_id: state.customer_id,
+        barcode_Array: state.barcode,
       });
     }
     const orderBarcode = shortid.generate();
@@ -442,18 +444,18 @@ class RentOrder extends Component {
 
       }
     }
-    // if (this.state.redirect === true) {
-    //   return <Redirect to="/rentproduct" />;
-    // }
+    if (this.state.redirect === true) {
+      return <Redirect to="/rentproduct" />;
+    }
 
-    // if (this.props.location.data === undefined) {
-    //   return <Redirect to="/rentproduct" />;
+    if (this.props.location.state === undefined) {
+      return <Redirect to="/rentproduct" />;
 
-    // }
-    // if (this.props.saved === true) {
-    //   return <Redirect to="/rentproduct" />;
+    }
+    if (this.props.saved === true) {
+      return <Redirect to="/rentproduct" />;
 
-    // }
+    }
 
     const { customer } = this.props;
     return (
@@ -484,7 +486,6 @@ class RentOrder extends Component {
                                   </h3>
                                 </div>
                               </div>
-                              {/* <form > */}
                               <form onSubmit={(e) => this.onSubmit(e)}>
 
                                 <div className="col-md-12">
@@ -494,7 +495,7 @@ class RentOrder extends Component {
                                     <Link
                                       to={{
                                         pathname: "/checkout",
-                                        data: {
+                                        state: {
                                           customer: this.state.customer_id,
                                         }
                                       }}
@@ -693,6 +694,7 @@ class RentOrder extends Component {
                                       <div className="col-md-6 text-center">
                                         <DatePicker
                                           id="issueinput4"
+                                          locale="vi"
                                           selected={this.state.rentDate}
                                           className="form-control round text-center"
                                           onChange={(e) => this.handleChangeForDate(e)}
@@ -769,9 +771,7 @@ class RentOrder extends Component {
                                           type="submit"
                                           className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
                                           id="btnSize2"
-                                        // data-toggle="modal"
-                                        // data-backdrop="false"
-                                        // data-target="#primary"
+                                      
                                         >
                                           <i className="ft-check"></i>
                                           Submit &amp; Get Invoice

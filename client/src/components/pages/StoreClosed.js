@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import Sidebar from "../layout/Sidebar";
-import Header from "../layout/Header";
-import { updateUser, getUser } from "../../actions/user";
+
 import { logout } from "../../actions/auth";
 import Loader from "../layout/Loader";
 import PropTypes from "prop-types";
@@ -11,9 +9,7 @@ import DatePicker from "react-datepicker";
 import { Redirect } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import Moment from "react-moment";
-import dateFormat from "dateformat";
 import { Link } from "react-router-dom";
-import Switch from "react-switch";
 
 class StoreClosed extends Component {
   state = {
@@ -44,14 +40,15 @@ class StoreClosed extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    const { user } = auth;
     if (this.props.saved) {
       return <Redirect to="/user" />;
     }
     if (this.state.logout === true) {
       return <Redirect to="/login" />;
     }
-
+    // const {shopStartTime} = this.state
+    const momentshopStartTime = moment(this.state.shopStartTime)
+   
     return (
       <React.Fragment>
         <Loader />
@@ -79,12 +76,12 @@ class StoreClosed extends Component {
                           <p className="text-white font-large-1 text-bold-400">
                             The store was closed at{" "}
                             {this.state.shopStartTime &&
-                              `${moment(this.state.shopStartTime).format(
+                              `${momentshopStartTime.tz("Asia/Vientiane").format(
                                 "hh:mm a"
                               )}`}{" "}
                             on{" "}
                             {this.state.shopStartTime &&
-                              `${moment(this.state.shopStartTime).format(
+                              `${momentshopStartTime.tz("Asia/Vientiane").format(
                                 "DD-MMM-YY"
                               )}`}
                             . Take a nap and comeback later!.

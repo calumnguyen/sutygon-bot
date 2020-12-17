@@ -38,6 +38,7 @@
     "lodash": "^4.17.20",
     "moment": "^2.27.0",
     "moment-immutable-methods": "^1.0.9",
+    "moment-timezone": "^0.5.32",
     "mongodb": "^3.6.3",
     "mongoose": "^5.10.0",
     "mongoose-auto-increment": "^5.0.1",

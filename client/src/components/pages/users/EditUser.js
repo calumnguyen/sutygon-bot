@@ -7,7 +7,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import * as moment from 'moment'
 import { Redirect } from 'react-router-dom'
-import { setAlert } from "../../../actions/alert";
 import { Link } from 'react-router-dom'
 import Switch from "react-switch";
 import DatePicker from "react-datepicker";
@@ -17,7 +16,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import Alert from '../../layout/Alert'
 import Modal from 'react-awesome-modal';
 import { logout } from "../../../actions/auth";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
 
+import {vi} from 'date-fns/esm/locale'
+
+
+registerLocale("vi", vi);
+setDefaultLocale("vi");
 
 class EditUser extends Component {
   state = {
@@ -58,7 +63,6 @@ class EditUser extends Component {
     statusChecked: '',
     show: false,
     code: '',
-    imgUpd: false,
     src: false,
     setIsOpen: false,
     password: "",
@@ -93,7 +97,6 @@ class EditUser extends Component {
           gender: user.gender,
           address: user.address,
           birthday:user.birthday=== undefined ?null:user.birthday,
-          avatar: user.avatar,
           sections: user.sections,
           Inventory: user.sections && user.sections.includes('Inventory') ? true : false,
           Appointments:user.sections &&  user.sections.includes('Appointments') ? true : false,
@@ -337,8 +340,7 @@ async componentDidUpdate(prevProps,prevState){
     })
   }
   handleChangeForDate = (date) => {
-    let formattedDate = this.formatDate(date);
-   
+ 
     this.setState({
       birthday: date
     });
@@ -788,7 +790,7 @@ async componentDidUpdate(prevProps,prevState){
                                         placeholder="Address"
                                         name="address"
                                         rows="7"
-                                        value={this.state.address == undefined ? "" : this.state.address}
+                                        value={this.state.address === undefined ? "" : this.state.address}
                                         readOnly />
                                     }
 
@@ -804,7 +806,8 @@ async componentDidUpdate(prevProps,prevState){
 
                                   {this.state.isEditP === true ?
                                       <DatePicker
-                                        dateFormat="dd/MM/yyyy" selected={new Date(this.state.birthday)}
+                                        dateFormat="dd/MM/yyyy" 
+                                        locale="vi" selected={new Date(this.state.birthday)}
                                         className="form-control border-primary"
                                         onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
                                         popperPlacement="top-start"

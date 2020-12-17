@@ -1,7 +1,12 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
-import { getOrderbyCustomerNumber, getOrderbyOrderNumber, getOrderbyID, emptyReturnOrder } from "../../../actions/returnproduct";
+import {
+  getOrderbyCustomerNumber,
+  getOrderbyOrderNumber,
+  getOrderbyID,
+  emptyReturnOrder,
+} from "../../../actions/returnproduct";
 import { getAllProducts } from "../../../actions/product";
 import { getCustomer } from "../../../actions/customer";
 import Loader from "../../layout/Loader";
@@ -9,7 +14,9 @@ import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import "../../../custom.css"
+import moment from "moment";
+import "moment-timezone";
+import "../../../custom.css";
 
 class ReturnProduct extends Component {
   state = {
@@ -33,16 +40,15 @@ class ReturnProduct extends Component {
   tryAgain = (e) => {
     e.preventDefault();
     this.setState({
-      tryAgain: true
-    })
+      tryAgain: true,
+    });
     var orderNumber = document.getElementById("orderNumber");
     var contactNumber = document.getElementById("contactnumber");
     var statusBox = document.getElementById("statusBox");
     contactNumber.value = "";
     contactNumber.focus();
-    orderNumber.value = ""
-
-  }
+    orderNumber.value = "";
+  };
 
   //handle change for input fields
   handleChange = (e, id = "") => {
@@ -51,16 +57,20 @@ class ReturnProduct extends Component {
   //search by Customer Number
   onSubmitCustomer = async (e) => {
     e.preventDefault();
-    this.setState({ saving: true, });
+    this.setState({ saving: true });
     const state = { ...this.state };
     await this.props.getOrderbyCustomerNumber(state.customer.trim());
-    const { orders } = this.props
+    const { orders } = this.props;
     if (!!orders.length) {
       await this.props.getCustomer(orders[0].customer);
-      var returningOrder = orders.filter((f => f.status !== "Completed"))
-
+      var returningOrder = orders.filter((f) => f.status !== "Completed");
     }
-    this.setState({ saving: false, tryAgain: false, orders: orders, returningOrder: returningOrder });
+    this.setState({
+      saving: false,
+      tryAgain: false,
+      orders: orders,
+      returningOrder: returningOrder,
+    });
   };
   //search by order number
   onSubmitOrderNumber = async (e) => {
@@ -69,13 +79,17 @@ class ReturnProduct extends Component {
 
     const state = { ...this.state };
     await this.props.getOrderbyOrderNumber(state.orderNumber.trim());
-    const { orders } = this.props
+    const { orders } = this.props;
     if (!!orders.length) {
-
       await this.props.getCustomer(orders[0].customer);
-      var returningOrder = orders.filter((f => f.status !== "Completed"))
+      var returningOrder = orders.filter((f) => f.status !== "Completed");
     }
-    this.setState({ saving: false, tryAgain: false, orders: orders, returningOrder: returningOrder });
+    this.setState({
+      saving: false,
+      tryAgain: false,
+      orders: orders,
+      returningOrder: returningOrder,
+    });
   };
 
   // return sorted products for barcodes
@@ -127,19 +141,15 @@ class ReturnProduct extends Component {
     return rows;
   };
 
-
   productBox = () => {
-
     const { seletedOrder } = this.state;
     let productarray = [];
     let { barcodes } = seletedOrder[0];
 
     const { products } = this.props;
     if (products) {
-
       let sortedAray = this.getSortedData(products);
       if (sortedAray) {
-
         barcodes.forEach((element) => {
           productarray.push(
             sortedAray.filter((f) => f.barcode.toString() === element)
@@ -148,66 +158,85 @@ class ReturnProduct extends Component {
 
         this.state.product_Array = productarray;
         return productarray.map((p, p_index) => {
-          return <>  <div className="form-group">
-            <div className="row text-center" key={p_index}>
-            <h6 style={{ 'color': 'black !important', 'margin': '4px 2px', 'width': '-webkit-fill-available', 'font-size': 'larger' }}>
-            {`${p[0].title} ${"|"} ${p[0].barcode}`}
-</h6>
-              
-
-            </div>
-          </div>
-          </>
-        })
+          return (
+            <>
+              {" "}
+              <div className="form-group" key={p_index}>
+                <div className="row text-center" key={p_index}>
+                  <h6
+                    style={{
+                      color: "black !important",
+                      margin: "4px 2px",
+                      width: "-webkit-fill-available",
+                      fontSize: "larger",
+                    }}
+                  >
+                    {`${p[0].title} ${"|"} ${p[0].barcode}`}
+                  </h6>
+                </div>
+              </div>
+            </>
+          );
+        });
       }
     }
-  }
-
+  };
 
   CutomerBox = () => {
     const { orders } = this.props;
     const { customeR } = this.props;
 
-
-    let returningOrders = orders.filter((f => f.status !== "Completed"))
+    let returningOrders = orders.filter((f) => f.status !== "Completed");
     return returningOrders.map((o, o_index) => (
       <>
-        <div className="col-md-12">
-          <div className="row form-group hovered" onClick={(e) => this.selectedOrder(e, o._id)}>
+        <div className="col-md-12" key={o_index}>
+          <div
+            className="row form-group hovered"
+            onClick={(e) => this.selectedOrder(e, o._id)}
+          >
             <div className="col-md-12 text-center p-1">
-
-              <h6 style={{ 'color': 'black !important', 'margin': '4px 2px', 'width': '-webkit-fill-available', 'font-size': 'larger' }}>
-                {(o && customeR) && `${"Order#"}${o.orderNumber}${"             "}${customeR.name}${"             "}${"OrderStatus-"}${o.status}`}
+              <h6
+                style={{
+                  color: "black !important",
+                  margin: "4px 2px",
+                  width: "-webkit-fill-available",
+                  fontSize: "larger",
+                }}
+              >
+                {o &&
+                  customeR &&
+                  `${"Order#"}${o.orderNumber}${"             "}${
+                    customeR.name
+                  }${"             "}${"OrderStatus-"}${o.status}`}
               </h6>
             </div>
-
           </div>
         </div>
       </>
-
-    ))
-  }
+    ));
+  };
 
   selectedOrder = (e, order_id) => {
     this.setState({
-      selectedOrder: true
-    })
-    e.preventDefault()
-    const orderID = order_id
+      selectedOrder: true,
+    });
+    e.preventDefault();
+    const orderID = order_id;
     const { orders } = this.props;
     const seletedOrder = orders.filter((f) => f._id === orderID);
     this.setState({
-      seletedOrder: seletedOrder
-    })
-  }
+      seletedOrder: seletedOrder,
+    });
+  };
 
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-
-
+    var dec = moment(new Date());
+    var tz = dec.tz("Asia/Vientiane");
+    console.log(tz);
     const { orders } = this.state;
     const { customeR } = this.props;
 
@@ -215,10 +244,8 @@ class ReturnProduct extends Component {
       <React.Fragment>
         <Loader />
         <div className="wrapper menu-collapsed">
-          <Sidebar location={this.props.location} >
-          </Sidebar>
-          <Header>
-          </Header>
+          <Sidebar location={this.props.location}></Sidebar>
+          <Header></Header>
 
           <div className="main-panel">
             <div className="main-content">
@@ -227,16 +254,12 @@ class ReturnProduct extends Component {
                   <div className="form-body">
                     <div className="card">
                       <div className="card-header">
-                        <h4 className="form-section">
-                          Return Product
-                          </h4>
+                        <h4 className="form-section">Return Product</h4>
                       </div>
 
                       <div className="card-body table-responsive">
-
                         <div className="card-body table-responsive">
                           <form onSubmit={(e) => this.onSubmitCustomer(e)}>
-
                             <div className="form-group">
                               <h3>Enter Customer 10-digit phone number</h3>
                               <div className="position-relative has-icon-right">
@@ -253,8 +276,8 @@ class ReturnProduct extends Component {
                                 <div className="form-control-position">
                                   <button
                                     type="submit"
-                                    className="mb-2 mr-2 btn ft-search">
-                                  </button>
+                                    className="mb-2 mr-2 btn ft-search"
+                                  ></button>
                                 </div>
                               </div>
                             </div>
@@ -272,76 +295,118 @@ class ReturnProduct extends Component {
                                   id="orderNumber"
                                   min="0"
                                   ref="orderNumber"
-                                  onChange={(e) => this.handleChange(e)} />
+                                  onChange={(e) => this.handleChange(e)}
+                                />
                                 <div className="form-control-position">
                                   <button
                                     type="submit"
-                                    className="mb-2 mr-2 btn ft-search">
-                                  </button>
+                                    className="mb-2 mr-2 btn ft-search"
+                                  ></button>
                                 </div>
                               </div>
                             </div>
                           </form>
 
-                          {(this.props.orders && this.state.tryAgain === false) ? <>
-                            <div id="colors_box" >
-                              <div className="row color-row">
-                                <div className="row">
-                                  <div className="col-md-12">
-                                    <h3>Is this the One</h3>
+                          {this.props.orders &&
+                          this.state.tryAgain === false ? (
+                            <>
+                              <div id="colors_box">
+                                <div className="row color-row">
+                                  <div className="row">
+                                    <div className="col-md-12">
+                                      <h3>Is this the One</h3>
+                                    </div>
                                   </div>
-                                </div>
-                                {(this.props.orders && this.state.tryAgain === false && !!this.props.orders.length) ?
-                                  <>{this.state.returningOrder && this.state.returningOrder.length > 0 ? this.CutomerBox() :
-
-                                    <div className="col-md-12" >
+                                  {this.props.orders &&
+                                  this.state.tryAgain === false &&
+                                  !!this.props.orders.length ? (
+                                    <>
+                                      {this.state.returningOrder &&
+                                      this.state.returningOrder.length > 0 ? (
+                                        this.CutomerBox()
+                                      ) : (
+                                        <div className="col-md-12">
+                                          <div className="form-group text-center p-1">
+                                            <h6
+                                              style={{
+                                                color: "black !important",
+                                                margin: "4px 2px",
+                                                width: "-webkit-fill-available",
+                                                fontSize: "larger",
+                                              }}
+                                            >
+                                              {"This order is completed"}
+                                            </h6>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <div className="col-md-12">
                                       <div className="form-group text-center p-1">
-                                        <h6 style={{ 'color': 'black !important', 'margin': '4px 2px', 'width': '-webkit-fill-available', 'font-size': 'larger' }}>
-                                          {"This order is completed"}
+                                        <h6
+                                          style={{
+                                            color: "black !important",
+                                            margin: "4px 2px",
+                                            width: "-webkit-fill-available",
+                                            fontSize: "larger",
+                                          }}
+                                        >
+                                          {"No order found"}
                                         </h6>
                                       </div>
                                     </div>
-                                  }</> :
+                                  )}
 
-                                  <div className="col-md-12" >
-                                    <div className="form-group text-center p-1">
-                                      <h6 style={{ 'color': 'black !important', 'margin': '4px 2px', 'width': '-webkit-fill-available', 'font-size': 'larger' }}>
-                                        {"No order found"}
-                                      </h6>
+                                  <div className="col-md-12">
+                                    <div className="text-center">
+                                      <button
+                                        type="button"
+                                        className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1 text-center"
+                                        onClick={(e) => this.tryAgain(e)}
+                                        id="btnSize"
+                                      >
+                                        <i className="ft-rotate-cw"></i> Try
+                                        Again
+                                      </button>
                                     </div>
-                                  </div>
-
-                                }
-
-                                <div className="col-md-12">
-                                  <div className="text-center">
-                                    <button
-                                      type="button"
-                                      className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1 text-center"
-                                      onClick={(e) => this.tryAgain(e)}
-                                      id="btnSize" ><i className="ft-rotate-cw"></i> Try Again
-                                    </button>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </> : ""}
+                            </>
+                          ) : (
+                            ""
+                          )}
                           <div id="colors_box">
-                            {(this.state.selectedOrder === true && this.state.tryAgain === false) ?
+                            {this.state.selectedOrder === true &&
+                            this.state.tryAgain === false ? (
                               <div className="row color-row" id="statusBox1">
                                 <div className="col-md-12">
                                   <div className="form-group">
-                                    <div style={{ 'float': 'left' }}>
-                                      <h3>{(customeR) ? `${customeR.name}${"#"}${customeR.contactnumber}` : ""}</h3>
+                                    <div style={{ float: "left" }}>
+                                      <h3>
+                                        {customeR
+                                          ? `${customeR.name}${"#"}${
+                                              customeR.contactnumber
+                                            }`
+                                          : ""}
+                                      </h3>
                                     </div>
-                                    <div style={{ 'float': 'right' }}>
-                                      <h3>{(orders && this.state.selectedOrder === true) ? `${"Order"}${"#"} ${this.state.seletedOrder[0].orderNumber}` : ""}</h3>
+                                    <div style={{ float: "right" }}>
+                                      <h3>
+                                        {orders &&
+                                        this.state.selectedOrder === true
+                                          ? `${"Order"}${"#"} ${
+                                              this.state.seletedOrder[0]
+                                                .orderNumber
+                                            }`
+                                          : ""}
+                                      </h3>
                                     </div>
                                   </div>
                                 </div>
                                 <div className="col-md-12">
-                                  {this.state.seletedOrder.length > 0 ?
-
+                                  {this.state.seletedOrder.length > 0 ? (
                                     <div id="colors_box">
                                       {this.productBox()}
                                       <div className="btn-cont text-center">
@@ -349,21 +414,28 @@ class ReturnProduct extends Component {
                                           <Link
                                             to={{
                                               pathname: "/scanBarcode",
-                                              data: {
+                                              state: {
                                                 customer: this.props.customeR,
-                                                order: this.state.seletedOrder
-                                              }
+                                                order: this.state.seletedOrder,
+                                              },
                                             }}
                                             type="submit"
                                             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1 text-center"
-                                            id="btnSize2" ><i className="ft-check"></i> Next</Link>
+                                            id="btnSize2"
+                                          >
+                                            <i className="ft-check"></i> Next
+                                          </Link>
                                         </div>
                                       </div>
                                     </div>
-                                    : ""}
+                                  ) : (
+                                    ""
+                                  )}
                                 </div>
                               </div>
-                              : ""}
+                            ) : (
+                              ""
+                            )}
                           </div>
                         </div>
                       </div>
@@ -373,13 +445,25 @@ class ReturnProduct extends Component {
               </div>
             </div>
             <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" rel="noopener noreferrer" id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <p className="clearfix text-muted text-sm-center px-2">
+                <span>
+                  Quyền sở hữu của &nbsp;{" "}
+                  <a
+                    href="https://www.sutygon.com"
+                    rel="noopener noreferrer"
+                    id="pixinventLink"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
+                  >
+                    SUTYGON-BOT{" "}
+                  </a>
+                  , All rights reserved.{" "}
+                </span>
+              </p>
             </footer>
           </div>
         </div>
       </React.Fragment>
-
     );
   }
 }
@@ -392,7 +476,7 @@ ReturnProduct.propTypes = {
   getAllProducts: PropTypes.func.isRequired,
   getOrderbyID: PropTypes.func.isRequired,
   orders: PropTypes.array,
-  customeR: PropTypes.array,
+  customeR: PropTypes.object,
   auth: PropTypes.object,
 };
 
@@ -401,7 +485,6 @@ const mapStateToProps = (state) => ({
   orders: state.returnproduct.returnorder,
   customeR: state.customer.customer,
   auth: state.auth,
-
 });
 export default connect(mapStateToProps, {
   getOrderbyCustomerNumber,
@@ -409,6 +492,5 @@ export default connect(mapStateToProps, {
   getCustomer,
   getAllProducts,
   getOrderbyID,
-  emptyReturnOrder
-
+  emptyReturnOrder,
 })(ReturnProduct);

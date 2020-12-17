@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 class Sidebar extends Component {
   componentDidMount() {
     this.props.changePage(this.props.location.pathname.replace("/", ""));
-    const { user } = this.props.auth;
   }
   getClassName = (name) => {
     const { pathname } = this.props.location;

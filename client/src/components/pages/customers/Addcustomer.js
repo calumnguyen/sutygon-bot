@@ -19,9 +19,13 @@ import Switch from "react-switch";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
 import Modal from "react-awesome-modal";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
 
-// import { noConflict } from "jquery";
+import {vi} from 'date-fns/esm/locale'
 
+
+registerLocale("vi", vi);
+setDefaultLocale("vi");
 class AddCustomer extends Component {
   state = {
     id: "",
@@ -406,7 +410,10 @@ class AddCustomer extends Component {
                                   {this.state.isEdit === false ? (
                                     <DatePicker
                                       dateFormat="dd/MM/yyyy"
+                                      locale="vi"
+
                                       selected={this.state.birthday}
+                                      
                                       className="form-control border-primary"
                                       onChange={(e) =>
                                         this.handleChangeForDate(e, "birthday")
@@ -802,6 +809,7 @@ class AddCustomer extends Component {
                                       {this.state.year === true ? (
                                         <DatePicker
                                           selected={this.state.selectedYear}
+                                          locale="vi"
                                           className="form-control border-primary"
                                           onChange={(e) =>
                                             this.handleChangeForDate(
@@ -819,6 +827,7 @@ class AddCustomer extends Component {
                                       ) : this.state.month === true ? (
                                         <DatePicker
                                           dateFormat="yyyy/MM"
+                                          locale="vi"
                                           selected={this.state.selectedMonth}
                                           className="form-control border-primary"
                                           onChange={(e) =>

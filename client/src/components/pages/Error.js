@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import Loader from "../layout/Loader";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import * as moment from "moment";
 import { Redirect } from "react-router-dom";
-import "react-datepicker/dist/react-datepicker.css";
 
 class Error extends Component {
   state = {
