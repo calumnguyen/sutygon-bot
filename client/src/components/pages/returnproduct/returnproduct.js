@@ -234,9 +234,7 @@ class ReturnProduct extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    var dec = moment(new Date());
-    var tz = dec.tz("Asia/Vientiane");
-    console.log(tz);
+   
     const { orders } = this.state;
     const { customeR } = this.props;
 

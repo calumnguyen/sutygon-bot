@@ -39,13 +39,6 @@ class MatchBarcodes extends Component {
 
     generateInvoice: true,
   };
-
-  handleChange = (e, id = "") => {
-    this.setState({ [e.target.name]: e.target.value });
-    this.customerOwe();
-    this.returnAmt();
-  };
-
   async componentDidMount() {
     await this.props.getAllProducts();
     const { state } = this.props.location;
@@ -62,6 +55,12 @@ class MatchBarcodes extends Component {
     }
   }
 
+  
+  handleChange = (e, id = "") => {
+    this.setState({ [e.target.name]: e.target.value });
+    this.customerOwe();
+    this.returnAmt();
+  };
   // return sorted products for barcodes
   getSortedData = (products) => {
     // looping through prducts

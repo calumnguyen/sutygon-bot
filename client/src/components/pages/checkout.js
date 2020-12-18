@@ -209,9 +209,9 @@ class Checkout extends Component {
     if (this.props.location.state === undefined) {
       return <Redirect to="/rentproduct" />;
     }
-    if (this.props.customer === null) {
-      return <Redirect to="/rentproduct" />;
-    }
+    // if (this.props.customer === null) {
+    //   return <Redirect to="/rentproduct" />;
+    // }
     const { user } = auth;
     if (user && user.systemRole === "Employee") {
       if (user && !user.sections.includes("Rentproduct")) {
