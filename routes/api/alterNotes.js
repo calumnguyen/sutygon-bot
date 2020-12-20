@@ -16,15 +16,28 @@ router.post('/', auth, async (req, res) => {
     const alterNote = await alterNotes.create({
       order_id,
       note,
-      alter_request: alter_request,
+      alter_request,
       emp_name: req.user.name,
     })
+
+    if (order_id) {
+      const order = await rentedProducts
+        .findOne({ orderNumber: order_id })
+        .select('status')
+      if (order) {
+        order.status = 'alteration'
+        await order.save()
+      }
+    }
 
     if (!alterNote) {
       return res.status(400).json({ msg: 'Unable to create alteration note.' })
     }
 
-    return res.status(200).json({ msg: 'Alteration note created.' })
+    return res.status(200).json({
+      errors: [{ msg: 'Alteration note created.' }],
+      alterNote,
+    })
   } catch (err) {
     console.log(err)
     res.status(500).send({ msg: 'Server Error' })
@@ -37,7 +50,12 @@ router.post('/', auth, async (req, res) => {
 router.get('/', auth, async (req, res) => {
   try {
     // find all alteration notes.
-    const alterationNotes = await alterNotes.find().lean()
+    const alterationNotes = await alterNotes
+      .find()
+      .lean()
+      .sort({ createdAt: -1 })
+    // new to old.
+    // .sort({ createdAt: -1 })
 
     // Outcome arrays.
     let alterationNotesWithProds = []
@@ -126,10 +144,7 @@ router.get('/', auth, async (req, res) => {
       }
     }
 
-    return res.status(200).json({
-      msg: 'Alteration requests found.',
-      data: alterationNotesWithProds,
-    })
+    return res.status(200).json(alterationNotesWithProds)
   } catch (err) {
     console.log(err)
     res.status(500).send({ msg: 'Server Error' })
@@ -141,11 +156,19 @@ router.get('/', auth, async (req, res) => {
 // @access  Private
 router.put('/:id/done', auth, async (req, res) => {
   try {
-    await alterNotes.updateOne(
-      { _id: req.params.id },
+    let note = await alterNotes.findByIdAndUpdate(req.params.id, {
+      $set: {
+        done: true,
+      },
+    })
+
+    await rentedProducts.updateOne(
+      {
+        orderNumber: note.order_id,
+      },
       {
         $set: {
-          done: true,
+          status: 'active',
         },
       }
     )
