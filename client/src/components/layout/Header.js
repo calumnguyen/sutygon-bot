@@ -1,3 +1,4 @@
+
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -19,27 +20,28 @@ class Header extends Component {
     dropdownOpen: false,
   };
 
+
   componentDidMount() {
-    loadjs(`/assets/vendors/js/core/jquery-3.2.1.min.js`);
-    loadjs(`/assets/vendors/js/core/popper.min.js`);
-    loadjs(`/assets/vendors/js/core/bootstrap.min.js`);
-    loadjs(`/assets/vendors/js/perfect-scrollbar.jquery.min.js`);
-    loadjs(`/assets/vendors/js/prism.min.js`);
-    loadjs(`/assets/vendors/js/jquery.matchHeight-min.js`);
-    loadjs(`/assets/vendors/js/screenfull.min.js`);
-    loadjs(`/assets/vendors/js/pace/pace.min.js`);
-    loadjs(`/assets/js/app-sidebar.js`);
-    loadjs(`/assets/js/notification-sidebar.js`);
-    loadjs(`/assets/js/customizer.js`);
-    loadjs(`/assets/js/view_product.js`);
-    const { user } = this.props.auth;
+    loadjs(`/assets/vendors/js/core/jquery-3.2.1.min.js`)
+    loadjs(`/assets/vendors/js/core/popper.min.js`)
+    loadjs(`/assets/vendors/js/core/bootstrap.min.js`)
+    loadjs(`/assets/vendors/js/perfect-scrollbar.jquery.min.js`)
+    loadjs(`/assets/vendors/js/prism.min.js`)
+    loadjs(`/assets/vendors/js/jquery.matchHeight-min.js`)
+    loadjs(`/assets/vendors/js/screenfull.min.js`)
+    loadjs(`/assets/vendors/js/pace/pace.min.js`)
+    loadjs(`/assets/js/app-sidebar.js`)
+    loadjs(`/assets/js/notification-sidebar.js`)
+    loadjs(`/assets/js/customizer.js`)
+    loadjs(`/assets/js/view_product.js`)
+    const { user } = this.props.auth
     if (user != undefined) {
       this.setState({
         username: user.username,
         userType: user.type,
         id: user._id,
         avatar: user.avatar,
-      });
+      })
     }
   }
   setDropdownOpen = (e) => {
@@ -50,6 +52,7 @@ class Header extends Component {
   };
 
   render() {
+
     const { user } = this.props.auth;
 
     return (
@@ -96,16 +99,17 @@ class Header extends Component {
         )}
       </>
     );
+
   }
 }
 
 Header.propTypes = {
   logout: PropTypes.func.isRequired,
   auth: PropTypes.object,
-};
+}
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-});
+})
 
-export default connect(mapStateToProps, { logout })(Header);
+export default connect(mapStateToProps, { logout })(Header)

@@ -11,7 +11,8 @@ import ViewUser from './components/pages/users/Viewuser'
 import AddCustomer from './components/pages/customers/Addcustomer'
 import AddProduct from './components/pages/products/Addproduct'
 import Orders from './components/pages/orders/orders'
-import AddOrder from './components/pages/orders/AddOrder'
+import ViewOrder from './components/pages/orders/viewOrder'
+import OrderNotes from './components/pages/orders/orderNotes'
 import Calender from './components/pages/calender'
 import AddAppointment from './components/pages/appointment'
 import ViewCustomer from './components/pages/customers/Viewcustomer'
@@ -53,23 +54,34 @@ const Main = () => {
     <Provider store={store}>
       <Router>
         <Switch>
+          <Route exact path='/' component={Login} />
+          <Route exact path='/Login' component={Login} />
 
-          <Route exact path="/" component={Login} />
-          <Route exact path="/Login" component={Login} />
-          
           {/* Dashboard */}
-          <PrivateRoute exact path="/dashboard" component={Dashboard} />
+          <PrivateRoute exact path='/dashboard' component={Dashboard} />
 
           {/* users */}
           <PrivateRoute exact path='/user/adduser' component={AddUser} />
-          <PrivateRoute exact path='/user/configuresystem' component={ConfigureSystem} />
-          <PrivateRoute exact path='/user/configuresystemuser' component={ConfigureSystemUser} />
+          <PrivateRoute
+            exact
+            path='/user/configuresystem'
+            component={ConfigureSystem}
+          />
+          <PrivateRoute
+            exact
+            path='/user/configuresystemuser'
+            component={ConfigureSystemUser}
+          />
           <PrivateRoute exact path='/user' component={ViewUser} />
           <PrivateRoute exact path='/user/edituser/:id' component={EditUser} />
           <PrivateRoute exact path='/user/view/:id' component={View} />
           {/* <PrivateRoute exact path='/user/updatesalary/:id' component={SalaryUpdate} /> */}
           <PrivateRoute exact path='/storeclosed' component={StoreClosed} />
-          <PrivateRoute exact path='/ActivateAccount' component={ActivateAccount} />
+          <PrivateRoute
+            exact
+            path='/ActivateAccount'
+            component={ActivateAccount}
+          />
 
           {/* customers */}
           <PrivateRoute
@@ -78,7 +90,11 @@ const Main = () => {
             component={AddCustomer}
           />
           <PrivateRoute exact path='/customer' component={ViewCustomer} />
-          <PrivateRoute exact path='/customer/editcustomer/:id' component={AddCustomer} />
+          <PrivateRoute
+            exact
+            path='/customer/editcustomer/:id'
+            component={AddCustomer}
+          />
 
           {/* products */}
           <PrivateRoute
@@ -97,8 +113,7 @@ const Main = () => {
             path='/product/viewproduct/:id'
             component={Product}
           />
-                    <PrivateRoute exact path='/test' component={Test} />
-
+          <PrivateRoute exact path='/test' component={Test} />
 
           {/* rent product */}
           <PrivateRoute exact path='/rentproduct' component={RentProduct} />
@@ -113,7 +128,16 @@ const Main = () => {
 
           {/* orders */}
           <PrivateRoute exact path='/orders' component={Orders} />
-          <PrivateRoute exact path='/orders/addorder' component={AddOrder} />
+          <PrivateRoute
+            exact
+            path='/orders/vieworder/:id'
+            component={ViewOrder}
+          />
+          <PrivateRoute
+            exact
+            path='/orders/alternotes'
+            component={OrderNotes}
+          />
 
           {/* appointment */}
           <PrivateRoute exact path='/appointments' component={AddAppointment} />
@@ -128,7 +152,6 @@ const Main = () => {
           {/* barcode */}
           <PrivateRoute exact path='/barcode' component={Barcode} />
           <PrivateRoute exact path='/Error' component={Error} />
-
         </Switch>
       </Router>
     </Provider>
