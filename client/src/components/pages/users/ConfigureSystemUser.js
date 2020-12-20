@@ -50,6 +50,10 @@ class ConfigureSystemUser extends Component {
         if (!auth.loading && !auth.isAuthenticated) {
             return <Redirect to='/' />
         }
+        const { user } = auth;
+        if (user && user.systemRole === "Employee") {
+          return <Redirect to="/Error" />;
+        }
         if (this.props.user == null) {
             return <Redirect push to='/user' />
         }

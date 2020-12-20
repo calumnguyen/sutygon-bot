@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import Loader from "../layout/Loader";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import * as moment from "moment";
 import { Redirect } from "react-router-dom";
-import "react-datepicker/dist/react-datepicker.css";
 
 class Error extends Component {
   state = {
@@ -36,20 +34,20 @@ class Error extends Component {
                         <img
                           src="assets/img/logo.png"
                           alt=""
-                          className="img-fluid maintenance-img mb-n5 mt-n4"
+                          className="img-fluid maintenance-img mb-2"
                           height="250"
                           width="300"
                         />
-                        <h1 className="text-white mt-4">
-                          404 - Page Not Found!
+                        <h1 className="text-white mb-5 mt-n5">
+                     ACCESS DENIED..
                         </h1>
 
-                        <button className="btn btn-primary btn-lg mt-3">
+                        <button className="btn btn-danger btn-lg mt-3">
                           <a
                             href="/dashboard"
                             className="text-decoration-none text-white"
                           >
-                            Back to dashboard
+                    <i className="ft-external-link"></i> Back to dashboard
                           </a>
                         </button>
                       </div>

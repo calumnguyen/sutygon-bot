@@ -1,262 +1,228 @@
-const express = require('express')
-const router = express.Router()
-const auth = require('../../middleware/auth')
-const Customer = require('../../models/Customer')
-const RentedProduct = require('../../models/RentedProducts')
-const { check, validationResult } = require('express-validator')
-const RentedProducts = require('../../models/RentedProducts')
-const mongoose = require('mongoose')
-const Invoice = require('../../models/Invoices')
-const Product = require('../../models/Product')
-var moment = require('moment')
+const express = require("express");
+const router = express.Router();
+const auth = require("../../middleware/auth");
+const Customer = require("../../models/Customer");
+const RentedProduct = require("../../models/RentedProducts");
+const { check, validationResult } = require("express-validator");
+const RentedProducts = require("../../models/RentedProducts");
+const mongoose = require("mongoose");
+const Invoice = require("../../models/Invoices");
+const Product = require("../../models/Product");
+var moment = require("moment");
 
 // @route   POST api/customers/add
 // @desc    Add New Customer
 // @access  private
 router.post(
-  '/add',
+  "/add",
   [
-    check('name', 'Customer Name Required').not().isEmpty(),
-    // check('contactnumber', 'Contact Number must be minimum of 10 digits').isLength({ min: 10 }),
-    check('email', 'Email Required').not().isEmpty(),
-    check('address', 'Address Required').not().isEmpty(),
-    check('birthday', 'Enter birth date.').not().isEmpty(),
+    check("name", "Customer Name Required").not().isEmpty(),
+    check("address", "Address Required").not().isEmpty(),
+    check("birthday", "Enter birth date.").not().isEmpty(),
   ],
   auth,
 
   async (req, res) => {
-    const errors = validationResult(req)
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() })
+      return res.status(422).json({ errors: errors.array() });
     }
 
     try {
       // Check if email already exist.
-      let emailExist = await Customer.findOne({ email: req.body.email })
-        .lean()
-        .select('_id')
-
-      if (emailExist) {
-        return res
-          .status(409)
-          .json({ errors: [{ msg: 'Email already exists' }] })
-      }
-
-      let customer = new Customer(req.body)
-      await customer.save()
-      res.status(200).json({ msg: 'Customer Added Successfully' })
+   
+      let customer = new Customer(req.body);
+      await customer.save();
+      res.status(200).json({ msg: "Customer Added Successfully" });
     } catch (err) {
-      console.log(err)
-      res.status(500).send('Server error')
+      console.log(err);
+      res.status(500).send("Server error");
     }
   }
-)
-
-// @route  POST api/customers/:id
-// @desc   Update a Customer
-// @access Private
-// router.post('/:id', auth, async (req, res) => {
-//   try {
-//     const body = req.body // req.body = [Object: null prototype] { title: 'product' }
-
-//     await Product.updateOne(
-//       { _id: req.params.id },
-//       {
-//         $set: {
-//           name: body.orderNumber,
-//         },
-//       }
-//     )
-//     res.json({ msg: 'Customer Updated Successfully' })
-//   } catch (err) {
-//     console.error(err.message)
-//     res
-//       .status(500)
-//       .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
-//   }
-// })
+);
 
 // @route    POST api/customers/:id
 //@desc      update customers.
-router.post('/:id', auth, async (req, res) => {
-
+router.post("/:id", auth, async (req, res) => {
   try {
-    let { name, birthday, online_account } = req.body
-    let { username } = { ...online_account }
+    let { name, birthday, online_account } = req.body;
+    let { username } = { ...online_account };
     // now remove those key:items from the req.body with are not editable.
     if (name || birthday) {
-      delete req.body['name']
-      delete req.body['birthday']
-      delete online_account['username']
+      delete req.body["name"];
+      delete req.body["birthday"];
+      delete online_account["username"];
     }
 
     let customer = await Customer.findByIdAndUpdate(
       req.params.id,
       { ...req.body },
       { new: true, runValidators: true }
-    ).lean()
+    ).lean();
 
     if (!customer) {
       return res
         .status(400)
-        .json({ errors: [{ msg: 'No customer found with this id.' }] })
+        .json({ errors: [{ msg: "No customer found with this id." }] });
     }
 
-    return res.status(200).json({ msg: 'Customer updated successfully!' })
+    return res.status(200).json({ msg: "Customer updated successfully!" });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return res
       .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
-})
+});
 
 // @route   GET api/customers
 // @desc    Get all customers
 // @access  Private
-router.get('/', auth, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
-    const customers = await Customer.find()
-    res.json(customers)
+    const customers = await Customer.find();
+    res.json(customers);
   } catch (err) {
-    console.log(err)
-    res.statu(500).send('Server Error!')
+    console.log(err);
+    res.statu(500).send("Server Error!");
   }
-})
+});
 
 // @route  GET api/customers/:id
 // @desc   Get Customer by id
 // @access Private
-router.get('/:id', auth, async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   try {
-    const customer = await Customer.findById(req.params.id)
+    const customer = await Customer.findById(req.params.id);
 
     if (!customer) {
-      return res.status(404).json({ msg: 'No Customer found' })
+      return res.status(404).json({ msg: "No Customer found" });
     }
 
-    res.json(customer)
+    res.json(customer);
   } catch (err) {
-    console.error(err.message)
+    console.error(err.message);
     // Check if id is not valid
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'No Customer found' })
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "No Customer found" });
     }
     res
       .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
-})
+});
 
 // @route  GET api/customer/:name
 // @desc   Get Customer (Search for customer)
 // @access Private
-router.get('/search/:contactnumber', auth, async (req, res) => {
+router.get("/search/:contactnumber", auth, async (req, res) => {
   try {
-    const customer = await Customer.findOne({ contactnumber: { $eq: req.params.contactnumber } })
+    const customer = await Customer.findOne({
+      contactnumber: { $eq: req.params.contactnumber },
+    });
     if (!customer) {
-      return status(404).json({ msg: 'No Customer found' })
+      return status(404).json({ msg: "No Customer found" });
     }
 
-    return res.status(200).json(customer)
+    return res.status(200).json(customer);
   } catch (err) {
-    console.error(err.message)
+    console.error(err.message);
     // Check if id is not valid
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'No Customer found' })
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "No Customer found" });
     }
     res
       .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
-})
+});
 
 //@route   GET api/customers/:contactnumber
 //@desc    Get Customer through contact number
 //@access  Private
-router.get('/search/number/:contactnumber', auth, async (req, res) => {
+router.get("/search/number/:contactnumber", auth, async (req, res) => {
   try {
     const customer = await Customer.findOne({
       contactnumber: { $eq: req.params.contactnumber },
-    })
+    });
 
     if (!customer) {
-      return status(404).json({ msg: 'No Customer found' })
+      return status(404).json({ msg: "No Customer found" });
     }
 
-    res.json(customer)
+    res.json(customer);
   } catch (err) {
-    console.error(err.message)
+    console.error(err.message);
 
     res
       .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
-})
+});
 
 // @route  DELETE api/customers/:id
 // @desc   Delete a Customer
 // @access Private
-router.delete('/:id', auth, async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
-    const customer = await Customer.findById(req.params.id)
+    const customer = await Customer.findById(req.params.id);
 
     if (!customer) {
-      return res.status(404).json({ msg: 'No Customer found' })
+      return res.status(404).json({ msg: "No Customer found" });
     }
 
-    await customer.remove()
+    await customer.remove();
 
-    res.json({ msg: 'Customer Successfully Removed' })
+    res.json({ msg: "Customer Successfully Removed" });
   } catch (err) {
-    console.error(err.message)
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'No Customer found' })
+    console.error(err.message);
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "No Customer found" });
     }
     res
       .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
-})
+});
 
 // @route  POST api/customers/insights
 // @desc   Post customer insights
 // @access Private
 
-router.post('/:id/insights', auth, async (req, res) => {
+router.post("/:id/insights", auth, async (req, res) => {
   try {
-    let { year, month, allTime } = { ...req.body }
+    let { year, month, allTime } = { ...req.body };
 
-    var startDate
-    var endDate
+    var startDate;
+    var endDate;
     if (year) {
       //get year
-      startDate = moment(year).format('YYYY-MM-DD')
+      startDate = moment(year).format("YYYY-MM-DD");
 
       //make last date of the current year
-      const lastDate = startDate.split('-')
+      const lastDate = startDate.split("-");
 
-      lastDate[1] = '12'
-      lastDate[2] = '30'
+      lastDate[1] = "12";
+      lastDate[2] = "30";
 
-      endDate = lastDate.join('-')
+      endDate = lastDate.join("-");
     }
 
     if (month) {
-      startDate = moment(month).format('YYYY-MM-DD')
+      startDate = moment(month).format("YYYY-MM-DD");
       // gets the last day of month , whether it is 29,30 or 31 automatically!
-      endDate = moment(startDate).endOf('month').format(moment.HTML5_FMT.DATE)
+      endDate = moment(startDate).endOf("month").format(moment.HTML5_FMT.DATE);
     }
 
     if (allTime) {
       // Initial period is set to 2012 by client.
-      startDate = moment('2012').format('YYYY-MM-DD')
+      startDate = moment("2012").format("YYYY-MM-DD");
       // Till current moment.
-      endDate = moment().format(moment.HTML5_FMT.DATE)
+      endDate = moment().format(moment.HTML5_FMT.DATE);
     }
 
     //converted to ObjectId because aggregator is type-sensitive.
-    var customerId = mongoose.Types.ObjectId(req.params.id)
+    var customerId = mongoose.Types.ObjectId(req.params.id);
 
     let orders = await RentedProducts.aggregate([
       {
@@ -279,19 +245,19 @@ router.post('/:id/insights', auth, async (req, res) => {
           total: {
             $sum: {
               // double is used to convert string to number for performing addition.
-              $toDouble: '$total',
+              $toDouble: "$total",
             },
           },
           insuranceAmt: {
             $sum: {
-              $toDouble: '$insuranceAmt',
+              $toDouble: "$insuranceAmt",
             },
           },
           Total_spent: {
             $sum: {
               $subtract: [
-                { $toDouble: '$total' },
-                { $toDouble: '$insuranceAmt' },
+                { $toDouble: "$total" },
+                { $toDouble: "$insuranceAmt" },
               ],
             },
           },
@@ -305,7 +271,7 @@ router.post('/:id/insights', auth, async (req, res) => {
           total_orders: { $sum: 1 },
         },
       },
-    ])
+    ]);
 
     let totalProducts = await RentedProducts.find(
       {
@@ -317,45 +283,45 @@ router.post('/:id/insights', auth, async (req, res) => {
         },
       },
       { barcodes: 1, _id: 0 }
-    )
+    );
 
     // .project({ barcodes: 1 })
     // .select('barcodes')
 
-    var productAmount = 0
+    var productAmount = 0;
     const calculateProductAmt = new Promise(async (resolve, reject) => {
       for (prod of totalProducts) {
         // console.log(prod.barcodes)
         for (bcode of prod.barcodes) {
           let singleProduct = await Product.findOne(
             {
-              'color.sizes.barcodes': {
+              "color.sizes.barcodes": {
                 $elemMatch: { barcode: parseInt(bcode) },
               },
             },
             { color: 1, _id: 0 }
-          ).lean() // anti-POJO
+          ).lean(); // anti-POJO
           // .select('color')
           // .project({ color: 1 })
 
           // I set this check of null to prevent null value incase no barcode is matched...
           if (singleProduct) {
             // will sum the amount of each product..
-            productAmount += parseInt(singleProduct.color[0].sizes[0].price)
+            productAmount += parseInt(singleProduct.color[0].sizes[0].price);
           }
         }
       }
-      return resolve(productAmount)
-    })
+      return resolve(productAmount);
+    });
 
-    const ProductTotal = await calculateProductAmt
+    const ProductTotal = await calculateProductAmt;
 
-    console.log(orders)
+    console.log(orders);
 
-    const totalTax = orders[0].total - (ProductTotal + orders[0].insuranceAmt)
+    const totalTax = orders[0].total - (ProductTotal + orders[0].insuranceAmt);
 
     // Adding tax value.
-    orders[0]['tax'] = totalTax
+    orders[0]["tax"] = totalTax;
     // orders[0]['total'] += totalTax
 
     // total orders gathered from Invoices collection.
@@ -368,12 +334,12 @@ router.post('/:id/insights', auth, async (req, res) => {
     //   },
     // }).countDocuments()
 
-    return res.status(200).json({ msg: 'Insights found.', orders })
+    return res.status(200).json({ msg: "Insights found.", orders });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong.' }] })
+      .json({ errors: [{ msg: "Server Error: Something went wrong." }] });
   }
 
   // total orders.
@@ -385,50 +351,49 @@ router.post('/:id/insights', auth, async (req, res) => {
   // damage = missing
 
   // late fees. (no)
-})
+});
 
 // @route  GET api/customers/blocked
 // @desc   get blocked customers
 // @access Private
-router.get('/status/blocked', auth, async (req, res) => {
+router.get("/status/blocked", auth, async (req, res) => {
   try {
     const customer = await Customer.find({ block_account: true })
-      .select('name email')
-      .lean()
-
+      .select("name email")
+      .lean();
 
     if (!customer) {
-      return res.status(404).json({ msg: 'No Customer found' })
+      return res.status(404).json({ msg: "No Customer found" });
     }
 
-    res.json({ msg: 'Blocked Cutomers', customer })
+    res.json({ msg: "Blocked Cutomers", customer });
   } catch (err) {
-    console.error(err.message)
+    console.error(err.message);
     res
       .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
-})
+});
 
 // @route  GET api/customers/:id/unblock
 // @desc   un-block customer by id
 // @access Private
-router.post('/:id/unblock', auth, async (req, res) => {
+router.post("/:id/unblock", auth, async (req, res) => {
   try {
     await Customer.updateOne(
       { _id: req.params.id },
       {
         $set: { block_account: false },
       }
-    )
+    );
 
-    res.json({ msg: 'Cutomers unblocked successfully!' })
+    res.json({ msg: "Cutomers unblocked successfully!" });
   } catch (err) {
-    console.error(err.message)
+    console.error(err.message);
     res
       .status(500)
-      .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
-})
+});
 
-module.exports = router
+module.exports = router;

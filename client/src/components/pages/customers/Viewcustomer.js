@@ -223,7 +223,13 @@ class ViewCustomer extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to='/' />
     }
+    const {user} = auth;
+    if(user && user.systemRole ==="Employee"){
+      if(user && !user.sections.includes("Customers")){
+        return <Redirect to="/Error"/>
 
+      }
+    }
     return (
       <React.Fragment>
         <Loader />

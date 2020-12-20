@@ -97,20 +97,26 @@ class Login extends Component {
             ) {
               return <Redirect to="/ActivateAccount" />;
             } else if (openShop.status === "off") {
-             return <Redirect
-                push
-                to={{
-                  pathname: "/storeclosed",
-                  shop: shop[0],
-                }}
-              />;
+              return (
+                <Redirect
+                  push
+                  to={{
+                    pathname: "/storeclosed",
+                    shop: shop[0],
+                  }}
+                />
+              );
             }
           }
         }
       }
     } else if (user && user.systemRole === "Admin") {
       if (this.props.AuthLoading === false && this.props.isAuthenticated) {
-        return <Redirect to="/dashboard" />;
+        if (user.isPasswordChanged === false) {
+          return <Redirect to="/ActivateAccount" />;
+        } else {
+          return <Redirect to="/dashboard" />;
+        }
       }
     }
 
