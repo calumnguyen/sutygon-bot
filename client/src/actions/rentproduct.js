@@ -268,9 +268,12 @@ export const getOrderSearchStatus = (status) => async (dispatch) => {
       payload: res.data,
     })
   } catch (err) {
+   const errors = err.response.data.errors
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, 'warning')))
+    }
     dispatch({
       type: RENTPRODUCTS_ERROR,
-      payload: err.response,
     })
   }
 }
