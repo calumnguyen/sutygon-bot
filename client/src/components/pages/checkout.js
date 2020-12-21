@@ -125,10 +125,7 @@ class Checkout extends Component {
           { timeOut: 3000 }
         );
         return;
-      } else if (
-        barcodeArry.isRented === undefined ||
-        barcodeArry.isRented === (false || "false")
-      ) {
+      } else {
         const { barcode } = this.state;
         barcode.push({
           id: shortid.generate(),
@@ -172,7 +169,7 @@ class Checkout extends Component {
                 placeholder="Barcode"
                 name="barcode"
                 id="widthBr"
-                style={{ width: "-webkit-fill-available" }}
+                style={{ width: "-webkit-fill-available",'color':"black" }}
                 onChange={(e) => this.handleChange(e, barcode.id)}
                 value={barcode.barcode}
               />
