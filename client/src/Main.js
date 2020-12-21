@@ -52,7 +52,7 @@ const Main = () => {
 
   return (
     <Provider store={store}>
-      <Router forceRefresh={true}>
+      <Router >
         <Switch>
           <Route exact path='/' component={Login} />
           <Route exact path='/Login' component={Login} />
