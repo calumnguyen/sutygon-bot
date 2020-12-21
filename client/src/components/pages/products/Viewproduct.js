@@ -6,7 +6,7 @@ import {
   deleteProduct,
   getProductById,
   findProducts,
-  changeStatus
+  changeStatus,
 } from "../../../actions/product";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { Link } from "react-router-dom";
@@ -15,8 +15,6 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
-
-
 
 class ViewProduct extends Component {
   state = {
@@ -32,9 +30,9 @@ class ViewProduct extends Component {
     }
   }
   encodeURI = (src) => {
-    var uri = src.split(" ").join("_")
+    var uri = src.split(" ").join("_");
     return uri;
-  }
+  };
 
   handleChange = (e, id = "") => {
     this.setState({ [e.target.name]: e.target.value });
@@ -97,59 +95,71 @@ class ViewProduct extends Component {
   setModalProduct = (id) => {
     const { formated_products } = this.state;
 
-    if(formated_products) {
+    if (formated_products) {
       formated_products.forEach((product, p_index) => {
-        if(product._id == id) {
-          this.setState({modal_product: product});
+        if (product._id == id) {
+          this.setState({ modal_product: product });
         }
       });
     }
-  }
+  };
   getViewModal = () => {
     let product = this.state.modal_product;
 
-    if(product) {
+    if (product) {
       return (
-
         <div>
-        <p>Colors, Sizes & Barcodes</p>
-        <div className="tree ">
-          <ul>
-        {product.color &&
-          product.color.map((color, color_i) => (
-
-            <li key={color_i}>
-            <span>
-            <div className="s1" data-toggle="collapse" aria-expanded="true" aria-controls="Web">
-            <i className="expanded"><i className="fa fa-arrow-right"></i></i> {color.colorname} : {color.total}</div></span>
-              <div id="Web" className="collapse show">
-                <ul>
-                {color.sizes &&
-                  color.sizes.map((size, size_i) => (
-
-                    <li key={size_i}>
-                    <span><i className="fa fa-arrow-right"></i>{size.size} : {size.qty}</span>
+          <p>Colors, Sizes & Barcodes</p>
+          <div className="tree ">
+            <ul>
+              {product.color &&
+                product.color.map((color, color_i) => (
+                  <li key={color_i}>
+                    <span>
+                      <div
+                        className="s1"
+                        data-toggle="collapse"
+                        aria-expanded="true"
+                        aria-controls="Web"
+                      >
+                        <i className="expanded">
+                          <i className="fa fa-arrow-right"></i>
+                        </i>{" "}
+                        {color.colorname} : {color.total}
+                      </div>
+                    </span>
+                    <div id="Web" className="collapse show">
                       <ul>
-                      {size.barcodes &&
-                        size.barcodes.map(
-                          (barcode, barcode_i) => (
-                            <li key={barcode_i}><span><i className="fa fa-arrow-right"></i>BARCODE ID # {barcode.barcode}</span></li>
-                          )
-                        )}
+                        {color.sizes &&
+                          color.sizes.map((size, size_i) => (
+                            <li key={size_i}>
+                              <span>
+                                <i className="fa fa-arrow-right"></i>
+                                {size.size} : {size.qty}
+                              </span>
+                              <ul>
+                                {size.barcodes &&
+                                  size.barcodes.map((barcode, barcode_i) => (
+                                    <li key={barcode_i}>
+                                      <span>
+                                        <i className="fa fa-arrow-right"></i>
+                                        BARCODE ID # {barcode.barcode}
+                                      </span>
+                                    </li>
+                                  ))}
+                              </ul>
+                            </li>
+                          ))}
                       </ul>
-                     </li>
-
-                  ))}
-                </ul>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+                    </div>
+                  </li>
+                ))}
+            </ul>
+          </div>
         </div>
-      )
+      );
     }
-  }
+  };
   calculateTotals = (products) => {
     // looping through prducts
     let rows = [];
@@ -161,7 +171,6 @@ class ViewProduct extends Component {
           let color_size_total = 0;
           // looping through sizes of current color
           if (color.sizes) {
-
             color.sizes.forEach((size, s_index) => {
               color_size_total += parseInt(size.qty);
               size.is_open = false;
@@ -187,7 +196,9 @@ class ViewProduct extends Component {
   toggleColor = (e, product_i, color_i) => {
     const { formated_products } = this.state;
 
-    formated_products[product_i].color[color_i].is_open = !formated_products[product_i].color[color_i].is_open;
+    formated_products[product_i].color[color_i].is_open = !formated_products[
+      product_i
+    ].color[color_i].is_open;
     this.setState({ formated_products });
     this.getTAble();
   };
@@ -199,7 +210,7 @@ class ViewProduct extends Component {
       size_i
     ].is_open = !formated_products[product_i].color[color_i].sizes[size_i]
       .is_open;
-    this.setState({ formated_products });;
+    this.setState({ formated_products });
   };
   // Replace all <img /> with <Img />
 
@@ -219,38 +230,77 @@ class ViewProduct extends Component {
         }
         return formated_products.map((product, i) => (
           <div className="col-xl-4 col-lg-6 col-md-12" key={i}>
-            <div className="card product_card" >
+            <div className="card product_card">
               <div className="card-content">
-                <div className="imeg_container" style={{backgroundImage: `url(${product.image})`}}>
-                <span className={"badge badge-pill badge-" + ((product.disabled === "true") ? "secondary" : "success") + " bdg"}>{(product.disabled === "false") ? "active" : "disabled"}</span>
+                <div
+                  className="imeg_container"
+                  style={{ backgroundImage: `url(${product.image})` }}
+                >
+                  <span
+                    className={
+                      "badge badge-pill badge-" +
+                      (product.disabled === "true" ? "secondary" : "success") +
+                      " bdg"
+                    }
+                  >
+                    {product.disabled === "false" ? "active" : "disabled"}
+                  </span>
                 </div>
                 <div className="textbbody">
                   <h4 className="card-title">{product.name}</h4>
-                  <h6 className="card-subtitle text-muted">Product id: {product.productId}</h6>
-                  <h6 className="card-subtitle text-muted">Total Items: {product.total}</h6>
+                  <h6 className="card-subtitle text-muted">
+                    Product id: {product.productId}
+                  </h6>
+                  <h6 className="card-subtitle text-muted">
+                    Total Items: {product.total}
+                  </h6>
                   {product.tags &&
                     product.tags.map((tag, tag_i) => (
-                      <span className="badge badge-pill badge-light" key={tag_i}>
+                      <span
+                        className="badge badge-pill badge-light"
+                        key={tag_i}
+                      >
                         {tag}
                       </span>
                     ))}
                 </div>
                 <div className="card-footer">
-                <Link
-                  to={{
-                    pathname: `/product/editproduct/${product._id}`,
-                    data: product
-                  }}
-                  className="card-link default">
-                  {" "}
-                  <i className="icon-pencil"></i> Edit{" "}
-                </Link>
-                <a href="javascript:void(0)" onClick={(e) => this.toggleStatus(product.disabled, product._id)} className="card-link default">
-                  {" "}
-                  <i className={"icon-control-" + ((product.disabled === "true") ? "play" : "pause")}></i> {(product.disabled === "true") ? "Reactivate" : "Disable"}
-                </a>
-                  <a href="javascript:void(0)" className="card-link default" data-toggle="modal" data-target="#viewModal" onClick={(e) => this.setModalProduct(product._id)}><i className="icon-eye"></i> View Details</a>
-                  </div>
+                  <Link
+                    to={{
+                      pathname: `/product/editproduct/${product._id}`,
+                      data: product,
+                    }}
+                    className="btn btn-default mx-n1 my-n2"
+                  >
+                    {" "}
+                    <i className="icon-pencil"></i> Edit{" "}
+                  </Link>
+                  <button
+                    // href="javascript:void(0)"
+                    onClick={(e) =>
+                      this.toggleStatus(product.disabled, product._id)
+                    }
+                    className="btn btn-default mx-n1 my-n2"
+                  >
+                    {" "}
+                    <i
+                      className={
+                        "icon-control-" +
+                        (product.disabled === "true" ? "play" : "pause")
+                      }
+                    ></i>{" "}
+                    {product.disabled === "true" ? "Reactivate" : "Disable"}
+                  </button>
+                  <button
+                    // href="javascript:void(0)"
+                    className="btn btn-default mx-n1 my-n2"
+                    data-toggle="modal"
+                    data-target="#viewModal"
+                    onClick={(e) => this.setModalProduct(product._id)}
+                  >
+                    <i className="icon-eye"></i> View Details
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -268,7 +318,6 @@ class ViewProduct extends Component {
   }
 
   async toggleStatus(status, product_id) {
-
     if (status === "true") {
       status = "false";
     } else {
@@ -280,18 +329,17 @@ class ViewProduct extends Component {
     if (products) {
       this.calculateTotals(products);
     }
-  };
+  }
 
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    const {user} = auth;
-    if(user && user.systemRole ==="Employee"){
-      if(user && !user.sections.includes("Inventory")){
-        return <Redirect to="/Error"/>
-
+    const { user } = auth;
+    if (user && user.systemRole === "Employee") {
+      if (user && !user.sections.includes("Inventory")) {
+        return <Redirect to="/Error" />;
       }
     }
     return (
@@ -322,20 +370,19 @@ class ViewProduct extends Component {
                                 />
                               </div>
                               <div className="col-md-4">
-                                <a
+                                {/* <a
                                   href="/product"
                                   className="btn btn-success"
                                   onClick={() => this.searchTable()}
                                 >
                                   <i className="fa fa-search"></i> Search{" "}
-                                </a>
+                                </a> */}
                               </div>
                               <div className="col-md-4">
                                 <Link
                                   to="/product/addproduct"
                                   className="btn btn-primary pull-right"
                                 >
-                                  {" "}
                                   <i className="fa fa-plus"></i> New Product
                                 </Link>
                               </div>
@@ -347,33 +394,44 @@ class ViewProduct extends Component {
                     </div>
                   </div>
 
-                  <div className="row">
-                  {this.getTAble()}
-                  </div>
-
+                  <div className="row">{this.getTAble()}</div>
                 </section>
               </div>
             </div>
           </div>
-          <div style={{clear: "both"}}></div>
+          <div style={{ clear: "both" }}></div>
 
-          <div className="modal fade" id="viewModal" tabIndex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="viewModalLabel">Product Details</h5>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                {this.getViewModal()}
-                <br />
-                <br />
+          <div
+            className="modal fade"
+            id="viewModal"
+            tabIndex="-1"
+            role="dialog"
+            aria-labelledby="viewModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="viewModalLabel">
+                    Product Details
+                  </h5>
+                  <button
+                    type="button"
+                    className="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  {this.getViewModal()}
+                  <br />
+                  <br />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
           {/*<footer className="footer footer-static footer-light">
             <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
