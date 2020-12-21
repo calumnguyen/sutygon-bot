@@ -362,12 +362,12 @@ class ViewProduct extends Component {
                           <div className="card-body table-responsive">
                             <div className="row">
                               <div className="col-md-4">
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  name="search"
-                                  onChange={(e) => this.handleChange(e)}
-                                />
+//                                 <input
+//                                   type="text"
+//                                   className="form-control"
+//                                   name="search"
+//                                   onChange={(e) => this.handleChange(e)}
+//                                 />
                               </div>
                               <div className="col-md-4">
                                 {/* <a
