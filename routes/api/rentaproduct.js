@@ -187,7 +187,7 @@ router.put('/searchstatus', auth, async (req, res) => {
       .lean()
 
     if (result.length < 1) {
-      return res.status(404).json({ msg: 'No Orders found' })
+      return res.status(404).json({ errors: [{ msg: 'No orders found.' }] })
     }
 
     return res.status(200).json(result)
