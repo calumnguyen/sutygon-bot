@@ -1,18 +1,18 @@
-import { combineReducers } from "redux";
-import auth from "./auth";
-import alert from "./alert";
+import { combineReducers } from 'redux'
+import auth from './auth'
+import alert from './alert'
 
-import dashboard from "./dashboard";
-import user from "./user";
-import pages from "./pages";
-import product from "./product";
-import customer from "./customer";
-import rentproduct from "./rentproduct";
-import returnproduct from "./returnproduct";
-import appointment from "./appointment";
-import report from "./report";
-import invoice from "./invoice";
-
+import dashboard from './dashboard'
+import user from './user'
+import pages from './pages'
+import product from './product'
+import customer from './customer'
+import rentproduct from './rentproduct'
+import returnproduct from './returnproduct'
+import appointment from './appointment'
+import report from './report'
+import invoice from './invoice'
+import alternotes from './alternotes'
 
 export default combineReducers({
   alert,
@@ -27,5 +27,5 @@ export default combineReducers({
   report,
   dashboard,
   invoice,
-
-});
+  alternotes,
+})

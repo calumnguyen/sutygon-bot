@@ -19,9 +19,13 @@ import Switch from "react-switch";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
 import Modal from "react-awesome-modal";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
 
-// import { noConflict } from "jquery";
+import {vi} from 'date-fns/esm/locale'
 
+
+registerLocale("vi", vi);
+setDefaultLocale("vi");
 class AddCustomer extends Component {
   state = {
     id: "",
@@ -44,6 +48,7 @@ class AddCustomer extends Component {
     alltime: false,
     selectedAllyear: "",
     visible: false,
+    show: false,
   };
 
   async componentDidMount() {
@@ -70,11 +75,18 @@ class AddCustomer extends Component {
               : "",
           year: customer.year ? moment(customer.year).format("DD/MM/YYYY") : "",
           createdAt: moment(customer.createdAt).format("DD/MM/YYYY"),
-          birthday: moment(customer.birthday).format("DD/MM/YYYY"),
+          birthday:
+            customer.birthday && moment(customer.birthday).format("DD/MM/YYYY"),
         });
       }
     }
   }
+  closeModal_insight = (e) => {
+    e.preventDefault();
+    this.setState({
+      show: false,
+    });
+  };
   closeModal = (e) => {
     e.preventDefault();
     this.setState({
@@ -96,7 +108,7 @@ class AddCustomer extends Component {
         birthday: date,
       });
     }
-    if (this.state.id !== "") {
+    if (this.state.id === "") {
       if (name === "selectedYear") {
         this.setState({
           selectedYear: date,
@@ -149,44 +161,47 @@ class AddCustomer extends Component {
   };
 
   handleChangeNumber = (e) => {
-    this.setState({
-      [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : "",
-    });
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === "" || re.test(e.target.value)) {
+      this.setState({ [e.target.name]: e.target.value });
+    }
   };
   onSubmit = async (e) => {
     e.preventDefault();
     this.setState({ saving: true });
     const state = { ...this.state };
+    const { customer } = this.props;
     let m_oc = {
       exist: "no",
-      membership: this.state.membership !=="" ? this.state.membership:null,
+      membership: this.state.membership === "" ? null:this.state.membership,
       username: this.state.name,
       email: "unverified",
       deactivate: false,
-      account_created: this.state.createdAt,
+      // account_created: this.state.createdAt,
     };
-    var customer = {
+    var customerData = {
       name: state.name,
       email: state.email,
       contactnumber: state.contactnumber,
       address: state.address,
-      birthday: moment(state.birthday),
+      birthday: state.id === "" ? moment(state.birthday) : customer.birthday,
       company: state.company,
       company_address: state.company_address,
       online_account: m_oc,
-      // block_account: state.block_account
+      block_account: state.block_account === "" ? false : state.block_account,
     };
 
     if (state.id === "") {
-      await this.props.addNewCustomer(customer);
+      await this.props.addNewCustomer(customerData);
     } else {
-      await this.props.updateCustomer(customer, state.id);
+      await this.props.updateCustomer(customerData, state.id);
     }
     this.setState({ saving: false });
   };
 
   getInsight = async (e) => {
     e.preventDefault();
+
     if (this.props.match.params.id) {
       const id = this.props.match.params.id;
 
@@ -196,6 +211,14 @@ class AddCustomer extends Component {
         allTime: this.state.alltime,
       };
       await this.props.getInsight(id, timeframe);
+      if (this.props.insightFound === true) {
+        this.setState({
+          show: true,
+        });
+      }
+      if (this.props.insightFound === false) {
+        OCAlert.alertError("Something Went Wrong", { timeOut: 3000 });
+      }
     }
   };
   render() {
@@ -203,7 +226,12 @@ class AddCustomer extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-
+    const { user } = auth;
+    if (user && user.systemRole === "Employee") {
+      if (user && !user.sections.includes("Customers")) {
+        return <Redirect to="/Error" />;
+      }
+    }
     if (this.props.saved) {
       return <Redirect to="/customer" />;
     }
@@ -326,7 +354,6 @@ class AddCustomer extends Component {
                                     name="email"
                                     value={this.state.email}
                                     onChange={(e) => this.handleChange(e)}
-                                    required
                                   />
                                 </div>
                               </div>
@@ -383,14 +410,17 @@ class AddCustomer extends Component {
                                   {this.state.isEdit === false ? (
                                     <DatePicker
                                       dateFormat="dd/MM/yyyy"
+                                      locale="vi"
+
                                       selected={this.state.birthday}
+                                      
                                       className="form-control border-primary"
                                       onChange={(e) =>
                                         this.handleChangeForDate(e, "birthday")
                                       }
                                       showMonthDropdown
                                       showYearDropdown
-                                      dropdownMode="scroll"
+                                      dropdownMode="select"
                                     />
                                   ) : (
                                     <input
@@ -512,12 +542,7 @@ class AddCustomer extends Component {
                                             type="text"
                                             id="projectinput4"
                                             className="form-control border-primary"
-                                            placeholder="Contact Number"
-                                            name="contactnumber"
                                             value={this.state.createdAt}
-                                            onChange={(e) =>
-                                              this.handleChangeNumber(e)
-                                            }
                                             readOnly
                                             required
                                           />
@@ -575,6 +600,9 @@ class AddCustomer extends Component {
                                               this.handleChange(e)
                                             }
                                           >
+                                            <option name="membership" value="">
+                                              ---select---{" "}
+                                            </option>
                                             <option
                                               name="membership"
                                               value="Gold"
@@ -582,6 +610,7 @@ class AddCustomer extends Component {
                                               {" "}
                                               Gold{" "}
                                             </option>
+
                                             <option
                                               name="membership"
                                               value="Diamond"
@@ -654,13 +683,26 @@ class AddCustomer extends Component {
                           <div className="form-actions top">
                             {this.state.id === "" ? (
                               <>
-                                <button
-                                  type="submit"
-                                  className="mb-2 mr-2 btn btn-raised btn-primary"
-                                  onClick={(e) => this.openModal(e)}
-                                >
-                                  <i className="ft-chevron-right" /> Next
-                                </button>
+                                {this.state.name === "" ||
+                                this.state.address === "" ||
+                                this.state.birthday === "" ||
+                                this.state.contactnumber === "" ? (
+                                  <button
+                                    type="submit"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary disabled"
+                                    onClick={(e) => this.openModal(e)}
+                                  >
+                                    <i className="ft-chevron-right" /> Next
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="submit"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                                    onClick={(e) => this.openModal(e)}
+                                  >
+                                    <i className="ft-chevron-right" /> Next
+                                  </button>
+                                )}{" "}
                               </>
                             ) : (
                               <>
@@ -766,8 +808,8 @@ class AddCustomer extends Component {
                                     <div className="col-md-9">
                                       {this.state.year === true ? (
                                         <DatePicker
-                                          dateFormat="yyyy"
                                           selected={this.state.selectedYear}
+                                          locale="vi"
                                           className="form-control border-primary"
                                           onChange={(e) =>
                                             this.handleChangeForDate(
@@ -777,12 +819,15 @@ class AddCustomer extends Component {
                                           }
                                           minDate={new Date(2011, 1, 1)}
                                           maxDate={new Date()}
+                                          dateFormat="yyyy"
                                           showYearPicker
+                                          yearItemNumber={9}
                                           dropdownMode="scroll"
                                         />
                                       ) : this.state.month === true ? (
                                         <DatePicker
                                           dateFormat="yyyy/MM"
+                                          locale="vi"
                                           selected={this.state.selectedMonth}
                                           className="form-control border-primary"
                                           onChange={(e) =>
@@ -811,146 +856,8 @@ class AddCustomer extends Component {
                                     </div>
                                   </div>
                                 </div>{" "}
-                                <div className="col-md-6">
-                                  {this.props.insight &&
-                                  this.props.insightFound === true ? (
-                                    <div className="card card-outline-primary box-shadow-1">
-                                      <div className="card-body">
-                                        <table className="table table-bordered table-striped">
-                                          <thead> </thead>
-                                          <tbody>
-                                            <tr>
-                                              <th scope="row">
-                                                {this.state.year === true
-                                                  ? `Total spent in ${moment(
-                                                      this.state.selectedYear
-                                                    ).format("yyyy")}`
-                                                  : this.state.month === true
-                                                  ? `Total spent in ${moment(
-                                                      this.state.selectedMonth
-                                                    ).format("MMMM-yyyy")}`
-                                                  : "Total spent in all time"}
-                                              </th>
-
-                                              <td>{orders[0].Total_spent}</td>
-                                            </tr>
-                                            <tr>
-                                              <th scope="row">
-                                                {" "}
-                                                {this.state.year === true
-                                                  ? `Total order in ${moment(
-                                                      this.state.selectedYear
-                                                    ).format("yyyy")}`
-                                                  : this.state.month === true
-                                                  ? `Total orders in ${moment(
-                                                      this.state.selectedMonth
-                                                    ).format("MMMM-yyyy")}`
-                                                  : "Total orders in all time"}
-                                              </th>
-                                              <td> {orders[0].total_orders}</td>
-                                            </tr>
-                                            <tr>
-                                              <th scope="row">
-                                                {" "}
-                                                {this.state.year === true
-                                                  ? `Total discounts in ${moment(
-                                                      this.state.selectedYear
-                                                    ).format("yyyy")}`
-                                                  : this.state.month === true
-                                                  ? `Total discounts in ${moment(
-                                                      this.state.selectedMonth
-                                                    ).format("MMMM-yyyy")}`
-                                                  : "Total discounts in all time"}
-                                              </th>
-                                              <td></td>
-                                            </tr>
-                                            <tr>
-                                              <th scope="row">
-                                                {" "}
-                                                {this.state.year === true
-                                                  ? `Total insurance paid in ${moment(
-                                                      this.state.selectedYear
-                                                    ).format("yyyy")}`
-                                                  : this.state.month === true
-                                                  ? `Total insuarance paid in ${moment(
-                                                      this.state.selectedMonth
-                                                    ).format("MMMM-yyyy")}`
-                                                  : "Total insurance paid in all time"}
-                                              </th>
-
-                                              <td> {orders[0].insuranceAmt}</td>
-                                            </tr>
-                                            <tr>
-                                              <th scope="row">
-                                                {this.state.year === true
-                                                  ? `Total insurance returned in ${moment(
-                                                      this.state.selectedYear
-                                                    ).format("yyyy")}`
-                                                  : this.state.month === true
-                                                  ? `Total insurance returned in ${moment(
-                                                      this.state.selectedMonth
-                                                    ).format("MMMM-yyyy")}`
-                                                  : "Total insurance returned in all time"}
-                                              </th>
-
-                                              <td>{""}</td>
-                                            </tr>
-                                            <tr>
-                                              <th scope="row">
-                                                {" "}
-                                                {this.state.year === true
-                                                  ? `Total damage-fee paid in ${moment(
-                                                      this.state.selectedYear
-                                                    ).format("yyyy")}`
-                                                  : this.state.month === true
-                                                  ? `Total damage-fee paid in ${moment(
-                                                      this.state.selectedMonth
-                                                    ).format("MMMM-yyyy")}`
-                                                  : "Total damage-fee paid in all time"}
-                                              </th>
-
-                                              <td>{""}</td>
-                                            </tr>
-                                            <tr>
-                                              <th scope="row">
-                                                {" "}
-                                                {this.state.year === true
-                                                  ? `Total late-fee in ${moment(
-                                                      this.state.selectedYear
-                                                    ).format("yyyy")}`
-                                                  : this.state.month === true
-                                                  ? `Total late-fee in ${moment(
-                                                      this.state.selectedMonth
-                                                    ).format("MMMM-yyyy")}`
-                                                  : "Total late-fee in all time "}
-                                              </th>
-                                              <td>{""}</td>
-                                            </tr>
-                                            <tr>
-                                              <th scope="row">
-                                                {" "}
-                                                {this.state.year === true
-                                                  ? `Total tax paid in ${moment(
-                                                      this.state.selectedYear
-                                                    ).format("yyyy")}`
-                                                  : this.state.month === true
-                                                  ? `Total tax paid in ${moment(
-                                                      this.state.selectedMonth
-                                                    ).format("MMMM-yyyy")}`
-                                                  : "Total tax paid in all time"}{" "}
-                                              </th>
-                                              <td> {orders[0].tax}</td>
-                                            </tr>
-                                          </tbody>
-                                        </table>
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    ""
-                                  )}
-                                </div>
                               </div>
-                              {this.props.insightFound === false ? (
+                              {/* {this.props.insightFound === false ? (
                                 <div
                                   className="alert alert-danger alert-dismissible mb-2"
                                   role="alert"
@@ -968,7 +875,7 @@ class AddCustomer extends Component {
                                 </div>
                               ) : (
                                 ""
-                              )}
+                              )} */}
                             </>
                           ) : (
                             ""
@@ -998,6 +905,158 @@ class AddCustomer extends Component {
               </p>
             </footer>
           </div>
+
+          <Modal
+            visible={this.state.show}
+            width="380"
+            height="490"
+            effect="fadeInUp"
+            onClickAway={(e) => this.closeModal_insight(e)}
+          >
+            <div>
+              <div className="modal-header">
+                <h5>Insights</h5>
+                <button
+                  type="button"
+                  onClick={(e) => this.closeModal_insight(e)}
+                  className="btn btn-sm"
+                >
+                  x
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <table className="table table-bordered table-striped">
+                  <thead> </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row" style={{ textAlign: "left" }}>
+                        {this.state.year === true
+                          ? `Total spent in ${moment(
+                              this.state.selectedYear
+                            ).format("yyyy")}`
+                          : this.state.month === true
+                          ? `Total spent in ${moment(
+                              this.state.selectedMonth
+                            ).format("MMMM-yyyy")}`
+                          : "Total spent in all time"}
+                      </th>
+
+                      <td>{orders && orders && orders[0].Total_spent}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style={{ textAlign: "left" }}>
+                        {" "}
+                        {this.state.year === true
+                          ? `Total order in ${moment(
+                              this.state.selectedYear
+                            ).format("yyyy")}`
+                          : this.state.month === true
+                          ? `Total orders in ${moment(
+                              this.state.selectedMonth
+                            ).format("MMMM-yyyy")}`
+                          : "Total orders in all time"}
+                      </th>
+                      <td> {orders && orders[0].total_orders}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style={{ textAlign: "left" }}>
+                        {" "}
+                        {this.state.year === true
+                          ? `Total discounts in ${moment(
+                              this.state.selectedYear
+                            ).format("yyyy")}`
+                          : this.state.month === true
+                          ? `Total discounts in ${moment(
+                              this.state.selectedMonth
+                            ).format("MMMM-yyyy")}`
+                          : "Total discounts in all time"}
+                      </th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style={{ textAlign: "left" }}>
+                        {" "}
+                        {this.state.year === true
+                          ? `Total insurance paid in ${moment(
+                              this.state.selectedYear
+                            ).format("yyyy")}`
+                          : this.state.month === true
+                          ? `Total insuarance paid in ${moment(
+                              this.state.selectedMonth
+                            ).format("MMMM-yyyy")}`
+                          : "Total insurance paid in all time"}
+                      </th>
+
+                      <td> {orders && orders[0].insuranceAmt}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style={{ textAlign: "left" }}>
+                        {this.state.year === true
+                          ? `Total insurance returned in ${moment(
+                              this.state.selectedYear
+                            ).format("yyyy")}`
+                          : this.state.month === true
+                          ? `Total insurance returned in ${moment(
+                              this.state.selectedMonth
+                            ).format("MMMM-yyyy")}`
+                          : "Total insurance returned in all time"}
+                      </th>
+
+                      <td>{""}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style={{ textAlign: "left" }}>
+                        {" "}
+                        {this.state.year === true
+                          ? `Total damage-fee paid in ${moment(
+                              this.state.selectedYear
+                            ).format("yyyy")}`
+                          : this.state.month === true
+                          ? `Total damage-fee paid in ${moment(
+                              this.state.selectedMonth
+                            ).format("MMMM-yyyy")}`
+                          : "Total damage-fee paid in all time"}
+                      </th>
+
+                      <td>{""}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style={{ textAlign: "left" }}>
+                        {" "}
+                        {this.state.year === true
+                          ? `Total late-fee in ${moment(
+                              this.state.selectedYear
+                            ).format("yyyy")}`
+                          : this.state.month === true
+                          ? `Total late-fee in ${moment(
+                              this.state.selectedMonth
+                            ).format("MMMM-yyyy")}`
+                          : "Total late-fee in all time "}
+                      </th>
+                      <td>{""}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" style={{ textAlign: "left" }}>
+                        {" "}
+                        {this.state.year === true
+                          ? `Total tax paid in ${moment(
+                              this.state.selectedYear
+                            ).format("yyyy")}`
+                          : this.state.month === true
+                          ? `Total tax paid in ${moment(
+                              this.state.selectedMonth
+                            ).format("MMMM-yyyy")}`
+                          : "Total tax paid in all time"}{" "}
+                      </th>
+                      <td> {orders && orders[0].tax}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </Modal>
+
           <Modal
             visible={this.state.visible}
             width="600"

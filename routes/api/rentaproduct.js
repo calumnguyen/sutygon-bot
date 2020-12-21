@@ -81,16 +81,17 @@ router.post(
   }
 )
 
-// @route   GET api/products
+// @route   GET api/rentedproducts
 // @desc    Get all RentedProduct
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
     const rentedProducts = await RentedProduct.find()
-      .populate('customer')
-      .populate('product')
-      .populate('user')
-    res.json(rentedProducts)
+      .populate('customer', { name: 1, contactnumber: 1 })
+      .select('orderNumber status')
+      // new to old.
+      .sort({ createdAt: -1 })
+    res.status(200).json(rentedProducts)
   } catch (err) {
     console.log(err)
     res.status(500).send('Server Error!')
@@ -176,10 +177,10 @@ router.get('/getLastRecord', auth, async (req, res) => {
 // @route  POST api/rentproducts/searchstatus
 // @desc   Search orders by status.
 // @access Private
-router.get('/searchstatus', auth, async (req, res) => {
+router.put('/searchstatus', auth, async (req, res) => {
   try {
     const result = await RentedProduct.find({
-      status: { $in: req.body.statusArray },
+      status: { $in: req.body.status },
     })
       .select('orderNumber customerContactNumber status')
       .populate('customer', 'name')
@@ -189,7 +190,7 @@ router.get('/searchstatus', auth, async (req, res) => {
       return res.status(404).json({ msg: 'No Orders found' })
     }
 
-    return res.status(200).json({ result, size: result.length })
+    return res.status(200).json(result)
   } catch (err) {
     console.error(err.message)
     res
@@ -307,26 +308,98 @@ router.get('/:id/orderitems', auth, async (req, res) => {
       'barcodes'
     )
 
-    var orderItems = []
+    let eachProdColorArr = []
+    let eachProdSizeArr = []
+    let singleProdDetailsArr = []
 
+    // Traverse through each barcode.
     for (bcode of barcodes) {
+      // for each new barcode we will empty the eachProdColorArr for traversing of the latest barcode's colors array...
+      eachProdColorArr.length = 0
+
+      // for each new barcode we will empty the eachProdSizeArr for traversing of the latest barcode's color's sizes array...
+      eachProdSizeArr.length = 0
+
+      // Find product document through barcode. (colors => sizes => barcodes)
       let singleProduct = await Product.findOne(
         {
           'color.sizes.barcodes': {
             $elemMatch: { barcode: parseInt(bcode) },
           },
         },
-        { color: 1, productId: 1, name: 1 }
-      ).lean() // anti-POJO
+        { color: 1, name: 1, productId: 1 }
+      )
 
-      orderItems.push(singleProduct)
+      // To avoid nulls if no product is found with the barcode...
+      if (singleProduct) {
+        // Get colours for each barcode.
+        singleProduct.color.forEach((clr) => {
+          // Push in color array for traversing it later.
+          eachProdColorArr.push(clr)
+        })
+
+        // Now traverse through each color.
+        eachProdColorArr.forEach((prodclr) => {
+          // Traverse through sizes array.
+          prodclr.sizes.forEach((psize) => {
+            // Traverse through each barcode inside the barcode array inside the sizes array...
+            for (barcode of psize.barcodes) {
+              // If barcode is matched.
+              if (barcode.barcode == bcode) {
+                // Updating details of single product..
+                // Created new object to avoid references.
+                let singleProdDetails = new Object()
+                singleProdDetails.name = singleProduct.name
+                singleProdDetails.colorname = prodclr.colorname
+                singleProdDetails.size = psize.size
+                singleProdDetails.barcode = bcode
+                singleProdDetails.price = psize.price
+                singleProdDetails.productId = singleProduct.productId
+
+                // Save each product's info object inside this array. (name, color,size)
+                singleProdDetailsArr.push(singleProdDetails)
+              }
+            }
+          })
+        })
+      }
     }
 
-    return res.status(200).json(orderItems)
+    return res.status(200).json(singleProdDetailsArr)
   } catch (err) {
     console.log(err)
     return res.status(500).send('Server Error!')
   }
 })
+
+// @route  GET api/rentproducts/searchorderId
+// @desc   Get order by order id or customer number
+// @access Private
+router.put(
+  '/searchorderId',
+  //  auth,
+  async (req, res) => {
+    try {
+      let search = req.body.search
+
+      const result = await RentedProduct.find({
+        $or: [{ orderNumber: search }, { customerContactNumber: search }],
+      })
+      if (!result) {
+        return res.status(404).json({ msg: 'No Order found' })
+      }
+      return res.json(result)
+    } catch (err) {
+      console.error(err.message)
+      // Check if id is not valid
+      if (err.kind === 'ObjectId') {
+        return res.status(404).json({ msg: 'No Order found' })
+      }
+      res
+        .status(500)
+        .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+    }
+  }
+)
 
 module.exports = router

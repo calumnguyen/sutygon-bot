@@ -60,9 +60,8 @@ body.modal-open .background-container {
 
 .react-bootstrap-table>table, td, th {  
   border: 0px solid #ddd !important;
-  text-align: center !important
+  /* text-align: center !important */
 }
-
 
 .react-bootstrap-table>thead ,tr{  
   border: 1px solid #ddd !important;

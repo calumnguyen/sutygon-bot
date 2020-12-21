@@ -9,8 +9,8 @@ import shortid from "shortid";
 import Loader from "../layout/Loader";
 import { getCustomer } from "../../actions/customer";
 import { getAllProducts } from "../../actions/product";
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
 
 class Checkout extends Component {
   state = {
@@ -21,15 +21,15 @@ class Checkout extends Component {
   async componentDidMount() {
     await this.props.getAllProducts();
 
-    const { data } = this.props.location;
-    if (data) {
+    const { state } = this.props.location;
+    if (state) {
       this.setState({
-        customer_id: data,
+        customer_id: state,
       });
     }
-    if(this.state.customer_id){
-    await this.props.getCustomer(this.state.customer_id);
-  }
+    if (this.state.customer_id) {
+      await this.props.getCustomer(this.state.customer_id);
+    }
   }
 
   addBarcodeRow = () => {
@@ -40,7 +40,6 @@ class Checkout extends Component {
     });
     this.setState({ barcode });
   };
-
 
   // return sorted products for barcodes
   getSortedData = (products) => {
@@ -97,32 +96,39 @@ class Checkout extends Component {
     e.preventDefault();
     const { products } = this.props;
     if (products) {
-      const sortedArray = this.getSortedData(products)
+      const sortedArray = this.getSortedData(products);
       const bc = e.target[0].value;
       const { barcode } = this.state;
       let m_barcode = [];
       barcode.forEach((barcode, b_index) => {
-        m_barcode.push(
-          barcode.barcode)
-      })
-      e.target[0].value = '';
-      const isInclude = m_barcode.includes(bc)
-      if (isInclude == true) {
+        m_barcode.push(barcode.barcode);
+      });
+      e.target[0].value = "";
+      const isInclude = m_barcode.includes(bc);
+      if (isInclude === true) {
         // error message
-        OCAlert.alertError('This barcode already exist in Order! Try again', { timeOut: 3000 });
+        OCAlert.alertError("This barcode already exist in Order! Try again", {
+          timeOut: 3000,
+        });
         return;
       }
-      const barcodeArry = sortedArray.filter((barcode) => barcode.barcode.toString() === bc.trim())[0]; // get current barode
+      const barcodeArry = sortedArray.filter(
+        (barcode) => barcode.barcode.toString() === bc.trim()
+      )[0]; // get current barode
       if (barcodeArry === undefined) {
         OCAlert.alertError(`This barcode does not exist`, { timeOut: 3000 });
         return;
-
       }
       if (barcodeArry.isRented === true) {
-        OCAlert.alertError(`This barcode is already Rented. Please try again!`, { timeOut: 3000 });
+        OCAlert.alertError(
+          `This barcode is already Rented. Please try again!`,
+          { timeOut: 3000 }
+        );
         return;
-      }
-      else if ((barcodeArry.isRented === undefined) || (barcodeArry.isRented === (false || 'false'))) {
+      } else if (
+        barcodeArry.isRented === undefined ||
+        barcodeArry.isRented === (false || "false")
+      ) {
         const { barcode } = this.state;
         barcode.push({
           id: shortid.generate(),
@@ -131,7 +137,7 @@ class Checkout extends Component {
         this.setState({ barcode });
       }
     }
-  }
+  };
   removeBarcodeRow = (id) => {
     let { barcode } = this.state;
     barcode = barcode.filter((barcode) => barcode.id !== id); // get current barode
@@ -145,7 +151,7 @@ class Checkout extends Component {
 
     let barcode_obj = barcode.filter((barcode) => barcode.id === barcode_id)[0];
     const barcodeIndex = barcode.findIndex(
-      (barcode) => barcode.id == barcode_id
+      (barcode) => barcode.id === barcode_id
     );
     barcode_obj[name] = value;
     barcode[barcodeIndex] = barcode_obj;
@@ -200,17 +206,19 @@ class Checkout extends Component {
       return <Redirect to="/" />;
     }
 
-    //   if(this.props.location.data == undefined){
-    //     return <Redirect to="/rentproduct" />;
-
-    //  }
-    if (this.props.customer === null) {
+    if (this.props.location.state === undefined) {
       return <Redirect to="/rentproduct" />;
-
     }
-    // if (this.props.saved) {
-    //   return <Redirect to="/orders" />;
+    // if (this.props.customer === null) {
+    //   return <Redirect to="/rentproduct" />;
     // }
+    const { user } = auth;
+    if (user && user.systemRole === "Employee") {
+      if (user && !user.sections.includes("Rentproduct")) {
+        return <Redirect to="/Error" />;
+      }
+    }
+
     const { customer } = this.props;
     return (
       <React.Fragment>
@@ -242,16 +250,24 @@ class Checkout extends Component {
                                   <div className="form-group">
                                     <h3>
                                       {customer && customer.name}{" "}
-                                      {`${"#"}${customer && customer.contactnumber
-                                        }`}
+                                      {`${"#"}${
+                                        customer && customer.contactnumber
+                                      }`}
                                     </h3>
                                   </div>
                                 </div>
 
                                 <div className="col-md-12">
                                   <div className="form-group">
-                                    <form onSubmit={e => this.onScanBarcode(e)}>
-                                      <input className="form-control mm-input col-md-12" maxLength={8} minLength={8} type="text" />
+                                    <form
+                                      onSubmit={(e) => this.onScanBarcode(e)}
+                                    >
+                                      <input
+                                        className="form-control mm-input col-md-12"
+                                        maxLength={8}
+                                        minLength={8}
+                                        type="text"
+                                      />
                                     </form>
                                   </div>
                                 </div>
@@ -259,32 +275,36 @@ class Checkout extends Component {
                                 <div className="col-md-12">
                                   {this.getBarcodeRow()}
 
-                                 <div className="row text-center ">
+                                  <div className="row text-center ">
                                     <div className="col-md-12 btn-cont">
                                       <div className="form-group">
-                                        {!!this.state.barcode.length ? 
-                                        <Link
-                                          to={{
-                                            pathname: "/rentorder",
-                                            data: {
-                                              customer_id: (customer) && customer._id,
-                                              barcode: this.state.barcode,
-                                            },
-                                          }} 
-                                          type="button"
-                                          className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                                          id="btnSize2"
-                                        >
-                                          <i className="ft-check"></i> Checkout
-                                        </Link> 
-                                        :   
-                                     
-                                      <p><h4>Please scan atleast one barcode!</h4></p>
-                                       }
+                                        {!!this.state.barcode.length ? (
+                                          <Link
+                                            to={{
+                                              pathname: "/rentorder",
+                                              state: {
+                                                customer_id:
+                                                  customer && customer._id,
+                                                barcode: this.state.barcode,
+                                              },
+                                            }}
+                                            type="button"
+                                            className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                                            id="btnSize2"
+                                          >
+                                            <i className="ft-check"></i>{" "}
+                                            Checkout
+                                          </Link>
+                                        ) : (
+                                          <p>
+                                            <h4>
+                                              Please scan atleast one barcode!
+                                            </h4>
+                                          </p>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
-
                                 </div>
                               </div>
                             </div>
@@ -297,17 +317,25 @@ class Checkout extends Component {
               </div>
             </div>
             <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com"
-                 id="pixinventLink" 
-                 rel="noopener noreferrer"
-                 target="_blank"
-                  className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <p className="clearfix text-muted text-sm-center px-2">
+                <span>
+                  Quyền sở hữu của &nbsp;{" "}
+                  <a
+                    href="https://www.sutygon.com"
+                    id="pixinventLink"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
+                  >
+                    SUTYGON-BOT{" "}
+                  </a>
+                  , All rights reserved.{" "}
+                </span>
+              </p>
             </footer>
           </div>
         </div>
         <OCAlertsProvider />
-
       </React.Fragment>
     );
   }
@@ -326,9 +354,8 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   customer: state.customer.customer,
   products: state.product.products,
-
 });
 export default connect(mapStateToProps, {
   getCustomer,
-  getAllProducts
+  getAllProducts,
 })(Checkout);
