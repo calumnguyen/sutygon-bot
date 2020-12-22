@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import Dashboard from './components/pages/Dashboard'
 import Login from './components/Login'
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import { Route, BrowserRouter as Router, Switch,withRouter } from 'react-router-dom'
 import { loadUser } from './actions/auth'
 import setAuthToken from './utils/setAuthToken'
 import PrivateRoute from './routing/PrivateRoute'
@@ -24,10 +24,10 @@ import ReturnProduct from './components/pages/returnproduct/returnproduct'
 import ScanBarcode from './components/pages/returnproduct/scanBarcode'
 import RentOrder from './components/pages/rentOrder'
 import ActivateAccount from './components/pages/ActivateAccount'
-import Test from './components/pages/users/test'
 import Error from './components/pages/Error'
 
 import Report from './components/pages/report/report'
+
 import ReportOrder from './components/pages/report/reportOrder'
 import MatchBarcodes from './components/pages/returnproduct/matchBarcodes'
 // import Calender from "./components/pages/calender";
@@ -52,7 +52,7 @@ const Main = () => {
 
   return (
     <Provider store={store}>
-      <Router >
+      <Router>
         <Switch>
           <Route exact path='/' component={Login} />
           <Route exact path='/Login' component={Login} />
@@ -82,6 +82,18 @@ const Main = () => {
             path='/ActivateAccount'
             component={ActivateAccount}
           />
+          {/* products */}
+          <PrivateRoute
+            exact
+            path='/product/add'
+            component={AddProduct}
+          />
+          <PrivateRoute exact path='/product' component={ViewProduct} />
+          <PrivateRoute
+            exact
+            path='/product/editproduct/:id'
+            component={AddProduct}
+          />
 
           {/* customers */}
           <PrivateRoute
@@ -96,24 +108,12 @@ const Main = () => {
             component={AddCustomer}
           />
 
-          {/* products */}
-          <PrivateRoute
-            exact
-            path='/product/addproduct'
-            component={AddProduct}
-          />
-          <PrivateRoute exact path='/product' component={ViewProduct} />
-          <PrivateRoute
-            exact
-            path='/product/editproduct/:id'
-            component={AddProduct}
-          />
+          
           <PrivateRoute
             exact
             path='/product/viewproduct/:id'
             component={Product}
           />
-          <PrivateRoute exact path='/test' component={Test} />
 
           {/* rent product */}
           <PrivateRoute exact path='/rentproduct' component={RentProduct} />

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
+import Alert from "../../layout/Alert";
 import { addNewUser, updateUser, getUser } from "../../../actions/user";
 import Loader from "../../layout/Loader";
 import { Redirect } from "react-router-dom";
@@ -8,6 +9,9 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import shortid from "shortid";
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
+
 
 class AddUser extends Component {
   state = {
@@ -25,6 +29,8 @@ class AddUser extends Component {
     src: "",
     systemRole: "",
     userID: "",
+    usernamesArr: "",
+    emailArr: "",
   };
 
   async componentDidMount() {
@@ -55,19 +61,62 @@ class AddUser extends Component {
         });
       }
     }
+    const { state } = this.props.location;
+    if (state) {
+      this.setState({
+        usernamesArr: state.usernamesArr,
+        emailArr: state.emailArr,
+      });
+    }
   }
 
-  _onChange = (e, id = "") => {
-    this.setState({
+  _onChange = async(e, id = "") => {
+       this.setState({
       [e.target.name]: e.target.files[0],
       imgUpd: true,
       src: URL.createObjectURL(e.target.files[0]),
     });
   };
 
-  handleChange = (e, id = "") => {
+  handleChange = (e, type) => {
     this.setState({ [e.target.name]: e.target.value });
   };
+  validateEmail = (e) => {
+    const {emailArr} = this.state;
+    if (e.target.value.length > 0) {
+      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      var isInclude = emailArr.includes(e.target.value)
+      if ((re.test(e.target.value)) && !isInclude) {
+        this.setState({ email: e.target.value });
+      } 
+
+     else if((re.test(e.target.value)) && isInclude) {
+        OCAlert.alertError("Email Already exists", { timeOut: 3000 });
+        this.setState({ email: "" });
+        return;     
+       } 
+
+       else {
+        OCAlert.alertError("Email is not valid", { timeOut: 3000 });
+        this.setState({ email: "" });
+        return;
+      }
+
+    }
+  };
+  validateUserName = (e)=>{
+    const {usernamesArr} = this.state;
+    var isUserNameInclude = usernamesArr.includes(e.target.value)
+    if (!isUserNameInclude) {
+      this.setState({ username: e.target.value });
+    } 
+    else {
+      OCAlert.alertError("Username already exists", { timeOut: 3000 });
+      this.setState({ username: "" });
+      return;
+    }
+  }
 
   handleChangeNumber = (e) => {
     const re = /^[0-9\b]+$/;
@@ -79,9 +128,13 @@ class AddUser extends Component {
   onSubmit = async (e) => {
     e.preventDefault();
     this.setState({ saving: true });
-
     const formData = new FormData();
-    formData.append("avatar", this.state.avatar);
+    if (this.state.avatar === "") {
+      OCAlert.alertError("Select Profile Picture", { timeOut: 3000 });
+      return;
+    } else {
+      formData.append("avatar", this.state.avatar);
+    }
     formData.append("username", this.state.username);
     formData.append("fullname", this.state.fullname);
     formData.append("contactnumber", this.state.contactnumber);
@@ -116,7 +169,7 @@ class AddUser extends Component {
           push
           to={{
             pathname: "/user/configuresystemuser",
-            data: { state: this.state, user: this.props.user },
+            state: { state: this.state, user: this.props.user },
           }}
         />
       );
@@ -146,8 +199,11 @@ class AddUser extends Component {
                         encType="multipart/form-data"
                         action="/upload"
                         method="POST"
-                        onSubmit={(e) => this.onSubmit(e)}
+                        // onSubmit={(e) => this.onSubmit(e)}
                       >
+                        <Alert />
+                        <OCAlertsProvider />
+
                         <div className="row">
                           <div className="form-group col-md-6 mb-2">
                             <label
@@ -164,6 +220,7 @@ class AddUser extends Component {
                                 id="inputGroupFile01"
                                 aria-describedby="inputGroupFileAddon01"
                                 accept="image/jpeg,image/gif,image/jpg,image/png,image/x-eps"
+                                required
                                 onChange={(e) => this._onChange(e)}
                               />
                               <label
@@ -216,7 +273,11 @@ class AddUser extends Component {
                                   required
                                   data-validation-required-message="This field is required"
                                   name="username"
-                                  onChange={(e) => this.handleChange(e)}
+                                  onChange={(e) =>
+                                    this.handleChange(e, "username")
+                                  }
+                                  onBlur={(e) => this.validateUserName(e)}
+
                                   value={this.state.username}
                                 />
                               </div>
@@ -238,7 +299,9 @@ class AddUser extends Component {
                                   placeholder="Full Name"
                                   name="fullname"
                                   required
-                                  onChange={(e) => this.handleChange(e)}
+                                  onChange={(e) =>
+                                    this.handleChange(e, "fullname")
+                                  }
                                   value={this.state.fullname}
                                 />
                               </div>
@@ -262,7 +325,10 @@ class AddUser extends Component {
                                   placeholder="E-mail"
                                   name="email"
                                   required
-                                  onChange={(e) => this.handleChange(e)}
+                                  onChange={(e) =>
+                                    this.handleChange(e, "email")
+                                  }
+                                  onBlur={(e) => this.validateEmail(e)}
                                   value={this.state.email}
                                 />
                               </div>
@@ -286,6 +352,8 @@ class AddUser extends Component {
                                   name="contactnumber"
                                   // onKeyPress={(e)=>this.isNumberKey(e)}
                                   onChange={(e) => this.handleChangeNumber(e)}
+                                  minLength={10}
+                                  maxLength={10}
                                   value={this.state.contactnumber}
                                 />
                               </div>
@@ -309,7 +377,9 @@ class AddUser extends Component {
                                   placeholder="Job Title"
                                   name="jobTitle"
                                   required
-                                  onChange={(e) => this.handleChange(e)}
+                                  onChange={(e) =>
+                                    this.handleChange(e, "jobTitle")
+                                  }
                                   value={this.state.jobTitle}
                                 />
                               </div>
@@ -330,7 +400,9 @@ class AddUser extends Component {
                                   required
                                   defaultValue="----"
                                   className="form-control border-primary"
-                                  onChange={(e) => this.handleChange(e)}
+                                  onChange={(e) =>
+                                    this.handleChange(e, "systemRole")
+                                  }
                                 >
                                   <option name="systemRole" value="">
                                     {" "}
@@ -364,9 +436,12 @@ class AddUser extends Component {
                                   <input
                                     type="radio"
                                     name="gender"
-                                    onChange={(e) => this.handleChange(e)}
+                                    onChange={(e) =>
+                                      this.handleChange(e, "gender")
+                                    }
                                     // checked={this.state.gender === 'male'}
                                     value="male"
+                                    required
                                   />{" "}
                                   Male
                                 </label>
@@ -375,7 +450,12 @@ class AddUser extends Component {
                                     type="radio"
                                     name="gender"
                                     value="female"
-                                    onChange={(e) => this.handleChange(e)}
+                                    onChange={(e) =>
+                                      this.handleChange(e, "gender")
+
+                                    }
+                                    required
+
                                     // checked={this.state.gender === 'female'}
                                   />{" "}
                                   Female
@@ -385,9 +465,14 @@ class AddUser extends Component {
                                     type="radio"
                                     name="gender"
                                     value="other"
-                                    onChange={(e) => this.handleChange(e)}
+                                    onChange={(e) =>
+                                      this.handleChange(e, "gender")
+                                    }
+                                    required
+
                                     // checked={this.state.gender === 'other'}
                                   />{" "}
+
                                   Others
                                 </label>
                               </div>
@@ -401,6 +486,7 @@ class AddUser extends Component {
                           this.state.email === "" ||
                           this.state.fullname === "" ||
                           this.state.gender === "" ||
+                          this.state.systemRole === "" ||
                           this.state.jobTitle === "" ? (
                             <button className="mb-2 mr-2 btn btn-raised btn-primary disabled">
                               <i className="ft-chevron-right" /> Next
@@ -410,9 +496,8 @@ class AddUser extends Component {
                               {this.state.systemRole === "Employee" ? (
                                 <Link
                                   to={{
-                                    // pathname: this.state.systemRole ==="Employee" ? "/user/configuresystem" : "/user/configuresystemuser",
                                     pathname: "/user/configuresystem",
-                                    data: this.state,
+                                    state: this.state,
                                   }}
                                   className="mb-2 mr-2 btn btn-raised btn-primary"
                                 >
@@ -421,6 +506,7 @@ class AddUser extends Component {
                               ) : (
                                 <button
                                   type="submit"
+                                  onClick={(e) => this.onSubmit(e)}
                                   className="mb-2 mr-2 btn btn-raised btn-primary"
                                 >
                                   <i className="ft-chevron-right" /> Next

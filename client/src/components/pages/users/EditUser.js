@@ -502,7 +502,7 @@ class EditUser extends Component {
                                     className='col-md-4 label-control'
                                     htmlFor='userinput1'
                                   >
-                                    Name
+                                   Full Name
                                   </label>
                                   <div className='col-md-8'>
                                     <input

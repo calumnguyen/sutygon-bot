@@ -10,8 +10,6 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
-import ReactTable from "react-table";
-import "react-table/react-table.css";
 
 class ViewUser extends Component {
   

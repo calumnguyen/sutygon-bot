@@ -57,7 +57,7 @@ router.post(
         }
         let product = new Product(productBody)
         await product.save()
-        res.json({ product, msg: 'Product Added Successfully' })
+        res.status(200).json({ product, msg: 'Product Added Successfully' })
       })
     } catch (err) {
       console.log(err)

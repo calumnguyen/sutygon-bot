@@ -97,7 +97,7 @@ class ViewProduct extends Component {
 
     if (formated_products) {
       formated_products.forEach((product, p_index) => {
-        if (product._id == id) {
+        if (product._id === id) {
           this.setState({ modal_product: product });
         }
       });
@@ -361,14 +361,7 @@ class ViewProduct extends Component {
                         <div className="card-content">
                           <div className="card-body table-responsive">
                             <div className="row">
-                              <div className="col-md-4">
-                                {/* <input
-                                  type="text"
-                                  className="form-control"
-                                  name="search"
-                                  onChange={(e) => this.handleChange(e)}
-                                /> */}
-                              </div>
+                              <div className="col-md-4"></div>
                               <div className="col-md-4">
                                 {/* <a
                                   href="/product"
@@ -380,7 +373,8 @@ class ViewProduct extends Component {
                               </div>
                               <div className="col-md-4">
                                 <Link
-                                  to="/product/addproduct"
+                                  // onClick={((e)=>this.redirectToAdd(e))}
+                                  to="/product/add"
                                   className="btn btn-primary pull-right"
                                 >
                                   <i className="fa fa-plus"></i> New Product
@@ -459,7 +453,7 @@ const mapStateToProps = (state) => ({
   product: state.product.product,
   auth: state.auth,
 });
-export default connect(mapStateToProps, {
+export default connect(mapStateToProps,{
   getAllProducts,
   changeStatus,
   deleteProduct,

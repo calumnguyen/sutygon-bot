@@ -119,7 +119,6 @@ class Checkout extends Component {
         OCAlert.alertError(`This barcode does not exist`, { timeOut: 3000 });
         return;
       }
-   console.log(barcodeArry)
 
       if (barcodeArry.isRented && barcodeArry.isRented === true) {
         OCAlert.alertError(

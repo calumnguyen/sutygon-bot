@@ -24,7 +24,7 @@ class ConfigureSystemUser extends Component {
         // check form is to Add or Edit
 
         const { user } = this.props
-        const {state } = this.props.location.data
+        const {state } = this.props.location.state
         if (user) {
             this.setState({
                 fullname: user.fullname,
@@ -54,8 +54,8 @@ class ConfigureSystemUser extends Component {
         if (user && user.systemRole === "Employee") {
           return <Redirect to="/Error" />;
         }
-        if (this.props.user == null) {
-            return <Redirect push to='/user' />
+        if (this.props.user === null) {
+            return <Redirect push={true} to='/user' />
         }
         return (
             <React.Fragment>

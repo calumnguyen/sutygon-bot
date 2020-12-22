@@ -24,6 +24,8 @@ import {
         return {
           ...state,
           loading: true,
+          saved: false,
+
         };
   
       case GET_PRODUCTS:
@@ -31,7 +33,7 @@ import {
           ...state,
           products: payload,
           loading: false,
-          // saved: tr,
+          saved: false,
           generateReturnInvoice:false,
 
         };
@@ -42,6 +44,8 @@ import {
           product: payload,
           loading: false,
           generateReturnInvoice:false,
+          saved: false,
+
 
         };
   

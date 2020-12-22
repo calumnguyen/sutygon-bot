@@ -85,11 +85,11 @@ class ActivateAccount extends Component {
                               <img
                                 alt={"Sutygon-bot"}
                                 src="assets/img/logos/logo.png"
-                                height={100}
+                                height={140}
                                 width={150}
                               />
                             </div>
-                            <h3 className="card-text mb-1 mt-n2 text-center align-middle">
+                            <h3 className="card-text mb-1 mt-n0 text-center align-middle">
                               Update Password{" "}
                             </h3>
                             <form onSubmit={(e) => this.onUpdatePassword(e)}>

@@ -9,6 +9,9 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import shortid from "shortid";
 
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
+
 
 class ConfigureSystem extends Component {
     state = {
@@ -32,6 +35,7 @@ class ConfigureSystem extends Component {
         avatar: '',
         userID: '',
         tempPwd: '',
+        systemRole:'',
         saved: false,
         saving: false,
 
@@ -40,18 +44,20 @@ class ConfigureSystem extends Component {
     async componentDidMount() {
         // check form is to Add or Edit
 
-        const { data } = this.props.location;
+        const { state } = this.props.location;
         const userID = Math.floor(Math.random() * 8999999999 + 1000000000);
         const tempPwd = shortid.generate();
-        if (data) {
+        if (state) {
             this.setState({
-                fullname: data.fullname,
-                username: data.username,
-                jobTitle: data.jobTitle,
-                gender: data.gender,
-                avatar: data.avatar,
-                contactnumber: data.contactnumber,
-                email: data.email,
+                fullname: state.fullname,
+                systemRole: state.systemRole,
+
+                username: state.username,
+                jobTitle: state.jobTitle,
+                gender: state.gender,
+                avatar: state.avatar,
+                contactnumber: state.contactnumber,
+                email: state.email,
                 userID: userID,
                 tempPwd: tempPwd
             })
@@ -90,8 +96,14 @@ class ConfigureSystem extends Component {
         e.preventDefault();
         await this.selected();
         const sessionsArr = Object.values(this.state.sections);
+       
         this.setState({ saving: true });
+        if(sessionsArr.length===0){
+            OCAlert.alertError("Configure User role", { timeOut: 3000 });
+            this.setState({ saving: false });
 
+            return;
+        }
         const formData = new FormData()
         formData.append('avatar', this.state.avatar)
         formData.append('username', this.state.username)
@@ -99,7 +111,7 @@ class ConfigureSystem extends Component {
         formData.append('contactnumber', this.state.contactnumber)
         formData.append('email', this.state.email)
         formData.append('password', this.state.tempPwd)
-        formData.append('type', this.state.type)
+        formData.append('systemRole', this.state.systemRole)
         formData.append('gender', this.state.gender)
         formData.append('sections', sessionsArr)
         formData.append('jobTitle', this.state.jobTitle)
@@ -116,7 +128,7 @@ class ConfigureSystem extends Component {
     }
     render() {
         const { auth } = this.props
-        if (this.props.location.data == undefined) {
+        if (this.props.location.state == undefined) {
             return <Redirect to='/user/adduser' />
         }
         if (!auth.loading && !auth.isAuthenticated) {
@@ -129,7 +141,7 @@ class ConfigureSystem extends Component {
         if (this.props.saved == true) {
             return <Redirect push to={{
                 pathname: "/user/configuresystemuser",
-                data: { state: this.state, user: this.props.user },
+                state: { state: this.state, user: this.props.user },
 
             }}
             />
@@ -157,6 +169,7 @@ class ConfigureSystem extends Component {
 
                                         <div className='card-body'>
                                             <Alert />
+                                           <OCAlertsProvider />
                                             <form
                                                 encType='multipart/form-data'
                                                 action='/upload'
