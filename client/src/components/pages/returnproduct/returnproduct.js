@@ -333,7 +333,7 @@ class ReturnProduct extends Component {
                                                 fontSize: "larger",
                                               }}
                                             >
-                                              {"This order is completed"}
+                                          {"No Active order found"}
                                             </h6>
                                           </div>
                                         </div>
