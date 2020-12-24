@@ -502,7 +502,7 @@ class EditUser extends Component {
                                     className='col-md-4 label-control'
                                     htmlFor='userinput1'
                                   >
-                                    Name
+                                   Full Name
                                   </label>
                                   <div className='col-md-8'>
                                     <input
@@ -920,8 +920,7 @@ class EditUser extends Component {
                                         value={this.state.address}
                                         onChange={(e) => this._handleChange(e)}
                                       />
-
-                                      :
+                                    ):
                                       <textarea type="text"
                                         id="userinput3"
                                         className="form-control border-primary"
@@ -942,7 +941,7 @@ class EditUser extends Component {
                                   <label className="col-md-4 label-control" htmlFor="userinput4">Birthday</label>
                                   <div className="col-md-8" data-date-format="dd/mm/yyyy">
 
-                                  {this.state.isEditP === true ?
+                                  {this.state.isEditP === true ?(
                                       <DatePicker
                                         dateFormat="dd/MM/yyyy" 
                                         locale="vi" selected={new Date(this.state.birthday)}

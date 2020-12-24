@@ -61,7 +61,7 @@ class Header extends Component {
           <ButtonDropdown
             isOpen={this.state.dropdownOpen}
             toggle={(e) => this.setDropdownOpen(e)}
-            style={{ marginLeft: "1170px", marginTop: "10px" }}
+            style={{ float  : 'right' , marginTop: "10px" }}
           >
             <DropdownToggle caret color="white">
               <img

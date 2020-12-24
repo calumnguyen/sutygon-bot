@@ -63,7 +63,7 @@ class ReturnProduct extends Component {
     const { orders } = this.props;
     if (!!orders.length) {
       await this.props.getCustomer(orders[0].customer);
-      var returningOrder = orders.filter((f) => f.status !== "Completed");
+      var returningOrder = orders.filter((f) => f.status === "active");
     }
     this.setState({
       saving: false,
@@ -82,7 +82,7 @@ class ReturnProduct extends Component {
     const { orders } = this.props;
     if (!!orders.length) {
       await this.props.getCustomer(orders[0].customer);
-      var returningOrder = orders.filter((f) => f.status !== "Completed");
+      var returningOrder = orders.filter((f) => f.status === "active");
     }
     this.setState({
       saving: false,
@@ -186,7 +186,7 @@ class ReturnProduct extends Component {
     const { orders } = this.props;
     const { customeR } = this.props;
 
-    let returningOrders = orders.filter((f) => f.status !== "Completed");
+    let returningOrders = orders.filter((f) => f.status === "active");
     return returningOrders.map((o, o_index) => (
       <>
         <div className="col-md-12" key={o_index}>
@@ -333,7 +333,7 @@ class ReturnProduct extends Component {
                                                 fontSize: "larger",
                                               }}
                                             >
-                                              {"This order is completed"}
+                                          {"No Active order found"}
                                             </h6>
                                           </div>
                                         </div>

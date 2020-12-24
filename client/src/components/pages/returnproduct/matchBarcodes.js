@@ -342,8 +342,8 @@ class MatchBarcodes extends Component {
                     // check if current size obj contain barcodes or not
                     if (size.barcodes) {
                       // Add isRented
-                      size.barcodes[pd[0].barcodeIndex].isRented = false;
-                      this.props.updateProductIndex(product, pd[0].product_id);
+                    let bcode ={ barcode : size.barcodes[pd[0].barcodeIndex].barcode }
+                      this.props.updateProductIndex(bcode, pd[0].product_id);
                     }
                   }
                 });

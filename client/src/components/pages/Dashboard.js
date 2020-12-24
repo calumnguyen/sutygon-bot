@@ -6,7 +6,6 @@ import Loader from "../layout/Loader";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getAllAppointments } from "../../actions/appointment";
-import { getAllOrders } from "../../actions/order";
 import { getAllRentedProducts } from "../../actions/rentproduct";
 import { getAllProducts } from "../../actions/product";
 import { changeShopStatus, getShop } from "../../actions/dashboard";

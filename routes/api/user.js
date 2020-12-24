@@ -108,6 +108,7 @@ router.post(
         const avatar = req.file.path
 
         cloudinary.uploader.upload(avatar, async function (result) {
+
           userBody = {
             ...body,
             password,
