@@ -24,7 +24,8 @@ class Checkout extends Component {
     const { state } = this.props.location;
     if (state) {
       this.setState({
-        customer_id: state,
+        customer_id: state.customer,
+        barcode:state.barcode
       });
     }
     if (this.state.customer_id) {
