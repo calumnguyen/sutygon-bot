@@ -93,16 +93,44 @@ router.post('/barcode_update/:id', auth, async (req, res) => {
 // @desc   Update a Product after renting
 // @access Private
 router.post('/index_update/:id', auth, async (req, res) => {
-  try {
-    const body = JSON.parse(JSON.stringify(req.body)) // req.body = [Object: null prototype] { title: 'product' }
-    await Product.updateOne(
-      { _id: req.params.id },
+    try {
+    const body = req.body // req.body = [Object: null prototype] { title: 'product' }
+    let singleProduct = await Product.findOne(
       {
-        $set: {
-          color: body.color,
+        'color.sizes.barcodes': {
+          $elemMatch: { barcode: parseInt(body.barcode) }
         },
-      }
+      },
+      { color: 1, name: 1, productId: 1 }
     )
+    // To avoid nulls if no product is found with the barcode...
+    let eachProdColorArr = []
+
+    if (singleProduct) {
+      // Get colours for each barcode.
+      singleProduct.color.forEach((clr) => {
+        // Push in color array for traversing it later.
+        eachProdColorArr.push(clr)
+      })
+    console.log(eachProdColorArr)
+      // Now traverse through each color.
+      eachProdColorArr.forEach((prodclr) => {
+        // Traverse through sizes array.
+        prodclr.sizes.forEach((psize) => {
+          // Traverse through each barcode inside the barcode array inside the sizes array...
+          for (barcode of psize.barcodes) {
+            
+            // If barcode is matched.
+            if (barcode.barcode == body.barcode) {
+                barcode.isRented = !barcode.isRented
+                 singleProduct.save()
+             }
+           
+         
+          }
+        })
+      })
+    }
     res.json({ msg: 'Product Updated Successfully' })
   } catch (err) {
     console.error(err.message)
