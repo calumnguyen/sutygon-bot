@@ -8,8 +8,8 @@ import { connect } from "react-redux";
 import shortid from "shortid";
 import Loader from "../../layout/Loader";
 import { getCustomer } from "../../../actions/customer";
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
 
 class ScanBarcode extends Component {
   state = {
@@ -17,18 +17,17 @@ class ScanBarcode extends Component {
     customer: "",
     order: "",
     barcodeFromInput: "",
-    matchedBarcodes: []
+    matchedBarcodes: [],
   };
 
   async componentDidMount() {
-    const { data } = this.props.location;
-    if (data) {
+    const { state } = this.props.location;
+    if (state) {
       this.setState({
-        customer: data.customer,
-        barcode: data.order[0].barcodes,
-        order: data.order
+        customer: state.customer,
+        barcode: state.order[0].barcodes,
+        order: state.order,
       });
-
     }
   }
 
@@ -45,42 +44,39 @@ class ScanBarcode extends Component {
   };
 
   onScanBarcode = (e) => {
-
     e.preventDefault();
-    e.target[0].value = '';
+    e.target[0].value = "";
     const { barcode } = this.state;
     let { barcodeFromInput } = this.state;
     const { matchedBarcodes } = this.state;
 
     let m_barcode = [];
     matchedBarcodes.forEach((barcode, b_index) => {
-      m_barcode.push(
-        barcode.barcode)
-    })
-    const isInclude = m_barcode.includes(barcodeFromInput)
+      m_barcode.push(barcode.barcode);
+    });
+    const isInclude = m_barcode.includes(barcodeFromInput);
     if (isInclude === true) {
-      OCAlert.alertError('This barcode already scanned! Try again', { timeOut: 3000 });
+      OCAlert.alertError("This barcode already scanned! Try again", {
+        timeOut: 3000,
+      });
       this.setState({ barcodeFromInput: "" });
       return;
-
     }
 
-    let isMatch = barcode.includes(barcodeFromInput)
+    let isMatch = barcode.includes(barcodeFromInput);
     if (isMatch === true) {
       matchedBarcodes.push({
         barcode: barcodeFromInput,
       });
       this.setState({ matchedBarcodes, barcodeFromInput: "" });
-
+    } else {
+      OCAlert.alertError(
+        `The barcode you enter does not match with any item
+        in this order. Please try again!`,
+        { timeOut: 3000 }
+      );
     }
-    else {
-      OCAlert.alertError(`The barcode you enter does not match with any item
-        in this order. Please try again!`, { timeOut: 3000 });
-
-    }
-
-
-  }
+  };
 
   removeBarcodeRow = (id) => {
     let { barcode } = this.state;
@@ -88,11 +84,11 @@ class ScanBarcode extends Component {
     this.setState({ barcode });
   };
 
-   getBarcodeRow = () => {
+  getBarcodeRow = () => {
     let { matchedBarcodes } = this.state; // get all barcode
     if (matchedBarcodes) {
-      return matchedBarcodes.map((barcode) => (
-        <div id="sizes_box" key={barcode.id || barcode._id}>
+      return matchedBarcodes.map((barcode,b_index) => (
+        <div id="sizes_box" key={b_index}>
           <div className="row">
             <div className="left">
               <input
@@ -100,8 +96,9 @@ class ScanBarcode extends Component {
                 className="form-control mm-input s-input"
                 placeholder="Barcode"
                 id="widthBr"
-                style={{ width: "-webkit-fill-available" }}
+                style={{ width: "-webkit-fill-available",color:'black' }}
                 value={barcode.barcode}
+                readOnly
               />
             </div>
             <div className="right">
@@ -112,7 +109,6 @@ class ScanBarcode extends Component {
                 <i className="fa fa-check fa-2x text-success"></i>
               </button>
             </div>
-
           </div>
         </div>
       ));
@@ -124,13 +120,11 @@ class ScanBarcode extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-    if (this.props.location.data === undefined) {
-       return <Redirect to="/returnproduct" />;
 
+    if (this.props.location.state === undefined) {
+      return <Redirect to="/returnproduct" />;
     }
-    if (this.props.saved) {
-      return <Redirect to="/orders" />;
-    }
+
     const { customer } = this.state;
     return (
       <React.Fragment>
@@ -149,7 +143,6 @@ class ScanBarcode extends Component {
                       </div>
                       <div className="card-content">
                         <div className="card-body table-responsive">
-                          <form className="" action="index.html" method="post">
                             <div id="colors_box">
                               <div className="row color-row">
                                 <div className="col-md-12">
@@ -162,22 +155,27 @@ class ScanBarcode extends Component {
                                   <div className="form-group">
                                     <h3>
                                       {customer && customer.name}{" "}
-                                      {`${"#"}${customer && customer.contactnumber
-                                        }`}
+                                      {`${"#"}${
+                                        customer && customer.contactnumber
+                                      }`}
                                     </h3>
                                   </div>
                                 </div>
 
                                 <div className="col-md-12">
                                   <div className="form-group">
-                                    <form onSubmit={e => this.onScanBarcode(e)}>
+                                    <form
+                                      onSubmit={(e) => this.onScanBarcode(e)}
+                                    >
                                       <input
                                         name="barcodeFromInput"
                                         className="form-control mm-input col-md-12"
+                                        style={{color: "black"}}
                                         type="text"
                                         value={this.state.barcodeFromInput}
-                                        onChange={(e) => this.handleChangeInput(e)}
-
+                                        onChange={(e) =>
+                                          this.handleChangeInput(e)
+                                        }
                                       />
                                     </form>
                                   </div>
@@ -189,43 +187,41 @@ class ScanBarcode extends Component {
                                   <div className="row text-center ">
                                     <div className="col-md-12 btn-cont">
                                       <div className="form-group">
-                                        {!!this.state.matchedBarcodes.length ?
+                                        {!!this.state.matchedBarcodes.length ? (
                                           <Link
                                             to={{
                                               pathname: "/matchbarcodes",
-                                              data: {
+                                              state: {
                                                 // customer: this.props.customer[0]._id,
-                                                barcodesArray: this.state.matchedBarcodes,
+                                                barcodesArray: this.state
+                                                  .matchedBarcodes,
                                                 order: this.state.order,
-                                                orderedBarcode: this.state.barcode,
+                                                orderedBarcode: this.state
+                                                  .barcode,
                                               },
-
                                             }}
                                             type="submit"
                                             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
                                             id="btnSize2"
                                           >
                                             <i className="ft-check"></i> Next
-                                    </Link> :
-                                          <Link
+                                          </Link>
+                                        ) : (
+                                          <button
 
                                             type="submit"
                                             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1 disabled"
                                             id="btnSize2"
                                           >
                                             <i className="ft-check"></i> Next
-                                  </Link>
-                                        }
-
+                                          </button>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
-
-
                                 </div>
                               </div>
                             </div>
-                          </form>
                         </div>
                       </div>
                     </div>
@@ -234,8 +230,21 @@ class ScanBarcode extends Component {
               </div>
             </div>
             <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2"><span>Quyền sở hữu của &nbsp;{" "}
-                <a href="https://www.sutygon.com" rel="noopener noreferrer"  id="pixinventLink" target="_blank" className="text-bold-800 primary darken-2">SUTYGON-BOT </a>, All rights reserved. </span></p>
+              <p className="clearfix text-muted text-sm-center px-2">
+                <span>
+                  Quyền sở hữu của &nbsp;{" "}
+                  <a
+                    href="https://www.sutygon.com"
+                    rel="noopener noreferrer"
+                    id="pixinventLink"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
+                  >
+                    SUTYGON-BOT{" "}
+                  </a>
+                  , All rights reserved.{" "}
+                </span>
+              </p>
             </footer>
           </div>
         </div>
@@ -247,8 +256,8 @@ class ScanBarcode extends Component {
 
 ScanBarcode.propTypes = {
   auth: PropTypes.object,
-  customer: PropTypes.array,
-  getCustomer:PropTypes.func.isRequired,
+  customer: PropTypes.object,
+  getCustomer: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({

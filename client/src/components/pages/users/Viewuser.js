@@ -41,22 +41,7 @@ class ViewUser extends Component {
     }
   }
 
-//  async componentDidUpdate() {
-// this.setState({users:this.props.users})    // await this.props.getAllUsers()
-    // this.setState({ users: this.props.users });
-  // }
 
-
-//   async componentDidUpdate(prevProps,prevState){
-//     if(prevProps.users !== this.props.users)
-//     await this.props.getAllUsers()
-//     const { users } = this.props;
-//     if (users) {
-//       this.setState({
-//         users: users
-//       })
-//     }
-// }
   getTAble = () => {
     const { auth } = this.props
     const auth_user = auth.user
@@ -212,6 +197,7 @@ class ViewUser extends Component {
       return <Redirect to='/' />
     }
     const {user} = auth;
+    
     
     if(user && user.systemRole ==="Employee"){
       return <Redirect to="/Error"/>

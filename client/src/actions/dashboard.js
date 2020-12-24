@@ -24,13 +24,16 @@ export const changeShopStatus = (status) => async (dispatch) => {
       dispatch(setAlert(res.data.msg, "success"));
   
     } catch (err) {
-      const errors = err.response.data.errors;
-      if (errors) {
-        errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+      if(err && err.response) {
+        const errors = err.response.data.errors;
+        if (errors) {
+          errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+        }
       }
       dispatch({
         type: DASHBOARD_ERROR,
       });
+      
     }
   };
 

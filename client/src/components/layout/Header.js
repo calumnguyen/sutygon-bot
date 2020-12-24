@@ -1,17 +1,25 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { logout } from '../../actions/auth'
-import loadjs from 'loadjs'
-import { Link } from 'react-router-dom'
 
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logout } from "../../actions/auth";
+import loadjs from "loadjs";
+import { Link } from "react-router-dom";
+import {
+  ButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 class Header extends Component {
   state = {
-    username: '',
-    userType: '',
-    id: '',
-    avatar: '',
-  }
+    username: "",
+    userType: "",
+    id: "",
+    avatar: "",
+    dropdownOpen: false,
+  };
+
 
   componentDidMount() {
     loadjs(`/assets/vendors/js/core/jquery-3.2.1.min.js`)
@@ -36,87 +44,62 @@ class Header extends Component {
       })
     }
   }
+  setDropdownOpen = (e) => {
+    e.preventDefault();
+    this.setState({
+      dropdownOpen: !this.state.dropdownOpen,
+    });
+  };
 
   render() {
-    return (
-      <nav className='navbar navbar-expand-lg navbar-light bg-faded header-navbar'>
-        <div className='container-fluid'>
-          <div className='navbar-header'>
-            <button
-              type='button'
-              data-toggle='collapse'
-              className='navbar-toggle d-lg-none float-left'
-            >
-              <span className='sr-only'>Toggle navigation</span>
-              <span className='icon-bar'></span>
-              <span className='icon-bar'></span>
-              <span className='icon-bar'></span>
-            </button>
-            <span className='d-lg-none navbar-right navbar-collapse-toggle'>
-              <a
-                aria-controls='navbarSupportedContent'
-                href='/dashboard'
-                className='open-navbar-container black'
-              >
-                <i className='ft-more-vertical'></i>
-              </a>
-            </span>
-            <form className='navbar-form navbar-right mt-1'>
-              <div className='position-relative has-icon-right'></div>
-            </form>
-          </div>
-          <div className='navbar-container'>
-            <div
-              id='navbarSupportedContent'
-              className='collapse navbar-collapse'
-            >
-              <ul className='navbar-nav'>
-                <li className='dropdown nav-item'>
-                  <a
-                    id='dropdownBasic3'
-                    href='/dashboard'
-                    data-toggle='dropdown'
-                    className='nav-link position-relative dropdown-toggle'
-                  >
-                    <img style={{ height: '40px' }} src={this.state.avatar} />
-                    <p className='d-none'>User Settings</p>
-                  </a>
-                  <div
-                    ngbdropdownmenu=''
-                    aria-labelledby='dropdownBasic3'
-                    className='dropdown-menu text-left dropdown-menu-right'
-                  >
-                    <a
-                      href={
-                        this.state.id ? `/user/edituser/${this.state.id}` : ''
-                      }
-                      className='dropdown-item py-1'
-                    >
-                      <i className='ft-edit mr-2'></i>
-                      <span>Edit Profile</span>
-                    </a>
 
-                    <Link
-                      to='/'
-                      onClick={() => this.props.logout()}
-                      className='dropdown-item'
-                    >
-                      <i className='ft-power mr-2'></i>
-                      <span>Logout</span>
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <h6 style={{ marginTop: '17px' }}>
-                    {this.state.username && this.state.username}
-                  </h6>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </nav>
-    )
+    const { user } = this.props.auth;
+
+    return (
+      <>
+        {user && user.avatar ? (
+          <ButtonDropdown
+            isOpen={this.state.dropdownOpen}
+            toggle={(e) => this.setDropdownOpen(e)}
+            style={{ marginLeft: "1170px", marginTop: "10px" }}
+          >
+            <DropdownToggle caret color="white">
+              <img
+                style={{ height: "40px" }}
+                src={user && user.avatar && user && user.avatar}
+                alt={"User"}
+              />
+              {user && user.username && user && user.username}
+            </DropdownToggle>
+            <DropdownMenu right>
+              <DropdownItem>
+                {" "}
+                <Link
+                  to={this.state.id ? `/user/edituser/${this.state.id}` : ""}
+                  className="dropdown-item py-1"
+                >
+                  <i className="ft-edit mr-2"></i>
+                  <span>Edit Profile</span>
+                </Link>
+              </DropdownItem>
+              <DropdownItem>
+                <Link
+                  to="/"
+                  onClick={() => this.props.logout()}
+                  className="dropdown-item"
+                >
+                  <i className="ft-power mr-2"></i>
+                  <span>Logout</span>
+                </Link>
+              </DropdownItem>
+            </DropdownMenu>
+          </ButtonDropdown>
+        ) : (
+          ""
+        )}
+      </>
+    );
+
   }
 }
 

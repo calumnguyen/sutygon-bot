@@ -51,7 +51,7 @@ router.post(
   '/add',
   upload.single('avatar'),
   auth,
-  isAdmin,
+  // isAdmin,
   [
     check('username', 'User Name is Required').not().isEmpty(),
     check('fullname', 'Full Name is Required').not().isEmpty(),
