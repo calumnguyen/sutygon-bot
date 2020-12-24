@@ -135,7 +135,7 @@ const Main = () => {
           />
           <PrivateRoute
             exact
-            path='/orders/alternotes'
+            path='/orders/alternotes/:id'
             component={OrderNotes}
           />
 

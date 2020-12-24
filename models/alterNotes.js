@@ -3,6 +3,10 @@ const Schema = mongoose.Schema
 
 const alterNotesSchema = new mongoose.Schema(
   {
+    order: {
+      type: Schema.Types.ObjectId,
+      ref: 'orders',
+    },
     order_id: String,
     note: {
       type: String,

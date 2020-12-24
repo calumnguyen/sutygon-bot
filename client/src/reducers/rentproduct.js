@@ -9,6 +9,7 @@ import {
   RENTPRODUCT_UPDATED,
   RENTPRODUCT_READY,
   RENTPRODUCT_ACTIVE,
+  RENTPRODUCT_CANCEL,
   RENTPRODUCT_ITEMS,
   RENTPRODUCT_STATUS_SEARCH,
 } from '../actions/types'
@@ -94,6 +95,13 @@ export default function (state = initialState, action) {
         generateInvoice: true,
       }
     case RENTPRODUCT_ACTIVE:
+      return {
+        ...state,
+        rentproduct: payload,
+        loading: false,
+        generateInvoice: true,
+      }
+    case RENTPRODUCT_CANCEL:
       return {
         ...state,
         rentproduct: payload,

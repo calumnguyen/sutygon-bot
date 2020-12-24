@@ -54,10 +54,6 @@ class Orders extends Component {
     }
   }
 
-  onChangeHandler = (e) => {
-    // this.setState({[e.target.name]: e.target.value})
-  }
-
   orderTable = () => {
     const { rentproducts } = this.props
 
@@ -116,7 +112,6 @@ class Orders extends Component {
       const MySearch = (props) => {
         let input
         const handleClick = () => {
-          console.log('haha')
           props.onSearch(input.value)
         }
         return (
@@ -134,13 +129,6 @@ class Orders extends Component {
                 <button className='btn btn-success' onClick={handleClick}>
                   <i className='fa fa-search'></i> Search{' '}
                 </button>
-              </div>
-              <div className='col-md-6'>
-                <Link to='/orders/alternotes'>
-                  <button className='btn btn-success float-right'>
-                    <i className='icon-bag'></i> Alter Notes{' '}
-                  </button>
-                </Link>
               </div>
             </div>
             <div className='row ml-5'>

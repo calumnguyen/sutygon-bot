@@ -5,10 +5,11 @@ import {
   ADD_ALTERNOTE,
   DONE_ALTERNOTE,
 } from '../actions/types'
+
 const initialState = {
   alternotes: [],
   loading: false,
-  error: {},
+  error: '',
 }
 
 export default function (state = initialState, action) {
@@ -33,6 +34,7 @@ export default function (state = initialState, action) {
         ...state,
         alternotes: [payload, ...state.alternotes],
         loading: false,
+        error: '',
       }
 
     // update it later.
@@ -41,6 +43,7 @@ export default function (state = initialState, action) {
         ...state,
         loading: false,
       }
+
     case ALTERNOTES_ERROR:
       return {
         ...state,

@@ -39,18 +39,20 @@ export const addAlterNote = (note) => async (dispatch) => {
     if (errors) {
       errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')))
     }
+
     dispatch({
       type: ALTERNOTES_ERROR,
+      payload: err.response.data.errors[0].msg,
     })
   }
 }
 
 // get all alternotes
-export const getAlterNotes = (note) => async (dispatch) => {
+export const getAlterNotes = (id) => async (dispatch) => {
   dispatch({ type: ALTERNOTES_LOADING })
 
   try {
-    const res = await axios.get('/api/alternotes')
+    const res = await axios.get(`/api/alternotes/${id}`)
 
     dispatch({
       type: GET_ALTERNOTES,
