@@ -25,7 +25,7 @@ class Checkout extends Component {
     if (state) {
       this.setState({
         customer_id: state.customer,
-        barcode:state.barcode
+        barcode:state.barcode ?state.barcode :[]
       });
     }
     if (this.state.customer_id) {
