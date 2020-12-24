@@ -12,6 +12,7 @@ import {
   RENTPRODUCT_UPDATED,
   RENTPRODUCT_READY,
   RENTPRODUCT_ACTIVE,
+  RENTPRODUCT_CANCEL,
   RENTPRODUCT_ITEMS,
   GET_CUSTOMER,
   CUSTOMER_LOADING,
@@ -220,6 +221,24 @@ export const orderStatusActive = (id) => async (dispatch) => {
   }
 }
 
+//api/rentedproducts/:id/status/cancel
+export const orderStatusCancel = (id) => async (dispatch) => {
+  dispatch({ type: RENTPRODUCTS_LOADING })
+  try {
+    const res = await axios.post(`/api/rentedproducts/${id}/status/cancel`)
+
+    dispatch({
+      type: RENTPRODUCT_CANCEL,
+      payload: res.data,
+    })
+  } catch (err) {
+    dispatch({
+      type: RENTPRODUCTS_ERROR,
+      payload: err.response,
+    })
+  }
+}
+
 // get order items.
 export const getOrderItems = (id) => async (dispatch) => {
   dispatch({ type: RENTPRODUCTS_LOADING })
@@ -268,10 +287,34 @@ export const getOrderSearchStatus = (status) => async (dispatch) => {
       payload: res.data,
     })
   } catch (err) {
+
+    const errors = err.response.data.errors
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, 'warning')))
+    }
+    dispatch({
+      type: RENTPRODUCTS_ERROR,
+    })
+  }
+}
+
+// /api/rentedproducts/status/pickuptoday
+export const pickupTodayOrders = () => async (dispatch) => {
+  dispatch({ type: RENTPRODUCTS_LOADING })
+  try {
+    const res = await axios.get(`/api/rentedproducts/status/pickuptoday`)
+
+    dispatch({
+      type: RENTPRODUCT_STATUS_SEARCH,
+      payload: res.data,
+    })
+  } catch (err) {
+
    const errors = err.response.data.errors
     if (errors) {
       errors.forEach((error) => dispatch(setAlert(error.msg, 'warning')))
     }
+
     dispatch({
       type: RENTPRODUCTS_ERROR,
     })

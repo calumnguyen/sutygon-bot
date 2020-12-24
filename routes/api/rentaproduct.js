@@ -179,12 +179,44 @@ router.get('/getLastRecord', auth, async (req, res) => {
 // @access Private
 router.put('/searchstatus', auth, async (req, res) => {
   try {
-    const result = await RentedProduct.find({
-      status: { $in: req.body.status },
-    })
-      .select('orderNumber customerContactNumber status')
-      .populate('customer', 'name')
-      .lean()
+    // const result = await RentedProduct.find({
+    //   status: { $in: req.body.status },
+    // })
+    //   .select('orderNumber customerContactNumber status')
+    //   .populate('customer', 'name')
+    //   .lean()
+
+    let result
+    if (req.body.status.includes('pickup')) {
+      result = await RentedProduct.find({
+        $or: [
+          { status: { $in: req.body.status } },
+          { pickedUpStatus: false, readyForPickUp: true },
+        ],
+      })
+        .select('orderNumber customerContactNumber status')
+        .populate('customer', 'name')
+        .lean()
+    } else if (req.body.status.includes('return')) {
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      result = await RentedProduct.find({
+        $or: [
+          { status: { $in: req.body.status } },
+          { returnDate: { $gte: today }, returnStatus: false },
+        ],
+      })
+        .select('orderNumber customerContactNumber status')
+        .populate('customer', 'name')
+        .lean()
+    } else {
+      result = await RentedProduct.find({
+        status: { $in: req.body.status },
+      })
+        .select('orderNumber customerContactNumber status')
+        .populate('customer', 'name')
+        .lean()
+    }
 
     if (result.length < 1) {
       return res.status(404).json({ errors: [{ msg: 'No orders found.' }] })
@@ -268,6 +300,40 @@ router.post('/:id/status/active', auth, async (req, res) => {
         $push: { authorization_logs: pickUpLog },
         status: 'active',
         pickedUpStatus: true,
+      },
+      { new: true }
+    )
+      .select(
+        'readyForPickUp pickedUpStatus returnStatus status authorization_logs'
+      )
+      .lean()
+
+    return res.status(200).json(rentedProducts)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).send('Server Error!')
+  }
+})
+
+// @route  POST /api/rentedproducts/:id/status/cancel
+// @desc   Make status active.
+// @access Private
+router.post('/:id/status/cancel', auth, async (req, res) => {
+  try {
+    pickUpLog = {
+      employee_id: req.user.id,
+      employee_name: req.user.name,
+      status: 'cancel',
+      message: `Order cancelled.`,
+    }
+
+    const rentedProducts = await RentedProduct.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: { authorization_logs: pickUpLog },
+        status: 'cancel',
+        readyForPickUp: false,
+        pickedUpStatus: false,
       },
       { new: true }
     )
@@ -372,34 +438,31 @@ router.get('/:id/orderitems', auth, async (req, res) => {
   }
 })
 
-// @route  GET api/rentproducts/searchorderId
-// @desc   Get order by order id or customer number
+// @route  GET api/rentproducts/status/pickuptoday
+// @desc   Get order whose pickup status is true.
 // @access Private
-router.put(
-  '/searchorderId',
-  //  auth,
-  async (req, res) => {
-    try {
-      let search = req.body.search
+router.get('/status/pickuptoday', auth, async (req, res) => {
+  try {
+    const result = await RentedProduct.find({
+      readyForPickUp: true,
+      pickedUpStatus: false,
+    })
+      .populate('customer', 'name')
+      .populate('product')
+      .populate('user', 'username')
+      .lean()
 
-      const result = await RentedProduct.find({
-        $or: [{ orderNumber: search }, { customerContactNumber: search }],
-      })
-      if (!result) {
-        return res.status(404).json({ msg: 'No Order found' })
-      }
-      return res.json(result)
-    } catch (err) {
-      console.error(err.message)
-      // Check if id is not valid
-      if (err.kind === 'ObjectId') {
-        return res.status(404).json({ msg: 'No Order found' })
-      }
-      res
-        .status(500)
-        .json({ errors: [{ msg: 'Server Error: Something went wrong' }] })
+    if (result.length < 1) {
+      return res
+        .status(404)
+        .json({ errors: [{ msg: 'No orders ready for pickup today.' }] })
     }
+
+    res.json(result)
+  } catch (err) {
+    console.log(err)
+    res.status(500).send('Server Error!')
   }
-)
+})
 
 module.exports = router

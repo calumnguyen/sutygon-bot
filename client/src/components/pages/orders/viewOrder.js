@@ -11,13 +11,14 @@ import {
   getOrderById,
   orderStatusReady,
   orderStatusActive,
+  orderStatusCancel,
   getOrderItems,
+  deleteRentedProduct,
 } from '../../../actions/rentproduct'
 import moment from 'moment'
 import { confirmAlert } from 'react-confirm-alert'
 import BootstrapTable from 'react-bootstrap-table-next'
 import ToolkitProvider from 'react-bootstrap-table2-toolkit'
-import { Spinner } from 'react-bootstrap'
 
 class ViewOrder extends Component {
   state = {
@@ -77,6 +78,26 @@ class ViewOrder extends Component {
       buttons: [
         {
           label: 'OK',
+          onClick: () => {},
+        },
+      ],
+    })
+  }
+
+  cancelOrderAlert = () => {
+    confirmAlert({
+      title: 'Cancel Order',
+      message: `Are you sure you want to cancel Order : ${this.state.orderNumber}`,
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: async () => {
+            await this.props.orderStatusCancel(this.state.id)
+            this.props.history.push('/orders')
+          },
+        },
+        {
+          label: 'No',
           onClick: () => {},
         },
       ],
@@ -252,10 +273,21 @@ class ViewOrder extends Component {
                   <div className='form-body'>
                     <div className='card'>
                       <div className='card-header'>
-                        <h4 className='form-section'>
-                          <i className='icon-bag' /> Order #{' '}
-                          {this.state.orderNumber}
-                        </h4>
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <h4 className='form-section'>
+                              <i className='icon-bag' /> Order #{' '}
+                              {this.state.orderNumber}
+                            </h4>
+                          </div>
+                          <div className='col-md-6'>
+                            <Link to={`/orders/alternotes/${this.state.id}`}>
+                              <button className='btn btn-success float-right'>
+                                <i className='icon-bag'></i> Alter Notes{' '}
+                              </button>
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                       <div>
                         {' '}
@@ -483,58 +515,68 @@ class ViewOrder extends Component {
                     </div>
                   </div>
                 </section>
-                <div className='row'>
-                  <div className='col-md-2'>
-                    {this.state.status == 'pending' ||
-                    this.state.status == 'ready' ? (
-                      <button
-                        to={{ pathname: `/report` }}
-                        type='submit'
-                        className='mb-2 mr-2 btn btn-raised btn-primary'
-                      >
-                        <i className='ft-check' /> Cancel Order
-                      </button>
-                    ) : (
-                      <button
-                        to={{ pathname: `/report` }}
-                        type='submit'
-                        className='mb-2 mr-2 btn btn-raised btn-primary'
-                        onClick={
-                          this.state.status == 'past'
-                            ? () => this.pastOrderAlert()
-                            : () => this.props.history.push('/returnproduct')
-                        }
-                      >
-                        <i className='ft-check' /> Refund
-                      </button>
-                    )}
-                  </div>
-                  <div className=''>
-                    {this.state.status !== 'active' &&
-                    this.state.status !== 'past' ? (
-                      <button
-                        to={{ pathname: `/report` }}
-                        type='submit'
-                        className='mb-2 mr-2 btn btn-raised btn-primary'
-                        onClick={
-                          this.state.status == 'pending'
-                            ? () => this.statusToReady(this.state.id)
-                            : this.state.status == 'ready'
-                            ? () => this.statusToPickup(this.state.id)
-                            : () => {}
-                        }
-                      >
-                        <i className='ft-check' />{' '}
-                        {this.state.status == 'pending'
-                          ? 'Ready'
-                          : this.state.status == 'ready'
-                          ? 'Pickup'
-                          : 'Active'}
-                      </button>
-                    ) : (
-                      ''
-                    )}
-                  </div>
+                <div>
+                  {this.state.status !== 'cancel' ? (
+                    <div className='row'>
+                      <div className=''>
+                        {this.state.status == 'pending' ||
+                        this.state.status == 'ready' ? (
+                          <button
+                            to={{ pathname: `/report` }}
+                            type='submit'
+                            className='mb-2 mr-2 btn btn-raised btn-primary'
+                            onClick={() => this.cancelOrderAlert()}
+                          >
+                            <i className='ft-check' /> Cancel Order
+                          </button>
+                        ) : (
+                          <button
+                            to={{ pathname: `/report` }}
+                            type='submit'
+                            className='mb-2 mr-2 btn btn-raised btn-primary'
+                            onClick={
+                              this.state.status == 'past'
+                                ? () => this.pastOrderAlert()
+                                : () =>
+                                    this.props.history.push('/returnproduct')
+                            }
+                          >
+                            <i className='ft-check' /> Refund
+                          </button>
+                        )}
+                      </div>
+                      <div className=''>
+                        {this.state.status !== 'active' &&
+                        this.state.status !== 'past' &&
+                        this.state.status !== 'lost' &&
+                        this.state.status !== 'alteration' ? (
+                          <button
+                            to={{ pathname: `/report` }}
+                            type='submit'
+                            className='mb-2 mr-2 btn btn-raised btn-primary'
+                            onClick={
+                              this.state.status == 'pending'
+                                ? () => this.statusToReady(this.state.id)
+                                : this.state.status == 'ready'
+                                ? () => this.statusToPickup(this.state.id)
+                                : () => {}
+                            }
+                          >
+                            <i className='ft-check' />{' '}
+                            {this.state.status == 'pending'
+                              ? 'Ready'
+                              : this.state.status == 'ready'
+                              ? 'Pickup'
+                              : 'Active'}
+                          </button>
+                        ) : (
+                          ''
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </div>
               </div>
             </div>
@@ -568,6 +610,8 @@ ViewOrder.propTypes = {
   getOrderById: PropTypes.func.isRequired,
   orderStatusReady: PropTypes.func.isRequired,
   getOrderItems: PropTypes.func.isRequired,
+  deleteRentedProduct: PropTypes.func.isRequired,
+  orderStatusCancel: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -579,5 +623,7 @@ export default connect(mapStateToProps, {
   getOrderById,
   orderStatusReady,
   orderStatusActive,
+  orderStatusCancel,
   getOrderItems,
+  deleteRentedProduct,
 })(ViewOrder)

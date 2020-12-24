@@ -64,12 +64,47 @@ class ConfigureSystem extends Component {
         }
     }
 
+    value = sections
+    this.setState({
+      sections: sections,
+    })
+  }
+  handleChange = (e, name) => {
+    this.setState({ [e.target.name]: !this.state[name] })
+  }
+
+  onSubmit = async (e) => {
+    e.preventDefault()
+    await this.selected()
+    const sessionsArr = Object.values(this.state.sections)
+    this.setState({ saving: true })
+
+    const formData = new FormData()
+    formData.append('avatar', this.state.avatar)
+    formData.append('username', this.state.username)
+    formData.append('fullname', this.state.fullname)
+    formData.append('contactnumber', this.state.contactnumber)
+    formData.append('email', this.state.email)
+    formData.append('password', this.state.tempPwd)
+    formData.append('type', this.state.type)
+    formData.append('gender', this.state.gender)
+    formData.append('sections', sessionsArr)
+    formData.append('jobTitle', this.state.jobTitle)
+    formData.append('userID', this.state.userID)
+
+    if (this.state.id === '') {
+      await this.props.addNewUser(formData)
+    } else {
+      await this.props.updateUser(formData, this.state.id)
+
+
     _onChange = (e, id = '') => {
         this.setState({
             [e.target.name]: e.target.files[0],
             imgUpd: true,
             src: URL.createObjectURL(e.target.files[0]),
         })
+
     }
 
     selected = async () => {
@@ -90,6 +125,22 @@ class ConfigureSystem extends Component {
     handleChange = (e, name) => {
         this.setState({ [e.target.name]: !this.state[name] })
     }
+
+    const { user } = auth
+    if (user && user.systemRole === 'Employee') {
+      return <Redirect to='/Error' />
+    }
+    if (this.props.saved == true) {
+      return (
+        <Redirect
+          push
+          to={{
+            pathname: '/user/configuresystemuser',
+            data: { state: this.state, user: this.props.user },
+          }}
+        />
+      )
+
 
 
     onSubmit = async (e) => {
@@ -125,6 +176,7 @@ class ConfigureSystem extends Component {
         }
         return;
         // this.setState({ saving: false, saved: true })
+
     }
     render() {
         const { auth } = this.props

@@ -27,7 +27,7 @@ class OrderNotes extends Component {
   }
 
   async componentDidMount() {
-    await this.props.getAlterNotes()
+    await this.props.getAlterNotes(this.props.match.params.id)
     const { alternotes, loading } = this.props
     this.setState({
       alternotes,
@@ -50,24 +50,36 @@ class OrderNotes extends Component {
   onSubmit = async (e) => {
     e.preventDefault()
     let { order_id, note, alter_request } = this.state
-    console.log(order_id, note, alter_request)
 
     await this.props.addAlterNote({
-      order_id,
+      order: this.props.match.params.id,
+      order_id: order_id ? order_id : this.props.order.orderNumber,
       note,
       alter_request,
     })
+
+    const { error } = this.props
+
+    if (error.length == 0) {
+      // If error is not there then clear all fields.
+      this.setState({
+        order_id: '',
+        note: '',
+        alter_request: '',
+      })
+    } else {
+      // If barcode is wrong then hold back the note and alter request state for better UX.
+      this.setState({
+        order_id: '',
+      })
+    }
+
+    await this.props.getAlterNotes(this.props.match.params.id)
 
     const { alternotes } = this.props
 
     this.setState({
       alternotes,
-    })
-
-    this.setState({
-      order_id: '',
-      note: '',
-      alter_request: '',
     })
   }
 
@@ -115,10 +127,13 @@ class OrderNotes extends Component {
 
         alterNotesArr.push({
           order_id: note.order_id,
-          products: prodString,
+          products: note.order_id.length <= 7 ? 'Order Note' : prodString,
           note: note.note,
           type: note.alter_request ? 'Request' : 'Note',
-          status: note.done ? (
+
+          status: !note.alter_request ? (
+            ''
+          ) : note.done ? (
             'Done'
           ) : (
             <Link
@@ -236,7 +251,7 @@ class OrderNotes extends Component {
                                     type='text'
                                     id='projectinput3'
                                     className='form-control border-primary'
-                                    placeholder='Order ID'
+                                    placeholder='8 digit ID (optional)'
                                     name='order_id'
                                     value={this.state.order_id}
                                     onChange={(e) => {
@@ -259,6 +274,7 @@ class OrderNotes extends Component {
                                     onChange={(e) => {
                                       this.onChangeHandler(e)
                                     }}
+                                    required
                                   />
                                 </div>
                               </div>
@@ -350,6 +366,8 @@ OrderNotes.propTypes = {
 const mapStateToProps = (state) => ({
   alternotes: state.alternotes.alternotes,
   loading: state.alternotes.loading,
+  order: state.rentproduct.rentproduct,
+  error: state.alternotes.error,
 })
 export default connect(mapStateToProps, {
   addAlterNote,
