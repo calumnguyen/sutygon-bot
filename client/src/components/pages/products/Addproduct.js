@@ -4,7 +4,7 @@ import Header from "../../layout/Header";
 import { addNewProduct, getProductById, updateProduct } from "../../../actions/product";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
-import { Redirect } from "react-router-dom";
+import { Redirect,withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import shortid from "shortid";
@@ -36,6 +36,7 @@ class AddProduct extends Component {
 
   async componentDidMount() {
     // check form is to Add or Edit
+    console.log(this.props.location)
     if (this.props.match.params.id) {
 
       const id = this.props.match.params.id;
@@ -575,6 +576,6 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 
 });
-export default connect(mapStateToProps, {
+export default connect(mapStateToProps,{
   addNewProduct, getProductById, updateProduct
 })(AddProduct);

@@ -81,11 +81,11 @@ class RentProduct extends Component {
                 <br />
                 <div className="row justify-content-center">
                   <Link
-                    to={{
+                   to={{
                       pathname: "/checkout",
-                      state: !!this.props.customer.length
+                      state:{ customer :!!this.props.customer.length
                         ? this.props.customer[0]._id
-                        : "",
+                        : ""},
                     }}
                     type="button"
                     className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"

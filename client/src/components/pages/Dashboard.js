@@ -1,17 +1,19 @@
-import React, { Component } from 'react'
-import Sidebar from '../layout/Sidebar'
-import Header from '../layout/Header'
-import Loader from '../layout/Loader'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { getAllAppointments } from '../../actions/appointment'
-import { getAllRentedProducts } from '../../actions/rentproduct'
-import { getAllProducts } from '../../actions/product'
-import { changeShopStatus, getShop } from '../../actions/dashboard'
-import * as moment from 'moment-timezone'
-import '../../login.css'
-import '../../dashbaord.css'
-import { Redirect } from 'react-router-dom'
+
+import React, { Component } from "react";
+import Sidebar from "../layout/Sidebar";
+import Header from "../layout/Header";
+import Loader from "../layout/Loader";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { getAllAppointments } from "../../actions/appointment";
+import { getAllRentedProducts } from "../../actions/rentproduct";
+import { getAllProducts } from "../../actions/product";
+import { changeShopStatus, getShop } from "../../actions/dashboard";
+import * as moment from "moment";
+import "../../login.css";
+import "../../dashbaord.css";
+import { Redirect } from "react-router-dom";
+
 
 class Dashboard extends Component {
   async componentDidMount() {
@@ -115,8 +117,7 @@ class Dashboard extends Component {
         }
       }
     }
-    const startTime =
-      this.props.shop[0] && moment(this.props.shop[0].shopStartTime)
+const startTime= this.props.shop[0] && moment(this.props.shop[0].shopStartTime)
 
     return (
       <React.Fragment>
@@ -282,7 +283,8 @@ class Dashboard extends Component {
                   </div>
                 </div>
 
-                {user && user.systemRole === 'Admin' ? (
+                {user && user.systemRole === "Admin" ? (
+
                   <>
                     <div className='row'>
                       <div className='col-md-12'>
@@ -302,18 +304,18 @@ class Dashboard extends Component {
                                   {' '}
                                   <span className='badge badge-info'>
                                     {this.props.shop[0] &&
-                                      startTime
-                                        .tz('Asia/Vientiane')
-                                        .format('hh:mm a')}
+
+                                      startTime.tz("Asia/Vientiane").format("hh:mm a")}
+
                                   </span>
                                 </h1>
                                 <p>
                                   <span className='badge badge-pill badge-light'>
                                     {this.props.shop[0] &&
-                                      startTime
-                                        .tz('Asia/Vientiane')
-                                        .format('DD-MMM-YY')}
-                                  </span>{' '}
+
+                                      startTime.tz("Asia/Vientiane").format("DD-MMM-YY")}
+                                  </span>{" "}
+
                                 </p>
                               </div>
                               <div className='col-md-3 txt-sep'>

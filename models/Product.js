@@ -35,7 +35,11 @@ const ProductSchema = new mongoose.Schema({
             {
               barcode: Number,
               isLost: { type: Boolean, default: false },
+
               // isRented: { type: Boolean, default: false },
+
+              isRented: { type: Boolean, default: false },
+
 
             },
           ],
@@ -47,6 +51,7 @@ const ProductSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-})
+} 
+)
 
 module.exports = Product = mongoose.model('product', ProductSchema)

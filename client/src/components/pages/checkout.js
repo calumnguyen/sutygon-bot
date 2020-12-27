@@ -24,7 +24,8 @@ class Checkout extends Component {
     const { state } = this.props.location;
     if (state) {
       this.setState({
-        customer_id: state,
+        customer_id: state.customer,
+        barcode:state.barcode ?state.barcode :[]
       });
     }
     if (this.state.customer_id) {
@@ -79,7 +80,7 @@ class Checkout extends Component {
                   title: product_name + " | " + color_name + " | " + size_name,
                   barcode: size.barcodes[i].barcode,
                   isRented: size.barcodes[i].isRented,
-
+                  isLost: size.barcodes[i].isLost,
                   price: price,
                 };
                 rows.push(row);
@@ -119,23 +120,30 @@ class Checkout extends Component {
         OCAlert.alertError(`This barcode does not exist`, { timeOut: 3000 });
         return;
       }
-      if (barcodeArry.isRented === true) {
+
+      if (barcodeArry.isRented && barcodeArry.isRented === true) {
         OCAlert.alertError(
           `This barcode is already Rented. Please try again!`,
           { timeOut: 3000 }
         );
         return;
-      } else if (
-        barcodeArry.isRented === undefined ||
-        barcodeArry.isRented === (false || "false")
-      ) {
+      }
+      if (barcodeArry.isLost === true) {
+        OCAlert.alertError(
+          `This barcode is Lost. Please try again!`,
+          { timeOut: 3000 }
+        );
+        return;
+      } 
+      else 
+       {
         const { barcode } = this.state;
         barcode.push({
           id: shortid.generate(),
           barcode: bc.trim(),
         });
         this.setState({ barcode });
-      }
+       }
     }
   };
   removeBarcodeRow = (id) => {
@@ -172,7 +180,7 @@ class Checkout extends Component {
                 placeholder="Barcode"
                 name="barcode"
                 id="widthBr"
-                style={{ width: "-webkit-fill-available" }}
+                style={{ width: "-webkit-fill-available",'color': 'black' }}
                 onChange={(e) => this.handleChange(e, barcode.id)}
                 value={barcode.barcode}
               />
@@ -237,7 +245,6 @@ class Checkout extends Component {
                       </div>
                       <div className="card-content">
                         <div className="card-body table-responsive">
-                          <form className="" action="index.html" method="post">
                             <div id="colors_box">
                               <div className="row color-row">
                                 <div className="col-md-12">
@@ -308,7 +315,6 @@ class Checkout extends Component {
                                 </div>
                               </div>
                             </div>
-                          </form>
                         </div>
                       </div>
                     </div>

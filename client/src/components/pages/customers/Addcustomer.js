@@ -21,8 +21,7 @@ import { OCAlert } from "@opuscapita/react-alerts";
 import Modal from "react-awesome-modal";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 
-import {vi} from 'date-fns/esm/locale'
-
+import { vi } from "date-fns/esm/locale";
 
 registerLocale("vi", vi);
 setDefaultLocale("vi");
@@ -59,7 +58,7 @@ class AddCustomer extends Component {
       const { customer } = this.props;
       if (customer) {
         this.setState({
-          id: id,
+          id: customer._id,
           isEdit: true,
           name: customer.name,
           contactnumber: customer.contactnumber,
@@ -96,11 +95,40 @@ class AddCustomer extends Component {
   static getDerivedStateFromProps(props, state) {
     return { orders: props.insight && props.insight.orders };
   }
+
+  validateEmail = (e) => {
+      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      if (re.test(e.target.value) ){
+        this.setState({ email: e.target.value });
+      } 
+
+       else {
+        OCAlert.alertError("Email is not valid", { timeOut: 3000 });
+        this.setState({ email: "" });
+        return;
+      }
+
+    
+  };
   openModal = (e) => {
     e.preventDefault();
-    this.setState({
-      visible: true,
-    });
+    if (
+      this.state.contactnumber === "" ||
+      this.state.name === "" ||
+      this.state.address === "" ||
+      this.state.birthday === ""
+    ) {
+      this.setState({
+        visible: false,
+      });
+      OCAlert.alertError("Enter Required Fields", { timeOut: 3000 });
+      return;
+    } else {
+      this.setState({
+        visible: true,
+      });
+    }
   };
   handleChangeForDate = (date, name, e) => {
     if (this.state.id === "") {
@@ -108,20 +136,21 @@ class AddCustomer extends Component {
         birthday: date,
       });
     }
-    if (this.state.id === "") {
-      if (name === "selectedYear") {
-        this.setState({
-          selectedYear: date,
-          selectedMonth: "",
-          alltime: false,
-        });
-      } else if (name === "selectedMonth") {
-        this.setState({
-          selectedMonth: date,
-          selectedYear: "",
-          alltime: false,
-        });
-      }
+    console.log(name);
+    console.log(date);
+
+    if (name === "selectedYear") {
+      this.setState({
+        selectedYear: date,
+        selectedMonth: "",
+        alltime: false,
+      });
+    } else if (name === "selectedMonth") {
+      this.setState({
+        selectedMonth: date,
+        selectedYear: "",
+        alltime: false,
+      });
     }
   };
 
@@ -173,7 +202,7 @@ class AddCustomer extends Component {
     const { customer } = this.props;
     let m_oc = {
       exist: "no",
-      membership: this.state.membership === "" ? null:this.state.membership,
+      membership: this.state.membership === "" ? null : this.state.membership,
       username: this.state.name,
       email: "unverified",
       deactivate: false,
@@ -265,8 +294,9 @@ class AddCustomer extends Component {
                       </div>
                       <div>
                         {" "}
-                        <OCAlertsProvider />
                         <Alert />
+                        <OCAlertsProvider />
+
                       </div>
 
                       <div className="card-body">
@@ -354,7 +384,9 @@ class AddCustomer extends Component {
                                     name="email"
                                     value={this.state.email}
                                     onChange={(e) => this.handleChange(e)}
-                                  />
+
+                                    onBlur={(e) => this.validateEmail(e)}
+                                    />
                                 </div>
                               </div>
                               <div className="form-group row">
@@ -411,9 +443,7 @@ class AddCustomer extends Component {
                                     <DatePicker
                                       dateFormat="dd/MM/yyyy"
                                       locale="vi"
-
                                       selected={this.state.birthday}
-                                      
                                       className="form-control border-primary"
                                       onChange={(e) =>
                                         this.handleChangeForDate(e, "birthday")

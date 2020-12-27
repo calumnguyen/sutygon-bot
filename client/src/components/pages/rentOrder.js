@@ -212,8 +212,8 @@ class RentOrder extends Component {
                     // check if current size obj contain barcodes or not
                     if (size.barcodes) {
                       // Add isRented
-                      size.barcodes[pd[0].barcodeIndex].isRented = true;
-                      this.props.updateProductIndex(product, pd[0].product_id);
+                      let bcode ={ barcode : size.barcodes[pd[0].barcodeIndex].barcode }
+                      this.props.updateProductIndex(bcode, pd[0].product_id);
                     }
                   }
                 });
@@ -497,9 +497,9 @@ class RentOrder extends Component {
                                         pathname: "/checkout",
                                         state: {
                                           customer: this.state.customer_id,
+                                          barcode: this.state.barcode_Array
                                         }
                                       }}
-                                      to="/checkout"
                                       className="btn "
                                     >
                                       <i className="fa fa-external-link"></i>
