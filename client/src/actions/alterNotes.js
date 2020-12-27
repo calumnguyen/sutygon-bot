@@ -39,11 +39,6 @@ export const addAlterNote = (note) => async (dispatch) => {
     if (errors) {
       errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')))
     }
-
-    dispatch({
-      type: ALTERNOTES_ERROR,
-      payload: err.response.data.errors[0].msg,
-    })
   }
 }
 

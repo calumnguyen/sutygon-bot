@@ -52,6 +52,10 @@ const RentedProductSchema = new mongoose.Schema(
         'alteration',
       ],
     },
+    // This is the status before alteration and it is restored once all the alterations are marked as done...
+    reservedStatus: {
+      type: String,
+    },
     readyForPickUp: {
       type: Boolean,
       default: false,

@@ -64,7 +64,19 @@ class Orders extends Component {
           orderNumber: order.orderNumber,
           name: order.customer ? order.customer.name : '',
           phone: order.customer ? order.customer.contactnumber : '',
-          status: <span className='badge badge-success'>{order.status}</span>,
+          status:
+            order.status == 'lost' ? (
+              <span className='badge badge-danger'>{order.status}</span>
+            ) : order.status == 'active' ? (
+              <span className='badge badge-success'>{order.status}</span>
+            ) : order.status == 'ready' ? (
+              <span className='badge badge-primary'>{order.status}</span>
+            ) : order.status == 'alteration' ? (
+              <span className='badge badge-warning'>{order.status}</span>
+            ) : (
+              <span className='badge badge-info'>{order.status}</span>
+            ),
+
           actions: (
             <>
               <Link

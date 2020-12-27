@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react'
 import Dashboard from './components/pages/Dashboard'
 import Login from './components/Login'
-import { Route, BrowserRouter as Router, Switch,withRouter } from 'react-router-dom'
+import {
+  Route,
+  BrowserRouter as Router,
+  Switch,
+  withRouter,
+} from 'react-router-dom'
 import { loadUser } from './actions/auth'
 import setAuthToken from './utils/setAuthToken'
 import PrivateRoute from './routing/PrivateRoute'
@@ -83,11 +88,7 @@ const Main = () => {
             component={ActivateAccount}
           />
           {/* products */}
-          <PrivateRoute
-            exact
-            path='/product/add'
-            component={AddProduct}
-          />
+          <PrivateRoute exact path='/product/add' component={AddProduct} />
           <PrivateRoute exact path='/product' component={ViewProduct} />
           <PrivateRoute
             exact
@@ -108,7 +109,6 @@ const Main = () => {
             component={AddCustomer}
           />
 
-          
           <PrivateRoute
             exact
             path='/product/viewproduct/:id'

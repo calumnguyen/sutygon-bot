@@ -179,13 +179,6 @@ router.get('/getLastRecord', auth, async (req, res) => {
 // @access Private
 router.put('/searchstatus', auth, async (req, res) => {
   try {
-    // const result = await RentedProduct.find({
-    //   status: { $in: req.body.status },
-    // })
-    //   .select('orderNumber customerContactNumber status')
-    //   .populate('customer', 'name')
-    //   .lean()
-
     let result
     if (req.body.status.includes('pickup')) {
       result = await RentedProduct.find({
@@ -195,26 +188,38 @@ router.put('/searchstatus', auth, async (req, res) => {
         ],
       })
         .select('orderNumber customerContactNumber status')
-        .populate('customer', 'name')
+        .populate('customer', 'name contactnumber')
         .lean()
     } else if (req.body.status.includes('return')) {
       const now = new Date()
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      const tomorrow = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1
+      )
+
       result = await RentedProduct.find({
         $or: [
           { status: { $in: req.body.status } },
-          { returnDate: { $gte: today }, returnStatus: false },
+          {
+            returnDate: {
+              $gte: today,
+              $lt: tomorrow,
+            },
+            returnStatus: false,
+          },
         ],
       })
         .select('orderNumber customerContactNumber status')
-        .populate('customer', 'name')
+        .populate('customer', 'name contactnumber')
         .lean()
     } else {
       result = await RentedProduct.find({
         status: { $in: req.body.status },
       })
         .select('orderNumber customerContactNumber status')
-        .populate('customer', 'name')
+        .populate('customer', 'name contactnumber')
         .lean()
     }
 
