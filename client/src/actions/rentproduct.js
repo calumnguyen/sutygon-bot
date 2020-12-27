@@ -71,7 +71,7 @@ export const getAllRentedProducts = () => async (dispatch) => {
 
 // Get Order by id.
 export const getOrderById = (id) => async (dispatch) => {
-  dispatch({ type: RENTPRODUCTS_LOADING })
+  dispatch({ type: RENTPRODUCT_LOADING })
   try {
     const config = {
       headers: {

@@ -15,6 +15,7 @@ import {
   getAlterNotes,
   markDone,
 } from '../../../actions/alterNotes'
+import { getOrderById } from '../../../actions/rentproduct'
 import Spinner from '../../layout/Spinner.js'
 
 class OrderNotes extends Component {
@@ -27,6 +28,7 @@ class OrderNotes extends Component {
   }
 
   async componentDidMount() {
+    await this.props.getOrderById(this.props.match.params.id)
     await this.props.getAlterNotes(this.props.match.params.id)
     const { alternotes, loading } = this.props
     this.setState({
@@ -129,12 +131,16 @@ class OrderNotes extends Component {
           order_id: note.order_id,
           products: note.order_id.length <= 7 ? 'Order Note' : prodString,
           note: note.note,
-          type: note.alter_request ? 'Request' : 'Note',
+          type: note.alter_request ? (
+            <span className='badge badge-warning'>Request</span>
+          ) : (
+            <span className='badge badge-info'>Note</span>
+          ),
 
           status: !note.alter_request ? (
             ''
           ) : note.done ? (
-            'Done'
+            <span className='badge badge-success'>Done</span>
           ) : (
             <Link
               onClick={() => {
@@ -361,6 +367,7 @@ OrderNotes.propTypes = {
   getAlterNotes: PropTypes.func.isRequired,
   addAlterNote: PropTypes.func.isRequired,
   markDone: PropTypes.func.isRequired,
+  getOrderById: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = (state) => ({
@@ -373,4 +380,5 @@ export default connect(mapStateToProps, {
   addAlterNote,
   getAlterNotes,
   markDone,
+  getOrderById,
 })(OrderNotes)

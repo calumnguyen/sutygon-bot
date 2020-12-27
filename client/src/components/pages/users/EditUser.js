@@ -21,16 +21,14 @@ import { OCAlert } from '@opuscapita/react-alerts'
 import 'react-datepicker/dist/react-datepicker.css'
 import Alert from '../../layout/Alert'
 
-import Modal from 'react-awesome-modal';
-import { logout } from "../../../actions/auth";
-import { registerLocale, setDefaultLocale } from "react-datepicker";
+import Modal from 'react-awesome-modal'
+import { logout } from '../../../actions/auth'
+import { registerLocale, setDefaultLocale } from 'react-datepicker'
 
-import {vi} from 'date-fns/esm/locale'
+import { vi } from 'date-fns/esm/locale'
 
-
-registerLocale("vi", vi);
-setDefaultLocale("vi");
-
+registerLocale('vi', vi)
+setDefaultLocale('vi')
 
 class EditUser extends Component {
   state = {
@@ -103,7 +101,7 @@ class EditUser extends Component {
           contactnumber: user.contactnumber,
           gender: user.gender,
           address: user.address,
-          birthday:user.birthday=== undefined ?null:user.birthday,
+          birthday: user.birthday === undefined ? null : user.birthday,
           sections: user.sections,
           Inventory:
             user.sections && user.sections.includes('Inventory') ? true : false,
@@ -262,15 +260,11 @@ class EditUser extends Component {
       return
     }
     if (state.birthday !== undefined) {
-
       formData.append('birthday', new Date(state.birthday))
-      this.setState({ isbirthdaySelected: false });
-
-    }
-    else {
-      this.setState({ saving: false, isbirthdaySelected: true });
-      return;
-
+      this.setState({ isbirthdaySelected: false })
+    } else {
+      this.setState({ saving: false, isbirthdaySelected: true })
+      return
     }
     formData.append('jobTitle', state.jobTitle)
     formData.append('systemRole', state.systemRole)
@@ -297,9 +291,7 @@ class EditUser extends Component {
     if (month.length < 2) month = '0' + month
     if (day.length < 2) day = '0' + day
 
-
-    return [day, month, year].join('/');
-
+    return [day, month, year].join('/')
   }
 
   _onChange = (e, id = '') => {
@@ -310,11 +302,11 @@ class EditUser extends Component {
     })
   }
   handleChangeNumber = (e) => {
-    const re = /^[0-9\b]+$/;
-    if (e.target.value === "" || re.test(e.target.value)) {
-      this.setState({ [e.target.name]: e.target.value });
+    const re = /^[0-9\b]+$/
+    if (e.target.value === '' || re.test(e.target.value)) {
+      this.setState({ [e.target.name]: e.target.value })
     }
-  };
+  }
 
   togglehandleChange = (status) => {
     if (status === true) {
@@ -357,11 +349,9 @@ class EditUser extends Component {
   }
 
   handleChangeForDate = (date) => {
- 
     this.setState({
-      birthday: date
-    });
-
+      birthday: date,
+    })
   }
   _onEditPersonalInfo = (e) => {
     e.preventDefault()
@@ -502,7 +492,7 @@ class EditUser extends Component {
                                     className='col-md-4 label-control'
                                     htmlFor='userinput1'
                                   >
-                                    Name
+                                    Full Name
                                   </label>
                                   <div className='col-md-8'>
                                     <input
@@ -884,9 +874,9 @@ class EditUser extends Component {
                                         placeholder='Phone Number'
                                         name='contactnumber'
                                         value={this.state.contactnumber}
-
-                                        onChange={e => this.handleChangeNumber(e)}
-
+                                        onChange={(e) =>
+                                          this.handleChangeNumber(e)
+                                        }
                                       />
                                     ) : (
                                       <input
@@ -920,40 +910,52 @@ class EditUser extends Component {
                                         value={this.state.address}
                                         onChange={(e) => this._handleChange(e)}
                                       />
-
-                                      :
-                                      <textarea type="text"
-                                        id="userinput3"
-                                        className="form-control border-primary"
-                                        placeholder="Address"
-                                        name="address"
-                                        rows="7"
-                                        value={this.state.address === undefined ? "" : this.state.address}
-                                        readOnly />
-                                    }
-
-
+                                    ) : (
+                                      <textarea
+                                        type='text'
+                                        id='userinput3'
+                                        className='form-control border-primary'
+                                        placeholder='Address'
+                                        name='address'
+                                        rows='7'
+                                        value={
+                                          this.state.address === undefined
+                                            ? ''
+                                            : this.state.address
+                                        }
+                                        readOnly
+                                      />
+                                    )}
                                   </div>
                                 </div>
                               </div>
 
-                              <div className="col-md-6">
-                                <div className="form-group row">
-                                  <label className="col-md-4 label-control" htmlFor="userinput4">Birthday</label>
-                                  <div className="col-md-8" data-date-format="dd/mm/yyyy">
-
-                                  {this.state.isEditP === true ?
+                              <div className='col-md-6'>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-4 label-control'
+                                    htmlFor='userinput4'
+                                  >
+                                    Birthday
+                                  </label>
+                                  <div
+                                    className='col-md-8'
+                                    data-date-format='dd/mm/yyyy'
+                                  >
+                                    {this.state.isEditP === true ? (
                                       <DatePicker
-                                        dateFormat="dd/MM/yyyy" 
-                                        locale="vi" selected={new Date(this.state.birthday)}
-                                        className="form-control border-primary"
-                                        onChange={(e) => this.handleChangeForDate(e)}//only when value has changed
-                                        popperPlacement="top-start"
-
+                                        dateFormat='dd/MM/yyyy'
+                                        locale='vi'
+                                        selected={new Date(this.state.birthday)}
+                                        className='form-control border-primary'
+                                        onChange={(e) =>
+                                          this.handleChangeForDate(e)
+                                        } //only when value has changed
+                                        popperPlacement='top-start'
                                         // peekNextMonth
                                         showMonthDropdown
                                         showYearDropdown
-                                        dropdownMode="select"
+                                        dropdownMode='select'
                                       />
                                     ) : (
                                       <DatePicker

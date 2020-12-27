@@ -133,7 +133,7 @@ class ViewOrder extends Component {
           sno: idx + 1,
           date: moment(log.date).format('ddd, MMM Do YYYY'),
           employee_name: log.employee_name,
-          status: log.status,
+          status: <span className='badge badge-info'>{log.status}</span>,
           message: log.message,
         })
       })
@@ -203,7 +203,7 @@ class ViewOrder extends Component {
         Items.push({
           productId: item.productId,
           product: `${item.name} | ${item.colorname} | ${item.size}`,
-          barcode: item.barcode,
+          barcode: <span className='badge badge-dark'>{item.barcode}</span>,
           price: item.price,
         })
       })
@@ -259,348 +259,352 @@ class ViewOrder extends Component {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        <Loader />
-        <div className='wrapper menu-collapsed'>
-          <Sidebar location={this.props.location}></Sidebar>
-          <Header></Header>
+    if (this.props.loading) {
+      return <Loader />
+    } else {
+      return (
+        <React.Fragment>
+          <Loader />
+          <div className='wrapper menu-collapsed'>
+            <Sidebar location={this.props.location}></Sidebar>
+            <Header></Header>
 
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <section id='form-action-layouts'>
-                  <div className='form-body'>
-                    <div className='card'>
-                      <div className='card-header'>
-                        <div className='row'>
-                          <div className='col-md-6'>
-                            <h4 className='form-section'>
-                              <i className='icon-bag' /> Order #{' '}
-                              {this.state.orderNumber}
-                            </h4>
-                          </div>
-                          <div className='col-md-6'>
-                            <Link to={`/orders/alternotes/${this.state.id}`}>
-                              <button className='btn btn-success float-right'>
-                                <i className='icon-bag'></i> Alter Notes{' '}
-                              </button>
-                            </Link>
+            <div className='main-panel'>
+              <div className='main-content'>
+                <div className='content-wrapper'>
+                  <section id='form-action-layouts'>
+                    <div className='form-body'>
+                      <div className='card'>
+                        <div className='card-header'>
+                          <div className='row'>
+                            <div className='col-md-6'>
+                              <h4 className='form-section'>
+                                <i className='icon-bag' /> Order #{' '}
+                                {this.state.orderNumber}
+                              </h4>
+                            </div>
+                            <div className='col-md-6'>
+                              <Link to={`/orders/alternotes/${this.state.id}`}>
+                                <button className='btn btn-success float-right'>
+                                  <i className='icon-bag'></i> Alter Notes{' '}
+                                </button>
+                              </Link>
+                            </div>
                           </div>
                         </div>
+                        <div>
+                          {' '}
+                          <Alert />
+                        </div>
+                        <div className='card-body'>
+                          <form
+                            className='form form-horizontal form-bordered'
+                            method='POST'
+                            // onSubmit={(e) => this.onSubmit(e)}
+                          >
+                            <h4 className='form-section '>
+                              <i className='ft-info'></i> General information
+                            </h4>
+                            <div className='row'>
+                              <div className='col-md-6'>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-3 label-control'
+                                    htmlFor='projectinput4'
+                                  >
+                                    Order Number
+                                  </label>
+
+                                  <div className='col-md-9'>
+                                    <input
+                                      type='text'
+                                      id='projectinput4'
+                                      className='form-control border-primary'
+                                      placeholder='Order Number'
+                                      name='ordernumber'
+                                      value={this.state.orderNumber}
+                                      // onChange={(e) => this.handleChangeNumber(e)}
+                                      required
+                                      minLength={10}
+                                      maxLength={10}
+                                    />
+                                  </div>
+                                </div>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-3 label-control'
+                                    htmlFor='projectinput3'
+                                  >
+                                    Customer Name
+                                  </label>
+                                  <div className='col-md-9'>
+                                    <input
+                                      type='email'
+                                      id='projectinput3'
+                                      className='form-control border-primary'
+                                      placeholder='Customer Name'
+                                      name='name'
+                                      value={this.state.customer}
+                                      // onChange={(e) => this.handleChange(e)}
+                                      required
+                                    />
+                                    <Link
+                                      to={`/customer/editcustomer/${this.state.customerId}`}
+                                    >
+                                      <p
+                                        style={{
+                                          marginTop: '5px',
+                                          marginBottom: '0px',
+                                        }}
+                                      >
+                                        View Customer
+                                      </p>
+                                    </Link>
+                                  </div>
+                                </div>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-3 label-control'
+                                    htmlFor='projectinput3'
+                                  >
+                                    Customer Number
+                                  </label>
+                                  <div className='col-md-9'>
+                                    <input
+                                      type='text'
+                                      id='projectinput3'
+                                      className='form-control border-primary'
+                                      placeholder='Customer Number'
+                                      name='company'
+                                      value={this.state.customernumber}
+                                      // onChange={(e) => this.handleChange(e)}
+                                    />
+                                  </div>
+                                </div>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-3 label-control'
+                                    htmlFor='projectinput3'
+                                  >
+                                    Total
+                                  </label>
+                                  <div className='col-md-9'>
+                                    <input
+                                      type='text'
+                                      id='projectinput3'
+                                      className='form-control border-primary'
+                                      placeholder='Total'
+                                      name='total'
+                                      value={this.state.total}
+                                      // onChange={(e) => this.handleChange(e)}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              <div className='col-md-6'>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-3 label-control'
+                                    htmlFor='projectinput3'
+                                  >
+                                    Order open Date
+                                  </label>
+                                  <div className='col-md-9'>
+                                    <input
+                                      type='text'
+                                      id='projectinput3'
+                                      className='form-control border-primary'
+                                      placeholder='Open Date'
+                                      name='opendate'
+                                      value={this.state.createdAt}
+                                      // onChange={(e) => this.handleChange(e)}
+                                    />
+                                  </div>
+                                </div>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-3 label-control'
+                                    htmlFor='projectinput1'
+                                  >
+                                    Pickup Date
+                                  </label>
+                                  <div className='col-md-9'>
+                                    <input
+                                      type='text'
+                                      id='projectinput1'
+                                      rows='4'
+                                      className='form-control col-md-12 border-primary'
+                                      placeholder='Pickup Date'
+                                      name='pickup'
+                                      value={this.state.rentDate}
+                                      // onChange={(e) => this.handleChange(e)}
+                                      required
+                                    />
+                                  </div>
+                                </div>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-3 label-control'
+                                    htmlFor='projectinput3'
+                                  >
+                                    Return Date
+                                  </label>
+                                  <div className='col-md-9'>
+                                    <input
+                                      type='text'
+                                      id='projectinput3'
+                                      className='form-control border-primary'
+                                      placeholder='Return Date'
+                                      name='company_address'
+                                      value={this.state.returnDate}
+                                      // onChange={(e) => this.handleChange(e)}
+                                    />
+                                  </div>
+                                </div>
+                                <div className='form-group row'>
+                                  <label
+                                    className='col-md-3 label-control'
+                                    htmlFor='projectinput3'
+                                  >
+                                    Return On
+                                  </label>
+                                  <div className='col-md-9'>
+                                    <input
+                                      type='text'
+                                      id='projectinput3'
+                                      className='form-control border-primary'
+                                      placeholder='Return On'
+                                      name='returnon'
+                                      value={this.state.returnOn}
+                                      // onChange={(e) => this.handleChange(e)}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
                       </div>
-                      <div>
-                        {' '}
-                        <Alert />
-                      </div>
-                      <div className='card-body'>
+                      <div className='card card-body'>
                         <form
                           className='form form-horizontal form-bordered'
                           method='POST'
                           // onSubmit={(e) => this.onSubmit(e)}
                         >
                           <h4 className='form-section '>
-                            <i className='ft-info'></i> General information
+                            <i className='ft-info'></i> Authorization Logs
                           </h4>
                           <div className='row'>
-                            <div className='col-md-6'>
-                              <div className='form-group row'>
-                                <label
-                                  className='col-md-3 label-control'
-                                  htmlFor='projectinput4'
-                                >
-                                  Order Number
-                                </label>
-
-                                <div className='col-md-9'>
-                                  <input
-                                    type='text'
-                                    id='projectinput4'
-                                    className='form-control border-primary'
-                                    placeholder='Order Number'
-                                    name='ordernumber'
-                                    value={this.state.orderNumber}
-                                    // onChange={(e) => this.handleChangeNumber(e)}
-                                    required
-                                    minLength={10}
-                                    maxLength={10}
-                                  />
-                                </div>
-                              </div>
-                              <div className='form-group row'>
-                                <label
-                                  className='col-md-3 label-control'
-                                  htmlFor='projectinput3'
-                                >
-                                  Customer Name
-                                </label>
-                                <div className='col-md-9'>
-                                  <input
-                                    type='email'
-                                    id='projectinput3'
-                                    className='form-control border-primary'
-                                    placeholder='Customer Name'
-                                    name='name'
-                                    value={this.state.customer}
-                                    // onChange={(e) => this.handleChange(e)}
-                                    required
-                                  />
-                                  <Link
-                                    to={`/customer/editcustomer/${this.state.customerId}`}
-                                  >
-                                    <p
-                                      style={{
-                                        marginTop: '5px',
-                                        marginBottom: '0px',
-                                      }}
-                                    >
-                                      View Customer
-                                    </p>
-                                  </Link>
-                                </div>
-                              </div>
-                              <div className='form-group row'>
-                                <label
-                                  className='col-md-3 label-control'
-                                  htmlFor='projectinput3'
-                                >
-                                  Customer Number
-                                </label>
-                                <div className='col-md-9'>
-                                  <input
-                                    type='text'
-                                    id='projectinput3'
-                                    className='form-control border-primary'
-                                    placeholder='Customer Number'
-                                    name='company'
-                                    value={this.state.customernumber}
-                                    // onChange={(e) => this.handleChange(e)}
-                                  />
-                                </div>
-                              </div>
-                              <div className='form-group row'>
-                                <label
-                                  className='col-md-3 label-control'
-                                  htmlFor='projectinput3'
-                                >
-                                  Total
-                                </label>
-                                <div className='col-md-9'>
-                                  <input
-                                    type='text'
-                                    id='projectinput3'
-                                    className='form-control border-primary'
-                                    placeholder='Total'
-                                    name='total'
-                                    value={this.state.total}
-                                    // onChange={(e) => this.handleChange(e)}
-                                  />
-                                </div>
-                              </div>
+                            <div className='col-md-12'>
+                              {this.authorizationLogsTable()}
                             </div>
-                            <div className='col-md-6'>
-                              <div className='form-group row'>
-                                <label
-                                  className='col-md-3 label-control'
-                                  htmlFor='projectinput3'
-                                >
-                                  Order open Date
-                                </label>
-                                <div className='col-md-9'>
-                                  <input
-                                    type='text'
-                                    id='projectinput3'
-                                    className='form-control border-primary'
-                                    placeholder='Open Date'
-                                    name='opendate'
-                                    value={this.state.createdAt}
-                                    // onChange={(e) => this.handleChange(e)}
-                                  />
-                                </div>
-                              </div>
-                              <div className='form-group row'>
-                                <label
-                                  className='col-md-3 label-control'
-                                  htmlFor='projectinput1'
-                                >
-                                  Pickup Date
-                                </label>
-                                <div className='col-md-9'>
-                                  <input
-                                    type='text'
-                                    id='projectinput1'
-                                    rows='4'
-                                    className='form-control col-md-12 border-primary'
-                                    placeholder='Pickup Date'
-                                    name='pickup'
-                                    value={this.state.rentDate}
-                                    // onChange={(e) => this.handleChange(e)}
-                                    required
-                                  />
-                                </div>
-                              </div>
-                              <div className='form-group row'>
-                                <label
-                                  className='col-md-3 label-control'
-                                  htmlFor='projectinput3'
-                                >
-                                  Return Date
-                                </label>
-                                <div className='col-md-9'>
-                                  <input
-                                    type='text'
-                                    id='projectinput3'
-                                    className='form-control border-primary'
-                                    placeholder='Return Date'
-                                    name='company_address'
-                                    value={this.state.returnDate}
-                                    // onChange={(e) => this.handleChange(e)}
-                                  />
-                                </div>
-                              </div>
-                              <div className='form-group row'>
-                                <label
-                                  className='col-md-3 label-control'
-                                  htmlFor='projectinput3'
-                                >
-                                  Return On
-                                </label>
-                                <div className='col-md-9'>
-                                  <input
-                                    type='text'
-                                    id='projectinput3'
-                                    className='form-control border-primary'
-                                    placeholder='Return On'
-                                    name='returnon'
-                                    value={this.state.returnOn}
-                                    // onChange={(e) => this.handleChange(e)}
-                                  />
-                                </div>
-                              </div>
+                          </div>
+                        </form>
+                      </div>
+                      <div className='card card-body'>
+                        <form
+                          className='form form-horizontal form-bordered'
+                          method='POST'
+                        >
+                          <h4 className='form-section '>
+                            <i className='ft-info'></i> Order Items
+                          </h4>
+                          <div className='row'>
+                            <div className='col-md-12'>
+                              {this.orderItemsTable()}
                             </div>
                           </div>
                         </form>
                       </div>
                     </div>
-                    <div className='card card-body'>
-                      <form
-                        className='form form-horizontal form-bordered'
-                        method='POST'
-                        // onSubmit={(e) => this.onSubmit(e)}
-                      >
-                        <h4 className='form-section '>
-                          <i className='ft-info'></i> Authorization Logs
-                        </h4>
-                        <div className='row'>
-                          <div className='col-md-12'>
-                            {this.authorizationLogsTable()}
-                          </div>
+                  </section>
+                  <div>
+                    {this.state.status !== 'cancel' ? (
+                      <div className='row'>
+                        <div className=''>
+                          {this.state.status == 'pending' ||
+                          this.state.status == 'ready' ? (
+                            <button
+                              to={{ pathname: `/report` }}
+                              type='submit'
+                              className='mb-2 mr-2 btn btn-raised btn-primary'
+                              onClick={() => this.cancelOrderAlert()}
+                            >
+                              <i className='ft-check' /> Cancel Order
+                            </button>
+                          ) : (
+                            <button
+                              to={{ pathname: `/report` }}
+                              type='submit'
+                              className='mb-2 mr-2 btn btn-raised btn-primary'
+                              onClick={
+                                this.state.status == 'past'
+                                  ? () => this.pastOrderAlert()
+                                  : () =>
+                                      this.props.history.push('/returnproduct')
+                              }
+                            >
+                              <i className='ft-check' /> Refund
+                            </button>
+                          )}
                         </div>
-                      </form>
-                    </div>
-                    <div className='card card-body'>
-                      <form
-                        className='form form-horizontal form-bordered'
-                        method='POST'
-                      >
-                        <h4 className='form-section '>
-                          <i className='ft-info'></i> Order Items
-                        </h4>
-                        <div className='row'>
-                          <div className='col-md-12'>
-                            {this.orderItemsTable()}
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </section>
-                <div>
-                  {this.state.status !== 'cancel' ? (
-                    <div className='row'>
-                      <div className=''>
-                        {this.state.status == 'pending' ||
-                        this.state.status == 'ready' ? (
-                          <button
-                            to={{ pathname: `/report` }}
-                            type='submit'
-                            className='mb-2 mr-2 btn btn-raised btn-primary'
-                            onClick={() => this.cancelOrderAlert()}
-                          >
-                            <i className='ft-check' /> Cancel Order
-                          </button>
-                        ) : (
-                          <button
-                            to={{ pathname: `/report` }}
-                            type='submit'
-                            className='mb-2 mr-2 btn btn-raised btn-primary'
-                            onClick={
-                              this.state.status == 'past'
-                                ? () => this.pastOrderAlert()
-                                : () =>
-                                    this.props.history.push('/returnproduct')
-                            }
-                          >
-                            <i className='ft-check' /> Refund
-                          </button>
-                        )}
-                      </div>
-                      <div className=''>
-                        {this.state.status !== 'active' &&
-                        this.state.status !== 'past' &&
-                        this.state.status !== 'lost' &&
-                        this.state.status !== 'alteration' ? (
-                          <button
-                            to={{ pathname: `/report` }}
-                            type='submit'
-                            className='mb-2 mr-2 btn btn-raised btn-primary'
-                            onClick={
-                              this.state.status == 'pending'
-                                ? () => this.statusToReady(this.state.id)
+                        <div className=''>
+                          {this.state.status !== 'active' &&
+                          this.state.status !== 'past' &&
+                          this.state.status !== 'lost' &&
+                          this.state.status !== 'alteration' ? (
+                            <button
+                              to={{ pathname: `/report` }}
+                              type='submit'
+                              className='mb-2 mr-2 btn btn-raised btn-primary'
+                              onClick={
+                                this.state.status == 'pending'
+                                  ? () => this.statusToReady(this.state.id)
+                                  : this.state.status == 'ready'
+                                  ? () => this.statusToPickup(this.state.id)
+                                  : () => {}
+                              }
+                            >
+                              <i className='ft-check' />{' '}
+                              {this.state.status == 'pending'
+                                ? 'Ready'
                                 : this.state.status == 'ready'
-                                ? () => this.statusToPickup(this.state.id)
-                                : () => {}
-                            }
-                          >
-                            <i className='ft-check' />{' '}
-                            {this.state.status == 'pending'
-                              ? 'Ready'
-                              : this.state.status == 'ready'
-                              ? 'Pickup'
-                              : 'Active'}
-                          </button>
-                        ) : (
-                          ''
-                        )}
+                                ? 'Pickup'
+                                : 'Active'}
+                            </button>
+                          ) : (
+                            ''
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    ''
-                  )}
+                    ) : (
+                      ''
+                    )}
+                  </div>
                 </div>
               </div>
+              <footer className='footer footer-static footer-light'>
+                <p className='clearfix text-muted text-sm-center px-2'>
+                  <span>
+                    Quyền sở hữu của &nbsp;{' '}
+                    <a
+                      href='https://www.sutygon.com'
+                      rel='noopener noreferrer'
+                      id='pixinventLink'
+                      target='_blank'
+                      className='text-bold-800 primary darken-2'
+                    >
+                      SUTYGON-BOT{' '}
+                    </a>
+                    , All rights reserved.{' '}
+                  </span>
+                </p>
+              </footer>
             </div>
-            <footer className='footer footer-static footer-light'>
-              <p className='clearfix text-muted text-sm-center px-2'>
-                <span>
-                  Quyền sở hữu của &nbsp;{' '}
-                  <a
-                    href='https://www.sutygon.com'
-                    rel='noopener noreferrer'
-                    id='pixinventLink'
-                    target='_blank'
-                    className='text-bold-800 primary darken-2'
-                  >
-                    SUTYGON-BOT{' '}
-                  </a>
-                  , All rights reserved.{' '}
-                </span>
-              </p>
-            </footer>
           </div>
-        </div>
-      </React.Fragment>
-    )
+        </React.Fragment>
+      )
+    }
   }
 }
 
@@ -618,6 +622,7 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   order: state.rentproduct.rentproduct,
   orderItems: state.rentproduct.orderItems,
+  loading: state.rentproduct.loading,
 })
 export default connect(mapStateToProps, {
   getOrderById,

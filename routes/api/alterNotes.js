@@ -94,8 +94,17 @@ router.post('/', auth, async (req, res) => {
       emp_name: req.user.name,
     })
 
+    let checkTotalAlterations = await alterNotes
+      .find({
+        order,
+        alter_request: true,
+        done: false,
+      })
+      .countDocuments()
+
     // If it is an alter request only then make the status alteration else not.
-    if (alter_request) {
+    if (checkTotalAlterations == 1 && alter_request) {
+      fetchOrder.reservedStatus = fetchOrder.status
       fetchOrder.status = 'alteration'
       await fetchOrder.save()
     }
@@ -114,7 +123,7 @@ router.post('/', auth, async (req, res) => {
     })
   } catch (err) {
     console.log(err)
-    res.status(500).send({ msg: 'Server Error' })
+    res.status(500).json({ msg: 'Server Error' })
   }
 })
 
@@ -346,17 +355,23 @@ router.put('/:id/done', auth, async (req, res) => {
 
     // It means that if alteration notes of this order _id becomes zero then only in that case we will make this order sttus:'active' otherwise if atleast 1 document is returned from alternotes of this order _id then it means that it have alteration request left which has to be mark as done later when its done thats why it is still in 'alteration' state :)
     if (checkTotalNotes.length == 0) {
-      console.log('active')
-      await rentedProducts.updateOne(
-        {
-          _id: note.order,
-        },
-        {
-          $set: {
-            status: 'active',
-          },
-        }
-      )
+      let order = await rentedProducts.findOne({ _id: note.order })
+
+      order.status = order.reservedStatus
+      order.reservedStatus = null
+
+      await order.save()
+
+      // await rentedProducts.updateOne(
+      //   {
+      //     _id: note.order,
+      //   },
+      //   {
+      //     $set: {
+      //       status: 'active',
+      //     },
+      //   }
+      // )
     }
 
     return res.status(200).json({ msg: 'Alteration marked as done.' })
