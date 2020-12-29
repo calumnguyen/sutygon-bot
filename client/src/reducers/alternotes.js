@@ -20,6 +20,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         loading: true,
+        alternotes: [],
       }
 
     case GET_ALTERNOTES:
