@@ -15,15 +15,17 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
+import MPagination from "../../../components/pagination/MPagination";
 
 class ViewProduct extends Component {
   state = {
     filter: "",
     modal_product: null,
+    page: 1,
   };
 
   async componentDidMount() {
-    await this.props.getAllProducts();
+    await this.props.getAllProducts(this.state.page);
     const { products } = this.props;
     if (products) {
       this.calculateTotals(products);
@@ -313,7 +315,7 @@ class ViewProduct extends Component {
     if (searchVal) {
       await this.props.findProducts(searchVal);
     } else {
-      await this.props.getAllProducts();
+      await this.props.getAllProducts(this.state.page);
     }
   }
 
@@ -324,13 +326,26 @@ class ViewProduct extends Component {
       status = "true";
     }
     await this.props.changeStatus(status, product_id);
-    await this.props.getAllProducts();
+    await this.props.getAllProducts(this.state.page);
     const { products } = this.props;
     if (products) {
       this.calculateTotals(products);
     }
   }
 
+  onChangePage = (page) => {
+    this.setState({ page: page });
+  };
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.page !== this.state.page) {
+      await this.props.getAllProducts(this.state.page);
+      const { products } = this.props;
+      if (products) {
+        this.calculateTotals(products);
+      }
+    }
+  }
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
@@ -387,7 +402,11 @@ class ViewProduct extends Component {
                       </div>
                     </div>
                   </div>
-
+                  <MPagination
+                    onChangePage={this.onChangePage}
+                    currentPage={this.state.page}
+                    products_total={this.props.products_total}
+                  />
                   <div className="row">{this.getTAble()}</div>
                 </section>
               </div>
@@ -452,8 +471,9 @@ const mapStateToProps = (state) => ({
   products: state.product.products,
   product: state.product.product,
   auth: state.auth,
+  products_total: state.product.products_total,
 });
-export default connect(mapStateToProps,{
+export default connect(mapStateToProps, {
   getAllProducts,
   changeStatus,
   deleteProduct,
