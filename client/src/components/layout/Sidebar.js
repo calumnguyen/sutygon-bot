@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { changePage } from "../../actions/pages";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-
+// import ListItem from './smallComponents/ListItem'
 class Sidebar extends Component {
   componentDidMount() {
     this.props.changePage(this.props.location.pathname.replace("/", ""));
@@ -69,6 +69,8 @@ class Sidebar extends Component {
                   <i className="ft-home" /> Trang chủ
                 </Link>
               </li>
+
+              <ListItem />
               {user && user.systemRole === "Admin" ? (
                 <li className={this.getClassName("user")}>
                   <Link to="/user" onClick={() => this.handleClick("user")}>
