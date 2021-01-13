@@ -16,6 +16,7 @@
     "react": "^16.13.1",
     "react-awesome-modal": "^2.0.5",
     "react-barcode": "^1.4.0",
+    "react-beautiful-dnd": "^13.0.0",
     "react-big-calendar": "^0.27.0",
     "react-bootstrap": "^1.4.0",
     "react-bootstrap-table-next": "^4.0.3",
@@ -34,6 +35,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "shortid": "^2.2.15",
+    "styled-components": "^5.2.1",
     "uuid": "^8.0.0"
   },
   "scripts": {
