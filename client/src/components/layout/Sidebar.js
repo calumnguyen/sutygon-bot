@@ -70,7 +70,7 @@ class Sidebar extends Component {
                 </Link>
               </li>
 
-              <ListItem />
+              {/* <ListItem /> */}
               {user && user.systemRole === "Admin" ? (
                 <li className={this.getClassName("user")}>
                   <Link to="/user" onClick={() => this.handleClick("user")}>
