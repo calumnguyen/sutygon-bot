@@ -134,7 +134,7 @@ class AddProduct extends Component {
   getColors = () => {
     let { color } = this.state;
 
-    return color.map((color) => (
+    return color && color.map((color) => (
       <div className="row color-row" key={color._id || color._id}>
         <div className="left" style={{ 'width': '95%', 'paddingLeft': '25px', 'paddingRight': '10px' }}>
 

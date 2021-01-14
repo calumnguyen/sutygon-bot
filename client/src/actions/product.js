@@ -44,7 +44,7 @@ export const getAllProducts = (page) => async (dispatch) => {
   dispatch({ type: PRODUCT_LOADING });
   try {
     const currentPage = page || 1;
-    const res = await axios.get(`/api/products/${currentPage}`);
+    const res = await axios.post(`/api/products/`,{currentPage:currentPage});
     dispatch({
       type: GET_PRODUCTS,
       payload: {

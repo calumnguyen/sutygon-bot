@@ -667,6 +667,7 @@ class Barcode extends Component {
   ) => {
     // get product by id
     await this.props.getProductById(product_id);
+    console.log("product_id",product_id)
     const { product } = this.props;
 
     if (product && product.color) {

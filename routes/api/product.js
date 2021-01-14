@@ -231,13 +231,16 @@ router.post("/:id", auth, upload.single("image"), async (req, res) => {
 // @route   GET api/products
 // @desc    Get all products
 // @access  Private
-router.get(
-  "/:page",
+router.post(
+  "/",
   auth,
 
   async (req, res) => {
     try {
-      var page = req.params.page ? parseInt(req.params.page) : 1;
+      console.log(req.body.currentPage)
+      // var page = req.params.page ? parseInt(req.params.page) : 1;
+      var page = req.body.currentPage ? parseInt(req.body.currentPage) : 1;
+      
       var skip = (page - 1) * pagination_limit;
       const products = await Product.find()
         .sort({ date: -1 })

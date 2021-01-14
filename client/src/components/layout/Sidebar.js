@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import { changePage } from "../../actions/pages";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-// import ListItem from './smallComponents/ListItem'
+import ListItem  from "./smallComponents/ListItem";
+import ListCustomItem from "./smallComponents/ListCustomItem";
+import List from "./data";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 class Sidebar extends Component {
   componentDidMount() {
     this.props.changePage(this.props.location.pathname.replace("/", ""));
@@ -31,7 +34,7 @@ class Sidebar extends Component {
   };
   render() {
     const { user } = this.props.auth;
-
+    const list = List.getList(user);
     return (
       <div
         data-active-color="white"
@@ -61,231 +64,264 @@ class Sidebar extends Component {
               data-scroll-to-active="true"
               className="navigation navigation-main"
             >
-              <li className={"nav-item " + this.getClassName("dashboard")}>
-                <Link
-                  to="/dashboard"
-                  onClick={() => this.handleClick("dashboard")}
-                >
-                  <i className="ft-home" /> Trang chủ
-                </Link>
-              </li>
-
-              {/* <ListItem /> */}
-              {user && user.systemRole === "Admin" ? (
-                <li className={this.getClassName("user")}>
-                  <Link to="/user" onClick={() => this.handleClick("user")}>
-                    <i className="ft-users" /> Nhân Viên
-                  </Link>
-                </li>
+              <ListItem
+                getClassName={this.getClassName("dashboard")}
+                url={"/dashboard"}
+                title={"Trang chủ"}
+                icon={"ft-home"}
+                handleClick={() => this.handleClick("dashboard")}
+              />
+            
+              <DragDropContext
+                onDragEnd={(param) => {
+                  const srcI = param.source.index;
+                  const desI = param.destination?.index;
+                  if (desI) {
+                    list.splice(desI, 0, list.splice(srcI, 1)[0]);
+                    List.saveList(list);
+                  }
+                }}
+              >
+                <Droppable droppableId="droppable-1">
+                  {(provided, _) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps}>
+                      {list && list.map((item, i) => (
+                        <Draggable
+                          key={item.id}
+                          draggableId={"draggable-" + item.id}
+                          index={i}
+                        >
+                          {(provided, snapshot) => (
+                            <ListCustomItem
+                              provided={provided}
+                              snapshot={snapshot}
+                              item={item}
+                              getClassName={this.getClassName}
+                              handleClick={this.handleClick}
+                            />
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+              {/* {user && user.systemRole === "Admin" ? (
+                <ListItem
+                  getClassName={this.getClassName("user")}
+                  handleClick={() => this.handleClick("user")}
+                  url={"/user"}
+                  title={"Nhân Viên"}
+                  icon={"ft-users"}
+                />
               ) : (
                 ""
-              )}
+              )} 
 
-              {user &&
+               {user &&
               user.systemRole === "Employee" &&
               user.sections.includes("Inventory") ? (
-                <li className={this.getClassName("product")}>
-                  <Link
-                    to="/product"
-                    onClick={() => this.handleClick("product")}
-                  >
-                    <i className="ft-box" /> Hàng Kho
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("product")}
+                  url={"/product"}
+                  title={"Hàng Kho"}
+                  icon={"ft-box"}
+                  handleClick={() => this.handleClick("product")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li className={this.getClassName("product")}>
-                  <Link
-                    to="/product"
-                    onClick={() => this.handleClick("product")}
-                  >
-                    <i className="ft-box" /> Hàng Kho
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("product")}
+                  url={"/product"}
+                  title={"Hàng Kho"}
+                  icon={"ft-box"}
+                  handleClick={() => this.handleClick("product")}
+                />
               ) : (
                 ""
-              )}
+              )} 
               {user &&
               user.systemRole === "Employee" &&
-              user.sections.includes("Barcode") ? (
-                <li className={this.getClassName("barcode")}>
-                  <Link
-                    to="/barcode"
-                    onClick={() => this.handleClick("barcode")}
-                  >
-                    <i className="fa fa-barcode" /> Barcode
-                  </Link>
-                </li>
+              user.sections.includes("barcode") ? (
+                <ListItem
+                  getClassName={this.getClassName("barcode")}
+                  url={"/barcode"}
+                  title={"Barcode"}
+                  icon={"fa fa-barcode"}
+                  handleClick={() => this.handleClick("barcode")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li className={this.getClassName("barcode")}>
-                  <Link
-                    to="/barcode"
-                    onClick={() => this.handleClick("barcode")}
-                  >
-                    <i className="fa fa-barcode" /> Barcode
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("barcode")}
+                  url={"/barcode"}
+                  title={"Barcode"}
+                  icon={"fa fa-barcode"}
+                  handleClick={() => this.handleClick("barcode")}
+                />
               ) : (
                 ""
-              )}
+                  )}
+             
               {user &&
               user.systemRole === "Employee" &&
               user.sections.includes("Customers") ? (
-                <li className={this.getClassName("customer")}>
-                  <Link
-                    to="/customer"
-                    onClick={() => this.handleClick("customer")}
-                  >
-                    <i className="ft-user" /> Khách Hàng
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("customer")}
+                  url={"/customer"}
+                  title={"Khách Hàng"}
+                  icon={"fa fa-user"}
+                  handleClick={() => this.handleClick("customer")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li className={this.getClassName("customer")}>
-                  <Link
-                    to="/customer"
-                    onClick={() => this.handleClick("customer")}
-                  >
-                    <i className="ft-user" /> Khách Hàng
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("customer")}
+                  url={"/customer"}
+                  title={"Khách Hàng"}
+                  icon={"fa fa-user"}
+                  handleClick={() => this.handleClick("customer")}
+                />
               ) : (
                 ""
-              )}
+                  )}
+             
               {user &&
               user.systemRole === "Employee" &&
               user.sections.includes("Rentproduct") ? (
-                <li className={"nav-item " + this.getClassName("rentproduct")}>
-                  <Link
-                    to="/rentproduct"
-                    onClick={() => this.handleClick("rentproduct")}
-                  >
-                    <i className="icon-basket-loaded" /> Thuê Đồ
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("rentproduct")}
+                  url={"/rentproduct"}
+                  title={"Thuê Đồ"}
+                  icon={"icon-basket-loaded"}
+                  handleClick={() => this.handleClick("rentproduct")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li className={"nav-item " + this.getClassName("rentproduct")}>
-                  <Link
-                    to="/rentproduct"
-                    onClick={() => this.handleClick("rentproduct")}
-                  >
-                    <i className="icon-basket-loaded" /> Thuê Đồ
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("rentproduct")}
+                  url={"/rentproduct"}
+                  title={"Thuê Đồ"}
+                  icon={"icon-basket-loaded"}
+                  handleClick={() => this.handleClick("rentproduct")}
+                />
               ) : (
                 ""
-              )}
+                  )}
+              
               {user &&
               user.systemRole === "Employee" &&
               user.sections.includes("Orders") ? (
-                <li className={"nav-item " + this.getClassName("orders")}>
-                  <Link to="/orders" onClick={() => this.handleClick("orders")}>
-                    <i className="icon-bag" /> Đơn Hàng
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("orders")}
+                  url={"/orders"}
+                  title={"Đơn Hàng"}
+                  icon={"icon-bag"}
+                  handleClick={() => this.handleClick("orders")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li className={"nav-item " + this.getClassName("orders")}>
-                  <Link to="/orders" onClick={() => this.handleClick("orders")}>
-                    <i className="icon-bag" /> Đơn Hàng
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("orders")}
+                  url={"/orders"}
+                  title={"Đơn Hàng"}
+                  icon={"icon-bag"}
+                  handleClick={() => this.handleClick("orders")}
+                />
               ) : (
                 ""
-              )}
+                  )}
+               
+              
+
               {user &&
               user.systemRole === "Employee" &&
               user.sections.includes("Appointments") ? (
-                <li className={"nav-item " + this.getClassName("appointments")}>
-                  <Link
-                    to="/appointments"
-                    onClick={() => this.handleClick("appointments")}
-                  >
-                    <i className="ft-activity" /> Hẹn Thử Đồ
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("appointments")}
+                  url={"/appointments"}
+                  title={"Hẹn Thử Đồ"}
+                  icon={"ft-activity"}
+                  handleClick={() => this.handleClick("appointments")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li className={"nav-item " + this.getClassName("appointments")}>
-                  <Link
-                    to="/appointments"
-                    onClick={() => this.handleClick("appointments")}
-                  >
-                    <i className="ft-activity" /> Hẹn Thử Đồ
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("appointments")}
+                  url={"/appointments"}
+                  title={"Hẹn Thử Đồ"}
+                  icon={"ft-activity"}
+                  handleClick={() => this.handleClick("appointments")}
+                />
               ) : (
                 ""
-              )}
+                  )}
+              
+                
+              
+
               {user &&
               user.systemRole === "Employee" &&
               user.sections.includes("Returnproduct") ? (
-                <li
-                  className={"nav-item " + this.getClassName("returnproduct")}
-                >
-                  <Link
-                    to="/returnproduct"
-                    onClick={() => this.handleClick("returnproduct")}
-                  >
-                    <i className="ft-activity" /> Trả Đồ
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("returnproduct")}
+                  url={"/returnproduct"}
+                  title={"Trả Đồ"}
+                  icon={"ft-activity"}
+                  handleClick={() => this.handleClick("returnproduct")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li
-                  className={"nav-item " + this.getClassName("returnproduct")}
-                >
-                  <Link
-                    to="/returnproduct"
-                    onClick={() => this.handleClick("returnproduct")}
-                  >
-                    <i className="ft-activity" /> Trả Đồ
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("returnproduct")}
+                  url={"/returnproduct"}
+                  title={"Trả Đồ"}
+                  icon={"ft-activity"}
+                  handleClick={() => this.handleClick("returnproduct")}
+                />
               ) : (
                 ""
-              )}
+                  )}
+              
+                   
               {user &&
               user.systemRole === "Employee" &&
               user.sections.includes("Calender") ? (
-                <li className={"nav-item " + this.getClassName("calender")}>
-                  <Link
-                    to="/calender"
-                    onClick={() => this.handleClick("calender")}
-                  >
-                    <i className="ft-calendar" /> Lịch
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("calender")}
+                  url={"/calender"}
+                  title={"Lịch"}
+                  icon={"ft-calendar"}
+                  handleClick={() => this.handleClick("calender")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li className={"nav-item " + this.getClassName("calender")}>
-                  <Link
-                    to="/calender"
-                    onClick={() => this.handleClick("calender")}
-                  >
-                    <i className="ft-calendar" /> Lịch
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("calender")}
+                  url={"/calender"}
+                  title={"Lịch"}
+                  icon={"ft-calendar"}
+                  handleClick={() => this.handleClick("calender")}
+                />
               ) : (
                 ""
-              )}
+                  )}
+              
               {user &&
               user.systemRole === "Employee" &&
               user.sections.includes("Reports") ? (
-                <li className={"nav-item " + this.getClassName("reports")}>
-                  <Link
-                    to="/reports"
-                    onClick={() => this.handleClick("reports")}
-                  >
-                    <i className="ft-clipboard" /> Báo Cáo Thống Kê
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("reports")}
+                  url={"/reports"}
+                  title={"Báo Cáo Thống Kê"}
+                  icon={"ft-clipboard"}
+                  handleClick={() => this.handleClick("reports")}
+                />
               ) : user && user.systemRole === "Admin" ? (
-                <li className={"nav-item " + this.getClassName("reports")}>
-                  <Link
-                    to="/reports"
-                    onClick={() => this.handleClick("reports")}
-                  >
-                    <i className="ft-clipboard" /> Báo Cáo Thống Kê
-                  </Link>
-                </li>
+                <ListItem
+                  getClassName={this.getClassName("reports")}
+                  url={"/reports"}
+                  title={"Báo Cáo Thống Kê"}
+                  icon={"ft-clipboard"}
+                  handleClick={() => this.handleClick("reports")}
+                />
               ) : (
                 ""
-              )}
+                  )}
+                */}
             </ul>
           </div>
         </div>
