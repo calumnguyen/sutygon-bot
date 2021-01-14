@@ -31,6 +31,7 @@ app.use('/api/reports', require('./routes/api/report'))
 app.use('/api/returnproducts', require('./routes/api/returnproduct'))
 app.use('/api/invoices', require('./routes/api/Invoices'))
 app.use('/api/alternotes', require('./routes/api/alterNotes'))
+app.use('/api/coupons', require('./routes/api/coupons'))
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'))

@@ -74,9 +74,11 @@ class Sidebar extends Component {
             
               <DragDropContext
                 onDragEnd={(param) => {
+              
+               
                   const srcI = param.source.index;
                   const desI = param.destination?.index;
-                  if (desI) {
+                  if (desI || desI==0) {
                     list.splice(desI, 0, list.splice(srcI, 1)[0]);
                     List.saveList(list,user);
                   }

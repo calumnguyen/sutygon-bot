@@ -46,6 +46,8 @@ import ConfigureSystemUser from './components/pages/users/ConfigureSystemUser'
 import EditUser from './components/pages/users/EditUser'
 // import SalaryUpdate from './components/pages/users/SalaryUpdate'
 import StoreClosed from './components/pages/StoreClosed'
+import ViewCoupons from './components/pages/coupons/ViewCoupons';
+import AddCoupons from './components/pages/coupons/AddCoupons'
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -151,6 +153,11 @@ const Main = () => {
 
           {/* barcode */}
           <PrivateRoute exact path='/barcode' component={Barcode} />
+          {/* ViewCoupons */}
+          
+          <PrivateRoute exact path='/coupons' component={ViewCoupons} />
+           <PrivateRoute exact path='/coupons/add' component={AddCoupons} />
+          
           <PrivateRoute exact path='/Error' component={Error} />
         </Switch>
       </Router>
