@@ -78,7 +78,7 @@ class Sidebar extends Component {
                   const desI = param.destination?.index;
                   if (desI) {
                     list.splice(desI, 0, list.splice(srcI, 1)[0]);
-                    List.saveList(list);
+                    List.saveList(list,user);
                   }
                 }}
               >

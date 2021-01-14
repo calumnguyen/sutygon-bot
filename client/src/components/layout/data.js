@@ -80,8 +80,8 @@ const List = {
   getList: function (user) {
     if (user && user.systemRole === "Admin") {
       return (
-        (localStorage.getItem("theList") &&
-          JSON.parse(localStorage.getItem("theList"))) ||
+        (localStorage.getItem(user._id) &&
+          JSON.parse(localStorage.getItem(user._id))) ||
         this.list
       );
     } else if (user && user.systemRole === "Employee") {
@@ -92,26 +92,21 @@ const List = {
           my_menu.push(this.list[k]);
         }
       }
-      // const intersection = this.list.filter((element) => {
-      //   if (user_list && user_list.includes(element.name)) {
-      //     my_menu.push(element);
-      //   }
-      // });
       return (
-        (localStorage.getItem("theList") &&
-          JSON.parse(localStorage.getItem("theList"))) ||
+        (localStorage.getItem(user._id) &&
+          JSON.parse(localStorage.getItem(user._id))) ||
         my_menu
       );
     }
-
-    // return (localStorage.getItem("theList") &&
-    //   JSON.parse(localStorage.getItem("theList"))) ||
-    //   (user && user.systemRole === "Admin")
-    //   ? this.list
-    //   : my_menu;
   },
-  saveList: (list) => {
-    // localStorage.setItem("theList", JSON.stringify(list));
+  saveList: (list, user) => {
+    if (!localStorage.getItem(user._id)) {
+      const token = localStorage.getItem("token");
+      localStorage.clear();
+      localStorage.setItem("token", token);
+      localStorage.setItem(user._id, JSON.stringify(list));
+    }
+    localStorage.setItem(user._id, JSON.stringify(list));
   },
 };
 
