@@ -1,21 +1,33 @@
-.pending{
-    background: #ffdc1f;
+.pending {
+  background: #ffdc1f;
 }
-.lost{
-    background: "#163A5F";
-    color : "#fff" ;
+.lost {
+  background: #163a5f;
+  color: "#fff";
 }
-.active{
-    background: #8C52FF;
-     color: "#fff";
+.active {
+  background: #8c52ff;
+  color: "#fff";
 }
-.ready{
-     background: "#45EBA5";
-      color: "#fff";
+.ready {
+  background: #45eba5;
+  color: "#fff";
 }
-.bg-no{
-    background: #f5f7fa;
+.past {
+  background: #ff66c4;
+  color: "#fff";
 }
-.pl-2px{
-    padding-left: 2px;
+.alteration {
+  background: #ff914d;
+  color: "#fff";
+}
+.overdue {
+  background: #ff914d;
+  color: "#fff";
+}
+.bg-no {
+  background: #f5f7fa;
+}
+.pl-2px {
+  padding-left: 2px;
 }

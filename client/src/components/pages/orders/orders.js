@@ -19,9 +19,8 @@ import * as moment from "moment";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider from "react-bootstrap-table2-toolkit";
-
+import OrderStatus from "./small/Status";
 import Spinner from "../../layout/Spinner.js";
-import { Button } from "bootstrap";
 
 class Orders extends Component {
   state = {
@@ -65,58 +64,17 @@ class Orders extends Component {
           orderNumber: order.orderNumber,
           name: order.customer ? order.customer.name : "",
           phone: order.customer ? order.customer.contactnumber : "",
-          status:
-            order.status == "lost" ? (
-              <span
-                className="lost badge custom_badge"
-              >
-                {order.status}
-              </span>
-            ) : order.status == "active" ? (
-              <span
-                className="active badge custom_badge"
-              >
-                {order.status}
-              </span>
-            ) : order.status == "ready" ? (
-              <span
-                className="badge ready custom_badge"
-              >
-                {order.status}
-              </span>
-            ) : order.status == "alteration" ? (
-              <div className="row m-auto w-75">
-                <span className="ml-md-auto col-md-6 col-12 px-0 badge-warning badge custom_badge">
-                  <div className="pt-1 h4 mb-0 font-weight-bold">
-                    {order.status}
-                  </div> 
-                </span>
-                <span className="col-md-3 col-6 px-0 bg-no">
-                  <div className="text-right"> Pickup</div>
-                  <div className="ml-1 mt-1"> 4</div>
-                </span>
-                <span className="mr-auto col-md-3 col-6 px-0 bg-no">
-                  <div className="text-left pl-2px">today</div>
-                  <div className="mt-1 mr-3"> 2</div>
-                </span>
-              </div>
-            ) : (
-              <div className="row m-auto w-75">
-                <span className="ml-md-auto col-md-6 col-12 px-0 pending badge custom_badge">
-                  <div className="pt-1 h4 mb-0 font-weight-bold">
-                    {order.status}
-                  </div> 
-                </span>
-                <span className="col-md-3 col-6 px-0 bg-no">
-                  <div className="text-right"> Pickup</div>
-                  <div className="ml-1 mt-1"> 4</div>
-                </span>
-                <span className="mr-auto col-md-3 col-6 px-0 bg-no">
-                  <div className="text-left pl-2px">today</div>
-                  <div className="mt-1 mr-3"> 2</div>
-                </span>
-              </div>
-            ),
+          status: (
+            <OrderStatus
+              title={order.status}
+              total={order.total_notes ? order.total_notes : 0}
+              remain={
+                order.notes
+                  ? order.notes.filter((i) => i.done == false).length
+                  : 0
+              }
+            />
+          ),
 
           actions: (
             <>
@@ -187,29 +145,32 @@ class Orders extends Component {
             <div className="row ml-5">
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-              <h2 className="font-weight-bold">   <span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                      cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "pending")
-                        ? "#FFDC1F"
-                        : "#737373"
-                    }`,
-                    color: `${
-                      this.state.status.find((s) => s == "pending")
-                        ? "#000"
-                        : "#fff"
-                    }`,
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("pending");
-                  }}
-                >
-                  Pending
-                </span></h2>
+                <h3 className="font-weight-bold">
+                  {" "}
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "pending")
+                          ? "#FFDC1F"
+                          : "#737373"
+                      }`,
+                      color: `${
+                        this.state.status.find((s) => s == "pending")
+                          ? "#000"
+                          : "#fff"
+                      }`,
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("pending");
+                    }}
+                  >
+                    Pending
+                  </span>
+                </h3>
                 {/* <label className='radio-inline'>
                   <input
                     type='checkbox'
@@ -225,25 +186,28 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                  <h2>  <span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                      cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "active")
-                        ? "#8C52FF"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("active");
-                  }}
-                >
-                  Active
-                </span></h2>
+                <h3>
+                  {" "}
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "active")
+                          ? "#8C52FF"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("active");
+                    }}
+                  >
+                    Active
+                  </span>
+                </h3>
                 {/* <label className='radio-inline'>
                   <input
                     type='checkbox'
@@ -259,25 +223,28 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                <h2> <span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                      cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "pickup")
-                        ? "#FF914D"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("pickup");
-                  }}
-                >
-                  Pickup Today
-                </span></h2>
+                <h3>
+                  {" "}
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "pickup")
+                          ? "#FF914D"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("pickup");
+                    }}
+                  >
+                    Pickup Today
+                  </span>
+                </h3>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -293,25 +260,27 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                    <h2><span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "return")
-                        ? "#FF914D"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("return");
-                  }}
-                >
-                  Return Today
-                </span></h2>
+                <h3>
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "return")
+                          ? "#FF914D"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("return");
+                    }}
+                  >
+                    Return Today
+                  </span>
+                </h3>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -327,25 +296,27 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                   <h2><span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "alteration")
-                        ? "#FF914D"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("alteration");
-                  }}
-                >
-                  Alteration
-                </span></h2>
+                <h3>
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "alteration")
+                          ? "#FF914D"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("alteration");
+                    }}
+                  >
+                    Alteration
+                  </span>
+                </h3>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -361,25 +332,28 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                     <h2> <span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "ready")
-                        ? "#45EBA5"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("ready");
-                  }}
-                >
-                  Ready
-                </span></h2>
+                <h3>
+                  {" "}
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "ready")
+                          ? "#45EBA5"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("ready");
+                    }}
+                  >
+                    Ready
+                  </span>
+                </h3>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -395,25 +369,28 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                  <h2> <span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "overdue")
-                        ? "#ff1616"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("overdue");
-                  }}
-                >
-                  Overdue
-                </span></h2>
+                <h3>
+                  {" "}
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "overdue")
+                          ? "#ff1616"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("overdue");
+                    }}
+                  >
+                    Overdue
+                  </span>
+                </h3>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -429,25 +406,27 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                 <h2><span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "lost")
-                        ? "#163A5F"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("lost");
-                  }}
-                >
-                  Lost
-                </span></h2>
+                <h3>
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "lost")
+                          ? "#163A5F"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("lost");
+                    }}
+                  >
+                    Lost
+                  </span>
+                </h3>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -463,25 +442,27 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                  <h2><span
-                   className="w-100 py-3 font-weight-bold badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "past")
-                        ? "#FF66c4"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("past");
-                  }}
-                >
-                  Past
-                </span></h2>
+                <h3>
+                  <span
+                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "past")
+                          ? "#FF66c4"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle("past");
+                    }}
+                  >
+                    Past
+                  </span>
+                </h3>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
