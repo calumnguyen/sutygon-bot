@@ -86,32 +86,32 @@ class Orders extends Component {
               </span>
             ) : order.status == "alteration" ? (
               <div className="row m-auto w-75">
-                <span className="ml-auto col-6 px-0 badge-warning badge custom_badge">
+                <span className="ml-md-auto col-md-6 col-12 px-0 badge-warning badge custom_badge">
                   <div className="pt-1 h4 mb-0 font-weight-bold">
                     {order.status}
                   </div> 
                 </span>
-                <span className="col-3 px-0 bg-no">
+                <span className="col-md-3 col-6 px-0 bg-no">
                   <div className="text-right"> Pickup</div>
                   <div className="ml-1 mt-1"> 4</div>
                 </span>
-                <span className="mr-auto col-3 px-0 bg-no">
+                <span className="mr-auto col-md-3 col-6 px-0 bg-no">
                   <div className="text-left pl-2px">today</div>
                   <div className="mt-1 mr-3"> 2</div>
                 </span>
               </div>
             ) : (
               <div className="row m-auto w-75">
-                <span className="ml-auto col-6 px-0 pending badge custom_badge">
+                <span className="ml-md-auto col-md-6 col-12 px-0 pending badge custom_badge">
                   <div className="pt-1 h4 mb-0 font-weight-bold">
                     {order.status}
                   </div> 
                 </span>
-                <span className="col-3 px-0 bg-no">
+                <span className="col-md-3 col-6 px-0 bg-no">
                   <div className="text-right"> Pickup</div>
                   <div className="ml-1 mt-1"> 4</div>
                 </span>
-                <span className="mr-auto col-3 px-0 bg-no">
+                <span className="mr-auto col-md-3 col-6 px-0 bg-no">
                   <div className="text-left pl-2px">today</div>
                   <div className="mt-1 mr-3"> 2</div>
                 </span>
