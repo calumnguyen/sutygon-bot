@@ -91,7 +91,7 @@ class Orders extends Component {
                     {order.status}
                   </div> 
                 </span>
-                <span className="col-2 px-0 bg-no">
+                <span className="col-3 px-0 bg-no">
                   <div className="ml-1 text-right"> Pickup</div>
                   <div className="mt-1"> 4</div>
                 </span>
@@ -107,7 +107,7 @@ class Orders extends Component {
                     {order.status}
                   </div> 
                 </span>
-                <span className="col-2 px-0 bg-no">
+                <span className="col-3 px-0 bg-no">
                   <div className="ml-1 text-right"> Pickup</div>
                   <div className="mt-1"> 4</div>
                 </span>
