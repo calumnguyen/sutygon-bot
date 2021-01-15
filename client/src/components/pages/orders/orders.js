@@ -143,7 +143,7 @@ class Orders extends Component {
               </div>
             </div>
             <div className="row ">
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4 " style={{marginTop:'-20px'}}>
                 <br></br>
                 <h3 className="font-weight-bold">
                   {" "}
@@ -173,7 +173,7 @@ class Orders extends Component {
                 </h3>
               </div>
 
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4" style={{marginTop:'-20px'}}>
                 <br></br>
                 <h3>
                   {" "}
@@ -199,7 +199,7 @@ class Orders extends Component {
                 </h3>
               </div>
 
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4 " style={{marginTop:'-20px'}}>
                 <br></br>
                 <h3>
                   {" "}
@@ -225,7 +225,7 @@ class Orders extends Component {
                 </h3>
               </div>
 
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4 " style={{marginTop:'-30px'}}>
                 <br></br>
                 <h3>
                   <span
@@ -250,7 +250,7 @@ class Orders extends Component {
                 </h3>
               </div>
 
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4" style={{marginTop:'-30px'}}>
                 <br></br>
                 <h3>
                   <span
@@ -275,7 +275,7 @@ class Orders extends Component {
                 </h3>
               </div>
 
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4 " style={{marginTop:'-30px'}}>
                 <br></br>
                 <h3>
                   {" "}
@@ -301,7 +301,7 @@ class Orders extends Component {
                 </h3>
               </div>
 
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4" style={{marginTop:'-30px'}}>
                 <br></br>
                 <h3>
                   {" "}
@@ -327,7 +327,7 @@ class Orders extends Component {
                 </h3>
               </div>
 
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4 " style={{marginTop:'-30px'}}>
                 <br></br>
                 <h3>
                   <span
@@ -352,7 +352,7 @@ class Orders extends Component {
                 </h3>
               </div>
 
-              <div className="form-group col-md-4 mb-1">
+              <div className="form-group col-md-4 " style={{marginTop:'-30px'}}>
                 <br></br>
                 <h3>
                   <span
