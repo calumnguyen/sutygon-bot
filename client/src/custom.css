@@ -12,7 +12,7 @@
 .mm-input {
   border-radius: 50px;
   padding-left: 20px;
-  box-shadow: 0 0 2px 0px rgba(0,0,0,0.1);
+  box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.1);
   /* background: #f2f2f2; */
   color: #fff;
   margin: 0px;
@@ -26,7 +26,7 @@
 #colors_box .color-row {
   margin: 10px 0px;
   padding: 15px;
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 #sizes_box .row {
@@ -50,20 +50,27 @@ body.modal-open .background-container {
   -ms-filter: blur(1px);
   filter: blur(1px);
 }
-.modal-dialog{
-  overflow-y: initial !important
+.modal-dialog {
+  overflow-y: initial !important;
 }
 
-.react-datepicker-wrapper{
+.react-datepicker-wrapper {
   width: 100%;
 }
 
-.react-bootstrap-table>table, td, th {  
+.react-bootstrap-table > table,
+td,
+th {
   border: 0px solid #ddd !important;
   /* text-align: center !important */
 }
 
-.react-bootstrap-table>thead ,tr{  
+.react-bootstrap-table > thead,
+tr {
   border: 1px solid #ddd !important;
-  text-align: center !important
+  text-align: center !important;
+}
+
+.custom_badge {
+  width: 150px;
 }

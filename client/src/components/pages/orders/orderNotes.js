@@ -52,7 +52,6 @@ class OrderNotes extends Component {
   onSubmit = async (e) => {
     e.preventDefault()
     let { order_id, note, alter_request } = this.state
-
     await this.props.addAlterNote({
       order: this.props.match.params.id,
       order_id: order_id ? order_id : this.props.order.orderNumber,
@@ -67,7 +66,7 @@ class OrderNotes extends Component {
       this.setState({
         order_id: '',
         note: '',
-        alter_request: '',
+        alter_request: false,
       })
     } else {
       // If barcode is wrong then hold back the note and alter request state for better UX.
@@ -304,7 +303,7 @@ class OrderNotes extends Component {
                             <div className='col-md-3'>
                               <div className=''>
                                 <div className=''>
-                                  <button className='btn btn-success'>
+                                  <button type={"submit"} className='btn btn-success'>
                                     <i className='fa fa-plus'></i> Add{' '}
                                   </button>
                                 </div>
