@@ -8,7 +8,7 @@ import {
   PRODUCTS_ERROR,
   PRODUCTS_LOADING,
   PRODUCT_DELETED,
-  PRODUCT_UPDATED,
+  PRODUCT_UPDATED,GET_QTY
 } from "./types";
 import { setAlert } from "./alert";
 
@@ -112,6 +112,25 @@ export const getProduct = (name) => async (dispatch) => {
     });
   }
 };
+
+
+export const getSize = (color_id,size_id) => async (dispatch) => {
+  dispatch({ type: PRODUCTS_LOADING });
+
+  try {
+    const res = await axios.get(`/api/products/${color_id}/${size_id}`);
+    dispatch({
+      type: GET_QTY,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: PRODUCTS_ERROR,
+      payload: err.response,
+    });
+  }
+};
+
 
 export const getProductById = (id) => async (dispatch) => {
   dispatch({ type: PRODUCTS_LOADING });
