@@ -29,6 +29,8 @@ export const REMOVE_ALERT = 'REMOVE_ALERT'
 
 //products
 export const PRODUCT_LOADING = 'PRODUCT_LOADING'
+export const GET_QTY = 'GET_QTY'
+
 export const PRODUCTS_LOADING = 'PRODUCTS_LOADING'
 export const PRODUCT_SAVED = 'PRODUCT_SAVED'
 export const GET_PRODUCT = 'GET_PRODUCT'
