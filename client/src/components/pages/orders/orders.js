@@ -6,6 +6,7 @@ import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
+import "../orders/orders.css";
 import Loader from "../../layout/Loader";
 import {
   getAllRentedProducts,
@@ -67,31 +68,54 @@ class Orders extends Component {
           status:
             order.status == "lost" ? (
               <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#163A5F", color: "#fff" }}
+                className="lost badge custom_badge"
               >
                 {order.status}
               </span>
             ) : order.status == "active" ? (
               <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#8C52FF", color: "#fff" }}
+                className="active badge custom_badge"
               >
                 {order.status}
               </span>
             ) : order.status == "ready" ? (
               <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#45EBA5", color: "#fff" }}
+                className="badge ready custom_badge"
               >
                 {order.status}
               </span>
             ) : order.status == "alteration" ? (
-              <span className="badge custom_badge badge-warning">{order.status}</span>
+              <div className="row m-auto w-75">
+                <span className="ml-auto col-6 px-0 badge-warning badge custom_badge">
+                  <div className="pt-1 h4 mb-0 font-weight-bold">
+                    {order.status}
+                  </div> 
+                </span>
+                <span className="col-2 px-0 bg-no">
+                  <div className="ml-1 text-right"> Pickup</div>
+                  <div className="mt-1"> 4</div>
+                </span>
+                <span className="mr-auto col-2 px-0 bg-no">
+                  <div className="text-left pl-2px">today</div>
+                  <div className="mt-1"> 2</div>
+                </span>
+              </div>
             ) : (
-              <span className="badge custom_badge" style={{ backgroundColor: "#ffdc1f" }}>
-                {order.status}
-              </span>
+              <div className="row m-auto w-75">
+                <span className="ml-auto col-6 px-0 pending badge custom_badge">
+                  <div className="pt-1 h4 mb-0 font-weight-bold">
+                    {order.status}
+                  </div> 
+                </span>
+                <span className="col-2 px-0 bg-no">
+                  <div className="ml-1 text-right"> Pickup</div>
+                  <div className="mt-1"> 4</div>
+                </span>
+                <span className="mr-auto col-2 px-0 bg-no">
+                  <div className="text-left pl-2px">today</div>
+                  <div className="mt-1"> 2</div>
+                </span>
+              </div>
             ),
 
           actions: (
@@ -163,8 +187,8 @@ class Orders extends Component {
             <div className="row ml-5">
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-              <h4>   <span
-                   className="badge custom_badge"
+              <h2 className="font-weight-bold">   <span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                       cursor:'pointer',
                     backgroundColor: `${
@@ -185,7 +209,7 @@ class Orders extends Component {
                   }}
                 >
                   Pending
-                </span></h4>
+                </span></h2>
                 {/* <label className='radio-inline'>
                   <input
                     type='checkbox'
@@ -201,8 +225,8 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                  <h4>  <span
-                   className="badge custom_badge"
+                  <h2>  <span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                       cursor:'pointer',
                     backgroundColor: `${
@@ -219,7 +243,7 @@ class Orders extends Component {
                   }}
                 >
                   Active
-                </span></h4>
+                </span></h2>
                 {/* <label className='radio-inline'>
                   <input
                     type='checkbox'
@@ -235,8 +259,8 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                <h4> <span
-                   className="badge custom_badge"
+                <h2> <span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                       cursor:'pointer',
                     backgroundColor: `${
@@ -253,7 +277,7 @@ class Orders extends Component {
                   }}
                 >
                   Pickup Today
-                </span></h4>
+                </span></h2>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -269,8 +293,8 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                    <h4><span
-                   className="badge custom_badge"
+                    <h2><span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                     cursor:'pointer',
                     backgroundColor: `${
@@ -287,7 +311,7 @@ class Orders extends Component {
                   }}
                 >
                   Return Today
-                </span></h4>
+                </span></h2>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -303,8 +327,8 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                   <h4><span
-                   className="badge custom_badge"
+                   <h2><span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                     cursor:'pointer',
                     backgroundColor: `${
@@ -321,7 +345,7 @@ class Orders extends Component {
                   }}
                 >
                   Alteration
-                </span></h4>
+                </span></h2>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -337,8 +361,8 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                     <h4> <span
-                   className="badge custom_badge"
+                     <h2> <span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                     cursor:'pointer',
                     backgroundColor: `${
@@ -355,7 +379,7 @@ class Orders extends Component {
                   }}
                 >
                   Ready
-                </span></h4>
+                </span></h2>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -371,8 +395,8 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                  <h4> <span
-                   className="badge custom_badge"
+                  <h2> <span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                     cursor:'pointer',
                     backgroundColor: `${
@@ -389,7 +413,7 @@ class Orders extends Component {
                   }}
                 >
                   Overdue
-                </span></h4>
+                </span></h2>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -405,8 +429,8 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                 <h4><span
-                   className="badge custom_badge"
+                 <h2><span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                     cursor:'pointer',
                     backgroundColor: `${
@@ -423,7 +447,7 @@ class Orders extends Component {
                   }}
                 >
                   Lost
-                </span></h4>
+                </span></h2>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
@@ -439,8 +463,8 @@ class Orders extends Component {
 
               <div className="form-group col-md-3 mb-1">
                 <br></br>
-                  <h4><span
-                   className="badge custom_badge"
+                  <h2><span
+                   className="w-100 py-3 font-weight-bold badge custom_badge"
                   style={{
                     cursor:'pointer',
                     backgroundColor: `${
@@ -457,7 +481,7 @@ class Orders extends Component {
                   }}
                 >
                   Past
-                </span></h4>
+                </span></h2>
                 {/* <label className="radio-inline">
                   <input
                     type="checkbox"
