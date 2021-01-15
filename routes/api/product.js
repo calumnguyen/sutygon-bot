@@ -6,7 +6,7 @@ const { check, validationResult } = require("express-validator");
 var multer = require("multer");
 var cloudinary = require("cloudinary");
 const config = require("config");
-const pagination_limit=10
+const pagination_limit = 10;
 
 const imageFilter = function (req, file, cb) {
   // accept image files only
@@ -113,7 +113,7 @@ router.post("/index_update/:id", auth, async (req, res) => {
         // Push in color array for traversing it later.
         eachProdColorArr.push(clr);
       });
-      console.log(eachProdColorArr);
+      // console.log(eachProdColorArr);
       // Now traverse through each color.
       eachProdColorArr.forEach((prodclr) => {
         // Traverse through sizes array.
@@ -237,10 +237,10 @@ router.post(
 
   async (req, res) => {
     try {
-      console.log(req.body.currentPage)
+      // console.log(req.body.currentPage)
       // var page = req.params.page ? parseInt(req.params.page) : 1;
       var page = req.body.currentPage ? parseInt(req.body.currentPage) : 1;
-      
+
       var skip = (page - 1) * pagination_limit;
       const products = await Product.find()
         .sort({ date: -1 })
@@ -372,6 +372,32 @@ router.delete(
     }
   }
 );
+
+// @route  GET api/products/getsize/:color_id/:size_id
+// @desc   get individual size quantity
+// @access Private
+router.get("/:color_id/:size_id", async (req, res) => {
+  try {
+    let singleProduct = await Product.findOne(
+      {
+        color: {
+          $elemMatch: { _id: req.params.color_id },
+        },
+      },
+      { color: 1, name: 1, productId: 1 }
+    );
+    const color_obj =
+      singleProduct &&
+      singleProduct.color.filter((color) => color._id == req.params.color_id);
+    const size_obj =
+      color_obj &&
+      color_obj[0].sizes.filter((size) => size.id == req.params.size_id);
+    return res.status(200).json(size_obj);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send("Server Error!");
+  }
+});
 
 // @route   GET api/products/search/search val
 // @desc    Search products
