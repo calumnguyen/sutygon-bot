@@ -92,8 +92,8 @@ class Orders extends Component {
                   </div> 
                 </span>
                 <span className="col-3 px-0 bg-no">
-                  <div className="ml-1 text-right"> Pickup</div>
-                  <div className="mt-1"> 4</div>
+                  <div className="text-right"> Pickup</div>
+                  <div className="ml-1 mt-1"> 4</div>
                 </span>
                 <span className="mr-auto col-2 px-0 bg-no">
                   <div className="text-left pl-2px">today</div>
@@ -108,8 +108,8 @@ class Orders extends Component {
                   </div> 
                 </span>
                 <span className="col-3 px-0 bg-no">
-                  <div className="ml-1 text-right"> Pickup</div>
-                  <div className="mt-1"> 4</div>
+                  <div className="text-right"> Pickup</div>
+                  <div className="ml-1 mt-1"> 4</div>
                 </span>
                 <span className="mr-auto col-2 px-0 bg-no">
                   <div className="text-left pl-2px">today</div>
