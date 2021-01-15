@@ -142,8 +142,8 @@ class Orders extends Component {
                 </button>
               </div>
             </div>
-            <div className="row ml-5">
-              <div className="form-group col-md-3 mb-1">
+            <div className="row ">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3 className="font-weight-bold">
                   {" "}
@@ -171,20 +171,9 @@ class Orders extends Component {
                     Pending
                   </span>
                 </h3>
-                {/* <label className='radio-inline'>
-                  <input
-                    type='checkbox'
-                    name='pending'
-                    onChange={() => {
-                      this.handleStatusToggle('pending')
-                    }}
-                    checked={this.state.status.find((s) => s == 'pending')}
-                  />{' '}
-                  Pending
-                </label> */}
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3>
                   {" "}
@@ -208,20 +197,9 @@ class Orders extends Component {
                     Active
                   </span>
                 </h3>
-                {/* <label className='radio-inline'>
-                  <input
-                    type='checkbox'
-                    name='active'
-                    onChange={() => {
-                      this.handleStatusToggle('active')
-                    }}
-                    checked={this.state.status.find((s) => s == 'active')}
-                  />{' '}
-                  Active
-                </label> */}
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3>
                   {" "}
@@ -245,20 +223,9 @@ class Orders extends Component {
                     Pickup Today
                   </span>
                 </h3>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="pickup"
-                    onChange={() => {
-                      this.handleStatusToggle("pickup");
-                    }}
-                    checked={this.state.status.find((s) => s == "pickup")}
-                  />{" "}
-                  Pickup Today
-                </label> */}
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3>
                   <span
@@ -281,20 +248,9 @@ class Orders extends Component {
                     Return Today
                   </span>
                 </h3>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="return"
-                    onChange={() => {
-                      this.handleStatusToggle("return");
-                    }}
-                    checked={this.state.status.find((s) => s == "return")}
-                  />{" "}
-                  Return Today
-                </label> */}
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3>
                   <span
@@ -317,20 +273,9 @@ class Orders extends Component {
                     Alteration
                   </span>
                 </h3>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="alteration"
-                    onChange={() => {
-                      this.handleStatusToggle("alteration");
-                    }}
-                    checked={this.state.status.find((s) => s == "alteration")}
-                  />{" "}
-                  Alteration
-                </label> */}
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3>
                   {" "}
@@ -354,20 +299,9 @@ class Orders extends Component {
                     Ready
                   </span>
                 </h3>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="ready"
-                    onChange={() => {
-                      this.handleStatusToggle("ready");
-                    }}
-                    checked={this.state.status.find((s) => s == "ready")}
-                  />{" "}
-                  Ready
-                </label> */}
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3>
                   {" "}
@@ -391,20 +325,9 @@ class Orders extends Component {
                     Overdue
                   </span>
                 </h3>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="overdue"
-                    onChange={() => {
-                      this.handleStatusToggle("overdue");
-                    }}
-                    checked={this.state.status.find((s) => s == "overdue")}
-                  />{" "}
-                  Overdue
-                </label> */}
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3>
                   <span
@@ -427,20 +350,9 @@ class Orders extends Component {
                     Lost
                   </span>
                 </h3>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="lost"
-                    onChange={() => {
-                      this.handleStatusToggle("lost");
-                    }}
-                    checked={this.state.status.find((s) => s == "lost")}
-                  />{" "}
-                  Lost
-                </label> */}
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col-md-4 mb-1">
                 <br></br>
                 <h3>
                   <span
@@ -463,17 +375,6 @@ class Orders extends Component {
                     Past
                   </span>
                 </h3>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="past"
-                    onChange={() => {
-                      this.handleStatusToggle("past");
-                    }}
-                    checked={this.state.status.find((s) => s == "past")}
-                  />{" "}
-                  Past
-                </label> */}
               </div>
             </div>
           </>
