@@ -380,7 +380,7 @@ class ViewCoupons extends Component {
                               <div className="col-md-4"></div>
                               <div className="col-md-4">
                                 <Link
-                                  to="/coupons/add"
+                                  to="/coupons/type"
                                   className="btn btn-primary pull-right"
                                 >
                                   <i className="fa fa-plus"></i> New Coupon

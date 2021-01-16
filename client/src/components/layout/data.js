@@ -6,13 +6,13 @@ const List = {
     //   url: "dashboard",
     //   icons: "ft-home",
     // },
-    // {
-    //   id: 1,
-    //   title: "Coupons",
-    //   url: "user",
-    //   icons: "ft-users",
-    //   name: "Admin",
-    // },
+    {
+      id: 0,
+      title: "phiếu giảm giá",
+      url: "coupons",
+      icons: "fa fa-gift",
+      name: "Admin",
+    },
     {
       id: 1,
       title: "Nhân Viên",

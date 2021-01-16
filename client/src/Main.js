@@ -47,7 +47,9 @@ import EditUser from './components/pages/users/EditUser'
 // import SalaryUpdate from './components/pages/users/SalaryUpdate'
 import StoreClosed from './components/pages/StoreClosed'
 import ViewCoupons from './components/pages/coupons/ViewCoupons';
-import AddCoupons from './components/pages/coupons/AddCoupons'
+import AddCoupons from './components/pages/coupons/AddCoupons';
+import SelectType from './components/pages/coupons/SelectType';
+
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -156,6 +158,7 @@ const Main = () => {
           {/* ViewCoupons */}
           
           <PrivateRoute exact path='/coupons' component={ViewCoupons} />
+          <PrivateRoute exact path='/coupons/type' component={SelectType} />
            <PrivateRoute exact path='/coupons/add' component={AddCoupons} />
           
           <PrivateRoute exact path='/Error' component={Error} />
