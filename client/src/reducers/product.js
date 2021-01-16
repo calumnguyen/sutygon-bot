@@ -6,6 +6,7 @@ import {
   GET_PRODUCT,
   PRODUCT_DELETED,
   PRODUCT_UPDATED,
+  GET_QTY
 } from "../actions/types";
 const initialState = {
   product: null,
@@ -14,6 +15,7 @@ const initialState = {
   loading: false,
   saved: false,
   generateReturnInvoice: false,
+  qty:null,
   error: {},
 };
 
@@ -42,6 +44,14 @@ export default function (state = initialState, action) {
       return {
         ...state,
         product: payload,
+        loading: false,
+        generateReturnInvoice: false,
+        saved: false,
+      };
+      case GET_QTY:
+      return {
+        ...state,
+        qty: payload,
         loading: false,
         generateReturnInvoice: false,
         saved: false,
