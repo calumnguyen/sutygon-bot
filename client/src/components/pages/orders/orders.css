@@ -1,21 +1,25 @@
 .pending {
   background: #ffdc1f;
-  box-shadow: none;
+  border-radius: 0 !important;
    
 }
 .shadow-status {
   box-shadow: 0px 0px 10px 2px #6161614a;
   text-transform: capitalize !important;
 }
+.shadow-status-1 {
+  box-shadow: 0px 0px 3px 1px #6161614a;
+  text-transform: capitalize !important;
+}
 .lost {
   background: #163a5f;
-  box-shadow: none;
+  border-radius: 0 !important;
    
   color: "#fff";
 }
 .active {
   background: #8c52ff;
-  box-shadow: none;
+  border-radius: 0 !important;
    
   color: "#fff";
 }
@@ -25,19 +29,19 @@
 }
 .past {
   background: #ff66c4;
-  box-shadow: none;
+  border-radius: 0 !important;
    
   color: "#fff";
 }
 .alteration {
   background: #ff914d;
-  box-shadow: none;
+  border-radius: 0 !important;
    
   color: "#fff";
 }
 .overdue {
   background: #ff914d;
-  box-shadow: none;
+  border-radius: 0 !important;
    
   color: "#fff";
 }

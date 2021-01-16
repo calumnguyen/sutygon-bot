@@ -2,12 +2,12 @@ import React from "react";
 
 export default function Status({ title, total, remain }) {
   return (
-    <div className="row m-auto w-75">
-      <span className={`shadow-status ml-md-auto col-md-6 col-12 px-0  badge ${title}`}>
+    <div className="row m-auto">
+      <div className={`ml-md-auto rounded shadow-status-1 col-md-4 col-12 px-0  badge ${title}`}>
         <div className="pt-1 h4 mb-0 font-weight-400" style={{color:'#253857'}}>{title}</div>
-      </span>
-      <div className="col-6 bg-no">
-        <div className="shadow-status row">
+      </div>
+      <div className="mr-md-auto col-12 px-0 col-md-5 rounded bg-no">
+        <div className="shadow-status-1 row m-auto">
       <span className="col-5 px-0 ml-auto">
         <div className="text-right"> Pickup</div>
         <div className="ml-1"> {total}</div>
