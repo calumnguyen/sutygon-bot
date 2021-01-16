@@ -3,6 +3,10 @@
   border-radius: 0 !important;
    
 }
+.btn-custom{
+  width: -webkit-fill-available;
+    font-size: 1rem !important;
+}
 .justify{
   justify-content: space-evenly;
 }
@@ -13,6 +17,7 @@
 .shadow-status-1 {
   box-shadow: 0px 0px 3px 1px #6161614a;
   text-transform: capitalize !important;
+  line-height: normal;
 }
 .lost {
   background: #163a5f;
@@ -49,10 +54,10 @@
   color: "#fff";
 }
 .font-weight-600{
-    font-weight: 600;
+    /* font-weight: 600; */
 }
 .font-weight-400{
-    font-weight: 500;
+    font-weight: 400;
     font-size: large !important;
     
 }
