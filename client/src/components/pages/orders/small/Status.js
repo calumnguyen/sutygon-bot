@@ -4,7 +4,7 @@ export default function Status({ title, total, remain }) {
   return (
     <div className="row m-auto w-75">
       <span className={`ml-md-auto col-md-6 col-12 px-0  badge custom_badge ${title}`}  >
-        <div className="pt-1 h4 mb-0 font-weight-bold" style={{color:'#fff'}}>{title}</div>
+        <div className="pt-1 h4 mb-0 font-weight-500" style={{color:'#253857'}}>{title}</div>
       </span>
       <span className="col-md-3 col-6 px-0 bg-no">
         <div className="text-right"> Pickup</div>
