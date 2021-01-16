@@ -3,23 +3,50 @@ const Schema = mongoose.Schema;
 
 const CouponsSchema = new mongoose.Schema(
   {
-    name: {
+    discount_amount: {
       type: String,
       required: true,
     },
-    username: {
+    max_payout: {
+      // only if percentage
       type: String,
     },
-    email: {
+    min_requirement: {
+      // min amount
       type: String,
     },
-    contactnumber: {
+    number_of_use: {
+      type: Number,
+    },
+    note: {
+      type: String,
+    },
+
+    code: {
       type: String,
       required: true,
     },
-    block_account: {
-      type: Boolean,
-      default: false,
+    start_date: {
+      type: String,
+      required: true,
+    },
+    end_date: {
+      type: String,
+      required: true,
+    },
+
+    eligibility: {
+      type: String,
+      default: "all",
+      enum: ["all", "only", "exclude", "each"],
+    },
+    eligible_products: [{ type: Schema.Types.ObjectId, ref: "product" }],
+    used_customers: [{ type: Schema.Types.ObjectId, ref: "user" }],
+
+    coupon_status: {
+      type: String,
+      default: "active",
+      enum: ["active", "inactive"],
     },
   },
   { timestamps: true }
