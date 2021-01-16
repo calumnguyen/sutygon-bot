@@ -1,12 +1,18 @@
 .pending {
   background: #ffdc1f;
+  box-shadow: none;
+  border-radius: 0 !important;
 }
 .lost {
   background: #163a5f;
+  box-shadow: none;
+  border-radius: 0 !important;
   color: "#fff";
 }
 .active {
   background: #8c52ff;
+  box-shadow: none;
+  border-radius: 0 !important;
   color: "#fff";
 }
 .ready {
@@ -15,15 +21,27 @@
 }
 .past {
   background: #ff66c4;
+  box-shadow: none;
+  border-radius: 0 !important;
   color: "#fff";
 }
 .alteration {
   background: #ff914d;
+  box-shadow: none;
+  border-radius: 0 !important;
   color: "#fff";
 }
 .overdue {
   background: #ff914d;
+  box-shadow: none;
+  border-radius: 0 !important;
   color: "#fff";
+}
+.font-weight-600{
+    font-weight: 600;
+}
+.font-weight-500{
+    font-weight: 500;
 }
 .bg-no {
   background: #f5f7fa;

@@ -145,10 +145,10 @@ class Orders extends Component {
             <div className="row ">
               <div className="form-group col-md-4 " style={{marginTop:'-20px'}}>
                 <br></br>
-                <h3 className="font-weight-bold">
+                <h3 className="">
                   {" "}
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
@@ -178,7 +178,7 @@ class Orders extends Component {
                 <h3>
                   {" "}
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
@@ -204,7 +204,7 @@ class Orders extends Component {
                 <h3>
                   {" "}
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
@@ -229,7 +229,7 @@ class Orders extends Component {
                 <br></br>
                 <h3>
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
@@ -254,7 +254,7 @@ class Orders extends Component {
                 <br></br>
                 <h3>
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
@@ -280,7 +280,7 @@ class Orders extends Component {
                 <h3>
                   {" "}
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
@@ -306,7 +306,7 @@ class Orders extends Component {
                 <h3>
                   {" "}
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
@@ -331,7 +331,7 @@ class Orders extends Component {
                 <br></br>
                 <h3>
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
@@ -356,7 +356,7 @@ class Orders extends Component {
                 <br></br>
                 <h3>
                   <span
-                    className="w-100 py-2 font-weight-bold badge custom_badge"
+                    className="w-75 py-3 font-weight-600 badge custom_badge"
                     style={{
                       cursor: "pointer",
                       backgroundColor: `${
