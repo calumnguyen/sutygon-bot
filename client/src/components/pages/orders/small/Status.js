@@ -2,18 +2,23 @@ import React from "react";
 
 export default function Status({ title, total, remain }) {
   return (
-    <div className="row m-auto w-75">
-      <span className={`ml-md-auto col-md-6 col-12 px-0  badge custom_badge ${title}`}  >
-        <div className="pt-1 h4 mb-0 font-weight-500" style={{color:'#253857'}}>{title}</div>
-      </span>
-      <span className="col-md-3 col-6 px-0 bg-no">
+    <div className="row m-auto">
+      <div className={`ml-md-auto rounded shadow-status-1 col-md-4 col-12 px-0  badge ${title}`}>
+        <div className="pt-1 h4 mb-0 font-weight-400" style={{color:'#253857'}}>{title}</div>
+      </div>
+      <div className="mr-md-auto col-12 px-0 col-md-5 rounded bg-no">
+        <div className="shadow-status-1 row m-auto">
+      <span className="col-5 px-0 ml-auto">
         <div className="text-right"> Pickup</div>
-        <div className="ml-1 mt-1"> {total}</div>
+        <div className="ml-1"> {total}</div>
       </span>
-      <span className="mr-auto col-md-3 col-6 px-0 bg-no">
+      <span className="mr-auto col-5 px-0">
         <div className="text-left pl-2px">today</div>
-        <div className="mt-1 mr-3"> {remain}</div>
+        <div className="mr-3"> {remain}</div>
       </span>
+
+        </div>
+      </div>
     </div>
   );
 }

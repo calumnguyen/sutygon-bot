@@ -1039,9 +1039,9 @@ pre {
     padding: 0.75rem;
     vertical-align: middle !important;
     border-top: 1px solid #dee2e6; }
-    .table td:nth-child(4){
+    /* .table td:nth-child(4){
     padding: 0 !important;
-    }
+    } */
   .table thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #dee2e6; }
