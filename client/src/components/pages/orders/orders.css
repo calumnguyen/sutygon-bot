@@ -3,6 +3,9 @@
   border-radius: 0 !important;
    
 }
+.justify{
+  justify-content: space-evenly;
+}
 .shadow-status {
   box-shadow: 0px 0px 10px 2px #6161614a;
   text-transform: capitalize !important;
