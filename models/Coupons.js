@@ -4,18 +4,26 @@ const Schema = mongoose.Schema;
 const CouponsSchema = new mongoose.Schema(
   {
     discount_amount: {
-      type: String,
+      type: Number,
       required: true,
     },
     max_payout: {
       // only if percentage
-      type: String,
+      type: Number,
     },
     min_requirement: {
       // min amount
-      type: String,
+      type: Number,
     },
-    number_of_use: {
+    coupon_type: {
+      type: String,
+      default: "amount",
+      enum: ["amount", "percentage"],
+    },
+    number_of_user_per_customer: {
+      type: Number,
+    },
+    max_life: {
       type: Number,
     },
     note: {
@@ -34,14 +42,35 @@ const CouponsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    tags: {
+      type: String,
+    },
 
     eligibility: {
       type: String,
       default: "all",
       enum: ["all", "only", "exclude", "each"],
     },
-    eligible_products: [{ type: Schema.Types.ObjectId, ref: "product" }],
-    used_customers: [{ type: Schema.Types.ObjectId, ref: "user" }],
+    // only,each eligible , exclude ineligible
+    // products: [{ type: Schema.Types.ObjectId, ref: "product" }],
+    product_ids: [String],
+    product_tags: [String],
+    used_customers: [
+      {
+        customer: {
+          type: Schema.Types.ObjectId,
+          ref: "user",
+        },
+        usage: {
+          default: 0,
+          type: Number,
+        },
+      },
+    ],
+    usage: {
+      default: 0,
+      type: Number,
+    },
 
     coupon_status: {
       type: String,

@@ -67,6 +67,7 @@ class Orders extends Component {
           status: (
             <OrderStatus
               title={order.status}
+              reservedStatus={order.reservedStatus}
               total={order.total_notes ? order.total_notes : 0}
               remain={
                 order.notes
