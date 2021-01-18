@@ -12,10 +12,11 @@ export default function Status({ title, total, remain ,reservedStatus}) {
          <span className="ml-3 mr-3"> {remain}</span>
         {/* <div className="shadow-status-1 row m-auto">
       <span className="col-5 px-0 ml-auto">
+
         <div className="text-right"> Pickup</div>
         <div className="ml-1"> {total}</div>
       </span>
-      <span className="mr-auto col-5 px-0">
+      <span className="col px-0">
         <div className="text-left pl-2px">today</div>
         <div className="mr-3"> {remain}</div>
       </span>
