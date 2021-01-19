@@ -6,6 +6,7 @@ import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Alert from "../../layout/Alert";
+import "../orders/orders.css";
 import Loader from "../../layout/Loader";
 import {
   getAllRentedProducts,
@@ -18,9 +19,8 @@ import * as moment from "moment";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider from "react-bootstrap-table2-toolkit";
-
+import OrderStatus from "./small/Status";
 import Spinner from "../../layout/Spinner.js";
-import { Button } from "bootstrap";
 
 class Orders extends Component {
   state = {
@@ -60,39 +60,24 @@ class Orders extends Component {
     if (rentproducts) {
       let ordersDataArr = [];
       rentproducts.forEach((order, idx) => {
+        console.log("order",order)
         ordersDataArr.push({
           orderNumber: order.orderNumber,
           name: order.customer ? order.customer.name : "",
           phone: order.customer ? order.customer.contactnumber : "",
-          status:
-            order.status == "lost" ? (
-              <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#163A5F", color: "#fff" }}
-              >
-                {order.status}
-              </span>
-            ) : order.status == "active" ? (
-              <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#8C52FF", color: "#fff" }}
-              >
-                {order.status}
-              </span>
-            ) : order.status == "ready" ? (
-              <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#45EBA5", color: "#fff" }}
-              >
-                {order.status}
-              </span>
-            ) : order.status == "alteration" ? (
-              <span className="badge custom_badge badge-warning">{order.status}</span>
-            ) : (
-              <span className="badge custom_badge" style={{ backgroundColor: "#ffdc1f" }}>
-                {order.status}
-              </span>
-            ),
+          status: (
+            <OrderStatus
+              title={order.status}
+              reservedStatus={order.reservedStatus}
+              pickedUpStatus={order.pickedUpStatus}
+              total={order.total_notes ? order.total_notes : 0}
+              remain={
+                order.notes
+                  ? order.notes.filter((i) => i.done == false).length
+                  : 0
+              }
+            />
+          ),
 
           actions: (
             <>
@@ -146,7 +131,7 @@ class Orders extends Component {
         return (
           <>
             <div className="row">
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <input
                   className="form-control"
                   style={{ backgroundColor: "white" }}
@@ -154,321 +139,249 @@ class Orders extends Component {
                   type="text"
                 />
               </div>
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <button className="btn btn-success" onClick={handleClick}>
                   <i className="fa fa-search"></i> Search{" "}
                 </button>
               </div>
             </div>
-            <div className="row ml-5">
-              <div className="form-group col-md-3 mb-1">
+            <div className="row ">
+              <div className="form-group col" style={{marginTop:'-20px'}}>
                 <br></br>
-              <h4>   <span
-                   className="badge custom_badge"
-                  style={{
-                      cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "pending")
-                        ? "#FFDC1F"
-                        : "#737373"
-                    }`,
-                    color: `${
-                      this.state.status.find((s) => s == "pending")
-                        ? "#000"
-                        : "#fff"
-                    }`,
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("pending");
-                  }}
-                >
-                  Pending
-                </span></h4>
-                {/* <label className='radio-inline'>
-                  <input
-                    type='checkbox'
-                    name='pending'
-                    onChange={() => {
-                      this.handleStatusToggle('pending')
+                <h3 className="">
+                  {" "}
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "pending")
+                          ? "#FFDC1F"
+                          : "#737373"
+                      }`,
+                      color: `${
+                        this.state.status.find((s) => s == "pending")
+                          ? "#000"
+                          : "#fff"
+                      }`,
+                      borderColor: "#fff",
+                      borderRadius: "none",
                     }}
-                    checked={this.state.status.find((s) => s == 'pending')}
-                  />{' '}
-                  Pending
-                </label> */}
+                    onClick={() => {
+                      this.handleStatusToggle("pending");
+                    }}
+                  >
+                    Pending
+                  </span>
+                </h3>
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col" style={{marginTop:'-20px'}}>
                 <br></br>
-                  <h4>  <span
-                   className="badge custom_badge"
-                  style={{
-                      cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "active")
-                        ? "#8C52FF"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("active");
-                  }}
-                >
-                  Active
-                </span></h4>
-                {/* <label className='radio-inline'>
-                  <input
-                    type='checkbox'
-                    name='active'
-                    onChange={() => {
-                      this.handleStatusToggle('active')
+                <h3>
+                  {" "}
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "active")
+                          ? "#8C52FF"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
                     }}
-                    checked={this.state.status.find((s) => s == 'active')}
-                  />{' '}
-                  Active
-                </label> */}
+                    onClick={() => {
+                      this.handleStatusToggle("active");
+                    }}
+                  >
+                    Active
+                  </span>
+                </h3>
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col" style={{marginTop:'-20px'}}>
                 <br></br>
-                <h4> <span
-                   className="badge custom_badge"
-                  style={{
-                      cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "pickup")
-                        ? "#FF914D"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("pickup");
-                  }}
-                >
-                  Pickup Today
-                </span></h4>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="pickup"
-                    onChange={() => {
+                <h3>
+                  {" "}
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "pickup")
+                          ? "#FF914D"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
                       this.handleStatusToggle("pickup");
                     }}
-                    checked={this.state.status.find((s) => s == "pickup")}
-                  />{" "}
-                  Pickup Today
-                </label> */}
+                  >
+                    Pickup Today
+                  </span>
+                </h3>
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col" style={{marginTop:'-20px'}}>
                 <br></br>
-                    <h4><span
-                   className="badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "return")
-                        ? "#FF914D"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("return");
-                  }}
-                >
-                  Return Today
-                </span></h4>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="return"
-                    onChange={() => {
+                <h3>
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "return")
+                          ? "#FF914D"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
                       this.handleStatusToggle("return");
                     }}
-                    checked={this.state.status.find((s) => s == "return")}
-                  />{" "}
-                  Return Today
-                </label> */}
+                  >
+                    Return Today
+                  </span>
+                </h3>
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col" style={{marginTop:'-20px'}}>
                 <br></br>
-                   <h4><span
-                   className="badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "alteration")
-                        ? "#FF914D"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("alteration");
-                  }}
-                >
-                  Alteration
-                </span></h4>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="alteration"
-                    onChange={() => {
+                <h3>
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "alteration")
+                          ? "#FF914D"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
                       this.handleStatusToggle("alteration");
                     }}
-                    checked={this.state.status.find((s) => s == "alteration")}
-                  />{" "}
-                  Alteration
-                </label> */}
+                  >
+                    Alteration
+                  </span>
+                </h3>
               </div>
-
-              <div className="form-group col-md-3 mb-1">
+            </div>
+            <div className="row">
+              <div className="form-group col" style={{marginTop:'-30px'}}>
                 <br></br>
-                     <h4> <span
-                   className="badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "ready")
-                        ? "#45EBA5"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("ready");
-                  }}
-                >
-                  Ready
-                </span></h4>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="ready"
-                    onChange={() => {
+                <h3>
+                  {" "}
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "ready")
+                          ? "#45EBA5"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
                       this.handleStatusToggle("ready");
                     }}
-                    checked={this.state.status.find((s) => s == "ready")}
-                  />{" "}
-                  Ready
-                </label> */}
+                  >
+                    Ready
+                  </span>
+                </h3>
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col" style={{marginTop:'-30px'}}>
                 <br></br>
-                  <h4> <span
-                   className="badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "overdue")
-                        ? "#ff1616"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("overdue");
-                  }}
-                >
-                  Overdue
-                </span></h4>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="overdue"
-                    onChange={() => {
+                <h3>
+                  {" "}
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "overdue")
+                          ? "#ff1616"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
                       this.handleStatusToggle("overdue");
                     }}
-                    checked={this.state.status.find((s) => s == "overdue")}
-                  />{" "}
-                  Overdue
-                </label> */}
+                  >
+                    Overdue
+                  </span>
+                </h3>
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col" style={{marginTop:'-30px'}}>
                 <br></br>
-                 <h4><span
-                   className="badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "lost")
-                        ? "#163A5F"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("lost");
-                  }}
-                >
-                  Lost
-                </span></h4>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="lost"
-                    onChange={() => {
+                <h3>
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "lost")
+                          ? "#163A5F"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
                       this.handleStatusToggle("lost");
                     }}
-                    checked={this.state.status.find((s) => s == "lost")}
-                  />{" "}
-                  Lost
-                </label> */}
+                  >
+                    Lost
+                  </span>
+                </h3>
               </div>
 
-              <div className="form-group col-md-3 mb-1">
+              <div className="form-group col" style={{marginTop:'-30px'}}>
                 <br></br>
-                  <h4><span
-                   className="badge custom_badge"
-                  style={{
-                    cursor:'pointer',
-                    backgroundColor: `${
-                      this.state.status.find((s) => s == "past")
-                        ? "#FF66c4"
-                        : "#737373"
-                    }`,
-                    color: "#fff",
-                    borderColor: "#fff",
-                    borderRadius: "none",
-                  }}
-                  onClick={() => {
-                    this.handleStatusToggle("past");
-                  }}
-                >
-                  Past
-                </span></h4>
-                {/* <label className="radio-inline">
-                  <input
-                    type="checkbox"
-                    name="past"
-                    onChange={() => {
+                <h3>
+                  <span
+                    className="py-2 btn-custom font-weight-600 badge "
+                    style={{
+                      cursor: "pointer",
+                      backgroundColor: `${
+                        this.state.status.find((s) => s == "past")
+                          ? "#FF66c4"
+                          : "#737373"
+                      }`,
+                      color: "#fff",
+                      borderColor: "#fff",
+                      borderRadius: "none",
+                    }}
+                    onClick={() => {
                       this.handleStatusToggle("past");
                     }}
-                    checked={this.state.status.find((s) => s == "past")}
-                  />{" "}
-                  Past
-                </label> */}
+                  >
+                    Past
+                  </span>
+                </h3>
+              </div>
+              <div className="col">
+
               </div>
             </div>
           </>

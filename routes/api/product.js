@@ -596,7 +596,7 @@ router.delete(
 // @route  GET api/products/getsize/:color_id/:size_id
 // @desc   get individual size quantity
 // @access Private
-router.get("/:color_id/:size_id", async (req, res) => {
+router.get("/:color_id/:size_id",auth, async (req, res) => {
   try {
     let singleProduct = await Product.findOne(
       {

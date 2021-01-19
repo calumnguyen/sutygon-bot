@@ -7,10 +7,10 @@ const List = {
     //   icons: "ft-home",
     // },
     // {
-    //   id: 1,
-    //   title: "Coupons",
-    //   url: "user",
-    //   icons: "ft-users",
+    //   id: 0,
+    //   title: "phiếu giảm giá",
+    //   url: "coupons",
+    //   icons: "fa fa-gift",
     //   name: "Admin",
     // },
     {
