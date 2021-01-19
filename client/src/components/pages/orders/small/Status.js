@@ -2,12 +2,12 @@ import React from "react";
 
 export default function Status({ title, total, remain, reservedStatus,pickedUpStatus }) {
   return (
-    <div className="row m-auto">
-      <div className={`ml-md-auto rounded shadow-status-1 col-md-4 col-12 px-0  badge ${reservedStatus?reservedStatus:title}`}>
+    <div className="row m-auto justify">
+      <div className={`rounded shadow-status-1 col-md-4 col-12 px-0  badge ${reservedStatus?reservedStatus:title}`}>
         <div className="pt-1 h4 mb-0 font-weight-400" style={{color:'#253857'}}>{reservedStatus?reservedStatus:title}</div>
       </div>
-      <div className="mr-md-auto col-12 col-md-5 rounded bg-no">
-        <div className="text-capitalize">
+      <div className="small col-12 col-md-5 rounded bg-no">
+        <div className="small text-capitalize">
           {pickedUpStatus ? "Pickup Today":reservedStatus ? title : <p></p>}
           </div>
         <span className="ml-1"> {total}</span>
