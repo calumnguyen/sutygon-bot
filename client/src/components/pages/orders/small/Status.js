@@ -11,7 +11,7 @@ export default function Status({ title, total, remain, reservedStatus,pickedUpSt
           {pickedUpStatus ? "Pickup Today":reservedStatus ? title : <p></p>}
           </div>
         <span className="ml-1"> {total}</span>
-         <span className="ml-3 mr-3"> {remain}</span>
+         <span className="ml-3 mr-2"> {remain}</span>
         {/* <div className="shadow-status-1 row m-auto">
       <span className="col-5 px-0 ml-auto">
 
