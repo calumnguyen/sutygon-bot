@@ -171,7 +171,7 @@ class ReturnProduct extends Component {
                       fontSize: "larger",
                     }}
                   >
-                    {`${p[0].title} ${"|"} ${p[0].barcode}`}
+                    {`${p[0]?p[0].title:''} ${"|"} ${p[0]?p[0].barcode:''}`}
                   </h6>
                 </div>
               </div>
