@@ -1,13 +1,12 @@
 .pending {
   background: #ffdc1f;
   border-radius: 0 !important;
-   
 }
-.btn-custom{
+.btn-custom {
   width: -webkit-fill-available;
-    font-size: 1rem !important;
+  font-size: 1rem !important;
 }
-.justify{
+.justify {
   justify-content: space-evenly;
 }
 .shadow-status {
@@ -22,13 +21,13 @@
 .lost {
   background: #163a5f;
   border-radius: 0 !important;
-   
+
   color: "#fff";
 }
 .active {
   background: #8c52ff;
   border-radius: 0 !important;
-   
+
   color: "#fff";
 }
 .ready {
@@ -38,28 +37,40 @@
 .past {
   background: #ff66c4;
   border-radius: 0 !important;
-   
+
   color: "#fff";
 }
 .alteration {
   background: #ff914d;
   border-radius: 0 !important;
-   
+
   color: "#fff";
 }
 .overdue {
   background: #ff914d;
   border-radius: 0 !important;
-   
+
   color: "#fff";
 }
-.font-weight-600{
-    /* font-weight: 600; */
+
+.Completed {
+  background: #ff66c4;
+  border-radius: 0 !important;
+
+  color: "#fff";
 }
-.font-weight-400{
-    font-weight: 400;
-    font-size: large !important;
-    
+.cancel {
+  background: #ff914d;
+  border-radius: 0 !important;
+
+  color: "#fff";
+}
+.font-weight-600 {
+  /* font-weight: 600; */
+}
+.font-weight-400 {
+  font-weight: 400;
+  font-size: large !important;
 }
 .bg-no {
   background: #f5f7fa;
