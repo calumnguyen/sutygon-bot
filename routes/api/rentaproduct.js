@@ -331,6 +331,12 @@ router.post('/:id/status/cancel', auth, async (req, res) => {
       status: 'cancel',
       message: `Order cancelled.`,
     }
+    const { barcodes } = await RentedProduct.findById(req.params.id).select(
+      'barcodes'
+    )
+    
+    let eachProdColorArr = []
+    let eachProdSizeArr = []
 
     const rentedProducts = await RentedProduct.findByIdAndUpdate(
       { _id: req.params.id },
@@ -346,7 +352,51 @@ router.post('/:id/status/cancel', auth, async (req, res) => {
         'readyForPickUp pickedUpStatus returnStatus status authorization_logs'
       )
       .lean()
+        // Traverse through each barcode.
+    for (bcode of barcodes) {
+      // for each new barcode we will empty the eachProdColorArr for traversing of the latest barcode's colors array...
+      eachProdColorArr.length = 0
 
+      // for each new barcode we will empty the eachProdSizeArr for traversing of the latest barcode's color's sizes array...
+      eachProdSizeArr.length = 0
+
+      // Find product document through barcode. (colors => sizes => barcodes)
+      let singleProduct = await Product.findOne(
+        {
+          'color.sizes.barcodes': {
+            $elemMatch: { barcode: parseInt(bcode) },
+          },
+        },
+        { color: 1, name: 1, productId: 1 }
+      )
+
+      // To avoid nulls if no product is found with the barcode...
+      if (singleProduct) {
+        // Get colours for each barcode.
+        singleProduct.color.forEach((clr) => {
+          // Push in color array for traversing it later.
+          eachProdColorArr.push(clr)
+        })
+
+        // Now traverse through each color.
+        eachProdColorArr.forEach((prodclr) => {
+          // Traverse through sizes array.
+          prodclr.sizes.forEach((psize) => {
+            // Traverse through each barcode inside the barcode array inside the sizes array...
+            for (barcode of psize.barcodes) {
+              // If barcode is matched.
+              if (barcode.barcode == bcode) {
+                // Updating details of single product..
+                barcode.isRented = false;
+                singleProduct.save();
+  
+              }
+            }
+          })
+        })
+      }
+    }
+    
     return res.status(200).json(rentedProducts)
   } catch (err) {
     console.log(err)
@@ -373,7 +423,7 @@ router.get('/:id/authlogs', auth, async (req, res) => {
 // @route  GET api/rentedproducts/:id/orderitems
 // @desc   get product items of order by id.
 // @access Private
-router.get('/:id/orderitems', auth, async (req, res) => {
+router.get('/:id/orderitems', async (req, res) => {
   try {
     const { barcodes } = await RentedProduct.findById(req.params.id).select(
       'barcodes'
@@ -418,6 +468,7 @@ router.get('/:id/orderitems', auth, async (req, res) => {
               // If barcode is matched.
               if (barcode.barcode == bcode) {
                 // Updating details of single product..
+
                 // Created new object to avoid references.
                 let singleProdDetails = new Object()
                 singleProdDetails.name = singleProduct.name
@@ -469,5 +520,21 @@ router.get('/status/pickuptoday', auth, async (req, res) => {
     res.status(500).send('Server Error!')
   }
 })
+
+router.get('/:barcode/findorderbybarcode',  async (req, res) => {
+  try {
+    const result = await RentedProduct.find({
+      "barcodes": {$eq:(req.params.barcode)},
+  }).populate('customer')
+  .sort({ updatedAt: -1 })
+
+  return res.status(200).json(result)
+
+ } catch (err) {
+    console.log(err)
+    res.status(500).send('Server Error!')
+  }
+})
+
 
 module.exports = router

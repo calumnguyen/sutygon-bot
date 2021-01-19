@@ -74,3 +74,34 @@ tr {
 .custom_badge {
   width: 150px;
 }
+.individual_item{
+  color:black;
+  text-decoration: none;
+}
+
+.individual_item:hover{
+  color:black;
+  text-decoration: underline;
+}
+._radio{
+  text-transform: capitalize !important;
+  color:rgba(0, 0, 0, 0.87);
+  font-family: "Rubik", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14;
+}
+/* .form-group{
+margin-bottom: 0 !important; 
+} */
+
+.fa-check{
+  color:green;
+  font-size:20px
+}
+.ft-alert-triangle{
+  color:yellow;
+  font-size:20px
+}
+.fa-close{
+  color:red;
+  font-size:20px
+}

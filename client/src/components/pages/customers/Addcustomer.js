@@ -136,8 +136,7 @@ class AddCustomer extends Component {
         birthday: date,
       });
     }
-    console.log(name);
-    console.log(date);
+   
 
     if (name === "selectedYear") {
       this.setState({

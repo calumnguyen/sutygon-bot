@@ -48,6 +48,8 @@ import EditUser from './components/pages/users/EditUser'
 import StoreClosed from './components/pages/StoreClosed'
 import ViewCoupons from './components/pages/coupons/ViewCoupons';
 import AddCoupons from './components/pages/coupons/AddCoupons'
+import IndividualBarcode from './components/pages/IndividualItem'
+
 
 if (localStorage.token) {
   setAuthToken(localStorage.token)
@@ -153,6 +155,7 @@ const Main = () => {
 
           {/* barcode */}
           <PrivateRoute exact path='/barcode' component={Barcode} />
+          <PrivateRoute exact path='/individualbarcode/:id' component={IndividualBarcode} />
           {/* ViewCoupons */}
           
           <PrivateRoute exact path='/coupons' component={ViewCoupons} />

@@ -6,6 +6,7 @@ import {
   GET_RENTPRODUCT,
   GET_RENTPRODUCTS,
   GET_LASTRECORD,
+  GET_BARCODE_ORDER,
   RENTPRODUCTS_ERROR,
   RENTPRODUCTS_LOADING,
   RENTPRODUCT_DELETED,
@@ -56,6 +57,23 @@ export const getAllRentedProducts = () => async (dispatch) => {
   dispatch({ type: RENTPRODUCT_LOADING })
   try {
     const res = await axios.get(`/api/rentedproducts`)
+
+    dispatch({
+      type: GET_RENTPRODUCTS,
+      payload: res.data,
+    })
+  } catch (err) {
+    dispatch({
+      type: RENTPRODUCTS_ERROR,
+      payload: err.response,
+    })
+  }
+}
+//check if the barcode is in any order for deletion purpose
+export const checkBarcode = (barcode) => async (dispatch) => {
+  dispatch({ type: RENTPRODUCT_LOADING })
+  try {
+    const res = await axios.get(`/api/rentedproducts/${barcode}/check`)
 
     dispatch({
       type: GET_RENTPRODUCTS,
@@ -306,6 +324,30 @@ export const pickupTodayOrders = () => async (dispatch) => {
 
     dispatch({
       type: RENTPRODUCT_STATUS_SEARCH,
+      payload: res.data,
+    })
+  } catch (err) {
+
+   const errors = err.response.data.errors
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, 'warning')))
+    }
+
+    dispatch({
+      type: RENTPRODUCTS_ERROR,
+    })
+  }
+}
+
+
+// /api/rentedproducts/status/pickuptoday
+export const searchByBarcode = (barcode) => async (dispatch) => {
+  dispatch({ type: RENTPRODUCTS_LOADING })
+  try {
+    const res = await axios.get(`/api/rentedproducts/${barcode}/findorderbybarcode`)
+
+    dispatch({
+      type: GET_BARCODE_ORDER,
       payload: res.data,
     })
   } catch (err) {

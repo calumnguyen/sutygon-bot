@@ -9,8 +9,9 @@ import {
   deleteItem,
   deleteProduct,
 } from "../../actions/product";
+import {searchByBarcode} from "../../actions/rentproduct"
 import Loader from "../layout/Loader";
-import { Redirect } from "react-router-dom";
+import { Redirect,Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
@@ -121,7 +122,7 @@ class Barcode extends Component {
           product: product.title,
           barcodeID:
             this.state.dataType === "with_barcode"
-              ? product.barcodes[product.barcodeIndex].barcode
+              ? <Link to={{pathname:`/individualbarcode/${product.barcodes[product.barcodeIndex].barcode}`,state:{p_id:product.product_id}}} data-toggle="tooltip" title="Click me!" className="individual_item">{product.barcodes[product.barcodeIndex].barcode}</Link>
               : "",
           changeBarcode:
             this.state.dataType === "without_barcode" ? (
@@ -199,7 +200,8 @@ class Barcode extends Component {
                     e,
                     product.product_id,
                     product.color_id,
-                    product.size_id
+                    product.size_id,
+                    
                   )
                 }
               >
@@ -215,7 +217,9 @@ class Barcode extends Component {
                     product.product_id,
                     product.color_id,
                     product.size_id,
-                    product.barcodeIndex
+                    product.barcodeIndex,
+                    product.barcodes[product.barcodeIndex].barcode
+
                   )
                 }
               >
@@ -296,182 +300,7 @@ class Barcode extends Component {
     }
   };
 
-  // getTAbleRows = () => {
-  //   let products = this.props.products;
-  //   if (products) {
-  //     let sortedProducts = this.getSortedData(products);
-  //     // let tbl_sno = 1;
-  //     if (sortedProducts) {
-  //       if (sortedProducts.length === 0) {
-  //         return (
-  //           <tr>
-  //             <td colSpan={10} className="text-center">
-  //               No product Found
-  //           </td>
-  //           </tr>
-  //         );
-  //       }
-  //       return sortedProducts.map((product, i) => {
-  //         console.log(product)
-  //         if (this.state.dataType === 'with_barcode')
-  //         {
-  //          const productsArr = [{
-  //             prodID: product.short_product_id,
-  //             product: product.title,
-  //             barcodeID: product.barcodes.barcode,
-  //             changeBarcode: <button
-  //               type="button"
-  //               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-  //               onClick={(e) => this.changeBarcode(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}>
-  //               Change Barcode
-  //                          </button>,
-  //             scanBarcode: <button
-  //               type="button"
-  //               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-  //               onClick={(e) => this.printBarcode(product.barcodes[product.barcodeIndex].barcode)}>
-  //               Print Barcode
-  //                           </button>,
-  //             deleteItem: <button
-  //               type="button"
-  //               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-  //               onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}>
-  //               Delete Item
-  //                           </button>
-
-  //           }
-  //           ];
-
-  //      const defaultSorted = [{
-  //           dataField: 'prodID',
-  //           order: 'desc'
-  //         }];
-
-  //         const  columns = [{
-  //           dataField: 'prodID',
-  //           text: 'Product ID',
-  //           sort: true,
-
-  //         }, {
-  //           dataField: 'Product',
-  //           text: 'pridyct id',
-  //           sort: true,
-
-  //         }, {
-  //           dataField: 'barcodeID',
-  //           text: 'Product Price',
-  //           sort: true,
-  //         }, {
-  //           dataField: 'changeBarcode',
-  //           text: 'Product Price',
-  //           sort: true,
-  //         },
-  //         {
-  //           dataField: 'scanBarcode',
-  //           text: 'Product Price',
-  //           sort: true,
-  //         },
-  //         {
-  //           dataField: 'deleteItem',
-  //           text: 'Product Price',
-  //           sort: true,
-  //         }
-  //         ];
-
-  //       }
-  // return (
-
-  //   <tr key={i}>
-  //     <td>
-  //       {product.short_product_id}
-  //     </td>
-  //     <td>
-  //       <div className="form-group">
-  //         <div className="">
-  //           {product.title}
-  //         </div>
-  //       </div>
-  //     </td>
-  //     {(this.state.dataType === 'with_barcode') && (
-  //       <td>
-  //         <span className="badge badge-secondary">{product.barcodes[product.barcodeIndex].barcode}</span>
-  //       </td>
-  //     )}
-  //     <td>
-  //       {(this.state.dataType === 'without_barcode') ? (
-  //         <button
-  //           type="button"
-  //           className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-  //           onClick={(e) => this.genPrintRandBarcode(e, product.product_id, product.color_id, product.size_id)}
-  //         >
-  //           Generate &amp; PRINT random barcode
-  //         </button>
-  //       ) : (
-  //           <button
-  //             type="button"
-  //             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-  //             onClick={(e) => this.changeBarcode(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}
-  //           >
-  //             Change Barcode
-  //           </button>
-  //         )}
-  //     </td>
-  //     <td>
-  //       {(this.state.dataType === 'without_barcode') ? (
-  //         <form onSubmit={(e) => this.OnSubmitScanBarcode(e, product.product_id, product.color_id, product.size_id)}>
-  //           <input
-  //             type="text"
-  //             className="form-control mm-input"
-  //             placeholder={"Scan existing Barcode"}
-  //             maxLength={8}
-  //             minLength={8}
-  //           />
-  //         </form>
-  //       ) : (
-  //           <button
-  //             type="button"
-  //             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-  //             onClick={(e) => this.printBarcode(product.barcodes[product.barcodeIndex].barcode)}
-  //           >
-  //             Print Barcode
-  //           </button>
-  //         )}
-  //     </td>
-  //     <td>
-  //       {(this.state.dataType === 'without_barcode') ? (
-  //         <button
-  //           type="button"
-  //           className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-  //           onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id)}
-  //         >
-  //           Delete Item
-  //         </button>
-  //       ) : (
-  //           <button
-  //             type="button"
-  //             className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-  //             onClick={(e) => this.deleteConfirm(e, product.product_id, product.color_id, product.size_id, product.barcodeIndex)}
-  //           >
-  //             Delete Item
-  //           </button>
-  //         )}
-  //     </td>
-  //   </tr>
-  // );
-  //   });
-  // }
-  // return (
-  //   <BootstrapTable
-  //   bootstrap4
-  //   keyField="id"
-  //   data={sortedProducts}
-  //   columns={this.columns}
-  //   defaultSorted={this.defaultSorted}
-
-  // />
-  // )
-  //     }
-  //   };
-  // }
+  
   // return sorted products for barcodes
   getBarcodeData = (products) => {
     // looping through prducts
@@ -531,8 +360,12 @@ class Barcode extends Component {
     OCAlert.alertSuccess("Barcode Generated and Saved Successfully!");
   };
 
-  deleteConfirm = async (e, product_id, color_id, size_id, barcodeIndex) => {
-    confirmAlert({
+  deleteConfirm = async (e, product_id, color_id, size_id, barcodeIndex,barcode) => {
+  
+    await this.props.searchByBarcode(barcode)
+    const {  barcoderec } = this.props;
+    if(barcoderec && barcoderec.length == 0){
+ confirmAlert({
       title: "Delete Item",
       message: "Are you sure you want to delete this Item?",
       buttons: [
@@ -548,6 +381,16 @@ class Barcode extends Component {
         },
       ],
     });
+    
+  }
+  else{
+    // error message
+    OCAlert.alertError("This barcode is being used in an order, you cannot delete it.", {
+      timeOut: 3000,
+    });
+    return;
+  }
+   
   };
 
   // Delete Item
@@ -667,8 +510,8 @@ class Barcode extends Component {
   ) => {
     // get product by id
     await this.props.getProductById(product_id);
-    console.log("product_id",product_id)
-    const { product } = this.props;
+    const { product,auth } = this.props;
+    
 
     if (product && product.color) {
       // loop through product colors
@@ -682,7 +525,17 @@ class Barcode extends Component {
                 // check if current size obj contain barcodes or not
                 if (size.barcodes) {
                   if (mode === "add") {
-                    size.barcodes.push({ barcode }); // Add barcode
+                    size.barcodes.push({ barcode, // Add barcode
+                     authorization_logs: [
+                      {
+                        employee_id: auth.user._id,
+                        employee_name: auth.user.username,
+                        message: `Item added to inventory`,
+                      },
+                    ],
+                     }); // Add barcode
+
+                    
                   } else {
                     // size.barcodes[barcodeIndex].barcode = barcode; // Change barcode
                     size.barcodes.splice(barcodeIndex, 1);
@@ -851,6 +704,8 @@ const mapStateToProps = (state) => ({
   saved: state.product.saved,
   auth: state.auth,
   products_total: state.product.products_total,
+  barcoderec: state.rentproduct.barcoderec,
+
 });
 export default connect(mapStateToProps, {
   getAllProducts,
@@ -858,5 +713,5 @@ export default connect(mapStateToProps, {
   getProductById,
   barcodeUpdateProduct,
   deleteItem,
-  deleteProduct,
+  deleteProduct,searchByBarcode
 })(Barcode);

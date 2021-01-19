@@ -71,7 +71,7 @@
   .show_it {
     display: block;
   }
-  .imeg_container {
+  .imeg_container{
     width: 100%;
     height: 250px;
     background-color: #C5E0E8;
@@ -157,5 +157,53 @@
 [aria-expanded="true"] > .collapsed {
   display: none;
 }
+div.gallery {
+  margin: 10px;
+  margin-right: 20px;
+  margin-left: 20px;
+  border: 1px solid rgb(87, 85, 85);
+  float: left;
+  width: 180px;
+}
 
-/* View Details css */
+div.gallery_img{
+  /* margin: 10px; */
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-bottom: 25px;
+  border: 1px solid rgb(87, 85, 85);
+  float: left;
+  width: 80px;
+  height: 80px;
+}
+
+div.gallery_img img:hover {
+  border: .5px solid rgb(54, 53, 53);
+  padding:1px; opacity: 0.6;
+  color:#000;cursor:pointer;
+}
+div.desc{
+  padding-right: 31px;
+  color:#000;
+  cursor:pointer;
+}
+
+
+div.gallery img {
+  width: 100%;
+  height: 100%;
+}
+
+div.gallery_img img {
+  width: 100%;
+  height: 100%;
+}
+
+.table_indBcode{
+  border-collapse:unset !important;
+}
+.table_indBcode th, td {
+  padding: 5px;
+  /* text-align: left;     */
+}
+

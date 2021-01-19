@@ -8,7 +8,7 @@ import {
   PRODUCTS_ERROR,
   PRODUCTS_LOADING,
   PRODUCT_DELETED,
-  PRODUCT_UPDATED,
+  PRODUCT_UPDATED,GET_QTY,IMAGES_SAVED
 } from "./types";
 import { setAlert } from "./alert";
 
@@ -20,6 +20,7 @@ export const addNewProduct = (product) => async (dispatch) => {
       "content-type": "multipart/form-data",
     },
   };
+
   try {
     const res = await axios.post("/api/products/add", product, config);
 
@@ -112,6 +113,25 @@ export const getProduct = (name) => async (dispatch) => {
     });
   }
 };
+
+
+export const getSize = (color_id,size_id) => async (dispatch) => {
+  dispatch({ type: PRODUCTS_LOADING });
+
+  try {
+    const res = await axios.get(`/api/products/${color_id}/${size_id}`);
+    dispatch({
+      type: GET_QTY,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: PRODUCTS_ERROR,
+      payload: err.response,
+    });
+  }
+};
+
 
 export const getProductById = (id) => async (dispatch) => {
   dispatch({ type: PRODUCTS_LOADING });
@@ -274,6 +294,79 @@ export const deleteProduct = (id) => async (dispatch) => {
     });
     dispatch(setAlert(res.data.msg, "success"));
     dispatch(getAllProducts());
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+      type: PRODUCTS_ERROR,
+    });
+  }
+};
+
+// change status of individual barcode
+export const changeItemStatus = (status, barcode) => async (dispatch) => {
+  dispatch({ type: PRODUCTS_LOADING });
+
+
+  try {
+    const res = await axios.post(`/api/products/${barcode}/${status}/status_update`);
+
+    dispatch({
+      type: PRODUCT_UPDATED,
+      payload: res.data,
+    });
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+      type: PRODUCTS_ERROR,
+    });
+  }
+};
+
+// upload images of individual barcode
+export const updateImages = (body, barcode) => async (dispatch) => {
+  dispatch({ type: PRODUCT_LOADING });
+  const config = {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  };
+  try {
+    const res = await axios.post(`/api/products/${barcode}/image_update`,body,config);
+
+    dispatch({
+      type: IMAGES_SAVED,
+      payload: res.data,
+    });
+
+    dispatch(setAlert(res.data.msg, "success"));
+
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+      type: PRODUCTS_ERROR,
+    });
+  }
+};
+
+//change quality of individual barcode
+export const changeItemQuality = (quality, barcode) => async (dispatch) => {
+  dispatch({ type: PRODUCTS_LOADING });
+
+  try {
+    const res = await axios.post(`/api/products/${barcode}/${quality}/quality_update`);
+    dispatch({
+      type: PRODUCT_UPDATED,
+      payload: res.data,
+    });
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {

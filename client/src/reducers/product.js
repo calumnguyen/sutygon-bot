@@ -6,6 +6,7 @@ import {
   GET_PRODUCT,
   PRODUCT_DELETED,
   PRODUCT_UPDATED,
+  GET_QTY,IMAGES_SAVED
 } from "../actions/types";
 const initialState = {
   product: null,
@@ -13,7 +14,9 @@ const initialState = {
   products_total: null,
   loading: false,
   saved: false,
+  images:null,
   generateReturnInvoice: false,
+  qty:null,
   error: {},
 };
 
@@ -46,7 +49,21 @@ export default function (state = initialState, action) {
         generateReturnInvoice: false,
         saved: false,
       };
-
+      case GET_QTY:
+      return {
+        ...state,
+        qty: payload,
+        loading: false,
+        generateReturnInvoice: false,
+        saved: false,
+      };
+    case IMAGES_SAVED:
+      return{
+        ...state,
+        images:payload,
+        saved:true,
+        loading:false,
+      }
     case PRODUCT_SAVED:
       return {
         ...state,
@@ -56,6 +73,7 @@ export default function (state = initialState, action) {
     case PRODUCT_UPDATED:
       return {
         ...state,
+        product: payload,
         saved: true,
         loading: false,
         generateReturnInvoice: true,
@@ -66,6 +84,7 @@ export default function (state = initialState, action) {
         error: payload,
         loading: false,
       };
+
 
     case PRODUCT_DELETED:
       return {

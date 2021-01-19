@@ -107,7 +107,6 @@ class ViewProduct extends Component {
   };
   getViewModal = () => {
     let product = this.state.modal_product;
-
     if (product) {
       return (
         <div>
