@@ -30,7 +30,7 @@ export default function (state = initialState, action) {
     case GET_COUPONS:
       return {
         ...state,
-        coupons: payload.products,
+        coupons: payload.coupons,
         coupons_total: payload.total,
         loading: false,
         saved: false,

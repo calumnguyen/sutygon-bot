@@ -1,14 +1,15 @@
 import React from "react";
 
-export default function Status({ title, total, remain, reservedStatus,pickedUpStatus }) {
+export default function Status({ title, total, remain, reservedStatus, readyForPickUp,pickedUpStatus }) {
+  
   return (
     <div className="row m-auto justify">
-      <div className={`rounded shadow-status-1 col-md-4 col-12 px-0  badge ${reservedStatus?reservedStatus:title}`}>
-        <div className="pt-1 h4 mb-0 font-weight-400" style={{color:'#253857'}}>{reservedStatus?reservedStatus:title}</div>
+      <div className={`d-flex align-items-center text-center rounded shadow-status-1 col-md-4 col-12 px-0  badge ${reservedStatus?reservedStatus:title}`}>
+        <div className="mx-auto h5 mb-0 font-weight-400" style={{color:'#253857'}}>{reservedStatus?reservedStatus:title}</div>
       </div>
       <div className="small col-12 col-md-5 rounded bg-no">
         <div className="small text-capitalize">
-          {pickedUpStatus ? "Pickup Today":reservedStatus ? title : <p></p>}
+          {pickedUpStatus ==false && readyForPickUp ? "Pickup Today":reservedStatus ? title : <p></p>}
           </div>
         <span className="ml-1"> {total}</span>
          <span className="ml-3 mr-2"> {remain}</span>

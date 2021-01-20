@@ -104,16 +104,19 @@ router.post("/:id", auth, async (req, res) => {
   }
 });
 
-// @route   GET api/Coupon
-// @desc    Get all Coupon
+// @route   POST api/Coupon
+// @desc    Post all Coupon
 // @access  Private
-router.get("/", auth, async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
-    let query = {};
+    let query = {
+      coupon_status: req.body.coupon_status,
+    };
+    console.log("query", query);
     var limit = 10;
     var page = req.body.currentPage ? parseInt(req.body.currentPage) : 1;
     var skip = (page - 1) * limit;
-    Coupon.find(query).skip(skip).limit(limit).sort({ date: -1 });
+    const coupons = await Coupon.find(query).skip(skip).limit(limit);
     const total = await Coupon.count({});
     res.status(200).json({ coupons: coupons, total: total });
   } catch (err) {

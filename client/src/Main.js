@@ -160,7 +160,8 @@ const Main = () => {
           <PrivateRoute exact path='/coupons' component={ViewCoupons} />
           <PrivateRoute exact path='/coupons/type' component={SelectType} />
            <PrivateRoute exact path='/coupons/add' component={AddCoupons} />
-          
+          <PrivateRoute exact path='/coupons/edit/:couponId' component={AddCoupons} />
+
           <PrivateRoute exact path='/Error' component={Error} />
         </Switch>
       </Router>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
- GET_COUPONS,
+  GET_COUPONS,
   COUPON_ERROR,
   COUPON_LOADING,
   COUPON_SAVED,
@@ -11,10 +11,11 @@ import {
 import { setAlert } from "./alert";
 
 // Add new Coupon
-export const addNewCoupon = (product) => async (dispatch) => {
+export const addNewCoupon = (coupon) => async (dispatch) => {
   dispatch({ type: COUPON_LOADING });
+  console.log("coupon",coupon)
   try {
-    const res = await axios.post("/api/coupons/add", product);
+    const res = await axios.post("/api/coupons/add", coupon);
     dispatch({
       type: COUPON_SAVED,
     });
@@ -26,21 +27,24 @@ export const addNewCoupon = (product) => async (dispatch) => {
       errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
     }
     dispatch({
-      type: PRODUCT_ERROR,
+      type: COUPON_ERROR,
     });
   }
 };
 
 // get All Coupons
-export const getAllCoupons = (page) => async (dispatch) => {
+export const getAllCoupons = (page, coupon_status) => async (dispatch) => {
   dispatch({ type: COUPON_LOADING });
   try {
-    const currentPage = page || 1;
-    const res = await axios.post(`/api/coupons/`,{currentPage:currentPage});
+    let obj = {
+      currentPage: page || 1,
+      coupon_status: coupon_status || "active",
+    };
+    const res = await axios.post(`/api/coupons/`, obj);
     dispatch({
       type: GET_COUPONS,
       payload: {
-        products: res.data.products,
+        coupons: res.data.coupons,
         total: res.data.total,
       },
     });
@@ -52,9 +56,8 @@ export const getAllCoupons = (page) => async (dispatch) => {
   }
 };
 
-
 export const getCouponById = (id) => async (dispatch) => {
-  dispatch({ type: PRODUCTS_LOADING });
+  dispatch({ type: COUPON_LOADING });
 
   try {
     const res = await axios.get(`/api/coupons/${id}`);
@@ -72,7 +75,7 @@ export const getCouponById = (id) => async (dispatch) => {
 
 // Update Coupon
 export const updateCoupon = (product, id) => async (dispatch) => {
-  dispatch({ type: PRODUCTS_LOADING });
+  dispatch({ type: COUPON_LOADING });
 
   const config = {
     headers: {
@@ -100,12 +103,9 @@ export const updateCoupon = (product, id) => async (dispatch) => {
 };
 // changeStatus
 
-
-
-
 // Delete Coupon
 export const deleteCoupon = (id) => async (dispatch) => {
-  dispatch({ type: PRODUCTS_LOADING });
+  dispatch({ type: COUPON_LOADING });
 
   try {
     const res = await axios.delete(`/api/coupons/${id}`);
