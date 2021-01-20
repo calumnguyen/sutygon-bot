@@ -35,11 +35,27 @@ const ProductSchema = new mongoose.Schema({
             {
               barcode: Number,
               isLost: { type: Boolean, default: false },
-
-              // isRented: { type: Boolean, default: false },
-
               isRented: { type: Boolean, default: false },
-
+              quality: { type: String, default: 'good-condition',enum:['good-condition', 'minor-damage', 'major-damage'] },
+              status:{type:String, default: 'Active',enum:['Active', 'Disable']},
+              authorization_logs: [
+                {
+                  _id: false,
+                  employee_id: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'user',
+                  },
+                  employee_name: String,
+                  date: { type: Date, default: Date.now },
+                  message: String, // eg : authorized for Update, Added item to inventoy
+                },
+              ],
+              images:[{
+                _id: false,
+                img:{type:String},
+                date: { type: Date, default: Date.now },
+              },
+              ],
 
             },
           ],
@@ -51,7 +67,10 @@ const ProductSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-} 
-)
+},
+{ timestamps: true }
 
-module.exports = Product = mongoose.model('product', ProductSchema)
+)
+ProductSchema.set('autoIndex', true);
+module.exports = Product = mongoose.model('products', ProductSchema);
+

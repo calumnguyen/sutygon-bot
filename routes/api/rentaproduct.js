@@ -164,7 +164,7 @@ router.delete("/:id", auth, async (req, res) => {
 // @access Private
 router.get(
   "/search",
-  //  auth,
+   auth,
   async (req, res) => {
     try {
       const result = await Customer.find({
@@ -482,8 +482,11 @@ router.post("/:id/status/cancel", auth, async (req, res) => {
       employee_name: req.user.name,
       status: "cancel",
       message: `Order cancelled.`,
-    };
-
+    }
+    const { barcodes } = await RentedProduct.findById(req.params.id).select(
+      'barcodes'
+    )
+    
     const rentedProducts = await RentedProduct.findByIdAndUpdate(
       { _id: req.params.id },
       {
@@ -570,6 +573,7 @@ router.get("/:id/orderitems", auth, async (req, res) => {
               // If barcode is matched.
               if (barcode.barcode == bcode) {
                 // Updating details of single product..
+
                 // Created new object to avoid references.
                 let singleProdDetails = new Object();
                 singleProdDetails.name = singleProduct.name;
@@ -622,4 +626,20 @@ router.get("/status/pickuptoday", auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+router.get('/:barcode/findorderbybarcode', auth,async (req, res) => {
+  try {
+    const result = await RentedProduct.find({
+      "barcodes": {$eq:(req.params.barcode)},
+  }).populate('customer')
+  .sort({ updatedAt: -1 })
+
+  return res.status(200).json(result)
+
+ } catch (err) {
+    console.log(err)
+    res.status(500).send('Server Error!')
+  }
+})
+
+
+module.exports = router

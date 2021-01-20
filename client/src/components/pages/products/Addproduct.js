@@ -16,7 +16,6 @@ import shortid from "shortid";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
 import "../../../custom.css";
-import { lte } from "lodash";
 
 class AddProduct extends Component {
   state = {
@@ -43,7 +42,6 @@ class AddProduct extends Component {
 
   async componentDidMount() {
     // check form is to Add or Edit
-    console.log(this.props.location);
     if (this.props.match.params.id) {
       const id = this.props.match.params.id;
       await this.props.getProductById(id);

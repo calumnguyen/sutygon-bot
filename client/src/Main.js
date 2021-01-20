@@ -47,7 +47,8 @@ import EditUser from './components/pages/users/EditUser'
 // import SalaryUpdate from './components/pages/users/SalaryUpdate'
 import StoreClosed from './components/pages/StoreClosed'
 import ViewCoupons from './components/pages/coupons/ViewCoupons';
-import AddCoupons from './components/pages/coupons/AddCoupons';
+import AddCoupons from './components/pages/coupons/AddCoupons'
+import IndividualBarcode from './components/pages/IndividualItem'
 import SelectType from './components/pages/coupons/SelectType';
 
 
@@ -155,6 +156,7 @@ const Main = () => {
 
           {/* barcode */}
           <PrivateRoute exact path='/barcode' component={Barcode} />
+          <PrivateRoute exact path='/individualbarcode/:id' component={IndividualBarcode} />
           {/* ViewCoupons */}
           
           <PrivateRoute exact path='/coupons' component={ViewCoupons} />

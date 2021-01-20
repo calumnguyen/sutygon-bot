@@ -138,6 +138,200 @@ router.post("/index_update/:id", auth, async (req, res) => {
   }
 });
 
+// @route  POST api/products/:barcode/:quality/quality_update
+// @desc   Update quality from individual barcode page
+// @access Private
+router.post("/:barcode/:quality/quality_update", auth, async (req, res) => {
+  try {
+    readyLog = {
+      employee_id: req.user.id,
+      employee_name: req.user.name,
+      message: `Quality is updated to ${req.params.quality}`,
+    };
+    const body = req.body;
+    let singleProduct = await Product.findOne(
+      {
+        "color.sizes.barcodes": {
+          $elemMatch: { barcode: parseInt(req.params.barcode) },
+        },
+      },
+      { color: 1, name: 1, productId: 1 }
+    );
+    // To avoid nulls if no product is found with the barcode...
+    let eachProdColorArr = [];
+
+    if (singleProduct) {
+      // console.log(singleProduct)
+      // Get colours for each barcode.
+      singleProduct.color.forEach((clr) => {
+        // Push in color array for traversing it later.
+        eachProdColorArr.push(clr);
+      });
+      // console.log(eachProdColorArr);
+      // Now traverse through each color.
+      eachProdColorArr.forEach((prodclr) => {
+        // Traverse through sizes array.
+        prodclr.sizes.forEach((psize) => {
+          // Traverse through each barcode inside the barcode array inside the sizes array...
+          for (barcode of psize.barcodes) {
+            // If barcode is matched.
+            if (barcode.barcode == req.params.barcode) {
+              const barcode_log = [...barcode.authorization_logs, readyLog];
+              barcode.quality = req.params.quality;
+              barcode.authorization_logs = barcode_log;
+              singleProduct.save();
+            }
+          }
+        });
+      });
+    }
+    res.json({ singleProduct, msg: "Quality Updated Successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+  }
+});
+
+// @route  POST api/products/status_update/:id
+// @desc   Update status from individual barcode page
+// @access Private
+router.post("/:barcode/:status/status_update", auth, async (req, res) => {
+  try {
+    readyLog = {
+      employee_id: req.user.id,
+      employee_name: req.user.name,
+      message: `Item is ${req.params.status}`,
+    };
+    const body = req.body;
+    let singleProduct = await Product.findOne(
+      {
+        "color.sizes.barcodes": {
+          $elemMatch: { barcode: parseInt(req.params.barcode) },
+        },
+      },
+      { color: 1, name: 1, productId: 1 }
+    );
+    // To avoid nulls if no product is found with the barcode...
+    let eachProdColorArr = [];
+
+    if (singleProduct) {
+      // console.log(singleProduct)
+      // Get colours for each barcode.
+      singleProduct.color.forEach((clr) => {
+        // Push in color array for traversing it later.
+        eachProdColorArr.push(clr);
+      });
+      // console.log(eachProdColorArr);
+      // Now traverse through each color.
+      eachProdColorArr.forEach((prodclr) => {
+        // Traverse through sizes array.
+        prodclr.sizes.forEach((psize) => {
+          // Traverse through each barcode inside the barcode array inside the sizes array...
+          for (barcode of psize.barcodes) {
+            // If barcode is matched.
+            if (barcode.barcode == req.params.barcode) {
+              const barcode_log = [...barcode.authorization_logs, readyLog];
+              barcode.status = req.params.status;
+              barcode.authorization_logs = barcode_log;
+              singleProduct.save();
+            }
+          }
+        });
+      });
+    }
+    res.json({ singleProduct, msg: "Status Updated Successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+  }
+});
+
+// @route  POST api/products/:barcode/image_update
+// @desc   Update image of individual barcode page
+// @access Private
+router.post(
+  "/:barcode/image_update",
+  auth,
+  upload.any("image"),
+  async (req, res) => {
+    try {
+      var files = req.files;
+      const all_paths = [];
+      let singleProduct = await Product.findOne(
+        {
+          "color.sizes.barcodes": {
+            $elemMatch: { barcode: parseInt(req.params.barcode) },
+          },
+        },
+        { color: 1, name: 1, productId: 1 }
+      );
+    
+      if (files) {
+        files.forEach((file) => all_paths.push(file.path));
+      }
+      readyLog = {
+        employee_id: req.user.id,
+        employee_name: req.user.name,
+        message: `Added ${all_paths.length} ${
+          all_paths.length == 1 ? "image" : "images"
+        }`,
+      };
+      const images = new Array();
+      if (all_paths) {
+        all_paths.forEach(function (path) {
+          cloudinary.uploader.upload(path, async function (result) {
+            images.push({ img: result.secure_url });
+          });
+        });
+      }
+
+      // To avoid nulls if no product is found with the barcode...
+      let eachProdColorArr = [];
+
+      if (singleProduct) {
+        // Get colours for each barcode.
+        singleProduct.color.forEach((clr) => {
+          // Push in color array for traversing it later.
+          eachProdColorArr.push(clr);
+        });
+        // Now traverse through each color.
+        eachProdColorArr.forEach((prodclr) => {
+          // Traverse through sizes array.
+          prodclr.sizes.forEach((psize) => {
+            // Traverse through each barcode inside the barcode array inside the sizes array...
+            for (barcode of psize.barcodes) {
+              // If barcode is matched.
+              if (barcode.barcode == req.params.barcode) {
+                setTimeout(function () {
+                  let barcode_log = [...barcode.authorization_logs, readyLog];
+                  let all_images = barcode.images.concat(images);  
+                  barcode.authorization_logs = barcode_log;
+                  barcode.images = all_images;
+                  singleProduct.save();
+                }, 2000);
+
+              }
+            }
+          });
+        });
+      }
+      setTimeout(function () {
+        res.json({ singleProduct, msg: "Image Updated Successfully" });
+      }, 2050);
+        
+    } catch (err) {
+      console.error(err.message);
+      res
+        .status(500)
+        .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+    }
+  }
+);
+
 // @route  POST api/products/changeStatus/:id
 // @desc   changeStatus
 // @access Private
@@ -151,6 +345,32 @@ router.post("/changeStatus/:id/:status", auth, async (req, res) => {
         },
       }
     );
+
+    let eachProdColorArr = [];
+
+    let singleProduct = await Product.findById({
+      _id: req.params.id,
+    });
+    //go in all barcodes of single product and disable thier status
+    if (singleProduct && req.params.status == "true") {
+      // Get colours for each barcode.
+      singleProduct.color.forEach((clr) => {
+        // Push in color array for traversing it later.
+        eachProdColorArr.push(clr);
+      });
+      // Now traverse through each color.
+      eachProdColorArr.forEach((prodclr) => {
+        // Traverse through sizes array.
+        prodclr.sizes.forEach((psize) => {
+          // Traverse through each barcode inside the barcode array inside the sizes array...
+          for (barcode of psize.barcodes) {
+            //update barcode status
+            barcode.status = "Disable";
+          }
+        });
+      });
+      singleProduct.save();
+    }
     res.json({ msg: "Product Status changed Successfully" });
   } catch (err) {
     console.error(err.message);
@@ -376,7 +596,7 @@ router.delete(
 // @route  GET api/products/getsize/:color_id/:size_id
 // @desc   get individual size quantity
 // @access Private
-router.get("/:color_id/:size_id", async (req, res) => {
+router.get("/:color_id/:size_id",auth, async (req, res) => {
   try {
     let singleProduct = await Product.findOne(
       {

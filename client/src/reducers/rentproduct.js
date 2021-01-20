@@ -12,6 +12,7 @@ import {
   RENTPRODUCT_CANCEL,
   RENTPRODUCT_ITEMS,
   RENTPRODUCT_STATUS_SEARCH,
+  GET_BARCODE_ORDER,
 } from '../actions/types'
 const initialState = {
   rentproduct: null,
@@ -21,6 +22,7 @@ const initialState = {
   // saved: false,
   generateInvoice: false,
   orderItems: null,
+  barcoderec:null,
   error: {},
 }
 
@@ -56,6 +58,14 @@ export default function (state = initialState, action) {
         lastrecord: payload,
         loading: false,
         generateInvoice: true,
+      }
+    case GET_BARCODE_ORDER:
+      return{
+        ...state,
+        barcoderec: payload,
+        loading: false,
+        generateInvoice: true,
+
       }
 
     case RENTPRODUCT_SAVED:
