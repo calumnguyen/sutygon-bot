@@ -23,9 +23,9 @@ import { OCAlert } from "@opuscapita/react-alerts";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import moment from "moment";
 import BootstrapTable from "react-bootstrap-table-next";
-import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import "../../custom.css";
 import Switch from "react-switch";
+import Pagination from "./Page";
 
 class IndividualBarcode extends Component {
   state = {
@@ -43,6 +43,8 @@ class IndividualBarcode extends Component {
     modal_product: null,
     image: "",
     images: [],
+    m_imgperpage: [],
+    m_logsperpage: [],
   };
 
   async componentDidMount() {
@@ -116,75 +118,71 @@ class IndividualBarcode extends Component {
 
   authorizationLogsTable() {
     const authLogArr = [];
-    const { authLog } = this.state;
-
-    if (authLog) {
-      authLog.sort(function (a, b) {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      });
-    }
-    if (authLog) {
-      authLog.forEach((log, idx) => {
-        authLogArr.push({
-          sno: idx + 1,
-          date: moment(log.date).format("ddd, MMM Do YYYY"),
-          // date: log.date,
-          employee_name: log.employee_name,
-          message: log.message,
+    const { m_logsperpage } = this.state;
+    if (m_logsperpage) {
+      if (m_logsperpage) {
+        m_logsperpage.forEach((log, idx) => {
+          authLogArr.push({
+            sno: idx + 1,
+            date: moment(log.date).format("ddd, MMM Do YYYY"),
+            // date: log.date,
+            employee_name: log.employee_name,
+            message: log.message,
+          });
         });
-      });
+      }
+      const columns = [
+        {
+          dataField: "sno",
+          text: "#",
+          sort: true,
+        },
+        {
+          dataField: "date",
+          text: "Date",
+          sort: true,
+        },
+        {
+          dataField: "employee_name",
+          text: "Employee",
+          sort: true,
+        },
+        {
+          dataField: "message",
+          text: "Log",
+          sort: true,
+        },
+      ];
+
+      return (
+        <BootstrapTable // bootstrap4
+          keyField="id"
+          data={authLogArr.length === 0 ? [] : authLogArr}
+          columns={columns}
+          search
+        />
+      );
+      // return m_logsperpage.map((log) => (
+      //      <>
+      //        <tr>
+      //          <td className="text-center text-muted">
+      //            {log.sno}
+      //          </td>
+      //          <td className="text-center">
+      //            {moment(log.date).format("ddd, MMM Do YYYY")}
+      //          </td>
+      //          <td className="text-center">
+      //            {log.employee_name}
+      //          </td>
+      //          <td className="text-center">
+      //            {log.message}
+      //          </td>
+      //        </tr>
+      //      </>
+      //    ))
     }
-
-    const columns = [
-      {
-        dataField: "sno",
-        text: "#",
-        sort: true,
-      },
-      {
-        dataField: "date",
-        text: "Date",
-        sort: true,
-      },
-      {
-        dataField: "employee_name",
-        text: "Employee",
-        sort: true,
-      },
-      {
-        dataField: "message",
-        text: "Log",
-        sort: true,
-      },
-    ];
-
-    const defaultSorted = [
-      {
-        dataField: "contactnumber",
-        order: "asc",
-      },
-    ];
-
-    return (
-      <ToolkitProvider
-        keyField="id"
-        data={authLogArr.length > 0 ? authLogArr : []}
-        columns={columns}
-        defaultSorted={defaultSorted}
-      >
-        {(props) => (
-          <div>
-            <BootstrapTable {...props.baseProps} />
-            <br />
-          </div>
-        )}
-      </ToolkitProvider>
-    );
   }
 
-  onChangePage = (page) => {
-    this.setState({ page: page });
-  };
   getViewModal = () => {
     let product = this.state.modal_product;
     if (product) {
@@ -294,7 +292,6 @@ class IndividualBarcode extends Component {
     this.setState({ imgupdating: true });
 
     const formData = new FormData();
-    console.log(state.images);
     if (this.state.images.length == 0) {
       OCAlert.alertError("Please Upload Image", { timeOut: 3000 });
       this.setState({ imgupdating: false });
@@ -569,6 +566,12 @@ class IndividualBarcode extends Component {
       this.setState({ status: "Disable" });
     }
   };
+  onChangePage_Auth = (paggedArr) => {
+    this.setState({ m_logsperpage: paggedArr });
+  };
+  onChangePage = (paggedArr) => {
+    this.setState({ m_imgperpage: paggedArr });
+  };
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
@@ -663,7 +666,7 @@ class IndividualBarcode extends Component {
                               </span>{" "}
                               Good Condition
                             </label>
-                            <label className="radio-inline _radio mr-5 ml-4">
+                            <label className="radio-inline _radio">
                               <input
                                 type="radio"
                                 name="quality"
@@ -677,7 +680,7 @@ class IndividualBarcode extends Component {
                               </span>{" "}
                               Minor Damage{" "}
                             </label>
-                            <label className="radio-inline _radio">
+                            <label className="radio-inline _radio ml-4">
                               <input
                                 type="radio"
                                 name="quality"
@@ -782,7 +785,6 @@ class IndividualBarcode extends Component {
                                 name="image"
                                 type="file"
                                 className="form-control-file file btn btn-raised shadow-z-1-hover"
-                                // style={{ marginRight: "200px" }}
                                 id="projectinput8"
                                 accept="image/jpeg,image/gif,image/jpg,image/png,image/x-eps"
                                 onChange={(e) => this._onChange(e)}
@@ -821,39 +823,33 @@ class IndividualBarcode extends Component {
                         )}
                         <tr>
                           <td colspan="1"></td>
-                          <td>
-                          <div className="row mt-n3">
-                            {this.state.images.length > 0 &&
-                              this.state.images.map((image) => {
-
-                                return (
-                                  <div className="gallery_img">
-                                    <img
-                                      src={URL.createObjectURL(image.img)}
-                                     alt="Avatar"
-                                        className="image"
-                                        width="120"
-                                        height="100"                                    />
-                                    <div class="desc">
-                                    <button
-                                            type="button"
-                                            className="close"
-                                            onClick={(e) =>
-                                              this.deleteImage(e, image.id)
-                                            }
-                                          >
-                                            {" "}
-                                            <span aria-hidden="true">
-                                              &times;
-                                            </span>
-                                          </button>{" "}
+                          <td >
+                            <div className="mt-n3">
+                              {this.state.images.length > 0 &&
+                                this.state.images.map((image) => {
+                                  return (
+                                    <div className="hovereffect w-25">
+                                      <img
+                                        className="img-responsive"
+                                        src={URL.createObjectURL(image.img)}
+                                        width="140"
+                                        height="100"
+                                        alt=""
+                                      />
+                                      <div className="overlay">
+                                        <h2 className="">
+                                          <i className="fa fa-trash mt-3"
+                                          onClick={(e) =>
+                                            this.deleteImage(e, image.id)
+                                          }
+                                          ></i>
+                                          
+                                        </h2>
+                                      </div>
                                     </div>
-                                  
-                                  </div>
-                                );
-                              })}
-                          </div>
-
+                                  );
+                                })}
+                            </div>
                           </td>
                         </tr>
                       </table>
@@ -866,50 +862,57 @@ class IndividualBarcode extends Component {
                     <>
                       <div className="card">
                         <div className="card-header">
-                          <h3 className="form-section mt-2">
+                          <h3 className="form-section">
                             <i className="ft-info"></i> Orders with this item
                             <hr />
                           </h3>
                         </div>
-                        <div className="card-body mt-n2">
+                        <div className="card-body mx-2 mt-n3">
                           {this.getOrderTable()}
                         </div>
                       </div>
                       <div className="card">
                         <div className="card-header">
-                          <h3 className="form-section ">
+                          <h3 className="form-section">
                             <i className="ft-info"></i> Authorization Logs
                             <hr />
                           </h3>
                         </div>
-                        <div className="card-body mt-n2">
+                        <div className="card-body mx-2 mt-n4">
+                          <Pagination
+                            items={this.state.authLog}
+                            onChangePage={(e) => this.onChangePage_Auth(e)}
+                          />
+
                           {this.authorizationLogsTable()}
                         </div>
                       </div>
 
                       <div className="card">
                         <div className="card-header">
-                          <h3 className="form-section mt-2">
+                          <h3 className="form-section">
                             <i className="fa fa-th"></i> Images
                             <hr />
                           </h3>
                         </div>
-                        <div className="card-body mt-n2">
-                          <div className="row">
-                            {this.state.images_Arr.length > 0 &&
-                              this.state.images_Arr.map((image) => {
-                                return (
-                                  <div class="gallery">
-                                    <img
-                                      src={image.img}
-                                      alt="Item"
-                                      width="600"
-                                      height="400"
-                                    />
-                                    {/* <div class="desc">Add a description of the image here</div> */}
-                                  </div>
-                                );
-                              })}
+                        <div className="card-body mx-2">
+                          <div className="row mx-1 mt-n4">
+                            <Pagination
+                              items={this.state.images_Arr}
+                              onChangePage={(e) => this.onChangePage(e)}
+                            />
+                            <div className="product-container image-gallery w-100">
+                              {this.state.m_imgperpage.map((image) => (
+                                <div className="products">
+                                  <img
+                                    src={image.img}
+                                    alt="Item"
+                                    width={180}
+                                    height={180}
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
