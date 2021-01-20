@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import shortid from "shortid";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
-import TagsInput from "./TagInput";
+
 class AddCoupons extends Component {
   state = {
     couponId: "",
@@ -30,6 +30,7 @@ class AddCoupons extends Component {
     code: "",
     start_date: "",
     end_date: "",
+    tag: "",
     tags: [],
     eligibility: "all",
     product_ids: [],
@@ -74,9 +75,6 @@ class AddCoupons extends Component {
     return result;
   };
 
-  handleTagsChange(tags) {
-    this.setState({ tags: tags });
-  }
 
   onSubmit = async () => {
     if (this.state.discount_amount === "") {
@@ -117,11 +115,15 @@ class AddCoupons extends Component {
     }
 
     if (this.state.eligibility !== "all") {
-      if (this.state.product_ids.length == 0 || this.state.product_tags.length==0) {
-             OCAlert.alertError("Product Ids Or Tags Are Required", { timeOut: 3000 });
-      return;
-          }
-     
+      if (
+        this.state.product_ids.length == 0 ||
+        this.state.product_tags.length == 0
+      ) {
+        OCAlert.alertError("Product Ids Or Tags Are Required", {
+          timeOut: 3000,
+        });
+        return;
+      }
     }
 
     const {
@@ -147,14 +149,14 @@ class AddCoupons extends Component {
       max_payout,
       number_of_use_per_customer,
       max_life,
-      note: this.state.note,
+      note,
       code,
       start_date,
       end_date,
       tags: coma_tags,
       eligibility,
-      product_ids:product_ids,
-      product_tags:product_tags,
+      product_ids: product_ids,
+      product_tags: product_tags,
     };
 
     if (min_requirement) {
@@ -164,20 +166,20 @@ class AddCoupons extends Component {
     if (this.state.couponId === "") {
       await this.props.addNewCoupon(formData);
 
-       this.setState({
-          discount_amount: "",
-          max_payout: "",
-          number_of_use_per_customer: "",
-          max_life: "",
-          note:'',
-         code:'',
-          start_date: '',
-          end_date:'',
-          // tags: coupon.tags,
-          eligibility: 'all',
-          product_ids: [],
-          product_tags:[],
-        });
+      this.setState({
+        discount_amount: "",
+        max_payout: "",
+        number_of_use_per_customer: "",
+        max_life: "",
+        note: "",
+        code: "",
+        start_date: "",
+        end_date: "",
+        tags: "",
+        // eligibility: "all",
+        product_ids: [],
+        product_tags: [],
+      });
     } else {
       await this.props.updateCoupon(formData, this.state.couponId);
     }
@@ -269,6 +271,7 @@ class AddCoupons extends Component {
                                 <div class="input-group">
                                   <input
                                     type="number"
+                                    min={0}
                                     id="discount_amount"
                                     className="form-control border-primary"
                                     placeholder=" Amount Discount"
@@ -282,7 +285,7 @@ class AddCoupons extends Component {
                                     value={this.state.discount_amount}
                                   />
                                   <span class="input-group-addon p-1 px-2">
-                                    {coupon_type == "percentage" ? "%" : "VDN"}
+                                    {coupon_type == "percentage" ? "%" : "VND"}
                                   </span>
                                 </div>
                               </div>
@@ -298,18 +301,24 @@ class AddCoupons extends Component {
                                   Max payout
                                 </label>
                                 <div className="col-md-8">
-                                  <input
-                                    type="number"
-                                    id="max_payout"
-                                    className="form-control border-primary"
-                                    placeholder="Max payout (VND) "
-                                    name="max_payout"
-                                    // required
-                                    onChange={(e) =>
-                                      this.handleChange(e, "max_payout")
-                                    }
-                                    value={this.state.max_payout}
-                                  />
+                                  <div class="input-group">
+                                    <input
+                                      type="number"
+                                      min={0}
+                                      id="max_payout"
+                                      className="form-control border-primary"
+                                      placeholder="Max payout (VND) "
+                                      name="max_payout"
+                                      // required
+                                      onChange={(e) =>
+                                        this.handleChange(e, "max_payout")
+                                      }
+                                      value={this.state.max_payout}
+                                    />
+                                    <span class="input-group-addon p-1 px-2">
+                                      VND
+                                    </span>{" "}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -323,18 +332,24 @@ class AddCoupons extends Component {
                                 Min-requirement (optional)
                               </label>
                               <div className="col-md-8">
-                                <input
-                                  type="number"
-                                  id="min_requirement"
-                                  className="form-control border-primary"
-                                  placeholder="Min-requirement (VND)"
-                                  name="min_requirement"
-                                  // required
-                                  onChange={(e) =>
-                                    this.handleChange(e, "min_requirement")
-                                  }
-                                  value={this.state.min_requirement}
-                                />
+                                <div class="input-group">
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    id="min_requirement"
+                                    className="form-control border-primary"
+                                    placeholder="Min-requirement (VND)"
+                                    name="min_requirement"
+                                    // required
+                                    onChange={(e) =>
+                                      this.handleChange(e, "min_requirement")
+                                    }
+                                    value={this.state.min_requirement}
+                                  />
+                                  <span class="input-group-addon p-1 px-2">
+                                    VND
+                                  </span>{" "}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -346,22 +361,28 @@ class AddCoupons extends Component {
                                 className="col-md-4 label-control"
                                 htmlFor="max_life"
                               >
-                                Max Life*
+                                Max times for life *
                               </label>
                               <div className="col-md-8">
-                                <input
-                                  type="number"
-                                  id="max_life"
-                                  className="form-control border-primary"
-                                  placeholder="Max Life*"
-                                  name="max_life"
-                                  // required
-                                  onChange={(e) =>
-                                    this.handleChange(e, "max_life")
-                                  }
-                                  // onBlur={(e) => this.validateEmail(e)}
-                                  value={this.state.max_life}
-                                />
+                                <div class="input-group">
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    id="max_life"
+                                    className="form-control border-primary"
+                                    placeholder="Max times for life"
+                                    name="max_life"
+                                    // required
+                                    onChange={(e) =>
+                                      this.handleChange(e, "max_life")
+                                    }
+                                    // onBlur={(e) => this.validateEmail(e)}
+                                    value={this.state.max_life}
+                                  />
+                                  <span class="input-group-addon p-1 px-2">
+                                    Times
+                                  </span>{" "}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -371,25 +392,33 @@ class AddCoupons extends Component {
                                 className="col-md-4 label-control"
                                 htmlFor="number_of_use_per_customer"
                               >
-                                Number of Use per customer*
+                                Max times per customer*
                               </label>
                               <div className="col-md-8">
-                                <input
-                                  type="number"
-                                  id="number_of_use_per_customer"
-                                  className="form-control border-primary"
-                                  placeholder="Number of Use*"
-                                  name="number_of_use_per_customer"
-                                  // required
-                                  onChange={(e) =>
-                                    this.handleChange(
-                                      e,
-                                      "number_of_use_per_customer"
-                                    )
-                                  }
-                                  // onBlur={(e) => this.validateEmail(e)}
-                                  value={this.state.number_of_use_per_customer}
-                                />
+                                <div class="input-group">
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    id="number_of_use_per_customer"
+                                    className="form-control border-primary"
+                                    placeholder="Number of Use*"
+                                    name="number_of_use_per_customer"
+                                    // required
+                                    onChange={(e) =>
+                                      this.handleChange(
+                                        e,
+                                        "number_of_use_per_customer"
+                                      )
+                                    }
+                                    // onBlur={(e) => this.validateEmail(e)}
+                                    value={
+                                      this.state.number_of_use_per_customer
+                                    }
+                                  />
+                                  <span class="input-group-addon p-1 px-2">
+                                    Times
+                                  </span>{" "}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -454,7 +483,7 @@ class AddCoupons extends Component {
                                 className="col-md-2 label-control"
                                 htmlFor="code"
                               >
-                                COUPON Code
+                                Coupon Code
                               </label>
                               <div className="col-md-4">
                                 <input
@@ -512,21 +541,71 @@ class AddCoupons extends Component {
                           <div className="col-md-12">
                             <div className="form-group row">
                               <label
-                                className="col-md-3 label-control"
+                                className="col-md-2 label-control"
                                 htmlFor="Coupon tags"
                               >
                                 Coupon tags*
                               </label>
                               <div className="col-md-9">
-                                <TagsInput
-                                  value={this.state.tags}
-                                  onChange={this.handleTagsChange}
+                                <input
+                                  type="text"
+                                  id="Coupon tags"
+                                  className="form-control border-primary"
+                                  placeholder="Coupon tags"
+                                  onChange={(e) =>
+                                    this.setState({
+                                      tag: e.target.value,
+                                    })
+                                  }
+                                  value={this.state.tag}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      const { tag } = this.state;
+                                      if (tag == "") {
+                                        OCAlert.alertError("Enter Coupon Tag", {
+                                          timeOut: 3000,
+                                        });
+                                        return;
+                                      } else {
+                                        this.setState({
+                                          tags: [...this.state.tags, tag],
+                                          tag: "",
+                                        });
+                                      }
+                                    }
+                                  }}
                                 />
+                                <p>
+                                  {this.state.tags &&
+                                    this.state.tags.map((entry1, index) => {
+                                      return (
+                                        <span
+                                          className="product_tag"
+                                          onClick={() => {
+                                            let result = this.state.tags.filter(
+                                              (k) => k !== entry1
+                                            );
+                                            this.setState({
+                                              tags: result,
+                                            });
+                                          }}
+                                          key={index}
+                                        >
+                                          {entry1}
+                                        </span>
+                                      );
+                                    })}
+                                </p>
+                               
                               </div>
                             </div>
                           </div>
                         </div>
-
+                        <div className="row">
+                          <div className="col-md-12">
+                            <p>Eligible products </p>
+                          </div>
+                        </div>
                         <div className="row">
                           <div className="col-md-12">
                             <div className="form-group row">
@@ -613,9 +692,11 @@ class AddCoupons extends Component {
                                 <div className="col-md-8">
                                   <input
                                     type="number"
+                                    min={1}
+                                    max={1}
                                     id="productId"
                                     className="form-control border-primary"
-                                    placeholder="Add item 6-digit PRODUCT ID"
+                                    placeholder="Add  6-digit Product ID"
                                     name="productId"
                                     onChange={(e) => {
                                       if (this.state.productId.length < 6) {
@@ -651,7 +732,7 @@ class AddCoupons extends Component {
                                       }
                                     }}
                                   />
-                                    <p>
+                                  <p>
                                     {this.state.product_ids &&
                                       this.state.product_ids.map(
                                         (entry2, index) => {
@@ -694,13 +775,23 @@ class AddCoupons extends Component {
                                     onKeyDown={(e) => {
                                       if (e.key === "Enter") {
                                         const { productTag } = this.state;
-                                        this.setState({
-                                          product_tags: [
-                                            ...this.state.product_tags,
-                                            productTag,
-                                          ],
-                                          productTag: "",
-                                        });
+                                        if (productTag == "") {
+                                          OCAlert.alertError(
+                                            "Enter Product Tag",
+                                            {
+                                              timeOut: 3000,
+                                            }
+                                          );
+                                          return;
+                                        } else {
+                                          this.setState({
+                                            product_tags: [
+                                              ...this.state.product_tags,
+                                              productTag,
+                                            ],
+                                            productTag: "",
+                                          });
+                                        }
                                       }
                                     }}
                                   />

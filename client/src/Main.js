@@ -47,6 +47,7 @@ import EditUser from './components/pages/users/EditUser'
 // import SalaryUpdate from './components/pages/users/SalaryUpdate'
 import StoreClosed from './components/pages/StoreClosed'
 import ViewCoupons from './components/pages/coupons/ViewCoupons';
+import CouponDetail from './components/pages/coupons/CouponDetail'
 import AddCoupons from './components/pages/coupons/AddCoupons'
 import IndividualBarcode from './components/pages/IndividualItem'
 import SelectType from './components/pages/coupons/SelectType';
@@ -162,7 +163,7 @@ const Main = () => {
           <PrivateRoute exact path='/coupons' component={ViewCoupons} />
           <PrivateRoute exact path='/coupons/type' component={SelectType} />
            <PrivateRoute exact path='/coupons/add' component={AddCoupons} />
-          <PrivateRoute exact path='/coupons/edit/:couponId' component={AddCoupons} />
+          <PrivateRoute exact path='/coupons/view/:couponId' component={CouponDetail} />
 
           <PrivateRoute exact path='/Error' component={Error} />
         </Switch>

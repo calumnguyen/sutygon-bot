@@ -108,7 +108,7 @@ margin-bottom: 0 !important;
 
 /*  */
 
-.tags-input {
+/* .tags-input {
   display: inline-flex;
   margin: 0 auto;
   padding: 5px;
@@ -119,22 +119,22 @@ margin-bottom: 0 !important;
 }
 .tag {
   margin-right: 5px;
-}
+} */
 
-.taginsideinput {
+/* .taginsideinput {
   width: 100%;
   border: none;
   outline: none;
-}
+} */
 
-.tag {
+/* .tag {
   display: inline-flex;
   padding: 2px 5px;
   background-color: #cecece;
   border-radius: 3px;
-}
+} */
 
-.button.delete {
+/* .button.delete {
   display: inline-block;
   margin-left: 5px;
   padding: 0;
@@ -149,15 +149,15 @@ margin-bottom: 0 !important;
   border: none;
   outline: none;
   user-select: none;
-}
-.delete:after {
+} */
+/* .delete:after {
   content: "X";
   width: 15px;
   height: 15px;
   color: "red";
   line-height: 15px;
   text-align: center;
-}
+} */
 
 .product_tag {
   margin-right: 5px;
@@ -175,6 +175,12 @@ margin-bottom: 0 !important;
   content: "X";
   width: 15px;
   height: 15px;
+  color: red;
   line-height: 15px;
   text-align: center;
+}
+
+.product_tag:hover {
+  cursor: pointer;
+  background-color: "red";
 }

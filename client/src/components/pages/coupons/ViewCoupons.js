@@ -71,7 +71,7 @@ class ViewCoupons extends Component {
               className="success p-0"
             >
               <i
-                className="ft-eye-3 font-medium-3 mr-2 "
+                className="fa fa-eye font-medium-3 mr-2 "
                 title="View Coupons"
               ></i>
             </Link>
