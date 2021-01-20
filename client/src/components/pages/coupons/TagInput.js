@@ -48,6 +48,7 @@ class TagsInput extends React.Component {
           ))}
           <input
             type="text"
+             className="taginsideinput"
             placeholder="Enter Coupons Tags"
             onChange={this.handleChange}
             onKeyDown={this.handleKeyDown}

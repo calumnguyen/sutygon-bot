@@ -34,7 +34,8 @@ class AddCoupons extends Component {
     eligibility: "all",
     product_ids: [],
     product_tags: [],
-    sign: "%",
+    productId: "",
+    productTag: "",
   };
 
   async componentDidMount() {
@@ -78,7 +79,6 @@ class AddCoupons extends Component {
   }
 
   onSubmit = async () => {
-  
     if (this.state.discount_amount === "") {
       OCAlert.alertError("Discount Amount Required", { timeOut: 3000 });
       return;
@@ -116,6 +116,14 @@ class AddCoupons extends Component {
       return;
     }
 
+    if (this.state.eligibility !== "all") {
+      if (this.state.product_ids.length == 0 || this.state.product_tags.length==0) {
+             OCAlert.alertError("Product Ids Or Tags Are Required", { timeOut: 3000 });
+      return;
+          }
+     
+    }
+
     const {
       tags,
       discount_amount,
@@ -139,14 +147,14 @@ class AddCoupons extends Component {
       max_payout,
       number_of_use_per_customer,
       max_life,
-      note:this.state.note,
+      note: this.state.note,
       code,
       start_date,
       end_date,
       tags: coma_tags,
       eligibility,
-      product_ids,
-      product_tags,
+      product_ids:product_ids,
+      product_tags:product_tags,
     };
 
     if (min_requirement) {
@@ -155,6 +163,21 @@ class AddCoupons extends Component {
 
     if (this.state.couponId === "") {
       await this.props.addNewCoupon(formData);
+
+       this.setState({
+          discount_amount: "",
+          max_payout: "",
+          number_of_use_per_customer: "",
+          max_life: "",
+          note:'',
+         code:'',
+          start_date: '',
+          end_date:'',
+          // tags: coupon.tags,
+          eligibility: 'all',
+          product_ids: [],
+          product_tags:[],
+        });
     } else {
       await this.props.updateCoupon(formData, this.state.couponId);
     }
@@ -245,7 +268,7 @@ class AddCoupons extends Component {
                               <div className={`col-md-8`}>
                                 <div class="input-group">
                                   <input
-                                    type="text"
+                                    type="number"
                                     id="discount_amount"
                                     className="form-control border-primary"
                                     placeholder=" Amount Discount"
@@ -276,7 +299,7 @@ class AddCoupons extends Component {
                                 </label>
                                 <div className="col-md-8">
                                   <input
-                                    type="text"
+                                    type="number"
                                     id="max_payout"
                                     className="form-control border-primary"
                                     placeholder="Max payout (VND) "
@@ -301,7 +324,7 @@ class AddCoupons extends Component {
                               </label>
                               <div className="col-md-8">
                                 <input
-                                  type="text"
+                                  type="number"
                                   id="min_requirement"
                                   className="form-control border-primary"
                                   placeholder="Min-requirement (VND)"
@@ -474,7 +497,9 @@ class AddCoupons extends Component {
                               </label>
                               <div className="col-md-8 ">
                                 <textarea
-                                  onChange={(e) => this.setState({note:e.target.value})}
+                                  onChange={(e) =>
+                                    this.setState({ note: e.target.value })
+                                  }
                                   cols="40"
                                 >
                                   {this.state.note}
@@ -503,86 +528,210 @@ class AddCoupons extends Component {
                         </div>
 
                         <div className="row">
-                          <div className="form-group row">
-                            <label
-                              className="col-md-3 label-control"
-                              htmlFor="note"
-                            >
-                              Eligible products*
-                            </label>
-                            <div className="col-md-2">
-                              <label className="radio-inline">
-                                <input
-                                  type="radio"
-                                  name="eligibility"
-                                  value="all"
-                                  onChange={(e) =>
-                                    this.setState({
-                                      eligibility: "all",
-                                    })
-                                  }
-                                  checked={this.state.eligibility === "all"}
-                                  value="male"
-                                  required
-                                />{" "}
-                                All
-                              </label>
-                            </div>
-                            <div className="col-md-2">
-                              <label className="radio-inline">
-                                <input
-                                  type="radio"
-                                  name="eligibility"
-                                  value="only"
-                                  onChange={(e) =>
-                                    this.setState({
-                                      eligibility: "only",
-                                    })
-                                  }
-                                  required
-                                  checked={this.state.eligibility === "only"}
-                                />{" "}
-                                ONLY
-                              </label>
-                            </div>
+                          <div className="col-md-12">
+                            <div className="form-group row">
+                              <div className="col-md-3">
+                                <label className="radio-inline">
+                                  <input
+                                    type="radio"
+                                    name="eligibility"
+                                    value="all"
+                                    onChange={(e) =>
+                                      this.setState({
+                                        eligibility: "all",
+                                      })
+                                    }
+                                    checked={this.state.eligibility === "all"}
+                                    value="male"
+                                    required
+                                  />{" "}
+                                  All
+                                </label>
+                              </div>
+                              <div className="col-md-3">
+                                <label className="radio-inline">
+                                  <input
+                                    type="radio"
+                                    name="eligibility"
+                                    value="only"
+                                    onChange={(e) =>
+                                      this.setState({
+                                        eligibility: "only",
+                                      })
+                                    }
+                                    required
+                                    checked={this.state.eligibility === "only"}
+                                  />{" "}
+                                  ONLY
+                                </label>
+                              </div>
 
-                            <div className="col-md-2">
-                              <label className="radio-inline">
-                                <input
-                                  type="radio"
-                                  name="eligibility"
-                                  value="exclude"
-                                  onChange={(e) =>
-                                    this.setState({
-                                      eligibility: "exclude",
-                                    })
-                                  }
-                                  required
-                                  checked={this.state.eligibility === "exclude"}
-                                />{" "}
-                                EXCLUDE
-                              </label>
-                            </div>
+                              <div className="col-md-3">
+                                <label className="radio-inline">
+                                  <input
+                                    type="radio"
+                                    name="eligibility"
+                                    value="exclude"
+                                    onChange={(e) =>
+                                      this.setState({
+                                        eligibility: "exclude",
+                                      })
+                                    }
+                                    required
+                                    checked={
+                                      this.state.eligibility === "exclude"
+                                    }
+                                  />{" "}
+                                  EXCLUDE
+                                </label>
+                              </div>
 
-                            <div className="col-md-3">
-                              <label className="radio-inline">
-                                <input
-                                  type="radio"
-                                  name="eligibility"
-                                  value="each"
-                                  onChange={(e) =>
-                                    this.setState({
-                                      eligibility: "each",
-                                    })
-                                  }
-                                  required
-                                  checked={this.state.eligibility === "each"}
-                                />{" "}
-                                EACH
-                              </label>
+                              <div className="col-md-3">
+                                <label className="radio-inline">
+                                  <input
+                                    type="radio"
+                                    name="eligibility"
+                                    value="each"
+                                    onChange={(e) =>
+                                      this.setState({
+                                        eligibility: "each",
+                                      })
+                                    }
+                                    required
+                                    checked={this.state.eligibility === "each"}
+                                  />{" "}
+                                  EACH
+                                </label>
+                              </div>
                             </div>
                           </div>
                         </div>
+                        {this.state.eligibility !== "all" && (
+                          <div className="row">
+                            <div className="col-md-6">
+                              <div className="form-group row">
+                                <div className="col-md-8">
+                                  <input
+                                    type="number"
+                                    id="productId"
+                                    className="form-control border-primary"
+                                    placeholder="Add item 6-digit PRODUCT ID"
+                                    name="productId"
+                                    onChange={(e) => {
+                                      if (this.state.productId.length < 6) {
+                                        this.setState({
+                                          productId: e.target.value,
+                                        });
+                                      }
+                                    }}
+                                    value={this.state.productId}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        const { productId } = this.state;
+                                        if (
+                                          productId &&
+                                          productId.length == 6
+                                        ) {
+                                          this.setState({
+                                            product_ids: [
+                                              ...this.state.product_ids,
+                                              productId,
+                                            ],
+                                            productId: "",
+                                          });
+                                        } else {
+                                          OCAlert.alertError(
+                                            "Product id length must be six",
+                                            {
+                                              timeOut: 3000,
+                                            }
+                                          );
+                                          return;
+                                        }
+                                      }
+                                    }}
+                                  />
+                                    <p>
+                                    {this.state.product_ids &&
+                                      this.state.product_ids.map(
+                                        (entry2, index) => {
+                                          return (
+                                            <span
+                                              className="product_tag"
+                                              onClick={() => {
+                                                let result = this.state.product_ids.filter(
+                                                  (k) => k !== entry2
+                                                );
+                                                this.setState({
+                                                  product_ids: result,
+                                                });
+                                              }}
+                                              key={index}
+                                            >
+                                              {entry2}
+                                            </span>
+                                          );
+                                        }
+                                      )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-md-6">
+                              <div className="form-group row">
+                                <div className="col-md-8">
+                                  <input
+                                    type="text"
+                                    id="productTag"
+                                    className="form-control border-primary"
+                                    placeholder="Add item  tag"
+                                    onChange={(e) =>
+                                      this.setState({
+                                        productTag: e.target.value,
+                                      })
+                                    }
+                                    value={this.state.productTag}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        const { productTag } = this.state;
+                                        this.setState({
+                                          product_tags: [
+                                            ...this.state.product_tags,
+                                            productTag,
+                                          ],
+                                          productTag: "",
+                                        });
+                                      }
+                                    }}
+                                  />
+                                  <p>
+                                    {this.state.product_tags &&
+                                      this.state.product_tags.map(
+                                        (entry1, index) => {
+                                          return (
+                                            <span
+                                              className="product_tag"
+                                              onClick={() => {
+                                                let result = this.state.product_tags.filter(
+                                                  (k) => k !== entry1
+                                                );
+                                                this.setState({
+                                                  product_tags: result,
+                                                });
+                                              }}
+                                              key={index}
+                                            >
+                                              {entry1}
+                                            </span>
+                                          );
+                                        }
+                                      )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                         <div className="form-actions top mt-3">
                           <div className="col-md-6">
                             <button
@@ -623,7 +772,7 @@ class AddCoupons extends Component {
 }
 
 AddCoupons.propTypes = {
-  // getUser: PropTypes.func.isRequired,
+  getCouponById: PropTypes.func.isRequired,
   // auth: PropTypes.object,
   // saved: PropTypes.bool,
   // updateUser: PropTypes.func.isRequired,
@@ -637,4 +786,5 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   addNewCoupon,
+  getCouponById,
 })(AddCoupons);

@@ -67,12 +67,12 @@ class ViewCoupons extends Component {
           </td>
           <td className="text-center">
             <Link
-              to={{ pathname: `/coupons/edit/${coupon._id}` }}
+              to={{ pathname: `/coupons/view/${coupon._id}` }}
               className="success p-0"
             >
               <i
-                className="ft-edit-3 font-medium-3 mr-2 "
-                title="Edit Coupons"
+                className="ft-eye-3 font-medium-3 mr-2 "
+                title="View Coupons"
               ></i>
             </Link>
 
