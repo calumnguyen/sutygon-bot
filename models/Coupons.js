@@ -1,26 +1,27 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const Float = require('mongoose-float').loadType(mongoose, 2);
 const CouponsSchema = new mongoose.Schema(
   {
     discount_amount: {
-      type: Number,
+      type: Float,
       required: true,
     },
     max_payout: {
       // only if percentage
-      type: Number,
+      type: Float,
     },
     min_requirement: {
       // min amount
-      type: Number,
+      type: Float,
     },
     coupon_type: {
+      required: true,
       type: String,
       default: "amount",
       enum: ["amount", "percentage"],
     },
-    number_of_user_per_customer: {
+    number_of_use_per_customer: {
       type: Number,
     },
     max_life: {
@@ -31,6 +32,7 @@ const CouponsSchema = new mongoose.Schema(
     },
 
     code: {
+      // random generated code
       type: String,
       required: true,
     },
@@ -48,6 +50,7 @@ const CouponsSchema = new mongoose.Schema(
 
     eligibility: {
       type: String,
+      required: true,
       default: "all",
       enum: ["all", "only", "exclude", "each"],
     },

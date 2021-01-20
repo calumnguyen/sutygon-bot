@@ -112,6 +112,7 @@ router.get("/", auth, async (req, res) => {
           orderNumber: "$orderNumber",
           status: "$status",
           reservedStatus: '$reservedStatus',
+          readyForPickUp: "$readyForPickUp",
           pickedUpStatus:"$pickedUpStatus",
           customer: {
             _id: "$customer._id",
@@ -250,7 +251,8 @@ router.put("/searchstatus", auth, async (req, res) => {
             status: "$status",
              reservedStatus:'$reservedStatus',
             customerContactNumber: "$customerContactNumber",
-            pickedUpStatus:"$pickedUpStatus",
+            readyForPickUp: "$readyForPickUp",
+             pickedUpStatus:"$pickedUpStatus",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -311,7 +313,8 @@ router.put("/searchstatus", auth, async (req, res) => {
             status: "$status",
              reservedStatus:'$reservedStatus',
             customerContactNumber: "$customerContactNumber",
-            pickedUpStatus:"$pickedUpStatus",
+            readyForPickUp: "$readyForPickUp",
+             pickedUpStatus:"$pickedUpStatus",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -356,7 +359,8 @@ router.put("/searchstatus", auth, async (req, res) => {
             status: "$status",
              reservedStatus:'$reservedStatus',
             customerContactNumber: "$customerContactNumber",
-            pickedUpStatus:"$pickedUpStatus",
+            readyForPickUp: "$readyForPickUp",
+             pickedUpStatus:"$pickedUpStatus",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",

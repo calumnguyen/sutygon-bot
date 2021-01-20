@@ -481,6 +481,20 @@ class IndividualBarcode extends Component {
                 {rec.status}
               </span>
             ),
+           actions: (
+              <>
+                <Link
+                  to={{ pathname: `/orders/vieworder/${rec._id}` }}
+                  className='success p-0'
+                >
+                  <i
+                    className='ft-edit-3 font-medium-3 mr-2 '
+                    title='Edit'
+                  ></i>
+                </Link>
+                
+              </>
+            ),
         });
       });
     }
@@ -503,6 +517,11 @@ class IndividualBarcode extends Component {
       {
         dataField: "status",
         text: "Status",
+        sort: true,
+      },
+  {
+        dataField: 'actions',
+        text: 'Actions',
         sort: true,
       },
     ];

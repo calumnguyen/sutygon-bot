@@ -12,7 +12,8 @@ import returnproduct from './returnproduct'
 import appointment from './appointment'
 import report from './report'
 import invoice from './invoice'
-import alternotes from './alternotes'
+import alternotes from './alternotes';
+import coupons from './coupons'
 
 export default combineReducers({
   alert,
@@ -28,4 +29,5 @@ export default combineReducers({
   dashboard,
   invoice,
   alternotes,
+  coupons
 })
