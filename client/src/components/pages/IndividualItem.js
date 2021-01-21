@@ -467,7 +467,7 @@ class IndividualBarcode extends Component {
               </span>
             ) : rec.status == "alteration" ? (
               <span className="badge custom_badge badge-warning">
-                {rec.status}
+                {'cancelled'}
               </span>
             ) : rec.status == "pending" ? (
               <span className="badge custom_badge badge-secondary">
@@ -907,7 +907,13 @@ class IndividualBarcode extends Component {
                         </div>
                       </div>
 
-                      <div className="card">
+                    
+                    </>
+                  ) : (
+                    ""
+                  )}
+
+<div className="card">
                         <div className="card-header">
                           <h3 className="form-section">
                             <i className="fa fa-th"></i> Images
@@ -935,10 +941,6 @@ class IndividualBarcode extends Component {
                           </div>
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    ""
-                  )}
                 </div>
               </div>
             </div>
