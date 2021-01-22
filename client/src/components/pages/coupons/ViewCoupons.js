@@ -18,6 +18,7 @@ import { OCAlert } from "@opuscapita/react-alerts";
 class ViewCoupons extends Component {
   state = {
     couponsStatus: "active",
+    page: 1,
   };
 
   async componentDidMount() {
@@ -152,6 +153,7 @@ class ViewCoupons extends Component {
                                     onChange={(e) =>
                                       this.setState({
                                         couponsStatus: "active",
+                                        page: 1,
                                       })
                                     }
                                     checked={
@@ -170,6 +172,7 @@ class ViewCoupons extends Component {
                                     onChange={(e) =>
                                       this.setState({
                                         couponsStatus: "inactive",
+                                        page: 1,
                                       })
                                     }
                                     checked={

@@ -75,7 +75,6 @@ class AddCoupons extends Component {
     return result;
   };
 
-
   onSubmit = async () => {
     if (this.state.discount_amount === "") {
       OCAlert.alertError("Discount Amount Required", { timeOut: 3000 });
@@ -116,7 +115,7 @@ class AddCoupons extends Component {
 
     if (this.state.eligibility !== "all") {
       if (
-        this.state.product_ids.length == 0 ||
+        this.state.product_ids.length == 0 &&
         this.state.product_tags.length == 0
       ) {
         OCAlert.alertError("Product Ids Or Tags Are Required", {
@@ -596,7 +595,6 @@ class AddCoupons extends Component {
                                       );
                                     })}
                                 </p>
-                               
                               </div>
                             </div>
                           </div>
@@ -691,19 +689,17 @@ class AddCoupons extends Component {
                               <div className="form-group row">
                                 <div className="col-md-8">
                                   <input
-                                    type="number"
-                                    min={1}
-                                    max={1}
+                                    type="text"
                                     id="productId"
                                     className="form-control border-primary"
                                     placeholder="Add  6-digit Product ID"
                                     name="productId"
+                                    minLength={6}
+                                    maxLength={6}
                                     onChange={(e) => {
-                                      if (this.state.productId.length < 6) {
-                                        this.setState({
-                                          productId: e.target.value,
-                                        });
-                                      }
+                                      this.setState({
+                                        productId: e.target.value,
+                                      });
                                     }}
                                     value={this.state.productId}
                                     onKeyDown={(e) => {
@@ -758,7 +754,7 @@ class AddCoupons extends Component {
                                 </div>
                               </div>
                             </div>
-                            <div className="col-md-6">
+                            {/* <div className="col-md-6">
                               <div className="form-group row">
                                 <div className="col-md-8">
                                   <input
@@ -820,7 +816,7 @@ class AddCoupons extends Component {
                                   </p>
                                 </div>
                               </div>
-                            </div>
+                            </div> */}
                           </div>
                         )}
                         <div className="form-actions top mt-3">

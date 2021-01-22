@@ -28,6 +28,7 @@ router.post(
         end_date: req.body.end_date,
         tags: req.body.tags,
         eligibility: req.body.eligibility,
+        number_of_use_per_customer: req.body.number_of_use_per_customer,
       };
       if (req.body.min_requirement) {
         CouponBody["min_requirement"] = req.body.min_requirement;
@@ -77,7 +78,84 @@ router.post("/changeStatus/:id/:status", auth, async (req, res) => {
     );
     res.json({ msg: "Coupon Status changed Successfully" });
   } catch (err) {
-    console.error(err.message);
+    res
+      .status(500)
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+  }
+});
+
+// @route  POST api/Coupon/add_note/:id
+// @desc   Update a Coupon Notes
+// @access Private
+router.post("/add_note/:id", auth, async (req, res) => {
+  try {
+    const result = await Coupon.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: { coupon_notes: JSON.parse(req.body.notes) },
+      },
+      { new: true }
+    );
+    res.json({
+      msg: "Coupon Note Add  Successfully",
+      result: result.coupon_notes,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+  }
+});
+
+// @route  Apply Coupon api/coupon/apply
+// @desc   Apply Coupon
+// @access Private
+router.post("/apply_coupon", auth, async (req, res) => {
+  try {
+    const { coupon_code, total, products } = req.body;
+    // console.log(req.body);
+    const result = await Coupon.findOne({ code: coupon_code });
+
+    if (result == null) {
+      return res.status(404).json({ msg: "No Coupon found" });
+    }
+    const {
+      max_life,
+      usage,
+      coupon_type,
+      eligibility,
+      coupon_status,
+      min_requirement,
+      start_date,
+      end_date,
+    } = result;
+
+    let startDate = new Date(start_date);
+    let endDate = new Date(end_date);
+    console.log(startDate <= endDate)
+    if (coupon_status == "active") {
+      if (Number(usage) >= Number(max_life)) {
+        return res.status(404).json({ msg: "Limit Exceed" });
+      }
+      if (startDate > endDate) {
+        return res.status(404).json({ msg: "Coupon Date Expired" });
+      }
+      if (eligibility == "only") {
+        OnlyCouponCode(req, res, products, result);
+      }
+      if (eligibility == "all") {
+        AllCouponCode(req, res, products, result);
+      }
+      if (eligibility == "exclude") {
+        ExcludeCouponCode(req, res, products, result);
+      }
+      if (eligibility == "each") {
+        EachCouponCode(req, res, products, result);
+      }
+    } else {
+      return res.status(404).json({ msg: "Coupon is Inactive" });
+    }
+  } catch (err) {
     res
       .status(500)
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
@@ -97,7 +175,6 @@ router.post("/:id", auth, async (req, res) => {
     );
     res.json({ msg: "Coupon Updated Successfully" });
   } catch (err) {
-    console.error(err.message);
     res
       .status(500)
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
@@ -112,15 +189,13 @@ router.post("/", auth, async (req, res) => {
     let query = {
       coupon_status: req.body.coupon_status,
     };
-    console.log("query", query);
     var limit = 10;
     var page = req.body.currentPage ? parseInt(req.body.currentPage) : 1;
     var skip = (page - 1) * limit;
     const coupons = await Coupon.find(query).skip(skip).limit(limit);
-    const total = await Coupon.count({});
+    const total = await Coupon.count(query);
     res.status(200).json({ coupons: coupons, total: total });
   } catch (err) {
-    console.log(err);
     res.status(500).send("Server Error!");
   }
 });
@@ -176,4 +251,146 @@ router.delete(
   }
 );
 
+// @route  POST api/Coupon/:couponId/:status/status_update
+// @desc   Update a Coupon Status
+// @access Private
+router.post("/:couponId/:status/status_update", auth, async (req, res) => {
+  try {
+    const coupon = await Coupon.findByIdAndUpdate(
+      { _id: req.params.couponId },
+      {
+        $set: { coupon_status: req.params.status },
+      },
+      { new: true }
+    );
+    res.json({
+      msg: "Coupon Updated  Successfully",
+      coupon,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+  }
+});
 module.exports = router;
+
+const AllCouponCode = (req, res, products, result) => {
+  let { min_requirement } = result;
+  var discount_products_total = 0;
+  products.map((item, index) => {
+    discount_products_total += Number(item.price);
+  });
+  if (min_requirement) {
+    if (discount_products_total >= min_requirement) {
+      return res.status(200).json({ msg: "Apply Coupon", result: result });
+    } else {
+      return res
+        .status(404)
+        .json({ msg: "Total of eligible items does not meet req." });
+    }
+  }
+  return res.status(200).json({ msg: "Apply Coupon", result: result });
+};
+const OnlyCouponCode = (req, res, products, result) => {
+  let { min_requirement } = result;
+  let discount_products = [];
+
+  var discount_products_total = 0;
+  products.map((item, index) => {
+    if (result.product_ids.includes(item.productId)) {
+      discount_products_total += Number(item.price);
+      discount_products.push(item);
+    }
+  });
+  if (discount_products.length > 0) {
+    if (min_requirement) {
+      if (discount_products_total >= min_requirement) {
+        return res.status(200).json({
+          msg: "Apply Coupon",
+          result: result,
+          discount_products: discount_products.length,
+        });
+      } else {
+        return res
+          .status(404)
+          .json({ msg: "Total of eligible items does not meet req." });
+      }
+    }
+    return res.status(200).json({
+      msg: "Apply Coupon",
+      result: result,
+      discount_products: discount_products.length,
+    });
+  }
+
+  return res.status(404).json({ msg: "These Products are Not Includes" });
+};
+
+const ExcludeCouponCode = (req, res, products, result) => {
+  let { min_requirement } = result;
+  let discount_products = [];
+  var discount_products_total = 0;
+  products.map((item1, index) => {
+    if (!result.product_ids.includes(item1.productId)) {
+      discount_products_total += Number(item1.price);
+      discount_products.push(item1);
+    }
+  });
+
+  if (discount_products.length > 0) {
+    if (min_requirement) {
+      if (discount_products_total >= min_requirement) {
+        return res.status(200).json({
+          msg: "Apply Coupon",
+          result: result,
+          discount_products: discount_products.length,
+        });
+      } else {
+        return res
+          .status(404)
+          .json({ msg: "Total of eligible items does not meet req." });
+      }
+    }
+    return res.status(200).json({
+      msg: "Apply Coupon",
+      result: result,
+      discount_products: discount_products.length,
+    });
+  }
+  return res.status(404).json({ msg: "These Products are Not Includes" });
+};
+
+const EachCouponCode = (req, res, products, result) => {
+  let { min_requirement } = result;
+  let discount_products = [];
+  var discount_products_total = 0;
+  products.map((item1, index) => {
+    if (result.product_ids.includes(item1.productId)) {
+      discount_products_total += Number(item1.price);
+      discount_products.push(item1);
+    }
+  });
+
+  if (discount_products.length > 0) {
+    if (min_requirement) {
+      if (discount_products_total >= min_requirement) {
+        return res.status(200).json({
+          msg: "Apply Coupon",
+          result: result,
+          discount_products: discount_products.length,
+        });
+      } else {
+        return res
+          .status(404)
+          .json({ msg: "Total of eligible items does not meet req." });
+      }
+    }
+    return res.status(200).json({
+      msg: "Apply Coupon",
+      result: result,
+      discount_products: discount_products.length,
+    });
+  }
+  return res.status(404).json({ msg: "These Products are Not Includes" });
+};
