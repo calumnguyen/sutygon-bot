@@ -385,7 +385,7 @@ class Barcode extends Component {
   }
   else{
     // error message
-    OCAlert.alertError("This barcode is being used in an order, you cannot delete it.", {
+    OCAlert.alertError(`Barcode ID ${barcode && barcode} is being used in Order# ${barcoderec && barcoderec[0].orderNumber}, You cannot delete it.`, {
       timeOut: 3000,
     });
     return;
@@ -413,6 +413,7 @@ class Barcode extends Component {
               if (size.id === size_id) {
                 // decrease size qty
                 if (size.qty > 0) {
+
                   size.qty = parseInt(size.qty) - 1;
 
                   // if barcode is availble remove it too
@@ -428,23 +429,27 @@ class Barcode extends Component {
       // update product for barcode only
       await this.props.deleteItem(product, product_id);
     }
+    this._deleteProduct(product);
 
     OCAlert.alertSuccess("Item Deleted Successfully!");
-    this._deleteProduct();
   };
 
-  _deleteProduct = async () => {
-    const { product } = this.props;
+  _deleteProduct = async (product) => {
+    // const { product } = this.props;
     let total_qty = 0;
-    if (product && product.color) {
+    // console.log(product)
+    const ex_product = product;
+    if (ex_product && ex_product.color) {
       // loop through product colors
-      product.color.forEach((color, c_index) => {
+
+      ex_product.color.forEach((color, c_index) => {
         if (color.sizes) {
           color.sizes.forEach((size, s_index) => {
             total_qty += parseInt(size.qty);
           });
         }
       });
+
       if (total_qty === 0) {
         await this.props.deleteProduct(product._id);
         OCAlert.alertSuccess("Product Deleted Successfully!");

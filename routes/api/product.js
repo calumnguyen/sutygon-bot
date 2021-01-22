@@ -386,7 +386,7 @@ router.post("/changeStatus/:id/:status", auth, async (req, res) => {
 router.post("/item_delete/:id", auth, async (req, res) => {
   try {
     const body = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-    const product = await Product.updateOne(
+    const product = await Product.findByIdAndUpdate(
       { _id: req.params.id },
       {
         $set: {
@@ -394,7 +394,7 @@ router.post("/item_delete/:id", auth, async (req, res) => {
         },
       }
     );
-    res.json({ msg: "Item Deleted Successfully" });
+    res.json({product, msg: "Item Deleted Successfully" });
   } catch (err) {
     console.error(err.message);
     res

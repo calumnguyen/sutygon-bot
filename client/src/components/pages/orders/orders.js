@@ -60,7 +60,6 @@ class Orders extends Component {
     if (rentproducts) {
       let ordersDataArr = [];
       rentproducts.forEach((order, idx) => {
-        console.log("order",order)
         ordersDataArr.push({
           orderNumber: order.orderNumber,
           name: order.customer ? order.customer.name : "",

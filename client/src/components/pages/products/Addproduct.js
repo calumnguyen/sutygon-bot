@@ -28,7 +28,14 @@ class AddProduct extends Component {
       {
         _id: shortid.generate(),
         colorname: "",
-        sizes: [],
+        sizes: [
+          {
+            id:shortid.generate(),
+            price:"",
+            qty:"",
+            size:""
+          },
+        ],
       },
     ],
     saving: false,

@@ -480,7 +480,7 @@ router.post("/:id/status/cancel", auth, async (req, res) => {
     pickUpLog = {
       employee_id: req.user.id,
       employee_name: req.user.name,
-      status: "cancel",
+      status: "cancelled",
       message: `Order cancelled.`,
     }
     const { barcodes } = await RentedProduct.findById(req.params.id).select(
@@ -491,7 +491,7 @@ router.post("/:id/status/cancel", auth, async (req, res) => {
       { _id: req.params.id },
       {
         $push: { authorization_logs: pickUpLog },
-        status: "cancel",
+        status: "cancelled",
         readyForPickUp: false,
         pickedUpStatus: false,
       },
