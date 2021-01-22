@@ -4,8 +4,8 @@ export default function Status({ title, total, remain, reservedStatus, readyForP
   
   return (
     <div className="row m-auto justify">
-      <div className={`d-flex align-items-center text-center rounded shadow-status-1 col-md-4 col-12 px-0  badge ${reservedStatus?reservedStatus:title}`}>
-        <div className="mx-auto h5 mb-0 font-weight-400" style={{color:'#253857'}}>{reservedStatus?reservedStatus:title}</div>
+      <div className={`d-flex align-items-center text-center rounded shadow-status-1 col-md-5 col-12 px-0  badge ${reservedStatus?reservedStatus:title}`}>
+        <div className="mx-auto h5 mb-0 font-weight-400" style={{color:'#fff'}}>{reservedStatus?reservedStatus:title}</div>
       </div>
       <div className="small col-12 col-md-5 rounded bg-no">
         <div className="small text-capitalize">
