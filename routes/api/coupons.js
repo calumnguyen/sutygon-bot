@@ -129,13 +129,13 @@ router.post("/update_tags/:id", auth, async (req, res) => {
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
 });
-// 
+//
 // @route  Apply Coupon api/coupon/apply
 // @desc   Apply Coupon
 // @access Private
 router.post("/apply_coupon", auth, async (req, res) => {
   try {
-    const { coupon_code, total, products } = req.body;
+    const { coupon_code, total, products, customerId } = req.body;
     // console.log(req.body);
     const result = await Coupon.findOne({ code: coupon_code });
 
@@ -151,6 +151,8 @@ router.post("/apply_coupon", auth, async (req, res) => {
       min_requirement,
       start_date,
       end_date,
+      used_customers,
+      number_of_use_per_customer,
     } = result;
 
     // count customer
@@ -159,6 +161,14 @@ router.post("/apply_coupon", auth, async (req, res) => {
         return res.status(404).json({ msg: "Limit Exceed" });
       }
 
+      used_customers.map((s) => {
+        if (
+          s.customer == customerId &&
+          !(s.usage < number_of_use_per_customer)
+        ) {
+          return res.status(404).json({ msg: "One time Per customer" });
+        }
+      });
       if (eligibility == "only") {
         OnlyCouponCode(req, res, products, result);
       }
