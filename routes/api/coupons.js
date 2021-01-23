@@ -107,6 +107,29 @@ router.post("/add_note/:id", auth, async (req, res) => {
   }
 });
 
+// @route  POST api/Coupon/add_note/:id
+// @desc   Update a Coupon Notes
+// @access Private
+router.post("/update_tags/:id", auth, async (req, res) => {
+  try {
+    const result = await Coupon.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: { tags: req.body.new_tags },
+      },
+      { new: true }
+    );
+    res.json({
+      msg: "Tags Updated  Successfully",
+      result: result.tags,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+  }
+});
+// 
 // @route  Apply Coupon api/coupon/apply
 // @desc   Apply Coupon
 // @access Private
@@ -130,16 +153,12 @@ router.post("/apply_coupon", auth, async (req, res) => {
       end_date,
     } = result;
 
-    let startDate = new Date(start_date);
-    let endDate = new Date(end_date);
-    console.log(startDate <= endDate)
+    // count customer
     if (coupon_status == "active") {
       if (Number(usage) >= Number(max_life)) {
         return res.status(404).json({ msg: "Limit Exceed" });
       }
-      if (startDate > endDate) {
-        return res.status(404).json({ msg: "Coupon Date Expired" });
-      }
+
       if (eligibility == "only") {
         OnlyCouponCode(req, res, products, result);
       }
@@ -293,12 +312,16 @@ const AllCouponCode = (req, res, products, result) => {
   return res.status(200).json({ msg: "Apply Coupon", result: result });
 };
 const OnlyCouponCode = (req, res, products, result) => {
-  let { min_requirement } = result;
+  let { min_requirement, product_tags } = result;
   let discount_products = [];
 
   var discount_products_total = 0;
+
   products.map((item, index) => {
-    if (result.product_ids.includes(item.productId)) {
+    if (
+      result.product_ids.includes(item.productId) ||
+      belongsToTags(product_tags, item.productTag)
+    ) {
       discount_products_total += Number(item.price);
       discount_products.push(item);
     }
@@ -328,11 +351,13 @@ const OnlyCouponCode = (req, res, products, result) => {
 };
 
 const ExcludeCouponCode = (req, res, products, result) => {
-  let { min_requirement } = result;
+  let { min_requirement, product_tags, product_ids } = result;
   let discount_products = [];
   var discount_products_total = 0;
+
   products.map((item1, index) => {
-    if (!result.product_ids.includes(item1.productId)) {
+    const result1 = product_ids.includes(item1.productId);
+    if (!result1 && !belongsToTagsExclude(product_tags, item1.productTag)) {
       discount_products_total += Number(item1.price);
       discount_products.push(item1);
     }
@@ -366,7 +391,10 @@ const EachCouponCode = (req, res, products, result) => {
   let discount_products = [];
   var discount_products_total = 0;
   products.map((item1, index) => {
-    if (result.product_ids.includes(item1.productId)) {
+    if (
+      result.product_ids.includes(item1.productId) ||
+      belongsToTags(product_tags, item.productTag)
+    ) {
       discount_products_total += Number(item1.price);
       discount_products.push(item1);
     }
@@ -393,4 +421,25 @@ const EachCouponCode = (req, res, products, result) => {
     });
   }
   return res.status(404).json({ msg: "These Products are Not Includes" });
+};
+
+const belongsToTags = (couponsTags, productTag) => {
+  if (couponsTags.length > 0) {
+    const convertTagToArray = productTag.split(",");
+    const found = convertTagToArray.some((r) => couponsTags.includes(r));
+    return found;
+  }
+  return false;
+};
+
+const belongsToTagsExclude = (couponsTags, productTag) => {
+  if (couponsTags.length > 0) {
+    const convertTagToArray = productTag.split(",");
+    var found1 = convertTagToArray.some((r) => couponsTags.includes(r));
+    if (found1) {
+      return true;
+    }
+    return false;
+  }
+  return false;
 };

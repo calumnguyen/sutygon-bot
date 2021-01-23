@@ -51,7 +51,7 @@ class RentOrder extends Component {
     coupon_code: "",
     discount_amount: 0,
     products_length: 0,
-    coupon_type:''
+    coupon_type: "",
   };
 
   async componentDidMount() {
@@ -173,6 +173,7 @@ class RentOrder extends Component {
       leaveID: this.state.leaveID,
       insuranceAmt: state.insAmt,
       orderBarcode: state.orderBarcode,
+      coupon_code:this.state.coupon_code
     };
     await this.props.addNewRentProduct(rentedOrder);
 
@@ -249,6 +250,8 @@ class RentOrder extends Component {
       let product_name = product.name;
       let product_id = product._id;
       let productId = product.productId;
+        let productTag = product.tags;
+      
       // looping through each color of current product
       if (product.color) {
         product.color.forEach((color, c_index) => {
@@ -281,6 +284,7 @@ class RentOrder extends Component {
                   barcode: size.barcodes[i].barcode,
                   price: price,
                   productId: productId,
+                  productTag: productTag,
                 };
                 rows.push(row);
               }
@@ -421,7 +425,7 @@ class RentOrder extends Component {
     let sum = 0;
     let { tax, insAmt, total_amt, discount_amount } = this.state;
     sum = Math.round(
-      Number(total_amt) + Number(tax) + Number(insAmt) - (Number(discount_amount))
+      Number(total_amt) + Number(tax) + Number(insAmt) - Number(discount_amount)
     );
     this.state.total = sum;
     return sum;
@@ -456,7 +460,6 @@ class RentOrder extends Component {
       result.push(i[0]);
     });
     const p_total = this.calculateTotalWithoutTax();
-
     let obj = {
       coupon_code: coupon_code,
       total: p_total,
@@ -475,14 +478,24 @@ class RentOrder extends Component {
           coupon_type,
           max_payout,
           eligibility,
+          start_date,
+          end_date,
         } = res.data.result;
+        const startDate = new Date(start_date).getTime()
+        const endDate=new Date(end_date).getTime()
+    
+        // if (endDate > startDate) {
+        //   OCAlert.alertError(`Coupon is expired`, { timeOut: 3000 });
+        //   return;
+        // }
+      
         if (coupon_type == "percentage") {
           // if discount amount percentage value then calculate percentage
           //params {product_total,percentage}
           const after_calculated = this.percentage(p_total, discount_amount);
           if (after_calculated <= max_payout) {
             this.setState({
-              coupon_type:coupon_type,
+              coupon_type: coupon_type,
               discount_amount:
                 eligibility == "each"
                   ? discount_amount * Number(products_length)
@@ -491,7 +504,7 @@ class RentOrder extends Component {
           } else {
             // if discount amount exceeds from max payout then apply max payout
             this.setState({
-              coupon_type:coupon_type,
+              coupon_type: coupon_type,
               discount_amount:
                 eligibility == "each"
                   ? discount_amount * Number(products_length)
@@ -501,7 +514,7 @@ class RentOrder extends Component {
         } else {
           // if not percentage then apply discount amount directly
           this.setState({
-            coupon_type:coupon_type,
+            coupon_type: coupon_type,
             discount_amount:
               eligibility == "each"
                 ? discount_amount * Number(products_length)
@@ -814,9 +827,11 @@ class RentOrder extends Component {
                                               readOnly
                                             />
                                             <span>
-                                              {this.state.coupon_type=="percentage"?'%':''}
+                                              {this.state.coupon_type ==
+                                              "percentage"
+                                                ? "%"
+                                                : ""}
                                             </span>
-                                            
 
                                             <span
                                               style={{ cursor: "pointer" }}

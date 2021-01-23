@@ -38,11 +38,11 @@ const CouponsSchema = new mongoose.Schema(
       required: true,
     },
     start_date: {
-      type: String,
+      type: Date,
       required: true,
     },
     end_date: {
-      type: String,
+      type: Date,
       required: true,
     },
     tags: {
@@ -75,7 +75,12 @@ const CouponsSchema = new mongoose.Schema(
       default: 0,
       type: Number,
     },
-
+    used_orders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "orders",
+      },
+    ],
     type: {
       type: String,
     },

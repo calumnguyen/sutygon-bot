@@ -22,6 +22,8 @@ class CouponDetail extends Component {
   state = {
     note_text: "",
     coupon_notes: [],
+    new_tags: [],
+    tag: "",
   };
   async componentDidMount() {
     if (this.props.match.params.couponId) {
@@ -30,6 +32,7 @@ class CouponDetail extends Component {
       const { coupon } = this.props;
       this.setState({
         coupon_notes: coupon.coupon_notes ? coupon.coupon_notes : [],
+        new_tags: coupon.tags ? coupon.tags.split(",") : [],
       });
     }
   }
@@ -82,6 +85,27 @@ class CouponDetail extends Component {
       }
     }
   };
+  onUpdateTags = async () => {
+    const { coupon } = this.props;
+    const { new_tags } = this.state;
+    const coma_tags = new_tags.length ? new_tags.join() : "";
+    try {
+      const res = await axios.post(`/api/coupons/update_tags/${coupon._id}`, {
+        new_tags: coma_tags,
+      });
+      OCAlert.alertSuccess("Tags Updated Successfully", { timeOut: 3000 });
+    } catch (err) {
+      const errors = err.response.data.errors;
+      if (errors) {
+        OCAlert.alertError("Error", { timeOut: 3000 });
+        return;
+      }
+    }
+  };
+
+  calculation = (coupon) => {
+    return coupon.max_life - coupon.usage;
+  };
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
@@ -113,7 +137,7 @@ class CouponDetail extends Component {
                         <div className="card-content">
                           <div className="card-body">
                             <div className="row">
-                              <div className="col-md-8">
+                              <div className="col-md-6">
                                 <ul>
                                   <li>
                                     Coupon code : {coupon ? coupon.code : ""}{" "}
@@ -221,6 +245,28 @@ class CouponDetail extends Component {
                                   )}
                                 </div>
                               </div>
+                              <div className="col-md-6">
+                                <h5>Usage Overview</h5>
+                                Max for life :{" "}
+                                {coupon && coupon.max_life
+                                  ? `${coupon.max_life}`
+                                  : ""}{" "}
+                                <div className="row mt-2">
+                                  <div className="col-md-6">
+                                    Total usage
+                                    <p>
+                                      {" "}
+                                      {coupon && coupon.usage
+                                        ? `${coupon.usage}`
+                                        : ""}
+                                    </p>
+                                  </div>
+                                  <div className="col-md-6">
+                                    Unclaimed
+                                    <p> {coupon && this.calculation(coupon)}</p>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -291,6 +337,144 @@ class CouponDetail extends Component {
                                 </ul>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-sm-12">
+                      <Alert />
+                      <OCAlertsProvider />
+                      <div className="card">
+                        <div className="card-header">
+                          <h4 className="card-title"> Coupon Tag</h4>
+                        </div>
+                        <div className="card-content">
+                          <div className="card-body">
+                            <div className="row mb-3">
+                              <div className="col-md-9">
+                                <input
+                                  type="text"
+                                  id="Coupon tags"
+                                  className="form-control border-primary"
+                                  placeholder="Coupon tags"
+                                  onChange={(e) =>
+                                    this.setState({
+                                      tag: e.target.value,
+                                    })
+                                  }
+                                  value={this.state.tag}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      const { tag } = this.state;
+                                      if (tag == "") {
+                                        OCAlert.alertError("Enter Coupon Tag", {
+                                          timeOut: 3000,
+                                        });
+                                        return;
+                                      } else {
+                                        this.setState({
+                                          new_tags: [
+                                            ...this.state.new_tags,
+                                            tag,
+                                          ],
+                                          tag: "",
+                                        });
+                                      }
+                                    }
+                                  }}
+                                />
+                                <p>
+                                  {this.state.new_tags &&
+                                    this.state.new_tags.map((entry1, index) => {
+                                      return (
+                                        <span
+                                          className="product_tag"
+                                          onClick={() => {
+                                            let result = this.state.new_tags.filter(
+                                              (k) => k !== entry1
+                                            );
+                                            this.setState({
+                                              new_tags: result,
+                                            });
+                                          }}
+                                          key={index}
+                                        >
+                                          {entry1}
+                                        </span>
+                                      );
+                                    })}
+                                </p>
+                              </div>
+                              <div className="col-md-2 mt-3">
+                                {" "}
+                                <button
+                                  onClick={this.onUpdateTags}
+                                  className="btn btn-warning pull-right"
+                                >
+                                  {" "}
+                                  <i className="fa fa-plus"></i> Update Tags{" "}
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="row">
+                              <div className="col-md-12">
+                                <ul>
+                                  {coupon_notes &&
+                                    coupon_notes.map((item, index) => {
+                                      return (
+                                        <li
+                                          style={{ cursor: "pointer" }}
+                                          onDoubleClick={() =>
+                                            this.onRemoveNote(item._id)
+                                          }
+                                          key={item._id}
+                                        >
+                                          {item.title}
+                                        </li>
+                                      );
+                                    })}
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row">
+                    <div className="col-sm-12">
+                      <div className="card">
+                        <div className="card-header">
+                          <h4 className="card-title">
+                            {" "}
+                            Orders with this coupon
+                          </h4>
+                        </div>
+                        <div className="card-content">
+                          <div className="card-body">
+                            <table class="table">
+                              <thead>
+                                {/* <tr>
+      <th scope="col">#</th>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">Handle</th>
+    </tr> */}
+                              </thead>
+                              <tbody>
+                                {/* <tr>
+      <th scope="row">1</th>
+      <td>Mark</td>
+      <td>Otto</td>
+      <td>@mdo</td>
+    </tr> */}
+                              </tbody>
+                            </table>
                           </div>
                         </div>
                       </div>
