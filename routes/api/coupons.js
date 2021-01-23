@@ -234,7 +234,16 @@ router.post("/", auth, async (req, res) => {
 // @access Private
 router.get("/:id", auth, async (req, res) => {
   try {
-    const coupon = await Coupon.findById(req.params.id);
+    const coupon = await Coupon.findById(req.params.id)
+      .populate(
+        { 
+     path: 'used_orders',
+     populate: {
+       path: 'customer',
+       model: 'customer'
+     } 
+  }
+        )
 
     if (!coupon) {
       return res.status(404).json({ msg: "No Coupon found" });

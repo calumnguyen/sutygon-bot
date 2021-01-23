@@ -88,7 +88,12 @@ class CouponDetail extends Component {
   onUpdateTags = async () => {
     const { coupon } = this.props;
     const { new_tags } = this.state;
+    if (new_tags.length == 0) {
+      OCAlert.alertError("Coupon Tag is required", { timeOut: 3000 });
+      return;
+    }
     const coma_tags = new_tags.length ? new_tags.join() : "";
+
     try {
       const res = await axios.post(`/api/coupons/update_tags/${coupon._id}`, {
         new_tags: coma_tags,
@@ -118,6 +123,7 @@ class CouponDetail extends Component {
     }
     const { coupon } = this.props;
     const { coupon_notes } = this.state;
+    console.log("coupon", coupon && coupon.used_orders);
     return (
       <React.Fragment>
         <Loader />
@@ -349,7 +355,7 @@ class CouponDetail extends Component {
                       <OCAlertsProvider />
                       <div className="card">
                         <div className="card-header">
-                          <h4 className="card-title"> Coupon Tag</h4>
+                          <h4 className="card-title">Update Coupon Tag</h4>
                         </div>
                         <div className="card-content">
                           <div className="card-body">
@@ -459,20 +465,27 @@ class CouponDetail extends Component {
                           <div className="card-body">
                             <table class="table">
                               <thead>
-                                {/* <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr> */}
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">Order Number</th>
+                                  <th scope="col">Customer</th>
+                                  <th scope="col">Status</th>
+                                </tr>
                               </thead>
                               <tbody>
-                                {/* <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr> */}
+                                {coupon &&
+                                  coupon.used_orders.map((i, index) => (
+                                    <tr>
+                                      <th key={index} scope="row">
+                                        {index + 1}
+                                      </th>
+                                      <td>{i.orderNumber}</td>
+                                      <td>
+                                        {i.customer ? i.customer.name : ""}
+                                      </td>
+                                      <td>{i.status}</td>
+                                    </tr>
+                                  ))}
                               </tbody>
                             </table>
                           </div>
