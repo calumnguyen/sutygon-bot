@@ -488,7 +488,7 @@ class RentOrder extends Component {
         //   OCAlert.alertError(`Coupon is expired`, { timeOut: 3000 });
         //   return;
         // }
-      
+
         if (coupon_type == "percentage") {
           // if discount amount percentage value then calculate percentage
           //params {product_total,percentage}
@@ -498,8 +498,8 @@ class RentOrder extends Component {
               coupon_type: coupon_type,
               discount_amount:
                 eligibility == "each"
-                  ? discount_amount * Number(products_length)
-                  : discount_amount,
+                  ? after_calculated * Number(products_length)
+                  : after_calculated,
             });
           } else {
             // if discount amount exceeds from max payout then apply max payout

@@ -264,7 +264,7 @@ class CouponDetail extends Component {
                                       {" "}
                                       {coupon && coupon.usage
                                         ? `${coupon.usage}`
-                                        : ""}
+                                        : 0}
                                     </p>
                                   </div>
                                   <div className="col-md-6">
