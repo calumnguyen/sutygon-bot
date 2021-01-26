@@ -111,12 +111,20 @@ router.get(
 // @access Private
 router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
-       var now = new Date();
-    let end = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toString();
+         var now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1
+    );     
+    const result = await Appointments.find({
+      date: {
+        $gte: today,
+        $lt: tomorrow,
+      }
+    }).populate("customer");
 
-      const result = await Appointments.find({ date:{$eq: new Date()}} ).populate(
-      "customer"
-    );
     
     if (!result) {
       return res.status(404).json({ msg: "No Appointments found" });
