@@ -111,10 +111,10 @@ router.get(
 // @access Private
 router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
-    var now = new Date();
+        var now = new Date();
     let end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-     const result = await Appointments.find({ date: end }).populate(
+let date = moment(now).format("MM/DD/YYYY")
+     const result = await Appointments.find({ date: date }).populate(
       "customer"
     );
     if (!result) {
