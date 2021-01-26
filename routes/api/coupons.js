@@ -218,6 +218,7 @@ router.post("/", auth, async (req, res) => {
     const new_date = new Date();
     let query = {};
     if (req.body.coupon_status == "active") {
+       query["coupon_status"] = 'active';
       query["end_date"] = { $gt: new_date };
     }
     if (req.body.coupon_status == "inactive") {
