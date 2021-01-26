@@ -22,7 +22,7 @@ router.post(
         discount_amount: req.body.discount_amount,
         coupon_type: req.body.coupon_type,
         max_life: req.body.max_life,
-        note: req.body.note,
+        coupon_notes: [{ title: req.body.note }],
         code: req.body.code,
         start_date: req.body.start_date,
         end_date: req.body.end_date,
@@ -215,9 +215,17 @@ router.post("/:id", auth, async (req, res) => {
 // @access  Private
 router.post("/", auth, async (req, res) => {
   try {
-    let query = {
-      coupon_status: req.body.coupon_status,
-    };
+    const new_date = new Date();
+    let query = {};
+    if (req.body.coupon_status == "active") {
+      query["end_date"] = { $gt: new_date };
+    }
+    if (req.body.coupon_status == "inactive") {
+      query = {
+        $or: [{ end_date: { $lt: new_date } }, { coupon_status: "inactive" }],
+      };
+    }
+    // end_date
     var limit = 10;
     var page = req.body.currentPage ? parseInt(req.body.currentPage) : 1;
     var skip = (page - 1) * limit;
@@ -403,22 +411,20 @@ const ExcludeCouponCode = (req, res, products, result) => {
 };
 
 const EachCouponCode = (req, res, products, result) => {
-
-  let { min_requirement ,product_tags} = result;
+  let { min_requirement, product_tags } = result;
   let discount_products = [];
   var discount_products_total = 0;
-    
+
   products.map((itemEach, index) => {
     if (
       result.product_ids.includes(itemEach.productId) ||
       belongsToTags(product_tags, itemEach.productTag)
     ) {
-  
       discount_products_total += Number(itemEach.price);
       discount_products.push(itemEach);
     }
   });
- 
+
   if (discount_products.length > 0) {
     if (min_requirement) {
       if (discount_products_total >= min_requirement) {

@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import shortid from "shortid";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
-
+import moment from "moment";
 class AddCoupons extends Component {
   state = {
     couponId: "",
@@ -116,6 +116,17 @@ class AddCoupons extends Component {
       });
       return;
     }
+
+    if (
+      Number(this.state.number_of_use_per_customer) >
+      Number(this.state.max_life)
+    ) {
+      OCAlert.alertError("Max Life must be greater than per customer", {
+        timeOut: 3000,
+      });
+      return;
+    }
+
     if (this.state.number_of_use_per_customer === "") {
       OCAlert.alertError("Number of use per customer  Required", {
         timeOut: 3000,
@@ -126,8 +137,22 @@ class AddCoupons extends Component {
       OCAlert.alertError("Coupon Code Required", { timeOut: 3000 });
       return;
     }
+    if (this.state.start_date === "") {
+      OCAlert.alertError("Start Date  Required", { timeOut: 3000 });
+      return;
+    }
     if (this.state.end_date === "") {
       OCAlert.alertError("End Date  Required", { timeOut: 3000 });
+      return;
+    }
+
+    const startDate = new Date(this.state.start_date).getTime();
+    const endDate = new Date(this.state.end_date).getTime();
+
+    if (startDate > endDate) {
+      OCAlert.alertError(`Start Date must be less then End Date`, {
+        timeOut: 3000,
+      });
       return;
     }
 
@@ -193,6 +218,7 @@ class AddCoupons extends Component {
         start_date: "",
         end_date: "",
         tags: "",
+        min_requirement: "",
         // eligibility: "all",
         product_ids: [],
         product_tags: [],
@@ -282,7 +308,10 @@ class AddCoupons extends Component {
                                 className="col-md-4 label-control"
                                 htmlFor="discount_amount"
                               >
-                                Amount Discount*
+                                {this.state.coupon_type == "percentage"
+                                  ? "Percentage"
+                                  : "Amount"}{" "}
+                                Discount*
                               </label>
                               <div className={`col-md-8`}>
                                 <div class="input-group">
@@ -291,7 +320,11 @@ class AddCoupons extends Component {
                                     min={0}
                                     id="discount_amount"
                                     className="form-control border-primary"
-                                    placeholder=" Amount Discount"
+                                    placeholder={`${
+                                      this.state.coupon_type == "percentage"
+                                        ? "Percentage Discount"
+                                        : "Amount Discount"
+                                    } `}
                                     // required
                                     // data-validation-required-message="This field is required"
                                     name="discount_amount"
@@ -453,6 +486,7 @@ class AddCoupons extends Component {
                               <div className="col-md-8">
                                 <input
                                   type="date"
+                                  min={moment().format("YYYY-MM-DD")}
                                   id="start_date"
                                   className="form-control border-primary"
                                   placeholder="Number of Use*"
@@ -477,6 +511,7 @@ class AddCoupons extends Component {
                               </label>
                               <div className="col-md-8">
                                 <input
+                                  min={moment().format("YYYY-MM-DD")}
                                   type="date"
                                   id="end_date"
                                   className="form-control border-primary"
@@ -547,9 +582,7 @@ class AddCoupons extends Component {
                                     this.setState({ note: e.target.value })
                                   }
                                   cols="40"
-                                >
-                                  {this.state.note}
-                                </textarea>
+                                ></textarea>
                               </div>
                             </div>
                           </div>

@@ -481,13 +481,15 @@ class RentOrder extends Component {
           start_date,
           end_date,
         } = res.data.result;
+
         const startDate = new Date(start_date).getTime();
         const endDate = new Date(end_date).getTime();
+        const new_date = new Date().getTime();
 
-        // if (endDate > startDate) {
-        //   OCAlert.alertError(`Coupon is expired`, { timeOut: 3000 });
-        //   return;
-        // }
+        if (startDate > new_date || new_date > endDate) {
+          OCAlert.alertError(`Coupon is expired`, { timeOut: 3000 });
+          return;
+        }
 
         if (coupon_type == "percentage") {
           // if discount amount percentage value then calculate percentage

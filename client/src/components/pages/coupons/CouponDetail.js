@@ -67,24 +67,7 @@ class CouponDetail extends Component {
     }
   };
 
-  onRemoveNote = async (note_id) => {
-    const { coupon } = this.props;
-    const { coupon_notes } = this.state;
-    let result1 = coupon_notes.filter((j) => j._id !== note_id);
-    try {
-      const res = await axios.post(`/api/coupons/add_note/${coupon._id}`, {
-        notes: JSON.stringify(result1),
-      });
-      this.setState({ coupon_notes: res.data.result });
-      OCAlert.alertSuccess("Note Remove Successfully", { timeOut: 3000 });
-    } catch (err) {
-      const errors = err.response.data.errors;
-      if (errors) {
-        OCAlert.alertError("Error", { timeOut: 3000 });
-        return;
-      }
-    }
-  };
+ 
   onUpdateTags = async () => {
     const { coupon } = this.props;
     const { new_tags } = this.state;
@@ -330,10 +313,7 @@ class CouponDetail extends Component {
                                     coupon_notes.map((item, index) => {
                                       return (
                                         <li
-                                          style={{ cursor: "pointer" }}
-                                          onDoubleClick={() =>
-                                            this.onRemoveNote(item._id)
-                                          }
+                                         
                                           key={item._id}
                                         >
                                           {item.title}
@@ -426,26 +406,7 @@ class CouponDetail extends Component {
                               </div>
                             </div>
 
-                            <div className="row">
-                              <div className="col-md-12">
-                                <ul>
-                                  {coupon_notes &&
-                                    coupon_notes.map((item, index) => {
-                                      return (
-                                        <li
-                                          style={{ cursor: "pointer" }}
-                                          onDoubleClick={() =>
-                                            this.onRemoveNote(item._id)
-                                          }
-                                          key={item._id}
-                                        >
-                                          {item.title}
-                                        </li>
-                                      );
-                                    })}
-                                </ul>
-                              </div>
-                            </div>
+                           
                           </div>
                         </div>
                       </div>

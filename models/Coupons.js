@@ -27,9 +27,6 @@ const CouponsSchema = new mongoose.Schema(
     max_life: {
       type: Number,
     },
-    note: {
-      type: String,
-    },
 
     code: {
       // random generated code
