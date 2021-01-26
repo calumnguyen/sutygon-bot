@@ -234,16 +234,13 @@ router.post("/", auth, async (req, res) => {
 // @access Private
 router.get("/:id", auth, async (req, res) => {
   try {
-    const coupon = await Coupon.findById(req.params.id)
-      .populate(
-        { 
-     path: 'used_orders',
-     populate: {
-       path: 'customer',
-       model: 'customer'
-     } 
-  }
-        )
+    const coupon = await Coupon.findById(req.params.id).populate({
+      path: "used_orders",
+      populate: {
+        path: "customer",
+        model: "customer",
+      },
+    });
 
     if (!coupon) {
       return res.status(404).json({ msg: "No Coupon found" });
@@ -406,19 +403,22 @@ const ExcludeCouponCode = (req, res, products, result) => {
 };
 
 const EachCouponCode = (req, res, products, result) => {
-  let { min_requirement } = result;
+
+  let { min_requirement ,product_tags} = result;
   let discount_products = [];
   var discount_products_total = 0;
-  products.map((item1, index) => {
+    
+  products.map((itemEach, index) => {
     if (
-      result.product_ids.includes(item1.productId) ||
-      belongsToTags(product_tags, item.productTag)
+      result.product_ids.includes(itemEach.productId) ||
+      belongsToTags(product_tags, itemEach.productTag)
     ) {
-      discount_products_total += Number(item1.price);
-      discount_products.push(item1);
+  
+      discount_products_total += Number(itemEach.price);
+      discount_products.push(itemEach);
     }
   });
-
+ 
   if (discount_products.length > 0) {
     if (min_requirement) {
       if (discount_products_total >= min_requirement) {
@@ -445,7 +445,7 @@ const EachCouponCode = (req, res, products, result) => {
 const belongsToTags = (couponsTags, productTag) => {
   if (couponsTags.length > 0) {
     const convertTagToArray = productTag.split(",");
-    const found = convertTagToArray.some((r) => couponsTags.includes(r));
+    const found = convertTagToArray.some((r) => couponsTags.includes(r.trim()));
     return found;
   }
   return false;
@@ -454,7 +454,7 @@ const belongsToTags = (couponsTags, productTag) => {
 const belongsToTagsExclude = (couponsTags, productTag) => {
   if (couponsTags.length > 0) {
     const convertTagToArray = productTag.split(",");
-    var found1 = convertTagToArray.some((r) => couponsTags.includes(r));
+    var found1 = convertTagToArray.some((r) => couponsTags.includes(r.trim()));
     if (found1) {
       return true;
     }

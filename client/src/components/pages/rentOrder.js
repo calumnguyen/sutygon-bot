@@ -173,7 +173,7 @@ class RentOrder extends Component {
       leaveID: this.state.leaveID,
       insuranceAmt: state.insAmt,
       orderBarcode: state.orderBarcode,
-      coupon_code:this.state.coupon_code
+      coupon_code: this.state.coupon_code,
     };
     await this.props.addNewRentProduct(rentedOrder);
 
@@ -250,8 +250,8 @@ class RentOrder extends Component {
       let product_name = product.name;
       let product_id = product._id;
       let productId = product.productId;
-        let productTag = product.tags;
-      
+      let productTag = product.tags;
+
       // looping through each color of current product
       if (product.color) {
         product.color.forEach((color, c_index) => {
@@ -481,9 +481,9 @@ class RentOrder extends Component {
           start_date,
           end_date,
         } = res.data.result;
-        const startDate = new Date(start_date).getTime()
-        const endDate=new Date(end_date).getTime()
-    
+        const startDate = new Date(start_date).getTime();
+        const endDate = new Date(end_date).getTime();
+
         // if (endDate > startDate) {
         //   OCAlert.alertError(`Coupon is expired`, { timeOut: 3000 });
         //   return;
@@ -493,6 +493,7 @@ class RentOrder extends Component {
           // if discount amount percentage value then calculate percentage
           //params {product_total,percentage}
           const after_calculated = this.percentage(p_total, discount_amount);
+          console.log(after_calculated <= max_payout);
           if (after_calculated <= max_payout) {
             this.setState({
               coupon_type: coupon_type,
@@ -502,14 +503,41 @@ class RentOrder extends Component {
                   : after_calculated,
             });
           } else {
-            // if discount amount exceeds from max payout then apply max payout
-            this.setState({
-              coupon_type: coupon_type,
-              discount_amount:
-                eligibility == "each"
-                  ? discount_amount * Number(products_length)
-                  : discount_amount,
-            });
+            // if (eligibility == "all") {
+            //    this.setState({
+            //   coupon_type: coupon_type,
+            //   discount_amount:max_payout
+            //    });
+            //   return
+            // }
+            // if (eligibility == "only") {
+            //    this.setState({
+            //   coupon_type: coupon_type,
+            //   discount_amount:max_payout
+            //    });
+            //   return
+            // }
+
+            if (eligibility == "each") {
+              this.setState({
+                coupon_type: coupon_type,
+                discount_amount: discount_amount * Number(products_length),
+              });
+              return;
+            } else {
+              this.setState({
+                coupon_type: coupon_type,
+                discount_amount: max_payout,
+              });
+            }
+            // // if discount amount exceeds from max payout then apply max payout
+            // this.setState({
+            //   coupon_type: coupon_type,
+            //   discount_amount:
+            //     eligibility == "each"
+            //       ? discount_amount * Number(products_length)
+            //       : discount_amount,
+            // });
           }
         } else {
           // if not percentage then apply discount amount directly

@@ -74,11 +74,29 @@ class AddCoupons extends Component {
     }
     return result;
   };
+  between(x, min, max) {
+    if (Number(x) >= min && Number(x) <= max) {
+      return true;
+    }
+    return false;
+  }
 
   onSubmit = async () => {
     if (this.state.discount_amount === "") {
       OCAlert.alertError("Discount Amount Required", { timeOut: 3000 });
       return;
+    }
+
+    if (this.state.coupon_type === "percentage") {
+      if (
+        Number(this.state.discount_amount) < 0.5 ||
+        Number(this.state.discount_amount) > 100
+      ) {
+        OCAlert.alertError("Percentage Between  Amount 0.5 And  100", {
+          timeOut: 3000,
+        });
+        return;
+      }
     }
 
     if (
