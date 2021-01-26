@@ -467,7 +467,7 @@ class IndividualBarcode extends Component {
               </span>
             ) : rec.status == "alteration" ? (
               <span className="badge custom_badge badge-warning">
-                {rec.status}
+                {'cancelled'}
               </span>
             ) : rec.status == "pending" ? (
               <span className="badge custom_badge badge-secondary">

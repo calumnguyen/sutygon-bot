@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import shortid from "shortid";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
-
+import moment from "moment";
 class AddCoupons extends Component {
   state = {
     couponId: "",
@@ -74,12 +74,29 @@ class AddCoupons extends Component {
     }
     return result;
   };
-
+  between(x, min, max) {
+    if (Number(x) >= min && Number(x) <= max) {
+      return true;
+    }
+    return false;
+  }
 
   onSubmit = async () => {
     if (this.state.discount_amount === "") {
       OCAlert.alertError("Discount Amount Required", { timeOut: 3000 });
       return;
+    }
+
+    if (this.state.coupon_type === "percentage") {
+      if (
+        Number(this.state.discount_amount) < 0.5 ||
+        Number(this.state.discount_amount) > 100
+      ) {
+        OCAlert.alertError("Percentage Between  Amount 0.5 And  100", {
+          timeOut: 3000,
+        });
+        return;
+      }
     }
 
     if (
@@ -99,6 +116,17 @@ class AddCoupons extends Component {
       });
       return;
     }
+
+    if (
+      Number(this.state.number_of_use_per_customer) >
+      Number(this.state.max_life)
+    ) {
+      OCAlert.alertError("Max Life must be greater than per customer", {
+        timeOut: 3000,
+      });
+      return;
+    }
+
     if (this.state.number_of_use_per_customer === "") {
       OCAlert.alertError("Number of use per customer  Required", {
         timeOut: 3000,
@@ -109,14 +137,28 @@ class AddCoupons extends Component {
       OCAlert.alertError("Coupon Code Required", { timeOut: 3000 });
       return;
     }
+    if (this.state.start_date === "") {
+      OCAlert.alertError("Start Date  Required", { timeOut: 3000 });
+      return;
+    }
     if (this.state.end_date === "") {
       OCAlert.alertError("End Date  Required", { timeOut: 3000 });
       return;
     }
 
+    const startDate = new Date(this.state.start_date).getTime();
+    const endDate = new Date(this.state.end_date).getTime();
+
+    if (startDate > endDate) {
+      OCAlert.alertError(`Start Date must be less then End Date`, {
+        timeOut: 3000,
+      });
+      return;
+    }
+
     if (this.state.eligibility !== "all") {
       if (
-        this.state.product_ids.length == 0 ||
+        this.state.product_ids.length == 0 &&
         this.state.product_tags.length == 0
       ) {
         OCAlert.alertError("Product Ids Or Tags Are Required", {
@@ -176,6 +218,7 @@ class AddCoupons extends Component {
         start_date: "",
         end_date: "",
         tags: "",
+        min_requirement: "",
         // eligibility: "all",
         product_ids: [],
         product_tags: [],
@@ -265,7 +308,10 @@ class AddCoupons extends Component {
                                 className="col-md-4 label-control"
                                 htmlFor="discount_amount"
                               >
-                                Amount Discount*
+                                {this.state.coupon_type == "percentage"
+                                  ? "Percentage"
+                                  : "Amount"}{" "}
+                                Discount*
                               </label>
                               <div className={`col-md-8`}>
                                 <div class="input-group">
@@ -274,7 +320,11 @@ class AddCoupons extends Component {
                                     min={0}
                                     id="discount_amount"
                                     className="form-control border-primary"
-                                    placeholder=" Amount Discount"
+                                    placeholder={`${
+                                      this.state.coupon_type == "percentage"
+                                        ? "Percentage Discount"
+                                        : "Amount Discount"
+                                    } `}
                                     // required
                                     // data-validation-required-message="This field is required"
                                     name="discount_amount"
@@ -436,6 +486,7 @@ class AddCoupons extends Component {
                               <div className="col-md-8">
                                 <input
                                   type="date"
+                                  min={moment().format("YYYY-MM-DD")}
                                   id="start_date"
                                   className="form-control border-primary"
                                   placeholder="Number of Use*"
@@ -460,6 +511,7 @@ class AddCoupons extends Component {
                               </label>
                               <div className="col-md-8">
                                 <input
+                                  min={moment().format("YYYY-MM-DD")}
                                   type="date"
                                   id="end_date"
                                   className="form-control border-primary"
@@ -530,9 +582,7 @@ class AddCoupons extends Component {
                                     this.setState({ note: e.target.value })
                                   }
                                   cols="40"
-                                >
-                                  {this.state.note}
-                                </textarea>
+                                ></textarea>
                               </div>
                             </div>
                           </div>
@@ -596,7 +646,6 @@ class AddCoupons extends Component {
                                       );
                                     })}
                                 </p>
-                               
                               </div>
                             </div>
                           </div>
@@ -691,19 +740,17 @@ class AddCoupons extends Component {
                               <div className="form-group row">
                                 <div className="col-md-8">
                                   <input
-                                    type="number"
-                                    min={1}
-                                    max={1}
+                                    type="text"
                                     id="productId"
                                     className="form-control border-primary"
                                     placeholder="Add  6-digit Product ID"
                                     name="productId"
+                                    minLength={6}
+                                    maxLength={6}
                                     onChange={(e) => {
-                                      if (this.state.productId.length < 6) {
-                                        this.setState({
-                                          productId: e.target.value,
-                                        });
-                                      }
+                                      this.setState({
+                                        productId: e.target.value,
+                                      });
                                     }}
                                     value={this.state.productId}
                                     onKeyDown={(e) => {

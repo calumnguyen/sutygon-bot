@@ -5,10 +5,13 @@ const RentedProduct = require("../../models/RentedProducts");
 const Customer = require("../../models/Customer");
 const Product = require("../../models/Product");
 const { check, validationResult } = require("express-validator");
+const shortid = require("shortid");
+const Coupon = require("../../models/Coupons");
 
 // @route   POST api/rentedproducts/add
 // @desc    Add New Rented Product
 // @access  private
+// zohaib
 router.post(
   "/add",
   [
@@ -40,8 +43,25 @@ router.post(
         ],
       });
       await rentedProduct.save();
-
-      res.json({ msg: "Order Added Successfully" });
+      const { coupon_code } = req.body;
+      if (coupon_code) {
+        const coupon = await Coupon.findOne({ code: coupon_code });
+        const updated_data = coupon.used_customers;
+        const index = updated_data.findIndex(
+          (project) => project.customer == req.body.customer
+        );
+        if (index != -1) {
+          updated_data[index].usage += 1;
+          coupon.used_customers = updated_data;
+          coupon.usage += 1;
+        } else {
+          coupon.usage += 1;
+          coupon.used_customers.push({ customer: req.body.customer, usage: 1 });
+        }
+        coupon.used_orders.push(rentedProduct._id);
+        await coupon.save();
+      }
+      return res.json({ msg: "Order Added Successfully" });
     } catch (err) {
       console.log(err);
       res.status(500).send("Server error");
@@ -110,9 +130,9 @@ router.get("/", auth, async (req, res) => {
         $project: {
           orderNumber: "$orderNumber",
           status: "$status",
-          reservedStatus: '$reservedStatus',
+          reservedStatus: "$reservedStatus",
           readyForPickUp: "$readyForPickUp",
-          pickedUpStatus:"$pickedUpStatus",
+          pickedUpStatus: "$pickedUpStatus",
           customer: {
             _id: "$customer._id",
             name: "$customer.name",
@@ -161,30 +181,26 @@ router.delete("/:id", auth, async (req, res) => {
 // @route  GET api/rentproducts/search
 // @desc   Get Cutomer (Search for Customer by number)
 // @access Private
-router.get(
-  "/search",
-   auth,
-  async (req, res) => {
-    try {
-      const result = await Customer.find({
-        contactnumber: { $eq: req.query.number },
-      });
-      if (!result) {
-        return res.status(404).json({ msg: "No Customer found" });
-      }
-      return res.json(result);
-    } catch (err) {
-      console.error(err.message);
-      // Check if id is not valid
-      if (err.kind === "ObjectId") {
-        return res.status(404).json({ msg: "No Customer found" });
-      }
-      res
-        .status(500)
-        .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+router.get("/search", auth, async (req, res) => {
+  try {
+    const result = await Customer.find({
+      contactnumber: { $eq: req.query.number },
+    });
+    if (!result) {
+      return res.status(404).json({ msg: "No Customer found" });
     }
+    return res.json(result);
+  } catch (err) {
+    console.error(err.message);
+    // Check if id is not valid
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "No Customer found" });
+    }
+    res
+      .status(500)
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
-);
+});
 
 
 // @route  GET api/nvoices/getLastRecord
@@ -249,10 +265,10 @@ router.put("/searchstatus", auth, async (req, res) => {
           $project: {
             orderNumber: "$orderNumber",
             status: "$status",
-             reservedStatus:'$reservedStatus',
+            reservedStatus: "$reservedStatus",
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
-             pickedUpStatus:"$pickedUpStatus",
+            pickedUpStatus: "$pickedUpStatus",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -311,10 +327,10 @@ router.put("/searchstatus", auth, async (req, res) => {
           $project: {
             orderNumber: "$orderNumber",
             status: "$status",
-             reservedStatus:'$reservedStatus',
+            reservedStatus: "$reservedStatus",
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
-             pickedUpStatus:"$pickedUpStatus",
+            pickedUpStatus: "$pickedUpStatus",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -357,10 +373,10 @@ router.put("/searchstatus", auth, async (req, res) => {
           $project: {
             orderNumber: "$orderNumber",
             status: "$status",
-             reservedStatus:'$reservedStatus',
+            reservedStatus: "$reservedStatus",
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
-             pickedUpStatus:"$pickedUpStatus",
+            pickedUpStatus: "$pickedUpStatus",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -482,11 +498,11 @@ router.post("/:id/status/cancel", auth, async (req, res) => {
       employee_name: req.user.name,
       status: "cancelled",
       message: `Order cancelled.`,
-    }
+    };
     const { barcodes } = await RentedProduct.findById(req.params.id).select(
-      'barcodes'
-    )
-    
+      "barcodes"
+    );
+
     const rentedProducts = await RentedProduct.findByIdAndUpdate(
       { _id: req.params.id },
       {
@@ -626,20 +642,19 @@ router.get("/status/pickuptoday", auth, async (req, res) => {
   }
 });
 
-router.get('/:barcode/findorderbybarcode', auth,async (req, res) => {
+router.get("/:barcode/findorderbybarcode", auth, async (req, res) => {
   try {
     const result = await RentedProduct.find({
-      "barcodes": {$eq:(req.params.barcode)},
-  }).populate('customer')
-  .sort({ updatedAt: -1 })
+      barcodes: { $eq: req.params.barcode },
+    })
+      .populate("customer")
+      .sort({ updatedAt: -1 });
 
-  return res.status(200).json(result)
-
- } catch (err) {
-    console.log(err)
-    res.status(500).send('Server Error!')
+    return res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error!");
   }
-})
+});
 
-
-module.exports = router
+module.exports = router;

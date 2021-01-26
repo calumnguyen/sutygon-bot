@@ -13,7 +13,6 @@ import { setAlert } from "./alert";
 // Add new Coupon
 export const addNewCoupon = (coupon) => async (dispatch) => {
   dispatch({ type: COUPON_LOADING });
-  console.log("coupon",coupon)
   try {
     const res = await axios.post("/api/coupons/add", coupon);
     dispatch({
@@ -101,6 +100,28 @@ export const updateCoupon = (product, id) => async (dispatch) => {
     });
   }
 };
+
+// Update Coupon
+export const AddCouponNote = (id, notes) => async (dispatch) => {
+  dispatch({ type: COUPON_LOADING });
+
+  try {
+    const res = await axios.post(`/api/coupons/add_note/${id}`, {
+      notes: notes,
+    });
+    dispatch(setAlert(res.data.msg, "success"));
+    dispatch(getCouponById(id));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+      type: COUPON_ERROR,
+    });
+  }
+};
+
 // changeStatus
 
 // Delete Coupon
@@ -122,6 +143,29 @@ export const deleteCoupon = (id) => async (dispatch) => {
     }
     dispatch({
       type: COUPON_ERROR,
+    });
+  }
+};
+
+export const changeCouponStatus = (status, couponId) => async (dispatch) => {
+  dispatch({ type: COUPON_LOADING });
+
+  try {
+    const res = await axios.post(
+      `/api/coupons/${couponId}/${status}/status_update`
+    );
+    dispatch({
+      type: COUPON_UPDATED,
+      payload: res.data,
+    });
+       dispatch(getCouponById(couponId));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+          type: COUPON_ERROR,
     });
   }
 };
