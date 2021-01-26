@@ -113,7 +113,7 @@ router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
         var now = new Date();
     let end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-let date = moment(now).format("MM/DD/YYYY")
+let date = new moment().utcOffset(0).format();
      const result = await Appointments.find({ date: '2021-01-25T19:00:00.000Z' }).populate(
       "customer"
     );
