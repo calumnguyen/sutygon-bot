@@ -61,7 +61,8 @@ async (req, res) => {
        const result = await RentedProduct.find({
            customerContactNumber: { $eq: req.params.contact },
            status: { $in: 'pending'},
-           rentDate:{ $gte: start, $lte:end }
+           rentDate:{ $gte: new Date(start), $lte: new Date(end) }
+
        },
         
        ).sort({ rentDate:1 })
