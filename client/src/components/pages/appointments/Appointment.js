@@ -101,11 +101,12 @@ class Appointment extends Component {
           var isToday = moment(moment(app.date).format("MM/DD/YYYY")).isSame(
             moment(currentDate).format("MM/DD/YYYY")
           );
+          console.log(app)
           var string_Categories = app.categories.join(" , ")
           m_app.push({
             contactnumber: app.customer.contactnumber,
             name: app.customer.name,
-            date: moment(app.date).format("ddd, MMM Do YYYY"),
+            date: moment(app.date).format("DD/MM/YYYY"),
             orderID:app.orderID && app.orderID,
             categories:app.categories && string_Categories,
             note: app.note,
@@ -172,7 +173,7 @@ class Appointment extends Component {
         m_app.push({
           contactnumber: app.customer.contactnumber,
           name: app.customer.name,
-          date: moment(app.date).format("ddd, MMM Do YYYY"),
+          date: moment(app.date).format("DD/MM/YYYY"),
           categories: app.categories && string_Categories,
           orderID: app.orderID && app.orderID,
           note: app.note,
