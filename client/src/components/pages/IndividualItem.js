@@ -481,20 +481,16 @@ class IndividualBarcode extends Component {
                 {rec.status}
               </span>
             ),
-           actions: (
-              <>
-                <Link
-                  to={{ pathname: `/orders/vieworder/${rec._id}` }}
-                  className='success p-0'
-                >
-                  <i
-                    className='ft-edit-3 font-medium-3 mr-2 '
-                    title='Edit'
-                  ></i>
-                </Link>
-                
-              </>
-            ),
+          actions: (
+            <>
+              <Link
+                to={{ pathname: `/orders/vieworder/${rec._id}` }}
+                className="success p-0"
+              >
+                <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit"></i>
+              </Link>
+            </>
+          ),
         });
       });
     }
@@ -519,9 +515,9 @@ class IndividualBarcode extends Component {
         text: "Status",
         sort: true,
       },
-  {
-        dataField: 'actions',
-        text: 'Actions',
+      {
+        dataField: "actions",
+        text: "Actions",
         sort: true,
       },
     ];
@@ -792,57 +788,51 @@ class IndividualBarcode extends Component {
                           </td>
                         </tr>
 
-                        {(user &&
-                          user.systemRole === "Employee" &&
-                          user.sections.includes("Orders")) ||
-                        (user && user.systemRole === "Admin") ? (
-                          <tr>
-                            <th>Upload Image :</th>
-                            <td>
-                              {" "}
-                              <input
-                                name="image"
-                                type="file"
-                                className="form-control-file file btn btn-raised shadow-z-1-hover"
-                                id="projectinput8"
-                                accept="image/jpeg,image/gif,image/jpg,image/png,image/x-eps"
-                                onChange={(e) => this._onChange(e)}
-                              />
-                            </td>
-                            <td>
-                              {this.state.imgupdating ? (
-                                <button
-                                  type="submit"
-                                  className="badge badge-success"
-                                >
-                                  <div
-                                    className="mr-2 spinner-grow spinner-grow-sm"
-                                    role="status"
-                                  ></div>{" "}
-                                  &nbsp; Updating{" "}
-                                </button>
-                              ) : (
-                                <button
-                                  type="submit"
-                                  className="badge badge-success"
-                                  onClick={(e) =>
-                                    this.onSubmitImages(
-                                      e,
-                                      individual_barcode.barcode
-                                    )
-                                  }
-                                >
-                                  <i className="ft-chevron-down" /> Update Image
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ) : (
-                          ""
-                        )}
+                        <tr>
+                          <th>Upload Image :</th>
+                          <td>
+                            {" "}
+                            <input
+                              name="image"
+                              type="file"
+                              className="form-control-file file btn btn-raised shadow-z-1-hover"
+                              id="projectinput8"
+                              accept="image/jpeg,image/gif,image/jpg,image/png,image/x-eps"
+                              onChange={(e) => this._onChange(e)}
+                            />
+                          </td>
+                          <td>
+                            {this.state.imgupdating ? (
+                              <button
+                                type="submit"
+                                className="badge badge-success"
+                              >
+                                <div
+                                  className="mr-2 spinner-grow spinner-grow-sm"
+                                  role="status"
+                                ></div>{" "}
+                                &nbsp; Updating{" "}
+                              </button>
+                            ) : (
+                              <button
+                                type="submit"
+                                className="badge badge-success"
+                                onClick={(e) =>
+                                  this.onSubmitImages(
+                                    e,
+                                    individual_barcode.barcode
+                                  )
+                                }
+                              >
+                                <i className="ft-chevron-down" /> Update Image
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+
                         <tr>
                           <td colspan="1"></td>
-                          <td >
+                          <td>
                             <div className="mt-n3">
                               {this.state.images.length > 0 &&
                                 this.state.images.map((image) => {
@@ -857,12 +847,12 @@ class IndividualBarcode extends Component {
                                       />
                                       <div className="overlay">
                                         <h2 className="">
-                                          <i className="fa fa-trash mt-3"
-                                          onClick={(e) =>
-                                            this.deleteImage(e, image.id)
-                                          }
+                                          <i
+                                            className="fa fa-trash mt-3"
+                                            onClick={(e) =>
+                                              this.deleteImage(e, image.id)
+                                            }
                                           ></i>
-                                          
                                         </h2>
                                       </div>
                                     </div>
@@ -906,39 +896,39 @@ class IndividualBarcode extends Component {
                           {this.authorizationLogsTable()}
                         </div>
                       </div>
-
-                      <div className="card">
-                        <div className="card-header">
-                          <h3 className="form-section">
-                            <i className="fa fa-th"></i> Images
-                            <hr />
-                          </h3>
-                        </div>
-                        <div className="card-body mx-2">
-                          <div className="row mx-1 mt-n4">
-                            <Pagination
-                              items={this.state.images_Arr}
-                              onChangePage={(e) => this.onChangePage(e)}
-                            />
-                            <div className="product-container image-gallery w-100">
-                              {this.state.m_imgperpage.map((image) => (
-                                <div className="products">
-                                  <img
-                                    src={image.img}
-                                    alt="Item"
-                                    width={180}
-                                    height={180}
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </>
                   ) : (
                     ""
                   )}
+
+                  <div className="card">
+                    <div className="card-header">
+                      <h3 className="form-section">
+                        <i className="fa fa-th"></i> Images
+                        <hr />
+                      </h3>
+                    </div>
+                    <div className="card-body mx-2">
+                      <div className="row mx-1 mt-n4">
+                        <Pagination
+                          items={this.state.images_Arr}
+                          onChangePage={(e) => this.onChangePage(e)}
+                        />
+                        <div className="product-container image-gallery w-100">
+                          {this.state.m_imgperpage.map((image) => (
+                            <div className="products">
+                              <img
+                                src={image.img}
+                                alt="Item"
+                                width={180}
+                                height={180}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

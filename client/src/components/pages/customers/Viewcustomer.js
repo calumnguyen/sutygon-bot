@@ -75,39 +75,7 @@ class ViewCustomer extends Component {
         })
       })
 
-      // if (customers.length === 0) {
-      //   return (
-      //     <tr>
-      //       <td colSpan={6} className="text-center">
-      //         Không tìm thấy khách hàng với thông tin này.
-      //       </td>
-      //     </tr>
-      //   );
-      // }
-      // return customers.map((customer, i) => (
-      // <tr key={i}>
-
-      //   <td className="text-center">{""}</td>
-
-      //   <td className="text-center">{customer.name}</td>
-      //   <td className="text-center">{customer.contactnumber}</td>
-      //    <td className="text-center">{customer.online_account.exist}</td>
-      //  <td className="text-center">{"Diamond"}</td>
-      //   <td className="text-center">
-      // <Link to= {{ pathname: `/customer/editcustomer/${customer._id}`}}
-      //     className="success p-0">
-      //     <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit User"></i>
-      //   </Link>
-      //   <Link to="/customer"
-      //     onClick={() => this.onDelete(customer._id)}
-      //     className="danger p-0">
-      //     <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
-      //   </Link>
-
-      //   </td>
-
-      // </tr>
-      // ));
+      
     }
     if (customers) {
       const columns = [

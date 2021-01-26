@@ -32,17 +32,13 @@ export const getOrderbyCustomerNumber = (number) => async (dispatch) => {
 };
 
 
- // Get Customer
- export const getOrderbyOrder = (orderNumber) => async (dispatch) => {
+ // Get Order by Customer number
+ export const getPendingOrders = (number,date) => async (dispatch) => {
   dispatch({ type:RETURNPRODUCT_LOADING });
 
     try { 
  
-    const res = await axios.get(`/api/returnproducts/searchbyOrderNumber`, {
-      params: {
-        "orderNumber": orderNumber,
-      } }
-    )
+    const res = await axios.post(`/api/returnproducts/${number}/${date}/pending`)
  
       dispatch({
       type: GET_RETURNORDER,
@@ -56,13 +52,10 @@ export const getOrderbyCustomerNumber = (number) => async (dispatch) => {
   }
 };
 
-
- // Get Customer
  export const getOrderbyOrderNumber = (orderNumber) => async (dispatch) => {
   dispatch({ type:RETURNPRODUCT_LOADING });
 
     try { 
- 
     const res = await axios.get(`/api/returnproducts/searchbyOrderNumber`, {
       params: {
         "orderNumber": orderNumber,

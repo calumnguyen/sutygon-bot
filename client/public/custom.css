@@ -50,12 +50,12 @@
 .hovered:hover {
   cursor: pointer;
   color: white !important; 
-  background: lightslategray;
+  background: rgb(126, 144, 161);
   opacity: 0.6;
   transition: 0.3s;
+  text-emphasis: inherit;
 }
 .modal-footer {
- 
   justify-content: space-evenly !important
 }
 

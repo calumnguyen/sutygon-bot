@@ -205,7 +205,6 @@ class AddCustomer extends Component {
       username: this.state.name,
       email: "unverified",
       deactivate: false,
-      // account_created: this.state.createdAt,
     };
     var customerData = {
       name: state.name,
@@ -263,9 +262,7 @@ class AddCustomer extends Component {
     if (this.props.saved) {
       return <Redirect to="/customer" />;
     }
-    // if (this.props.insight) {
-    //   var { orders } = this.props.insight;
-    // }
+    
     if (this.props.insight) {
       var { orders } = this.state;
     }

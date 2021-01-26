@@ -322,3 +322,11 @@ cursor:pointer
   -ms-transform: scale(1);
   transform: scale(1);
 }
+
+.selectedOrderRow{
+  margin:5px
+}
+
+.row-span{
+  font-size:large;
+padding:4px}

@@ -5,7 +5,6 @@ const RentedProduct = require("../../models/RentedProducts");
 const Customer = require("../../models/Customer");
 const Product = require("../../models/Product");
 const { check, validationResult } = require("express-validator");
-const shortid = require("shortid");
 
 // @route   POST api/rentedproducts/add
 // @desc    Add New Rented Product
@@ -186,6 +185,7 @@ router.get(
     }
   }
 );
+
 
 // @route  GET api/nvoices/getLastRecord
 // @desc   Get Last Enter Record
