@@ -101,11 +101,12 @@ class Appointment extends Component {
           var isToday = moment(moment(app.date).format("MM/DD/YYYY")).isSame(
             moment(currentDate).format("MM/DD/YYYY")
           );
+          console.log(app)
           var string_Categories = app.categories.join(" , ")
           m_app.push({
             contactnumber: app.customer.contactnumber,
             name: app.customer.name,
-            date: moment(app.date).format("ddd, MMM Do YYYY"),
+            date: moment(app.date).format("DD/MM/YYYY"),
             orderID:app.orderID && app.orderID,
             categories:app.categories && string_Categories,
             note: app.note,
@@ -127,7 +128,7 @@ class Appointment extends Component {
                     className="success p-0"
                   >
                     <i
-                      className="ft-edit fa-2x mr-2 "
+                      className="ft-edit font-medium-3 mr-2 "
                       title="Edit Appointment"
                     ></i>
                   </Link>
@@ -139,7 +140,7 @@ class Appointment extends Component {
                     >
                       <i
                         className="
-                  icon-user-following fa-2x mr-2 "
+                  icon-user-following font-medium-3 mr-2 "
                         title="Checked-In"
                       ></i>
                     </Link>
@@ -153,7 +154,7 @@ class Appointment extends Component {
                   >
                     <i
                       className="
-                    ft-x fa-2x mr-2"
+                    ft-x font-medium-3 mr-2"
                       title="Cancel"
                     ></i>
                   </Link>
@@ -172,7 +173,7 @@ class Appointment extends Component {
         m_app.push({
           contactnumber: app.customer.contactnumber,
           name: app.customer.name,
-          date: moment(app.date).format("ddd, MMM Do YYYY"),
+          date: moment(app.date).format("DD/MM/YYYY"),
           categories: app.categories && string_Categories,
           orderID: app.orderID && app.orderID,
           note: app.note,
@@ -189,15 +190,7 @@ class Appointment extends Component {
               </>
             ) : (
               <>
-                <Link
-                  to={{ pathname: `/appointments/edit/${app._id}` }}
-                  className="success p-0"
-                >
-                  <i
-                    className="ft-edit fa-2x mr-2 "
-                    title="Edit Appointment"
-                  ></i>
-                </Link>
+                
                 {isToday === true ? (
                   <Link
                     to="/appointments"
@@ -206,13 +199,24 @@ class Appointment extends Component {
                   >
                     <i
                       className="
-              icon-user-following fa-2x mr-2 "
+              icon-user-following font-medium-3 mr-2 "
                       title="Checked-In"
                     ></i>
                   </Link>
                 ) : (
                   ""
                 )}
+
+                <Link
+                  to={{ pathname: `/appointments/edit/${app._id}` }}
+                  className="success p-0"
+                >
+                  <i
+                    className="ft-edit font-medium-3 mr-2 "
+                    title="Edit Appointment"
+                  ></i>
+                </Link>
+                
                 <Link
                   to="/appointments"
                   onClick={() => this.onCancel(app._id)}
@@ -220,7 +224,7 @@ class Appointment extends Component {
                 >
                   <i
                     className="
-                ft-x fa-2x mr-2"
+                ft-x font-medium-3 mr-2"
                     title="Cancel"
                   ></i>
                 </Link>

@@ -113,17 +113,19 @@ router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
     var now = new Date();
     let end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    const result = await Appointments.find({ date: end });
+    console.log(end)
+    const result = await Appointments.find({ date: end }).populate(
+      "customer"
+    );
     if (!result) {
-      return res.status(404).json({ msg: "No Appointmentsfound" });
+      return res.status(404).json({ msg: "No Appointments found" });
     }
     return res.json(result);
   } catch (err) {
     console.error(err.message);
     // Check if id is not valid
     if (err.kind === "ObjectId") {
-      return res.status(404).json({ msg: "No Appointmentsfound" });
+      return res.status(404).json({ msg: "No Appointments found" });
     }
     res
       .status(500)
