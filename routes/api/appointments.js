@@ -117,16 +117,11 @@ router.get("/currentDateAppointment/:date", auth, async (req, res) => {
 
     var end = new Date();
     end.setHours(0, 0, 0, 0);
-    var pipeline = [
-      {
-          "$match": {
-              "date": { "$gte": start, "$lt": end }
-          }
-      }
-      ];
-    const result = await Appointments.aggregate(pipeline, function (err, result){
-      if (err) throw new Error();
-  });
+   
+        const result = await Appointments.find({date: { $gte: start, $lt: end }}).populate(
+      "customer"
+    );
+
 
     if (!result) {
       return res.status(404).json({ msg: "No Appointmentsfound" });
