@@ -120,7 +120,7 @@ class EditAppointment extends Component {
     const { orders, customer } = this.state;
     if (orders) {
       return orders.map((order) => (
-        <tr>
+        <tr onClick={(e) => this.selectOrder(order.orderNumber)}>
           <td>
             <h5>
               <input
@@ -387,8 +387,11 @@ class EditAppointment extends Component {
                                   </tr>
                                   {this.state.date != "" &&
                                   this.state.defaultSelected != "" ? (
-                                    <tr>
-                                      <td>
+                                    <tr onClick={(e) =>this.selectOrder(
+                                      this.state.date == ""
+                                        ? "No Order"
+                                        : this.state.defaultSelected.orderNumber
+                                    )}>                                      <td>
                                         <h5>
                                           <input
                                             type="radio"
@@ -397,7 +400,7 @@ class EditAppointment extends Component {
                                               this.selectOrder(
                                                 this.state.date == ""
                                                   ? "No Order"
-                                                  : this.state.orderNumber
+                                                  : this.state.defaultSelected.orderNumber
                                               )
                                             }
                                             checked={
@@ -426,8 +429,11 @@ class EditAppointment extends Component {
                                   {this.getOrderRows()}
 
                                   {this.state.showNoOrderRow ? (
-                                    <tr>
-                                      <td>
+                                    <tr
+                                      onClick={(e) =>
+                                        this.selectOrder("No Order")
+                                      }
+                                    >                                      <td>
                                         <h5>
                                           <input
                                             type="radio"
