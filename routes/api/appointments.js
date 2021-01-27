@@ -118,10 +118,15 @@ router.get("/currentDateAppointment/:date", auth, async (req, res) => {
       now.getMonth(),
       now.getDate()
     );     
+    var start = new Date();
+start.setHours(0,0,0,0);
+
+var end = new Date();
+end.setHours(23,59,59,999);
     const result = await Appointments.find({
       date: {
-        $gte: today,
-        $lte: moment(today).add(1, 'h'),
+        $gte: start,
+        $lte: end
       }
     }).populate("customer");
 
