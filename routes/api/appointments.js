@@ -112,11 +112,11 @@ router.get(
 router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
    
-    var start = new Date();
-    start.setHours(0,0,0,0);
-    
+        var start = new Date();
+    start.setHours(-23, -59, -59, -999);
+
     var end = new Date();
-    end.setHours(23,59,59,999);
+    end.setHours(0, 0, 0, 0);
     var pipeline = [
       {
           "$match": {
