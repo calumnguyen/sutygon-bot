@@ -111,9 +111,12 @@ router.get(
 // @access Private
 router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-       var gte = moment.utc(today, 'DD-MM-YYYY');
+    var now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var start = new Date();
+    start.setHours(0,0,0,0);
+    
+    var gte = moment.utc(today, 'DD-MM-YYYY');
 var lte = moment.utc(today, 'DD-MM-YYYY').endOf('Day');
 
         const result = await Appointments.find({
@@ -123,22 +126,22 @@ var lte = moment.utc(today, 'DD-MM-YYYY').endOf('Day');
           }
         }).populate("customer");
     
+
     if (!result) {
-      return res.status(404).json({ msg: "No Appointments found" });
+      return res.status(404).json({ msg: "No Appointmentsfound" });
     }
     return res.json(result);
   } catch (err) {
     console.error(err.message);
     // Check if id is not valid
     if (err.kind === "ObjectId") {
-      return res.status(404).json({ msg: "No Appointments found" });
+      return res.status(404).json({ msg: "No Appointmentsfound" });
     }
     res
       .status(500)
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
 });
-
 // @route  DELETE api/appointments/:id
 // @desc   Cancel an Appointment
 // @access Private
