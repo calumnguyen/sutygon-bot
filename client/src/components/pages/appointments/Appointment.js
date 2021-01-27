@@ -123,6 +123,22 @@ class Appointment extends Component {
                 </>
               ) : (
                 <>
+                {isToday === true ? (
+                    <Link
+                      to="/appointments"
+                      onClick={() => this.onChecked(app._id)}
+                      className="warning p-0 mb-1"
+                    >
+                      <i
+                        className="
+                  icon-user-following font-medium-3 mr-2 "
+                        title="Checked-In"
+                      ></i>
+                    </Link>
+                  ) : (
+                    ""
+                  )}
+                
                   <Link
                     to={{ pathname: `/appointments/edit/${app._id}` }}
                     className="success p-0"
