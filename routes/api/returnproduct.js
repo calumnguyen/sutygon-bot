@@ -55,17 +55,19 @@ router.post('/:contact/:date/pending',
 auth,
 async (req, res) => {
    try {
-   let now = moment(req.params.date)
-    let start =  now.subtract('1','year').toISOString()
-    let end = moment(req.params.date).toISOString()
-       const result = await RentedProduct.find({
-           customerContactNumber: { $eq: req.params.contact },
-           status: { $in: 'pending'},
-           rentDate:{ $gte: start, $lte: end }
+       var now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()+7);
+    const yesterday = new Date(
+      now.getFullYear()-1,
+      now.getMonth(),
+      now.getDate()
+    );
+    const result = await RentedProduct.find({
+      customerContactNumber: { $eq: req.params.contact },
+      status: { $in: "pending" },
+      rentDate: { $gte: yesterday, $lte: today },
+    }).sort({ rentDate: 1 });
 
-       },
-        
-       ).sort({ rentDate:1 })
 
        if (result == null) {
            return res
