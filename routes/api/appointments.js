@@ -116,7 +116,7 @@ router.get("/currentDateAppointment/:date", auth, async (req, res) => {
     const tomorrow = new Date(
       now.getFullYear(),
       now.getMonth(),
-      now.getDate() + 1
+      now.getDate()
     );     
     const result = await Appointments.find({
       date: {
