@@ -111,25 +111,15 @@ router.get(
 // @access Private
 router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
-         var now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrow = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );     
-    var start = new Date();
-start.setHours(0,0,0,0);
+       var gte = moment.utc(req.query.date, 'DD-MM-YYYY');
+var lte = moment.utc(req.query.date, 'DD-MM-YYYY').endOf('Day');
 
-var end = new Date();
-end.setHours(23,59,59,999);
-    const result = await Appointments.find({
-      date: {
-        $gte: start,
-        $lte: end
-      }
-    }).populate("customer");
-
+        const result = await Appointments.find({
+          date: {
+            $gte: gte,
+            $lte: lte
+          }
+        }).populate("customer");
     
     if (!result) {
       return res.status(404).json({ msg: "No Appointments found" });
