@@ -121,7 +121,7 @@ router.get("/currentDateAppointment/:date", auth, async (req, res) => {
     const result = await Appointments.find({
       date: {
         $gte: today,
-        $lt: tomorrow,
+        $lte: tomorrow,
       }
     }).populate("customer");
 
