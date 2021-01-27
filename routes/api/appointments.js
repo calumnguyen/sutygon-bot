@@ -111,8 +111,10 @@ router.get(
 // @access Private
 router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
-       var gte = moment.utc(req.query.date, 'DD-MM-YYYY');
-var lte = moment.utc(req.query.date, 'DD-MM-YYYY').endOf('Day');
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+       var gte = moment.utc(today, 'DD-MM-YYYY');
+var lte = moment.utc(today, 'DD-MM-YYYY').endOf('Day');
 
         const result = await Appointments.find({
           date: {
