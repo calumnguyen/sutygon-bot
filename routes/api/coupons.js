@@ -18,6 +18,10 @@ router.post(
   async (req, res) => {
     const { eligibility } = req.body;
     try {
+      const result = await Coupon.findOne({ code: req.body.code });
+    if (result) {
+      return res.status(404).json({ msg: "Coupon Code Must be unique " });
+    }
       const CouponBody = {
         discount_amount: req.body.discount_amount,
         coupon_type: req.body.coupon_type,
@@ -57,7 +61,6 @@ router.post(
       await coupon.save();
       res.status(200).json({ coupon, msg: "Coupon Added Successfully" });
     } catch (err) {
-      console.log(err);
       res.status(500).send("Server error");
     }
   }

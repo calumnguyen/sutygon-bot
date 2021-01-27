@@ -241,7 +241,7 @@ class CouponDetail extends Component {
                                   ? `${coupon.max_life}`
                                   : ""}{" "}
                                 <div className="row mt-2">
-                                  <div className="col-md-6">
+                                  <div className="col-md-12">
                                     Total usage
                                     <p>
                                       {" "}
@@ -250,7 +250,7 @@ class CouponDetail extends Component {
                                         : 0}
                                     </p>
                                   </div>
-                                  <div className="col-md-6">
+                                  <div className="col-md-12">
                                     Unclaimed
                                     <p> {coupon && this.calculation(coupon)}</p>
                                   </div>

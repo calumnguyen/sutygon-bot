@@ -21,10 +21,13 @@ export const addNewCoupon = (coupon) => async (dispatch) => {
 
     dispatch(setAlert(res.data.msg, "success"));
   } catch (err) {
-    const errors = err.response.data.errors;
-    if (errors) {
-      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    if (err.response.data.msg) {
+      dispatch(setAlert(err.response.data.msg, "danger"))
     }
+    // const errors = err.response.data;
+    // if (errors) {
+    //   errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    // }
     dispatch({
       type: COUPON_ERROR,
     });

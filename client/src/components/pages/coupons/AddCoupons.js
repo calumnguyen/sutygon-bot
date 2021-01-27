@@ -145,7 +145,10 @@ class AddCoupons extends Component {
       OCAlert.alertError("End Date  Required", { timeOut: 3000 });
       return;
     }
-
+if (this.state.tags.length == 0) {
+      OCAlert.alertError("Coupon Tags is Required", { timeOut: 3000 });
+      return;
+    }
     const startDate = new Date(this.state.start_date).getTime();
     const endDate = new Date(this.state.end_date).getTime();
 
@@ -217,7 +220,7 @@ class AddCoupons extends Component {
         code: "",
         start_date: "",
         end_date: "",
-        tags: "",
+        tags: [],
         min_requirement: "",
         // eligibility: "all",
         product_ids: [],
@@ -485,7 +488,7 @@ class AddCoupons extends Component {
                               </label>
                               <div className="col-md-8">
                                 <input
-                                  type="date"
+                                  type="datetime-local"
                                   min={moment().format("YYYY-MM-DD")}
                                   id="start_date"
                                   className="form-control border-primary"
@@ -512,7 +515,7 @@ class AddCoupons extends Component {
                               <div className="col-md-8">
                                 <input
                                   min={moment().format("YYYY-MM-DD")}
-                                  type="date"
+                                  type="datetime-local"
                                   id="end_date"
                                   className="form-control border-primary"
                                   placeholder="Number of Use*"
