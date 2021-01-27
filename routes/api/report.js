@@ -4,7 +4,7 @@ const router = express.Router();
 const auth = require("../../middleware/auth");
 const { check, validationResult } = require("express-validator");
 const  RentedProduct= require("../../models/RentedProducts");
-const  FittingAppointment= require("../../models/FittingAppointment");
+const  Appointments= require("../../models/Appointments");
 const moment = require("moment")
 
 
@@ -71,7 +71,7 @@ router.get('',
 
        }
        else if (req.query.reportType === "appointment") {
-             result = await FittingAppointment.find({
+             result = await Appointments.find({
                 customer: { $eq: req.query.customer },
                 user: { $eq: req.query.user },
                 start: { $gte: req.query.start, $lte: req.query.end }

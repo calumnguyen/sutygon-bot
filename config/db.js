@@ -14,6 +14,8 @@ const connectDB = async () => {
         useCreateIndex: true,
         useFindAndModify: false,
         useUnifiedTopology: true,
+      },
+      {    autoIndex :false 
       }
     )
 

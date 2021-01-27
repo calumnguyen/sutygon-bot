@@ -19,7 +19,10 @@ import Orders from './components/pages/orders/orders'
 import ViewOrder from './components/pages/orders/viewOrder'
 import OrderNotes from './components/pages/orders/orderNotes'
 import Calender from './components/pages/calender'
-import AddAppointment from './components/pages/appointment'
+import AddAppointment from './components/pages/appointments/AddAppointment'
+import Appointment from './components/pages/appointments/Appointment'
+import NewAppointment from './components/pages/appointments/NewAppointment'
+import EditAppointment from './components/pages/appointments/EditAppointment'
 import ViewCustomer from './components/pages/customers/Viewcustomer'
 import ViewProduct from './components/pages/products/Viewproduct'
 import Product from './components/pages/products/Product'
@@ -146,7 +149,11 @@ const Main = () => {
           />
 
           {/* appointment */}
-          <PrivateRoute exact path='/appointments' component={AddAppointment} />
+          <PrivateRoute exact path='/appointments/add' component={AddAppointment} />
+          <PrivateRoute exact path='/appointments/' component={Appointment} />
+          <PrivateRoute exact path='/appointments/newappointment' component={NewAppointment} />
+          <PrivateRoute exact path='/appointments/edit/:id' component={EditAppointment} />
+
 
           {/* calender */}
           <PrivateRoute exact path='/calender' component={Calender} />

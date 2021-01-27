@@ -114,21 +114,7 @@ class ViewUser extends Component {
             ) : (
               ""
             )}
-            {/*            
-            {auth_user && auth_user.type === "Admin" ?
-              <Link
-                to={{ pathname: `/user` }}
-                onClick={() => this.onBlock(user._id)}
-                className='info p-0'
-              >
-                <i
-                  className='ft-alert-triangle font-medium-3 mr-2'
-                  title='Block User'
-                ></i>
-              </Link>
-              : ""} */}
-
-            {auth_user && auth_user.systemRole === "Admin" ? (
+                       {auth_user && auth_user.systemRole === "Admin" ? (
               <Link
                 to="/user"
                 onClick={() => this.onDelete(user._id)}

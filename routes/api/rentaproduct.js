@@ -202,6 +202,7 @@ router.get("/search", auth, async (req, res) => {
   }
 });
 
+
 // @route  GET api/nvoices/getLastRecord
 // @desc   Get Last Enter Record
 // @access Private

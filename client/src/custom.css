@@ -184,3 +184,6 @@ margin-bottom: 0 !important;
   cursor: pointer;
   background-color: "red";
 }
+.badge-category{
+border-radius: 3px; padding:5px; font-size:medium;cursor:pointer; box-shadow: 0px; border:black
+}

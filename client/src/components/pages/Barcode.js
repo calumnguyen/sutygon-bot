@@ -437,7 +437,6 @@ class Barcode extends Component {
   _deleteProduct = async (product) => {
     // const { product } = this.props;
     let total_qty = 0;
-    // console.log(product)
     const ex_product = product;
     if (ex_product && ex_product.color) {
       // loop through product colors
