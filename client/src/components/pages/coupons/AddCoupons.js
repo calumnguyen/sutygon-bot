@@ -488,7 +488,7 @@ if (this.state.tags.length == 0) {
                               </label>
                               <div className="col-md-8">
                                 <input
-                                  type="datetime-local"
+                                  type="date"
                                   min={moment().format("YYYY-MM-DD")}
                                   id="start_date"
                                   className="form-control border-primary"
@@ -515,7 +515,7 @@ if (this.state.tags.length == 0) {
                               <div className="col-md-8">
                                 <input
                                   min={moment().format("YYYY-MM-DD")}
-                                  type="datetime-local"
+                                  type="date"
                                   id="end_date"
                                   className="form-control border-primary"
                                   placeholder="Number of Use*"
