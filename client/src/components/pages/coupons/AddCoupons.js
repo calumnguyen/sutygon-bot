@@ -514,7 +514,7 @@ if (this.state.tags.length == 0) {
                               </label>
                               <div className="col-md-8">
                                 <input
-                                  min={moment().format("YYYY-MM-DD")}
+                                  min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0]}
                                   type="date"
                                   id="end_date"
                                   className="form-control border-primary"
