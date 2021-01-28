@@ -67,7 +67,6 @@ class CouponDetail extends Component {
     }
   };
 
- 
   onUpdateTags = async () => {
     const { coupon } = this.props;
     const { new_tags } = this.state;
@@ -197,14 +196,14 @@ class CouponDetail extends Component {
                                   <li>
                                     Start:{" "}
                                     {coupon && coupon.start_date
-                                      ? `${coupon.start_date}`
+                                      ? `${coupon.start_date.split("T")[0]}`
                                       : ""}{" "}
                                   </li>
 
                                   <li>
                                     Expire :{" "}
                                     {coupon && coupon.end_date
-                                      ? `${coupon.end_date}`
+                                      ? `${coupon.end_date.split("T")[0]}`
                                       : ""}{" "}
                                   </li>
                                 </ul>
@@ -312,12 +311,7 @@ class CouponDetail extends Component {
                                   {coupon_notes &&
                                     coupon_notes.map((item, index) => {
                                       return (
-                                        <li
-                                         
-                                          key={item._id}
-                                        >
-                                          {item.title}
-                                        </li>
+                                        <li key={item._id}>{item.title}</li>
                                       );
                                     })}
                                 </ul>
@@ -405,8 +399,6 @@ class CouponDetail extends Component {
                                 </button>
                               </div>
                             </div>
-
-                           
                           </div>
                         </div>
                       </div>
