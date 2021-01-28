@@ -91,7 +91,7 @@ class NewAppointment extends Component {
     const { orders, customer } = this.state;
     if (orders) {
       return orders.map((order) => (
-        <tr>
+        <tr onClick={(e) => this.selectOrder(order.orderNumber)}>
           <td>
             <h5>
               <input
@@ -282,9 +282,7 @@ class NewAppointment extends Component {
                                         id="basicInput"
                                         name="category"
                                         max={25}
-                                        onChange={(e) =>
-                                          this.handleChange(e)
-                                        }
+                                        onChange={(e) => this.handleChange(e)}
                                       />
                                     </td>
                                   </tr>
@@ -302,9 +300,7 @@ class NewAppointment extends Component {
                                         class="form-control"
                                         id="basicInput"
                                         name="note"
-                                        onChange={(e) =>
-                                          this.handleChange(e)
-                                        }
+                                        onChange={(e) => this.handleChange(e)}
                                       />
                                     </td>
                                   </tr>
@@ -324,7 +320,11 @@ class NewAppointment extends Component {
                                   </tr>
                                   {this.state.date != "" &&
                                   this.state.defaultSelected != "" ? (
-                                    <tr>
+                                    <tr onClick={(e) =>this.selectOrder(
+                                      this.state.date == ""
+                                        ? "No Order"
+                                        : this.state.defaultSelected.orderNumber
+                                    )}>
                                       <td>
                                         <h5>
                                           <input
@@ -334,7 +334,7 @@ class NewAppointment extends Component {
                                               this.selectOrder(
                                                 this.state.date == ""
                                                   ? "No Order"
-                                                  : this.state.orderNumber
+                                                  : this.state.defaultSelected.orderNumber
                                               )
                                             }
                                             checked={
@@ -363,7 +363,11 @@ class NewAppointment extends Component {
                                   {this.getOrderRows()}
 
                                   {this.state.showNoOrderRow ? (
-                                    <tr>
+                                    <tr
+                                      onClick={(e) =>
+                                        this.selectOrder("No Order")
+                                      }
+                                    >
                                       <td>
                                         <h5>
                                           <input
