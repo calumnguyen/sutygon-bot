@@ -1,23 +1,23 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
-import { Link } from "react-router-dom";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { getAllCoupons, deleteCoupon } from "../../../actions/coupons";
-import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css";
-import Alert from "../../layout/Alert";
-import Loader from "../../layout/Loader";
-import MPagination from "../../../components/pagination/MPagination";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { getAllCoupons, deleteCoupon } from '../../../actions/coupons';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import Alert from '../../layout/Alert';
+import Loader from '../../layout/Loader';
+import MPagination from '../../../components/pagination/MPagination';
 
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
 
 class ViewCoupons extends Component {
   state = {
-    couponsStatus: "active",
+    couponsStatus: 'active',
     page: 1,
   };
 
@@ -42,47 +42,47 @@ class ViewCoupons extends Component {
       if (coupons.length === 0) {
         return (
           <tr>
-            <td colSpan={9} className="text-center">
-              No Coupon Found
+            <td colSpan={9} className='text-center'>
+              Không tìm thấy mã giảm giá nào. Kiết quá đi!
             </td>
           </tr>
         );
       }
       return coupons.map((coupon, index) => (
         <tr key={coupon._id}>
-          <td className="text-center">{index + 1}</td>
+          <td className='text-center'>{index + 1}</td>
 
-          <td className="text-center">
+          <td className='text-center'>
             {coupon.discount_amount}
-            {coupon.coupon_type == "percentage" ? " %" : " VND"}
+            {coupon.coupon_type == 'percentage' ? ' %' : ' VND'}
           </td>
-          <td className="text-center">{coupon.code}</td>
-          <td className="text-center">{coupon.usage}</td>
-          <td className="text-center">
-            {coupon.coupon_status === "active" && (
-              <span className="badge badge-success">ACTIVE</span>
+          <td className='text-center'>{coupon.code}</td>
+          <td className='text-center'>{coupon.usage}</td>
+          <td className='text-center'>
+            {coupon.coupon_status === 'active' && (
+              <span className='badge badge-success'>ĐANG CHẠY</span>
             )}
-            {coupon.coupon_status === "inactive" && (
-              <span className="badge badge-warning">INACTIVE</span>
+            {coupon.coupon_status === 'inactive' && (
+              <span className='badge badge-warning'>Hết Hạn</span>
             )}
           </td>
-          <td className="text-center">
+          <td className='text-center'>
             <Link
               to={{ pathname: `/coupons/view/${coupon._id}` }}
-              className="success p-0"
+              className='success p-0'
             >
               <i
-                className="fa fa-eye font-medium-3 mr-2 "
-                title="View Coupons"
+                className='fa fa-eye font-medium-3 mr-2 '
+                title='Xem Thông Tin'
               ></i>
             </Link>
 
             <Link
-              to="/coupons"
+              to='/coupons'
               onClick={() => this.onDelete(coupon._id)}
-              className="danger p-0"
+              className='danger p-0'
             >
-              <i className="ft-x font-medium-3 mr-2" title="Delete"></i>
+              <i className='ft-x font-medium-3 mr-2' title='Xoá Mã'></i>
             </Link>
           </td>
         </tr>
@@ -92,17 +92,17 @@ class ViewCoupons extends Component {
 
   onDelete = (id) => {
     confirmAlert({
-      title: "Delete Coupon",
-      message: "Are you sure you want to delete this record?",
+      title: 'Xoá Mã Giảm Giá?',
+      message: 'Bạn có chắc chắn muốn xoá mã giảm giá này không?',
       buttons: [
         {
-          label: "Yes",
+          label: 'Có, xoá mã!',
           onClick: () => {
             this.props.deleteCoupon(id);
           },
         },
         {
-          label: "No",
+          label: 'Hủy',
           onClick: () => {},
         },
       ],
@@ -115,82 +115,82 @@ class ViewCoupons extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to='/' />;
     }
     const { user } = auth;
 
-    if (user && user.systemRole === "Employee") {
-      return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      return <Redirect to='/Error' />;
     }
 
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="simple-table">
-                  <div className="row">
-                    <div className="col-sm-12">
-                      <div className="card">
-                        <div className="card-header">
-                          <h4 className="card-title">All Coupons</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='simple-table'>
+                  <div className='row'>
+                    <div className='col-sm-12'>
+                      <div className='card'>
+                        <div className='card-header'>
+                          <h4 className='card-title'>Mã Giảm Giá</h4>
                         </div>
-                        <div className="card-content">
-                          <div className="card-body">
-                            <div className="row">
-                              <div className="col-md-8">
+                        <div className='card-content'>
+                          <div className='card-body'>
+                            <div className='row'>
+                              <div className='col-md-8'>
                                 <label
-                                  className="radio-inline"
-                                  style={{ marginLeft: "10px" }}
+                                  className='radio-inline'
+                                  style={{ marginLeft: '10px' }}
                                 >
                                   <input
-                                    type="radio"
-                                    name="activeUser"
+                                    type='radio'
+                                    name='activeUser'
                                     onChange={(e) =>
                                       this.setState({
-                                        couponsStatus: "active",
+                                        couponsStatus: 'active',
                                         page: 1,
                                       })
                                     }
                                     checked={
-                                      this.state.couponsStatus === "active"
+                                      this.state.couponsStatus === 'active'
                                     }
-                                  />{" "}
-                                  Active Coupons
+                                  />{' '}
+                                  Đang Chạy
                                 </label>
                                 <label
-                                  className="radio-inline"
-                                  style={{ marginLeft: "10px" }}
+                                  className='radio-inline'
+                                  style={{ marginLeft: '10px' }}
                                 >
                                   <input
-                                    type="radio"
-                                    name="InactiveUser"
+                                    type='radio'
+                                    name='InactiveUser'
                                     onChange={(e) =>
                                       this.setState({
-                                        couponsStatus: "inactive",
+                                        couponsStatus: 'inactive',
                                         page: 1,
                                       })
                                     }
                                     checked={
-                                      this.state.couponsStatus === "inactive"
+                                      this.state.couponsStatus === 'inactive'
                                     }
-                                  />{" "}
-                                  Inactive Coupons
+                                  />{' '}
+                                  Hết Hạn
                                 </label>
                               </div>
 
-                              <div className="col-md-4">
+                              <div className='col-md-4'>
                                 <Link
                                   to={{
-                                    pathname: "/coupons/add",
+                                    pathname: '/coupons/add',
                                   }}
-                                  className="btn btn-primary pull-right"
+                                  className='btn btn-primary pull-right'
                                 >
-                                  <i className="fa fa-plus"></i> New Coupon
+                                  <i className='fa fa-plus'></i> Thêm Mã Mới
                                 </Link>
                               </div>
                             </div>
@@ -203,17 +203,15 @@ class ViewCoupons extends Component {
                                 products_total={this.props.coupons_total}
                               />
                             )}
-                            <table className="table">
+                            <table className='table'>
                               <thead>
                                 <tr>
-                                  <th className="text-center">ID#</th>
-                                  <th className="text-center">
-                                    Discount Amount
-                                  </th>
-                                  <th className="text-center">Coupon code</th>
-                                  <th className="text-center">Total Usage</th>
-                                  <th className="text-center">Status</th>
-                                  <th className="text-center">View/Edit</th>
+                                  <th className='text-center'>STT</th>
+                                  <th className='text-center'>Giảm Giá</th>
+                                  <th className='text-center'>Mã</th>
+                                  <th className='text-center'>Tổng Lược Xài</th>
+                                  <th className='text-center'>Trạng Thái</th>
+                                  <th className='text-center'>Hành Động</th>
                                 </tr>
                               </thead>
 
@@ -228,20 +226,20 @@ class ViewCoupons extends Component {
               </div>
             </div>
           </div>
-          <footer className="footer footer-static footer-light">
-            <p className="clearfix text-muted text-sm-center px-2">
+          <footer className='footer footer-static footer-light'>
+            <p className='clearfix text-muted text-sm-center px-2'>
               <span>
-                Quyền sở hữu của &nbsp;{" "}
+                Quyền sở hữu của &nbsp;{' '}
                 <a
-                  href="https://www.sutygon.com"
-                  rel="noopener noreferrer"
-                  id="pixinventLink"
-                  target="_blank"
-                  className="text-bold-800 primary darken-2"
+                  href='https://www.sutygon.com'
+                  rel='noopener noreferrer'
+                  id='pixinventLink'
+                  target='_blank'
+                  className='text-bold-800 primary darken-2'
                 >
-                  SUTYGON-BOT{" "}
+                  SUTYGON-BOT{' '}
                 </a>
-                , All rights reserved.{" "}
+                , All rights reserved.{' '}
               </span>
             </p>
           </footer>

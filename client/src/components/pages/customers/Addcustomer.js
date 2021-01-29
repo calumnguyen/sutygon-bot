@@ -1,51 +1,51 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
 import {
   addNewCustomer,
   getCustomer,
   updateCustomer,
   getInsight,
-} from "../../../actions/customer";
-import { Redirect, Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import Alert from "../../layout/Alert";
-import Loader from "../../layout/Loader";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import * as moment from "moment";
-import Switch from "react-switch";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
-import Modal from "react-awesome-modal";
-import { registerLocale, setDefaultLocale } from "react-datepicker";
+} from '../../../actions/customer';
+import { Redirect, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Alert from '../../layout/Alert';
+import Loader from '../../layout/Loader';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import * as moment from 'moment';
+import Switch from 'react-switch';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
+import Modal from 'react-awesome-modal';
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
 
-import { vi } from "date-fns/esm/locale";
+import { vi } from 'date-fns/esm/locale';
 
-registerLocale("vi", vi);
-setDefaultLocale("vi");
+registerLocale('vi', vi);
+setDefaultLocale('vi');
 class AddCustomer extends Component {
   state = {
-    id: "",
-    name: "",
-    contactnumber: "",
-    email: "",
-    address: "",
-    birthday: "",
-    company: "",
-    company_address: "",
-    block_account: "",
-    online_account: "",
-    membership: "",
+    id: '',
+    name: '',
+    contactnumber: '',
+    email: '',
+    address: '',
+    birthday: '',
+    company: '',
+    company_address: '',
+    block_account: '',
+    online_account: '',
+    membership: '',
     saving: false,
     isEdit: false,
     year: false,
-    selectedYear: "",
+    selectedYear: '',
     month: false,
-    selectedMonth: "",
+    selectedMonth: '',
     alltime: false,
-    selectedAllyear: "",
+    selectedAllyear: '',
     visible: false,
     show: false,
   };
@@ -71,11 +71,11 @@ class AddCustomer extends Component {
           membership:
             customer.online_account[0] && customer.online_account[0].membership
               ? customer.online_account[0].membership
-              : "",
-          year: customer.year ? moment(customer.year).format("DD/MM/YYYY") : "",
-          createdAt: moment(customer.createdAt).format("DD/MM/YYYY"),
+              : '',
+          year: customer.year ? moment(customer.year).format('DD/MM/YYYY') : '',
+          createdAt: moment(customer.createdAt).format('DD/MM/YYYY'),
           birthday:
-            customer.birthday && moment(customer.birthday).format("DD/MM/YYYY"),
+            customer.birthday && moment(customer.birthday).format('DD/MM/YYYY'),
         });
       }
     }
@@ -97,32 +97,28 @@ class AddCustomer extends Component {
   }
 
   validateEmail = (e) => {
-      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-      if (re.test(e.target.value) ){
-        this.setState({ email: e.target.value });
-      } 
-
-       else {
-        OCAlert.alertError("Email is not valid", { timeOut: 3000 });
-        this.setState({ email: "" });
-        return;
-      }
-
-    
+    if (re.test(e.target.value)) {
+      this.setState({ email: e.target.value });
+    } else {
+      OCAlert.alertError('Email is not valid', { timeOut: 3000 });
+      this.setState({ email: '' });
+      return;
+    }
   };
   openModal = (e) => {
     e.preventDefault();
     if (
-      this.state.contactnumber === "" ||
-      this.state.name === "" ||
-      this.state.address === "" ||
-      this.state.birthday === ""
+      this.state.contactnumber === '' ||
+      this.state.name === '' ||
+      this.state.address === '' ||
+      this.state.birthday === ''
     ) {
       this.setState({
         visible: false,
       });
-      OCAlert.alertError("Enter Required Fields", { timeOut: 3000 });
+      OCAlert.alertError('Enter Required Fields', { timeOut: 3000 });
       return;
     } else {
       this.setState({
@@ -131,23 +127,22 @@ class AddCustomer extends Component {
     }
   };
   handleChangeForDate = (date, name, e) => {
-    if (this.state.id === "") {
+    if (this.state.id === '') {
       this.setState({
         birthday: date,
       });
     }
-   
 
-    if (name === "selectedYear") {
+    if (name === 'selectedYear') {
       this.setState({
         selectedYear: date,
-        selectedMonth: "",
+        selectedMonth: '',
         alltime: false,
       });
-    } else if (name === "selectedMonth") {
+    } else if (name === 'selectedMonth') {
       this.setState({
         selectedMonth: date,
-        selectedYear: "",
+        selectedYear: '',
         alltime: false,
       });
     }
@@ -160,26 +155,26 @@ class AddCustomer extends Component {
       this.setState({ block_account: false });
     }
   };
-  handleChange = (e, id = "") => {
+  handleChange = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   handleCheck = (e, name) => {
-    if (name === "month") {
+    if (name === 'month') {
       this.setState({
         [e.target.name]: !this.state[name],
         year: false,
         alltime: false,
       });
     }
-    if (name === "year") {
+    if (name === 'year') {
       this.setState({
         [e.target.name]: !this.state[name],
         month: false,
         alltime: false,
       });
     }
-    if (name === "alltime") {
+    if (name === 'alltime') {
       this.setState({
         [e.target.name]: !this.state[name],
         month: false,
@@ -190,7 +185,7 @@ class AddCustomer extends Component {
 
   handleChangeNumber = (e) => {
     const re = /^[0-9\b]+$/;
-    if (e.target.value === "" || re.test(e.target.value)) {
+    if (e.target.value === '' || re.test(e.target.value)) {
       this.setState({ [e.target.name]: e.target.value });
     }
   };
@@ -200,10 +195,10 @@ class AddCustomer extends Component {
     const state = { ...this.state };
     const { customer } = this.props;
     let m_oc = {
-      exist: "no",
-      membership: this.state.membership === "" ? null : this.state.membership,
+      exist: 'no',
+      membership: this.state.membership === '' ? null : this.state.membership,
       username: this.state.name,
-      email: "unverified",
+      email: 'unverified',
       deactivate: false,
     };
     var customerData = {
@@ -211,14 +206,14 @@ class AddCustomer extends Component {
       email: state.email,
       contactnumber: state.contactnumber,
       address: state.address,
-      birthday: state.id === "" ? moment(state.birthday) : customer.birthday,
+      birthday: state.id === '' ? moment(state.birthday) : customer.birthday,
       company: state.company,
       company_address: state.company_address,
       online_account: m_oc,
-      block_account: state.block_account === "" ? false : state.block_account,
+      block_account: state.block_account === '' ? false : state.block_account,
     };
 
-    if (state.id === "") {
+    if (state.id === '') {
       await this.props.addNewCustomer(customerData);
     } else {
       await this.props.updateCustomer(customerData, state.id);
@@ -233,8 +228,8 @@ class AddCustomer extends Component {
       const id = this.props.match.params.id;
 
       const timeframe = {
-        year: moment(this.state.selectedYear).add(1, "month"),
-        month: moment(this.state.selectedMonth).add(1, "month"),
+        year: moment(this.state.selectedYear).add(1, 'month'),
+        month: moment(this.state.selectedMonth).add(1, 'month'),
         allTime: this.state.alltime,
       };
       await this.props.getInsight(id, timeframe);
@@ -244,25 +239,25 @@ class AddCustomer extends Component {
         });
       }
       if (this.props.insightFound === false) {
-        OCAlert.alertError("Something Went Wrong", { timeOut: 3000 });
+        OCAlert.alertError('Something Went Wrong', { timeOut: 3000 });
       }
     }
   };
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to='/' />;
     }
     const { user } = auth;
-    if (user && user.systemRole === "Employee") {
-      if (user && !user.sections.includes("Customers")) {
-        return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      if (user && !user.sections.includes('Customers')) {
+        return <Redirect to='/Error' />;
       }
     }
     if (this.props.saved) {
-      return <Redirect to="/customer" />;
+      return <Redirect to='/customer' />;
     }
-    
+
     if (this.props.insight) {
       var { orders } = this.state;
     }
@@ -270,69 +265,68 @@ class AddCustomer extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="form-action-layouts">
-                  <div className="form-body">
-                    <div className="card">
-                      <div className="card-header">
-                        <h4 className="form-section">
-                          <i className="ft-user"></i>
-                          {this.state.id === ""
-                            ? "Đăng Ký Khách Hàng Mới"
-                            : "Update Customer"}
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='form-action-layouts'>
+                  <div className='form-body'>
+                    <div className='card'>
+                      <div className='card-header'>
+                        <h4 className='form-section'>
+                          <i className='ft-user'></i>
+                          {this.state.id === ''
+                            ? 'Đăng Ký Khách Hàng Mới'
+                            : 'Update Customer'}
                         </h4>
                       </div>
                       <div>
-                        {" "}
+                        {' '}
                         <Alert />
                         <OCAlertsProvider />
-
                       </div>
 
-                      <div className="card-body">
+                      <div className='card-body'>
                         <form
-                          className="form form-horizontal form-bordered"
-                          method="POST"
+                          className='form form-horizontal form-bordered'
+                          method='POST'
                           onSubmit={(e) => this.onSubmit(e)}
                         >
-                          <h4 className="form-section ">
-                            <i className="ft-info"></i> Personal information
+                          <h4 className='form-section '>
+                            <i className='ft-info'></i> Personal information
                           </h4>
-                          <div className="row">
-                            <div className="col-md-6">
-                              <div className="form-group row">
+                          <div className='row'>
+                            <div className='col-md-6'>
+                              <div className='form-group row'>
                                 <label
-                                  className="col-md-3 label-control"
-                                  htmlFor="projectinput1"
+                                  className='col-md-3 label-control'
+                                  htmlFor='projectinput1'
                                 >
                                   Name
                                 </label>
 
-                                <div className="col-md-9">
+                                <div className='col-md-9'>
                                   {this.state.isEdit === false ? (
                                     <input
-                                      type="text"
-                                      id="projectinput1"
-                                      className="form-control border-primary"
-                                      placeholder="Name"
-                                      name="name"
+                                      type='text'
+                                      id='projectinput1'
+                                      className='form-control border-primary'
+                                      placeholder='Name'
+                                      name='name'
                                       required
                                       value={this.state.name}
                                       onChange={(e) => this.handleChange(e)}
                                     />
                                   ) : (
                                     <input
-                                      type="text"
-                                      id="projectinput1"
-                                      className="form-control border-primary"
-                                      placeholder="Name"
-                                      name="name"
+                                      type='text'
+                                      id='projectinput1'
+                                      className='form-control border-primary'
+                                      placeholder='Name'
+                                      name='name'
                                       required
                                       value={this.state.name}
                                       onChange={(e) => this.handleChange(e)}
@@ -341,21 +335,21 @@ class AddCustomer extends Component {
                                   )}
                                 </div>
                               </div>
-                              <div className="form-group row">
+                              <div className='form-group row'>
                                 <label
-                                  className="col-md-3 label-control"
-                                  htmlFor="projectinput4"
+                                  className='col-md-3 label-control'
+                                  htmlFor='projectinput4'
                                 >
                                   Contact Number
                                 </label>
 
-                                <div className="col-md-9">
+                                <div className='col-md-9'>
                                   <input
-                                    type="text"
-                                    id="projectinput4"
-                                    className="form-control border-primary"
-                                    placeholder="Contact Number"
-                                    name="contactnumber"
+                                    type='text'
+                                    id='projectinput4'
+                                    className='form-control border-primary'
+                                    placeholder='Contact Number'
+                                    name='contactnumber'
                                     value={this.state.contactnumber}
                                     onChange={(e) => this.handleChangeNumber(e)}
                                     required
@@ -364,113 +358,112 @@ class AddCustomer extends Component {
                                   />
                                 </div>
                               </div>
-                              <div className="form-group row">
+                              <div className='form-group row'>
                                 <label
-                                  className="col-md-3 label-control"
-                                  htmlFor="projectinput3"
+                                  className='col-md-3 label-control'
+                                  htmlFor='projectinput3'
                                 >
                                   E-mail
                                 </label>
-                                <div className="col-md-9">
+                                <div className='col-md-9'>
                                   <input
-                                    type="email"
-                                    id="projectinput3"
-                                    className="form-control border-primary"
-                                    placeholder="E-mail"
-                                    name="email"
+                                    type='email'
+                                    id='projectinput3'
+                                    className='form-control border-primary'
+                                    placeholder='E-mail'
+                                    name='email'
                                     value={this.state.email}
                                     onChange={(e) => this.handleChange(e)}
-
                                     onBlur={(e) => this.validateEmail(e)}
-                                    />
+                                  />
                                 </div>
                               </div>
-                              <div className="form-group row">
+                              <div className='form-group row'>
                                 <label
-                                  className="col-md-3 label-control"
-                                  htmlFor="projectinput3"
+                                  className='col-md-3 label-control'
+                                  htmlFor='projectinput3'
                                 >
                                   Company
                                 </label>
-                                <div className="col-md-9">
+                                <div className='col-md-9'>
                                   <input
-                                    type="text"
-                                    id="projectinput3"
-                                    className="form-control border-primary"
-                                    placeholder="Company"
-                                    name="company"
+                                    type='text'
+                                    id='projectinput3'
+                                    className='form-control border-primary'
+                                    placeholder='Company'
+                                    name='company'
                                     value={this.state.company}
                                     onChange={(e) => this.handleChange(e)}
                                   />
                                 </div>
                               </div>
                             </div>
-                            <div className="col-md-6">
-                              <div className="form-group row">
+                            <div className='col-md-6'>
+                              <div className='form-group row'>
                                 <label
-                                  className="col-md-3 label-control"
-                                  htmlFor="projectinput1"
+                                  className='col-md-3 label-control'
+                                  htmlFor='projectinput1'
                                 >
                                   Address
                                 </label>
-                                <div className="col-md-9">
+                                <div className='col-md-9'>
                                   <textarea
-                                    type="text"
-                                    id="projectinput1"
-                                    rows="4"
-                                    className="form-control col-md-12 border-primary"
-                                    placeholder="Address"
-                                    name="address"
+                                    type='text'
+                                    id='projectinput1'
+                                    rows='4'
+                                    className='form-control col-md-12 border-primary'
+                                    placeholder='Address'
+                                    name='address'
                                     value={this.state.address}
                                     onChange={(e) => this.handleChange(e)}
                                     required
                                   />
                                 </div>
                               </div>
-                              <div className="form-group row">
+                              <div className='form-group row'>
                                 <label
-                                  className="col-md-3 label-control"
-                                  htmlFor="projectinput3"
+                                  className='col-md-3 label-control'
+                                  htmlFor='projectinput3'
                                 >
                                   Birthday
                                 </label>
-                                <div className="col-md-9">
+                                <div className='col-md-9'>
                                   {this.state.isEdit === false ? (
                                     <DatePicker
-                                      dateFormat="dd/MM/yyyy"
-                                      locale="vi"
+                                      dateFormat='dd/MM/yyyy'
+                                      locale='vi'
                                       selected={this.state.birthday}
-                                      className="form-control border-primary"
+                                      className='form-control border-primary'
                                       onChange={(e) =>
-                                        this.handleChangeForDate(e, "birthday")
+                                        this.handleChangeForDate(e, 'birthday')
                                       }
                                       showMonthDropdown
                                       showYearDropdown
-                                      dropdownMode="select"
+                                      dropdownMode='select'
                                     />
                                   ) : (
                                     <input
                                       value={this.state.birthday}
-                                      className="form-control border-primary"
+                                      className='form-control border-primary'
                                       readOnly
                                     />
                                   )}
                                 </div>
                               </div>
-                              <div className="form-group row">
+                              <div className='form-group row'>
                                 <label
-                                  className="col-md-3 label-control"
-                                  htmlFor="projectinput3"
+                                  className='col-md-3 label-control'
+                                  htmlFor='projectinput3'
                                 >
                                   Company Address
                                 </label>
-                                <div className="col-md-9">
+                                <div className='col-md-9'>
                                   <input
-                                    type="text"
-                                    id="projectinput3"
-                                    className="form-control border-primary"
-                                    placeholder="Company Address"
-                                    name="company_address"
+                                    type='text'
+                                    id='projectinput3'
+                                    className='form-control border-primary'
+                                    placeholder='Company Address'
+                                    name='company_address'
                                     value={this.state.company_address}
                                     onChange={(e) => this.handleChange(e)}
                                   />
@@ -480,48 +473,48 @@ class AddCustomer extends Component {
                           </div>
                           {this.state.isEdit === true ? (
                             <>
-                              <h4 className="form-section mt-4">
-                                <i className="ft-info"></i> Block Customer
+                              <h4 className='form-section mt-4'>
+                                <i className='ft-info'></i> Block Customer
                               </h4>
-                              <div className="row">
-                                <div className="col-md-6">
-                                  <div className="form-group row">
+                              <div className='row'>
+                                <div className='col-md-6'>
+                                  <div className='form-group row'>
                                     <label
-                                      className="col-md-3  label-control"
-                                      htmlFor="userinput1"
+                                      className='col-md-3  label-control'
+                                      htmlFor='userinput1'
                                     >
                                       Status
                                     </label>
-                                    <div className="col-md-8">
+                                    <div className='col-md-8'>
                                       <Switch
-                                        name="status"
-                                        className="react-switch float-center"
+                                        name='status'
+                                        className='react-switch float-center'
                                         onChange={(e) =>
-                                          this.togglehandleChange(e, "status")
+                                          this.togglehandleChange(e, 'status')
                                         }
                                         checked={this.state.block_account}
                                       />
-                                    </div>{" "}
+                                    </div>{' '}
                                   </div>
                                 </div>
                               </div>
                             </>
                           ) : (
-                            ""
+                            ''
                           )}
                           {this.state.isEdit === true ? (
                             <>
-                              <h4 className="form-section mt-4">
-                                <i className="ft-info"></i> Online Account
+                              <h4 className='form-section mt-4'>
+                                <i className='ft-info'></i> Online Account
                                 Information
                               </h4>
                               {this.state.online_account &&
-                              this.state.online_account.exist === "no" ? (
-                                <div className="row">
-                                  <div className="col-md-6">
-                                    <div className="form-group row">
-                                      <h4 className="ml-4 alert alert-secondary">
-                                        {" "}
+                              this.state.online_account.exist === 'no' ? (
+                                <div className='row'>
+                                  <div className='col-md-6'>
+                                    <div className='form-group row'>
+                                      <h4 className='ml-4 alert alert-secondary'>
+                                        {' '}
                                         No online account found.
                                       </h4>
                                     </div>
@@ -529,23 +522,23 @@ class AddCustomer extends Component {
                                 </div>
                               ) : (
                                 <>
-                                  <div className="row">
-                                    <div className="col-md-6">
-                                      <div className="form-group row">
+                                  <div className='row'>
+                                    <div className='col-md-6'>
+                                      <div className='form-group row'>
                                         <label
-                                          className="col-md-3 label-control"
-                                          htmlFor="projectinput1"
+                                          className='col-md-3 label-control'
+                                          htmlFor='projectinput1'
                                         >
                                           Username
                                         </label>
 
-                                        <div className="col-md-9">
+                                        <div className='col-md-9'>
                                           <input
-                                            type="text"
-                                            id="projectinput1"
-                                            className="form-control border-primary"
-                                            placeholder="Name"
-                                            name="name"
+                                            type='text'
+                                            id='projectinput1'
+                                            className='form-control border-primary'
+                                            placeholder='Name'
+                                            name='name'
                                             required
                                             value={this.state.name}
                                             onChange={(e) =>
@@ -555,54 +548,54 @@ class AddCustomer extends Component {
                                           />
                                         </div>
                                       </div>
-                                      <div className="form-group row">
+                                      <div className='form-group row'>
                                         <label
-                                          className="col-md-3 label-control"
-                                          htmlFor="projectinput4"
+                                          className='col-md-3 label-control'
+                                          htmlFor='projectinput4'
                                         >
                                           Account Created
                                         </label>
 
-                                        <div className="col-md-9">
+                                        <div className='col-md-9'>
                                           <input
-                                            type="text"
-                                            id="projectinput4"
-                                            className="form-control border-primary"
+                                            type='text'
+                                            id='projectinput4'
+                                            className='form-control border-primary'
                                             value={this.state.createdAt}
                                             readOnly
                                             required
                                           />
                                         </div>
                                       </div>
-                                      <div className="form-group row">
+                                      <div className='form-group row'>
                                         <label
-                                          className="col-md-3 label-control"
-                                          htmlFor="projectinput3"
+                                          className='col-md-3 label-control'
+                                          htmlFor='projectinput3'
                                         ></label>
-                                        <div className="col-md-9">
+                                        <div className='col-md-9'>
                                           <Link
-                                            to=""
+                                            to=''
                                             onClick={(e) =>
                                               this.openModalforPassword(e)
                                             }
-                                            type="button"
-                                            className="font-medium-3"
+                                            type='button'
+                                            className='font-medium-3'
                                           >
-                                            <i className="ft-external-link"></i>{" "}
+                                            <i className='ft-external-link'></i>{' '}
                                             De-Activate online account
                                           </Link>
                                         </div>
                                       </div>
                                     </div>
-                                    <div className="col-md-6">
-                                      <div className="form-group row">
+                                    <div className='col-md-6'>
+                                      <div className='form-group row'>
                                         <label
-                                          className="col-md-3 label-control"
-                                          htmlFor="projectinput3"
+                                          className='col-md-3 label-control'
+                                          htmlFor='projectinput3'
                                         >
                                           Membership
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className='col-md-9'>
                                           {/* <input
                                             type="text"
                                             id="projectinput3"
@@ -616,56 +609,56 @@ class AddCustomer extends Component {
                                             required
                                           /> */}
                                           <select
-                                            id="projectinput3"
-                                            name="membership"
-                                            placeholder="Membership"
+                                            id='projectinput3'
+                                            name='membership'
+                                            placeholder='Membership'
                                             required
-                                            defaultValue={"-----"}
-                                            className="form-control border-primary"
+                                            defaultValue={'-----'}
+                                            className='form-control border-primary'
                                             onChange={(e) =>
                                               this.handleChange(e)
                                             }
                                           >
-                                            <option name="membership" value="">
-                                              ---select---{" "}
+                                            <option name='membership' value=''>
+                                              ---select---{' '}
                                             </option>
                                             <option
-                                              name="membership"
-                                              value="Gold"
+                                              name='membership'
+                                              value='Gold'
                                             >
-                                              {" "}
-                                              Gold{" "}
+                                              {' '}
+                                              Gold{' '}
                                             </option>
 
                                             <option
-                                              name="membership"
-                                              value="Diamond"
+                                              name='membership'
+                                              value='Diamond'
                                             >
-                                              {" "}
-                                              Diamond{" "}
+                                              {' '}
+                                              Diamond{' '}
                                             </option>
                                           </select>
                                         </div>
                                       </div>
-                                      <div className="form-group row">
+                                      <div className='form-group row'>
                                         <label
-                                          className="col-md-3 label-control"
-                                          htmlFor="projectinput3"
+                                          className='col-md-3 label-control'
+                                          htmlFor='projectinput3'
                                         >
                                           Email
                                         </label>
-                                        <div className="col-md-9">
+                                        <div className='col-md-9'>
                                           <input
-                                            type="text"
-                                            id="projectinput3"
-                                            className="form-control border-primary"
-                                            placeholder="Email"
-                                            name="email"
+                                            type='text'
+                                            id='projectinput3'
+                                            className='form-control border-primary'
+                                            placeholder='Email'
+                                            name='email'
                                             value={
                                               this.state.online_account
-                                                .email === "unverified"
-                                                ? "Un-Verified"
-                                                : "Verified"
+                                                .email === 'unverified'
+                                                ? 'Un-Verified'
+                                                : 'Verified'
                                             }
                                             onChange={(e) =>
                                               this.handleChange(e)
@@ -675,28 +668,28 @@ class AddCustomer extends Component {
                                         </div>
                                       </div>
                                       {this.state.online_account.email ===
-                                      "unverified" ? (
-                                        <div className="form-group row">
+                                      'unverified' ? (
+                                        <div className='form-group row'>
                                           <label
-                                            className="col-md-3 label-control"
-                                            htmlFor="projectinput3"
+                                            className='col-md-3 label-control'
+                                            htmlFor='projectinput3'
                                           ></label>
-                                          <div className="col-md-9">
+                                          <div className='col-md-9'>
                                             <Link
-                                              to=""
+                                              to=''
                                               onClick={(e) =>
                                                 this.openModalforPassword(e)
                                               }
-                                              type="button"
-                                              className="font-medium-3"
+                                              type='button'
+                                              className='font-medium-3'
                                             >
-                                              <i className="ft-external-link"></i>
+                                              <i className='ft-external-link'></i>
                                               Resend Verification Link?
                                             </Link>
                                           </div>
                                         </div>
                                       ) : (
-                                        ""
+                                        ''
                                       )}
                                     </div>
                                   </div>
@@ -704,51 +697,51 @@ class AddCustomer extends Component {
                               )}
                             </>
                           ) : (
-                            ""
+                            ''
                           )}
-                          <div className="form-actions top">
-                            {this.state.id === "" ? (
+                          <div className='form-actions top'>
+                            {this.state.id === '' ? (
                               <>
-                                {this.state.name === "" ||
-                                this.state.address === "" ||
-                                this.state.birthday === "" ||
-                                this.state.contactnumber === "" ? (
+                                {this.state.name === '' ||
+                                this.state.address === '' ||
+                                this.state.birthday === '' ||
+                                this.state.contactnumber === '' ? (
                                   <button
-                                    type="submit"
-                                    className="mb-2 mr-2 btn btn-raised btn-primary disabled"
+                                    type='submit'
+                                    className='mb-2 mr-2 btn btn-raised btn-primary disabled'
                                     onClick={(e) => this.openModal(e)}
                                   >
-                                    <i className="ft-chevron-right" /> Next
+                                    <i className='ft-chevron-right' /> Next
                                   </button>
                                 ) : (
                                   <button
-                                    type="submit"
-                                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                                    type='submit'
+                                    className='mb-2 mr-2 btn btn-raised btn-primary'
                                     onClick={(e) => this.openModal(e)}
                                   >
-                                    <i className="ft-chevron-right" /> Next
+                                    <i className='ft-chevron-right' /> Next
                                   </button>
-                                )}{" "}
+                                )}{' '}
                               </>
                             ) : (
                               <>
                                 {this.state.saving ? (
                                   <button
-                                    type="button"
-                                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                                    type='button'
+                                    className='mb-2 mr-2 btn btn-raised btn-primary'
                                   >
                                     <div
-                                      className="spinner-grow spinner-grow-sm "
-                                      role="status"
-                                    ></div>{" "}
-                                    &nbsp; Save{" "}
+                                      className='spinner-grow spinner-grow-sm '
+                                      role='status'
+                                    ></div>{' '}
+                                    &nbsp; Save{' '}
                                   </button>
                                 ) : (
                                   <button
-                                    type="submit"
-                                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                                    type='submit'
+                                    className='mb-2 mr-2 btn btn-raised btn-primary'
                                   >
-                                    <i className="ft-check" /> Save Changes
+                                    <i className='ft-check' /> Save Changes
                                   </button>
                                 )}
                               </>
@@ -757,131 +750,131 @@ class AddCustomer extends Component {
 
                           {this.state.isEdit === true ? (
                             <>
-                              <h4 className="form-section mt-4">
-                                <i className="ft-info"></i> Insight
+                              <h4 className='form-section mt-4'>
+                                <i className='ft-info'></i> Insight
                               </h4>
-                              <div className="row">
-                                <div className="col-md-6">
-                                  <div className="form-group row">
+                              <div className='row'>
+                                <div className='col-md-6'>
+                                  <div className='form-group row'>
                                     <label
-                                      className="col-md-3 label-control"
-                                      htmlFor="userinput1"
+                                      className='col-md-3 label-control'
+                                      htmlFor='userinput1'
                                     >
                                       Choose a timeframe
                                     </label>
-                                    <div className="col-md-9">
+                                    <div className='col-md-9'>
                                       <label
-                                        className="radio-inline"
-                                        htmlFor="one_year"
+                                        className='radio-inline'
+                                        htmlFor='one_year'
                                       >
                                         <input
-                                          type="radio"
-                                          name="year"
-                                          id="one_year"
+                                          type='radio'
+                                          name='year'
+                                          id='one_year'
                                           onChange={(e) =>
-                                            this.handleCheck(e, "year")
+                                            this.handleCheck(e, 'year')
                                           }
                                           checked={this.state.year === true}
                                           value={true}
-                                        />{" "}
+                                        />{' '}
                                         One Year
-                                      </label>{" "}
-                                      {"          "}
+                                      </label>{' '}
+                                      {'          '}
                                       <label
-                                        className="radio-inline"
-                                        htmlFor="one_month"
+                                        className='radio-inline'
+                                        htmlFor='one_month'
                                       >
                                         <input
-                                          type="radio"
-                                          name="month"
-                                          id="one_month"
+                                          type='radio'
+                                          name='month'
+                                          id='one_month'
                                           value={true}
                                           checked={this.state.month === true}
                                           onChange={(e) =>
-                                            this.handleCheck(e, "month")
+                                            this.handleCheck(e, 'month')
                                           }
-                                        />{" "}
+                                        />{' '}
                                         One Month
-                                      </label>{" "}
-                                      {"          "}
+                                      </label>{' '}
+                                      {'          '}
                                       <label
-                                        className="radio-inline"
-                                        htmlFor="all_year"
+                                        className='radio-inline'
+                                        htmlFor='all_year'
                                       >
                                         <input
-                                          type="radio"
-                                          name="alltime"
-                                          id="all_year"
+                                          type='radio'
+                                          name='alltime'
+                                          id='all_year'
                                           onChange={(e) =>
-                                            this.handleCheck(e, "alltime")
+                                            this.handleCheck(e, 'alltime')
                                           }
                                           checked={this.state.alltime === true}
                                           value={true}
-                                        />{" "}
+                                        />{' '}
                                         All Year
-                                      </label>{" "}
-                                      {"          "}
+                                      </label>{' '}
+                                      {'          '}
                                     </div>
                                   </div>
-                                  <div className="form-group row">
-                                    <label className="col-md-3 label-control">
+                                  <div className='form-group row'>
+                                    <label className='col-md-3 label-control'>
                                       {this.state.year === true
-                                        ? "Pick a year from 2012"
+                                        ? 'Pick a year from 2012'
                                         : this.state.month === true
-                                        ? "Pick a month from 2012"
-                                        : ""}
+                                        ? 'Pick a month from 2012'
+                                        : ''}
                                     </label>
-                                    <div className="col-md-9">
+                                    <div className='col-md-9'>
                                       {this.state.year === true ? (
                                         <DatePicker
                                           selected={this.state.selectedYear}
-                                          locale="vi"
-                                          className="form-control border-primary"
+                                          locale='vi'
+                                          className='form-control border-primary'
                                           onChange={(e) =>
                                             this.handleChangeForDate(
                                               e,
-                                              "selectedYear"
+                                              'selectedYear'
                                             )
                                           }
                                           minDate={new Date(2011, 1, 1)}
                                           maxDate={new Date()}
-                                          dateFormat="yyyy"
+                                          dateFormat='yyyy'
                                           showYearPicker
                                           yearItemNumber={9}
-                                          dropdownMode="scroll"
+                                          dropdownMode='scroll'
                                         />
                                       ) : this.state.month === true ? (
                                         <DatePicker
-                                          dateFormat="yyyy/MM"
-                                          locale="vi"
+                                          dateFormat='yyyy/MM'
+                                          locale='vi'
                                           selected={this.state.selectedMonth}
-                                          className="form-control border-primary"
+                                          className='form-control border-primary'
                                           onChange={(e) =>
                                             this.handleChangeForDate(
                                               e,
-                                              "selectedMonth"
+                                              'selectedMonth'
                                             )
                                           }
                                           minDate={new Date(2011, 1, 1)}
                                           maxDate={new Date()}
                                           showMonthYearPicker
-                                          dropdownMode="scroll"
+                                          dropdownMode='scroll'
                                         />
                                       ) : (
-                                        ""
+                                        ''
                                       )}
-                                      <div className="mt-2 top">
+                                      <div className='mt-2 top'>
                                         <button
-                                          type="submit"
-                                          className="mb-2 mr-2 btn btn-raised btn-success"
+                                          type='submit'
+                                          className='mb-2 mr-2 btn btn-raised btn-success'
                                           onClick={(e) => this.getInsight(e)}
                                         >
-                                          <i className="ft-check" /> Get Insight
+                                          <i className='ft-check' /> Get Insight
                                         </button>
-                                      </div>{" "}
+                                      </div>{' '}
                                     </div>
                                   </div>
-                                </div>{" "}
+                                </div>{' '}
                               </div>
                               {/* {this.props.insightFound === false ? (
                                 <div
@@ -904,7 +897,7 @@ class AddCustomer extends Component {
                               )} */}
                             </>
                           ) : (
-                            ""
+                            ''
                           )}
                         </form>
                       </div>
@@ -913,20 +906,20 @@ class AddCustomer extends Component {
                 </section>
               </div>
             </div>
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    rel="noopener noreferrer"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    rel='noopener noreferrer'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>
@@ -934,146 +927,146 @@ class AddCustomer extends Component {
 
           <Modal
             visible={this.state.show}
-            width="380"
-            height="490"
-            effect="fadeInUp"
+            width='380'
+            height='490'
+            effect='fadeInUp'
             onClickAway={(e) => this.closeModal_insight(e)}
           >
             <div>
-              <div className="modal-header">
+              <div className='modal-header'>
                 <h5>Insights</h5>
                 <button
-                  type="button"
+                  type='button'
                   onClick={(e) => this.closeModal_insight(e)}
-                  className="btn btn-sm"
+                  className='btn btn-sm'
                 >
                   x
                 </button>
               </div>
 
-              <div className="modal-body">
-                <table className="table table-bordered table-striped">
+              <div className='modal-body'>
+                <table className='table table-bordered table-striped'>
                   <thead> </thead>
                   <tbody>
                     <tr>
-                      <th scope="row" style={{ textAlign: "left" }}>
+                      <th scope='row' style={{ textAlign: 'left' }}>
                         {this.state.year === true
                           ? `Total spent in ${moment(
                               this.state.selectedYear
-                            ).format("yyyy")}`
+                            ).format('yyyy')}`
                           : this.state.month === true
                           ? `Total spent in ${moment(
                               this.state.selectedMonth
-                            ).format("MMMM-yyyy")}`
-                          : "Total spent in all time"}
+                            ).format('MMMM-yyyy')}`
+                          : 'Total spent in all time'}
                       </th>
 
                       <td>{orders && orders && orders[0].Total_spent}</td>
                     </tr>
                     <tr>
-                      <th scope="row" style={{ textAlign: "left" }}>
-                        {" "}
+                      <th scope='row' style={{ textAlign: 'left' }}>
+                        {' '}
                         {this.state.year === true
                           ? `Total order in ${moment(
                               this.state.selectedYear
-                            ).format("yyyy")}`
+                            ).format('yyyy')}`
                           : this.state.month === true
                           ? `Total orders in ${moment(
                               this.state.selectedMonth
-                            ).format("MMMM-yyyy")}`
-                          : "Total orders in all time"}
+                            ).format('MMMM-yyyy')}`
+                          : 'Total orders in all time'}
                       </th>
                       <td> {orders && orders[0].total_orders}</td>
                     </tr>
                     <tr>
-                      <th scope="row" style={{ textAlign: "left" }}>
-                        {" "}
+                      <th scope='row' style={{ textAlign: 'left' }}>
+                        {' '}
                         {this.state.year === true
                           ? `Total discounts in ${moment(
                               this.state.selectedYear
-                            ).format("yyyy")}`
+                            ).format('yyyy')}`
                           : this.state.month === true
                           ? `Total discounts in ${moment(
                               this.state.selectedMonth
-                            ).format("MMMM-yyyy")}`
-                          : "Total discounts in all time"}
+                            ).format('MMMM-yyyy')}`
+                          : 'Total discounts in all time'}
                       </th>
                       <td></td>
                     </tr>
                     <tr>
-                      <th scope="row" style={{ textAlign: "left" }}>
-                        {" "}
+                      <th scope='row' style={{ textAlign: 'left' }}>
+                        {' '}
                         {this.state.year === true
                           ? `Total insurance paid in ${moment(
                               this.state.selectedYear
-                            ).format("yyyy")}`
+                            ).format('yyyy')}`
                           : this.state.month === true
                           ? `Total insuarance paid in ${moment(
                               this.state.selectedMonth
-                            ).format("MMMM-yyyy")}`
-                          : "Total insurance paid in all time"}
+                            ).format('MMMM-yyyy')}`
+                          : 'Total insurance paid in all time'}
                       </th>
 
                       <td> {orders && orders[0].insuranceAmt}</td>
                     </tr>
                     <tr>
-                      <th scope="row" style={{ textAlign: "left" }}>
+                      <th scope='row' style={{ textAlign: 'left' }}>
                         {this.state.year === true
                           ? `Total insurance returned in ${moment(
                               this.state.selectedYear
-                            ).format("yyyy")}`
+                            ).format('yyyy')}`
                           : this.state.month === true
                           ? `Total insurance returned in ${moment(
                               this.state.selectedMonth
-                            ).format("MMMM-yyyy")}`
-                          : "Total insurance returned in all time"}
+                            ).format('MMMM-yyyy')}`
+                          : 'Total insurance returned in all time'}
                       </th>
 
-                      <td>{""}</td>
+                      <td>{''}</td>
                     </tr>
                     <tr>
-                      <th scope="row" style={{ textAlign: "left" }}>
-                        {" "}
+                      <th scope='row' style={{ textAlign: 'left' }}>
+                        {' '}
                         {this.state.year === true
                           ? `Total damage-fee paid in ${moment(
                               this.state.selectedYear
-                            ).format("yyyy")}`
+                            ).format('yyyy')}`
                           : this.state.month === true
                           ? `Total damage-fee paid in ${moment(
                               this.state.selectedMonth
-                            ).format("MMMM-yyyy")}`
-                          : "Total damage-fee paid in all time"}
+                            ).format('MMMM-yyyy')}`
+                          : 'Total damage-fee paid in all time'}
                       </th>
 
-                      <td>{""}</td>
+                      <td>{''}</td>
                     </tr>
                     <tr>
-                      <th scope="row" style={{ textAlign: "left" }}>
-                        {" "}
+                      <th scope='row' style={{ textAlign: 'left' }}>
+                        {' '}
                         {this.state.year === true
                           ? `Total late-fee in ${moment(
                               this.state.selectedYear
-                            ).format("yyyy")}`
+                            ).format('yyyy')}`
                           : this.state.month === true
                           ? `Total late-fee in ${moment(
                               this.state.selectedMonth
-                            ).format("MMMM-yyyy")}`
-                          : "Total late-fee in all time "}
+                            ).format('MMMM-yyyy')}`
+                          : 'Total late-fee in all time '}
                       </th>
-                      <td>{""}</td>
+                      <td>{''}</td>
                     </tr>
                     <tr>
-                      <th scope="row" style={{ textAlign: "left" }}>
-                        {" "}
+                      <th scope='row' style={{ textAlign: 'left' }}>
+                        {' '}
                         {this.state.year === true
                           ? `Total tax paid in ${moment(
                               this.state.selectedYear
-                            ).format("yyyy")}`
+                            ).format('yyyy')}`
                           : this.state.month === true
                           ? `Total tax paid in ${moment(
                               this.state.selectedMonth
-                            ).format("MMMM-yyyy")}`
-                          : "Total tax paid in all time"}{" "}
+                            ).format('MMMM-yyyy')}`
+                          : 'Total tax paid in all time'}{' '}
                       </th>
                       <td> {orders && orders[0].tax}</td>
                     </tr>
@@ -1085,13 +1078,13 @@ class AddCustomer extends Component {
 
           <Modal
             visible={this.state.visible}
-            width="600"
-            height="290"
-            effect="fadeInUp"
+            width='600'
+            height='290'
+            effect='fadeInUp'
             onClickAway={(e) => this.closeModal(e)}
           >
             <div>
-              <div className="modal-header text-center">
+              <div className='modal-header text-center'>
                 <h5>
                   Please check their ID to make sure the name and birthday match
                   with the name on screen, then click confirm.
@@ -1099,53 +1092,53 @@ class AddCustomer extends Component {
               </div>
               <Alert />
 
-              <div className="modal-body">
-                <div className="form-group row mx-5">
-                  <div className="col-md-12">
+              <div className='modal-body'>
+                <div className='form-group row mx-5'>
+                  <div className='col-md-12'>
                     <input
                       value={this.state.name}
-                      className="form-control border-primary text-center"
+                      className='form-control border-primary text-center'
                       readOnly
                     />
                   </div>
                 </div>
-                <div className="form-group row mx-5">
-                  <div className="col-md-12">
+                <div className='form-group row mx-5'>
+                  <div className='col-md-12'>
                     <input
-                      value={moment(this.state.birthday).format("DD-MM-YYYY")}
-                      className="form-control border-primary text-center"
+                      value={moment(this.state.birthday).format('DD-MM-YYYY')}
+                      className='form-control border-primary text-center'
                       readOnly
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="modal-footer">
+              <div className='modal-footer'>
                 {this.state.saving ? (
                   <button
-                    type="button"
-                    className="mb-2 mr-2 btn btn-raised btn-primary"
+                    type='button'
+                    className='mb-2 mr-2 btn btn-raised btn-primary'
                   >
                     <div
-                      className="spinner-grow spinner-grow-sm "
-                      role="status"
-                    ></div>{" "}
-                    &nbsp; Confirm{" "}
+                      className='spinner-grow spinner-grow-sm '
+                      role='status'
+                    ></div>{' '}
+                    &nbsp; Confirm{' '}
                   </button>
                 ) : (
                   <button
-                    type="submit"
+                    type='submit'
                     onClick={(e) => this.onSubmit(e)}
-                    className="btn grey btn-lg btn-outline-success"
+                    className='btn grey btn-lg btn-outline-success'
                   >
                     Confirm
                   </button>
                 )}
 
                 <button
-                  type="button"
+                  type='button'
                   onClick={(e) => this.closeModal(e)}
-                  className="btn grey btn-lg btn-outline-danger"
+                  className='btn grey btn-lg btn-outline-danger'
                 >
                   Close
                 </button>

@@ -1,33 +1,33 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
-import { Link } from "react-router-dom";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import "react-confirm-alert/src/react-confirm-alert.css";
-import Alert from "../../layout/Alert";
-import Loader from "../../layout/Loader";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import BootstrapTable from "react-bootstrap-table-next";
-import ToolkitProvider from "react-bootstrap-table2-toolkit";
-import { confirmAlert } from "react-confirm-alert";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import Alert from '../../layout/Alert';
+import Loader from '../../layout/Loader';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import BootstrapTable from 'react-bootstrap-table-next';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import { confirmAlert } from 'react-confirm-alert';
 import {
   getAllAppointments,
   checked,
   cancel,
   getCurentDayAppointment,
-} from "../../../actions/appointment";
-import moment from "moment";
+} from '../../../actions/appointment';
+import moment from 'moment';
 class Appointment extends Component {
   state = {
     todayApp: false,
     allApp: true,
-    appointments: "",
+    appointments: '',
   };
 
   async componentDidMount() {
-    var currentdate = moment(new Date()).format("MM-DD-YYYY");
+    var currentdate = moment(new Date()).format('MM-DD-YYYY');
     await this.props.getAllAppointments();
     await this.props.getCurentDayAppointment(currentdate);
     const { appointments } = this.props;
@@ -39,17 +39,17 @@ class Appointment extends Component {
   }
   onChecked = (id) => {
     confirmAlert({
-      title: "CheckedIn",
-      message: "Are you sure you want to change the status to checked-in?",
+      title: 'Khách Đã Đến!',
+      message: 'Khách hàng đã đến tiệm checkin?',
       buttons: [
         {
-          label: "Yes",
+          label: 'Xác Nhận',
           onClick: () => {
             this.props.checked(id);
           },
         },
         {
-          label: "No",
+          label: 'Hủy',
           onClick: () => {},
         },
       ],
@@ -58,17 +58,17 @@ class Appointment extends Component {
 
   onCancel = (id) => {
     confirmAlert({
-      title: "Cancel",
-      message: "Are you sure you want to change the status to cancel?",
+      title: 'Hủy Hẹn Thử Đồ',
+      message: 'Bạn có chắc chắn muốn hủy hẹn thử đồ này không?',
       buttons: [
         {
-          label: "Yes",
+          label: 'Huỷ hẹn',
           onClick: () => {
             this.props.cancel(id);
           },
         },
         {
-          label: "No",
+          label: 'Không',
           onClick: () => {},
         },
       ],
@@ -98,80 +98,80 @@ class Appointment extends Component {
     if (todayApp == true) {
       if (todayAppointment) {
         todayAppointment.forEach((app) => {
-          var isToday = moment(moment(app.date).format("MM/DD/YYYY")).isSame(
-            moment(currentDate).format("MM/DD/YYYY")
+          var isToday = moment(moment(app.date).format('MM/DD/YYYY')).isSame(
+            moment(currentDate).format('MM/DD/YYYY')
           );
-          console.log(app)
-          var string_Categories = app.categories.join(" , ")
+          console.log(app);
+          var string_Categories = app.categories.join(' , ');
           m_app.push({
             contactnumber: app.customer.contactnumber,
             name: app.customer.name,
-            date: moment(app.date).format("DD/MM/YYYY"),
-            orderID:app.orderID && app.orderID,
-            categories:app.categories && string_Categories,
+            date: moment(app.date).format('DD/MM/YYYY'),
+            orderID: app.orderID && app.orderID,
+            categories: app.categories && string_Categories,
             note: app.note,
             actions:
-              app.status === "Cancelled" ? (
+              app.status === 'Cancelled' ? (
                 <>
-                  <span className="badge badge-warning">{app.status}</span>
+                  <span className='badge badge-warning'>Đã hủy hẹn</span>
                 </>
-              ) : app.status === "CheckedIn" ? (
+              ) : app.status === 'CheckedIn' ? (
                 <>
-                  <span className="badge badge-success">
-                    Checked in at {app.checkedInAt}
+                  <span className='badge badge-success'>
+                    Đến lúc {app.checkedInAt}
                   </span>
                 </>
               ) : (
                 <>
-                {isToday === true ? (
+                  {isToday === true ? (
                     <Link
-                      to="/appointments"
+                      to='/appointments'
                       onClick={() => this.onChecked(app._id)}
-                      className="warning p-0 mb-1"
+                      className='warning p-0 mb-1'
                     >
                       <i
-                        className="
-                  icon-user-following font-medium-3 mr-2 "
-                        title="Checked-In"
+                        className='
+                  icon-user-following font-medium-3 mr-2 '
+                        title='Checkin'
                       ></i>
                     </Link>
                   ) : (
-                    ""
+                    ''
                   )}
-                
+
                   <Link
                     to={{ pathname: `/appointments/edit/${app._id}` }}
-                    className="success p-0"
+                    className='success p-0'
                   >
                     <i
-                      className="ft-edit font-medium-3 mr-2 "
-                      title="Edit Appointment"
+                      className='ft-edit font-medium-3 mr-2 '
+                      title='Thay đổi thông tin'
                     ></i>
                   </Link>
                   {isToday === true ? (
                     <Link
-                      to="/appointments"
+                      to='/appointments'
                       onClick={() => this.onChecked(app._id)}
-                      className="warning p-0 mb-1"
+                      className='warning p-0 mb-1'
                     >
                       <i
-                        className="
-                  icon-user-following font-medium-3 mr-2 "
-                        title="Checked-In"
+                        className='
+                  icon-user-following font-medium-3 mr-2 '
+                        title='Checkin'
                       ></i>
                     </Link>
                   ) : (
-                    ""
+                    ''
                   )}
                   <Link
-                    to="/appointments"
+                    to='/appointments'
                     onClick={() => this.onCancel(app._id)}
-                    className="danger p-0 mb-1"
+                    className='danger p-0 mb-1'
                   >
                     <i
-                      className="
-                    ft-x font-medium-3 mr-2"
-                      title="Cancel"
+                      className='
+                    ft-x font-medium-3 mr-2'
+                      title='Hủy hẹn'
                     ></i>
                   </Link>
                 </>
@@ -180,111 +180,111 @@ class Appointment extends Component {
         });
       }
     } else {
-      appointments && appointments.forEach((app) => {
-        var isToday = moment(moment(app.date).format("MM/DD/YYYY")).isSame(
-          moment(currentDate).format("MM/DD/YYYY")
-        );
-        var string_Categories = app.categories.join(" , ")
+      appointments &&
+        appointments.forEach((app) => {
+          var isToday = moment(moment(app.date).format('MM/DD/YYYY')).isSame(
+            moment(currentDate).format('MM/DD/YYYY')
+          );
+          var string_Categories = app.categories.join(' , ');
 
-        m_app.push({
-          contactnumber: app.customer.contactnumber,
-          name: app.customer.name,
-          date: moment(app.date).format("DD/MM/YYYY"),
-          categories: app.categories && string_Categories,
-          orderID: app.orderID && app.orderID,
-          note: app.note,
-          actions:
-            app.status === "Cancelled" ? (
-              <>
-                <span className="badge badge-warning">{app.status}</span>
-              </>
-            ) : app.status === "CheckedIn" ? (
-              <>
-                <span className="badge badge-success">
-                  Checked in at {app.checkedInAt}
-                </span>
-              </>
-            ) : (
-              <>
-                
-                {isToday === true ? (
+          m_app.push({
+            contactnumber: app.customer.contactnumber,
+            name: app.customer.name,
+            date: moment(app.date).format('DD/MM/YYYY'),
+            categories: app.categories && string_Categories,
+            orderID: app.orderID && app.orderID,
+            note: app.note,
+            actions:
+              app.status === 'Cancelled' ? (
+                <>
+                  <span className='badge badge-warning'>Đã hủy hẹn</span>
+                </>
+              ) : app.status === 'CheckedIn' ? (
+                <>
+                  <span className='badge badge-success'>
+                    Đến lúc {app.checkedInAt}
+                  </span>
+                </>
+              ) : (
+                <>
+                  {isToday === true ? (
+                    <Link
+                      to='/appointments'
+                      onClick={() => this.onChecked(app._id)}
+                      className='warning p-0 mb-1'
+                    >
+                      <i
+                        className='
+              icon-user-following font-medium-3 mr-2 '
+                        title='Checkin'
+                      ></i>
+                    </Link>
+                  ) : (
+                    ''
+                  )}
+
                   <Link
-                    to="/appointments"
-                    onClick={() => this.onChecked(app._id)}
-                    className="warning p-0 mb-1"
+                    to={{ pathname: `/appointments/edit/${app._id}` }}
+                    className='success p-0'
                   >
                     <i
-                      className="
-              icon-user-following font-medium-3 mr-2 "
-                      title="Checked-In"
+                      className='ft-edit font-medium-3 mr-2 '
+                      title='Sửa đổi thông tin'
                     ></i>
                   </Link>
-                ) : (
-                  ""
-                )}
 
-                <Link
-                  to={{ pathname: `/appointments/edit/${app._id}` }}
-                  className="success p-0"
-                >
-                  <i
-                    className="ft-edit font-medium-3 mr-2 "
-                    title="Edit Appointment"
-                  ></i>
-                </Link>
-                
-                <Link
-                  to="/appointments"
-                  onClick={() => this.onCancel(app._id)}
-                  className="danger p-0 mb-1"
-                >
-                  <i
-                    className="
-                ft-x font-medium-3 mr-2"
-                    title="Cancel"
-                  ></i>
-                </Link>
-              </>
-            ),
+                  <Link
+                    to='/appointments'
+                    onClick={() => this.onCancel(app._id)}
+                    className='danger p-0 mb-1'
+                  >
+                    <i
+                      className='
+                ft-x font-medium-3 mr-2'
+                      title='Hủy hẹn'
+                    ></i>
+                  </Link>
+                </>
+              ),
+          });
         });
-      });
     }
     const columns = [
       {
-        dataField: "date",
-        text: "Date",
+        dataField: 'date',
+        text: 'Ngày Hẹn',
         sort: true,
       },
       {
-        dataField: "name",
-        text: "Customer Name",
+        dataField: 'name',
+        text: 'Tên Khách',
         sort: true,
       },
       {
-        dataField: "categories",
-        text: "Category",
+        dataField: 'categories',
+        text: 'Loại',
         sort: true,
       },
       {
-        dataField: "orderID",
-        text: "Order",
+        dataField: 'orderID',
+        text: 'Đơn Hàng',
         sort: true,
       },
       {
-        dataField: "note",
-        text: "Note",
+        dataField: 'note',
+        text: 'Ghi Chú',
         sort: true,
       },
       {
-        dataField: "actions",
-        text: "Actions",
+        dataField: 'actions',
+        text: 'Hành Động',
         sort: true,
       },
     ];
     const defaultSorted = [
       {
-        dataField: "contactnumber",
-        order: "asc",
+        dataField: 'contactnumber',
+        order: 'asc',
       },
     ];
     const MySearch = (props) => {
@@ -294,30 +294,30 @@ class Appointment extends Component {
       };
       return (
         <>
-          <div className="row">
-            <div className="col-md-4">
+          <div className='row'>
+            <div className='col-md-4'>
               <input
-                className="form-control"
-                style={{ backgroundColor: "white" }}
+                className='form-control'
+                style={{ backgroundColor: 'white' }}
                 ref={(n) => (input = n)}
-                type="text"
+                type='text'
               />
             </div>
-            <div className="col-md-4">
-              <button className="btn btn-success" onClick={handleClick}>
-                <i className="fa fa-search"></i> Search{" "}
+            <div className='col-md-4'>
+              <button className='btn btn-success' onClick={handleClick}>
+                <i className='fa fa-search'></i> Tìm{' '}
               </button>
             </div>
-            <div className="col-md-4">
+            <div className='col-md-4'>
               <Link
                 to={{
-                  pathname: "/appointments/add",
+                  pathname: '/appointments/add',
                 }}
-                className="btn btn-primary pull-right"
+                className='btn btn-primary pull-right'
               >
-                <i className="fa fa-plus"></i> New Appointment
+                <i className='fa fa-plus'></i> Đặt hẹn thử đồ
               </Link>
-            </div>{" "}
+            </div>{' '}
           </div>
         </>
       );
@@ -325,7 +325,7 @@ class Appointment extends Component {
 
     return (
       <ToolkitProvider
-        keyField="id"
+        keyField='id'
         data={m_app && m_app.length > 0 ? m_app : []}
         columns={columns}
         defaultSorted={defaultSorted}
@@ -345,69 +345,71 @@ class Appointment extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to='/' />;
     }
     const { user } = auth;
 
-    if (user && user.systemRole === "Employee") {
-      if (user && !user.sections.includes("Appointments")) {
-        return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      if (user && !user.sections.includes('Appointments')) {
+        return <Redirect to='/Error' />;
       }
     }
 
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="simple-table">
-                  <div className="row">
-                    <div className="col-sm-12">
-                      <div className="card">
-                        <div className="card-header">
-                          <h4 className="card-title">All Appointments</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='simple-table'>
+                  <div className='row'>
+                    <div className='col-sm-12'>
+                      <div className='card'>
+                        <div className='card-header'>
+                          <h4 className='card-title'>Tất Cả Các Cuộc Hẹn</h4>
                         </div>
-                        <div className="card-content">
-                          <div className="card-body">
-                            <div className="row">
-                              <div className="col-md-8">
+                        <div className='card-content'>
+                          <div className='card-body'>
+                            <div className='row'>
+                              <div className='col-md-8'>
                                 <label
-                                  className="radio-inline" htmlFor="all"
-                                  style={{ marginLeft: "10px" }}
+                                  className='radio-inline'
+                                  htmlFor='all'
+                                  style={{ marginLeft: '10px' }}
                                 >
                                   <input
-                                    type="radio"
-                                    id="all"
-                                    name="activeUser"
+                                    type='radio'
+                                    id='all'
+                                    name='activeUser'
                                     checked={this.state.allApp == true}
                                     onChange={(e) =>
                                       this.handleChange_allApp(e)
                                     }
-                                  />{" "}
-                                  All Appointment
+                                  />{' '}
+                                  Tất Cả Các Cuộc Hẹn
                                 </label>
                                 <label
-                                  className="radio-inline" htmlFor="today"
-                                  style={{ marginLeft: "10px" }}
+                                  className='radio-inline'
+                                  htmlFor='today'
+                                  style={{ marginLeft: '10px' }}
                                 >
                                   <input
-                                    type="radio"
-                                    name="activeUser"
-                                    id="today"
+                                    type='radio'
+                                    name='activeUser'
+                                    id='today'
                                     checked={this.state.todayApp == true}
                                     onChange={(e) =>
                                       this.handleChange_todaysapp(e)
                                     }
-                                  />{" "}
-                                  Today's Appointment
+                                  />{' '}
+                                  Hẹn Hôm Nay
                                 </label>
                               </div>
 
-                              <div className="col-md-4"></div>
+                              <div className='col-md-4'></div>
                             </div>
                             <Alert />
                             <OCAlertsProvider />
@@ -422,20 +424,20 @@ class Appointment extends Component {
               </div>
             </div>
           </div>
-          <footer className="footer footer-static footer-light">
-            <p className="clearfix text-muted text-sm-center px-2">
+          <footer className='footer footer-static footer-light'>
+            <p className='clearfix text-muted text-sm-center px-2'>
               <span>
-                Quyền sở hữu của &nbsp;{" "}
+                Quyền sở hữu của &nbsp;{' '}
                 <a
-                  href="https://www.sutygon.com"
-                  rel="noopener noreferrer"
-                  id="pixinventLink"
-                  target="_blank"
-                  className="text-bold-800 primary darken-2"
+                  href='https://www.sutygon.com'
+                  rel='noopener noreferrer'
+                  id='pixinventLink'
+                  target='_blank'
+                  className='text-bold-800 primary darken-2'
                 >
-                  SUTYGON-BOT{" "}
+                  SUTYGON-BOT{' '}
                 </a>
-                , All rights reserved.{" "}
+                , All rights reserved.{' '}
               </span>
             </p>
           </footer>

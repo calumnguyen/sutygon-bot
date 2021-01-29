@@ -1,42 +1,42 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
-import Alert from "../../layout/Alert";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
+import Alert from '../../layout/Alert';
 import {
   addNewCoupon,
   updateCoupon,
   getCouponById,
-} from "../../../actions/coupons";
-import Loader from "../../layout/Loader";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import shortid from "shortid";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
-import moment from "moment";
+} from '../../../actions/coupons';
+import Loader from '../../layout/Loader';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import shortid from 'shortid';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
+import moment from 'moment';
 class AddCoupons extends Component {
   state = {
-    couponId: "",
+    couponId: '',
     // fields
-    discount_amount: "",
-    coupon_type: "percentage", //percentage or amount
-    max_payout: "",
-    min_requirement: "",
-    number_of_use_per_customer: "",
-    max_life: "",
-    note: "",
-    code: "",
-    start_date: "",
-    end_date: "",
-    tag: "",
+    discount_amount: '',
+    coupon_type: 'percentage', //percentage or amount
+    max_payout: '',
+    min_requirement: '',
+    number_of_use_per_customer: '',
+    max_life: '',
+    note: '',
+    code: '',
+    start_date: '',
+    end_date: '',
+    tag: '',
     tags: [],
-    eligibility: "all",
+    eligibility: 'all',
     product_ids: [],
     product_tags: [],
-    productId: "",
-    productTag: "",
+    productId: '',
+    productTag: '',
   };
 
   async componentDidMount() {
@@ -65,9 +65,9 @@ class AddCoupons extends Component {
     }
   }
   makeid = (length) => {
-    var result = "";
+    var result = '';
     var characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
     for (var i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -82,38 +82,43 @@ class AddCoupons extends Component {
   }
 
   onSubmit = async () => {
-    if (this.state.discount_amount === "") {
-      OCAlert.alertError("Discount Amount Required", { timeOut: 3000 });
+    if (this.state.discount_amount === '') {
+      OCAlert.alertError('Giảm giá bao nhiêu?', { timeOut: 5000 });
       return;
     }
 
-    if (this.state.coupon_type === "percentage") {
+    if (this.state.coupon_type === 'percentage') {
       if (
         Number(this.state.discount_amount) < 0.5 ||
         Number(this.state.discount_amount) > 100
       ) {
-        OCAlert.alertError("Percentage Between  Amount 0.5 And  100", {
-          timeOut: 3000,
+        OCAlert.alertError('Phần trăm phải từ 0.5% đến 100%', {
+          timeOut: 5000,
         });
         return;
       }
     }
 
     if (
-      this.state.coupon_type == "percentage" &&
-      this.state.max_payout === ""
+      this.state.coupon_type == 'percentage' &&
+      this.state.max_payout === ''
     ) {
-      OCAlert.alertError("Max Payout is  Required", { timeOut: 3000 });
+      OCAlert.alertError('Giảm Giá Tối Đa bao nhiêu VNĐ?', { timeOut: 7000 });
       return;
     }
-    if (this.state.max_life === "") {
-      OCAlert.alertError("Max life  Required", { timeOut: 3000 });
-      return;
-    }
-    if (this.state.number_of_use_per_customer === "") {
-      OCAlert.alertError("Number of use per customer  Required", {
-        timeOut: 3000,
+    if (this.state.max_life === '') {
+      OCAlert.alertError('Tổng cộng số lần phiếu giảm giá này được sử dụng?', {
+        timeOut: 7000,
       });
+      return;
+    }
+    if (this.state.number_of_use_per_customer === '') {
+      OCAlert.alertError(
+        'Mỗi khách hàng được phép sử dụng phiếu giảm giá này bao nhiêu lần?',
+        {
+          timeOut: 7000,
+        }
+      );
       return;
     }
 
@@ -121,51 +126,59 @@ class AddCoupons extends Component {
       Number(this.state.number_of_use_per_customer) >
       Number(this.state.max_life)
     ) {
-      OCAlert.alertError("Max Life must be greater than per customer", {
-        timeOut: 3000,
-      });
+      OCAlert.alertError(
+        'Tổng Sử Dụng phải LỚN HƠN số lượng tối đa mỗi khách hàng',
+        {
+          timeOut: 7000,
+        }
+      );
       return;
     }
 
-    if (this.state.number_of_use_per_customer === "") {
-      OCAlert.alertError("Number of use per customer  Required", {
-        timeOut: 3000,
+    if (this.state.number_of_use_per_customer === '') {
+      OCAlert.alertError(
+        'Mỗi khách hàng được phép sử dụng phiếu giảm giá này bao nhiêu lần?',
+        {
+          timeOut: 3000,
+        }
+      );
+      return;
+    }
+    if (this.state.code === '') {
+      OCAlert.alertError('Mã phiếu giảm giá là gì?', { timeOut: 4000 });
+      return;
+    }
+    if (this.state.start_date === '') {
+      OCAlert.alertError('Cần ngày ra hiệu lực', { timeOut: 4000 });
+      return;
+    }
+    if (this.state.end_date === '') {
+      OCAlert.alertError('Cần ngày hết hiệu lực', { timeOut: 4000 });
+      return;
+    }
+    if (this.state.tags.length == 0) {
+      OCAlert.alertError('Hãy chọn một số tag để phân loại coupon', {
+        timeOut: 4000,
       });
-      return;
-    }
-    if (this.state.code === "") {
-      OCAlert.alertError("Coupon Code Required", { timeOut: 3000 });
-      return;
-    }
-    if (this.state.start_date === "") {
-      OCAlert.alertError("Start Date  Required", { timeOut: 3000 });
-      return;
-    }
-    if (this.state.end_date === "") {
-      OCAlert.alertError("End Date  Required", { timeOut: 3000 });
-      return;
-    }
-if (this.state.tags.length == 0) {
-      OCAlert.alertError("Coupon Tags is Required", { timeOut: 3000 });
       return;
     }
     const startDate = new Date(this.state.start_date).getTime();
     const endDate = new Date(this.state.end_date).getTime();
 
     if (startDate > endDate) {
-      OCAlert.alertError(`Start Date must be less then End Date`, {
+      OCAlert.alertError(`Ngày bắt đầu phải ở trước ngày hết hạn`, {
         timeOut: 3000,
       });
       return;
     }
 
-    if (this.state.eligibility !== "all") {
+    if (this.state.eligibility !== 'all') {
       if (
         this.state.product_ids.length == 0 &&
         this.state.product_tags.length == 0
       ) {
-        OCAlert.alertError("Product Ids Or Tags Are Required", {
-          timeOut: 3000,
+        OCAlert.alertError('Cần chọn sản phẩm hợp lệ để nhận phiếu giảm giá', {
+          timeOut: 6000,
         });
         return;
       }
@@ -187,7 +200,7 @@ if (this.state.tags.length == 0) {
       eligibility,
       min_requirement,
     } = this.state;
-    const coma_tags = tags.length ? tags.join() : "";
+    const coma_tags = tags.length ? tags.join() : '';
     const formData = {
       discount_amount,
       coupon_type,
@@ -205,23 +218,23 @@ if (this.state.tags.length == 0) {
     };
 
     if (min_requirement) {
-      formData["min_requirement"] = min_requirement;
+      formData['min_requirement'] = min_requirement;
     }
 
-    if (this.state.couponId === "") {
+    if (this.state.couponId === '') {
       await this.props.addNewCoupon(formData);
 
       this.setState({
-        discount_amount: "",
-        max_payout: "",
-        number_of_use_per_customer: "",
-        max_life: "",
-        note: "",
-        code: "",
-        start_date: "",
-        end_date: "",
+        discount_amount: '',
+        max_payout: '',
+        number_of_use_per_customer: '',
+        max_life: '',
+        note: '',
+        code: '',
+        start_date: '',
+        end_date: '',
         tags: [],
-        min_requirement: "",
+        min_requirement: '',
         // eligibility: "all",
         product_ids: [],
         product_tags: [],
@@ -239,228 +252,228 @@ if (this.state.tags.length == 0) {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <div className="form-body">
-                  <div className="card">
-                    <div className="card-header">
-                      <h4 className="form-section">
-                        <i className="fa fa-gift"></i> Add New Coupons
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <div className='form-body'>
+                  <div className='card'>
+                    <div className='card-header'>
+                      <h4 className='form-section'>
+                        <i className='fa fa-gift'></i> Thêm Mã Mới
                       </h4>
                     </div>
 
-                    <div className="card-body">
+                    <div className='card-body'>
                       <div
-                        className="form form-horizontal form-bordered" //
+                        className='form form-horizontal form-bordered' //
                       >
                         <Alert />
                         <OCAlertsProvider />
-                        <div className="row">
-                          <div className="col-md-12">
-                            <div className="form-group row">
-                              <div className="col-md-3">
-                                <label className="radio-inline">
+                        <div className='row'>
+                          <div className='col-md-12'>
+                            <div className='form-group row'>
+                              <div className='col-md-3'>
+                                <label className='radio-inline'>
                                   <input
-                                    type="radio"
-                                    name="coupon_type"
-                                    value="percentage"
+                                    type='radio'
+                                    name='coupon_type'
+                                    value='phần trăm %'
                                     onChange={(e) =>
                                       this.setState({
-                                        coupon_type: "percentage",
+                                        coupon_type: 'percentage',
                                       })
                                     }
                                     checked={
-                                      this.state.coupon_type === "percentage"
+                                      this.state.coupon_type === 'percentage'
                                     }
-                                    value="male"
+                                    value='male'
                                     required
-                                  />{" "}
-                                  Percentage
+                                  />{' '}
+                                  Phần trăm %
                                 </label>
                               </div>
 
-                              <div className="col-md-3">
-                                <label className="radio-inline">
+                              <div className='col-md-3'>
+                                <label className='radio-inline'>
                                   <input
-                                    type="radio"
-                                    name="coupon_type"
-                                    value="amount"
+                                    type='radio'
+                                    name='coupon_type'
+                                    value='VNĐ'
                                     onChange={(e) =>
                                       this.setState({
-                                        coupon_type: "amount",
+                                        coupon_type: 'amount',
                                       })
                                     }
                                     required
                                     checked={
-                                      this.state.coupon_type === "amount"
+                                      this.state.coupon_type === 'amount'
                                     }
-                                  />{" "}
-                                  Amount
+                                  />{' '}
+                                  Tiền VNĐ
                                 </label>
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="discount_amount"
+                                className='col-md-4 label-control'
+                                htmlFor='discount_amount'
                               >
-                                {this.state.coupon_type == "percentage"
-                                  ? "Percentage"
-                                  : "Amount"}{" "}
-                                Discount*
+                                {this.state.coupon_type == 'percentage'
+                                  ? 'Phần trăm %'
+                                  : 'VNĐ'}{' '}
+                                Giảm*
                               </label>
                               <div className={`col-md-8`}>
-                                <div class="input-group">
+                                <div class='input-group'>
                                   <input
-                                    type="number"
+                                    type='number'
                                     min={0}
-                                    id="discount_amount"
-                                    className="form-control border-primary"
+                                    id='discount_amount'
+                                    className='form-control border-primary'
                                     placeholder={`${
-                                      this.state.coupon_type == "percentage"
-                                        ? "Percentage Discount"
-                                        : "Amount Discount"
+                                      this.state.coupon_type == 'percentage'
+                                        ? 'Phần Trăm %'
+                                        : 'Tiền VNĐ'
                                     } `}
                                     // required
                                     // data-validation-required-message="This field is required"
-                                    name="discount_amount"
+                                    name='discount_amount'
                                     onChange={(e) =>
-                                      this.handleChange(e, "discount_amount")
+                                      this.handleChange(e, 'discount_amount')
                                     }
                                     // onBlur={(e) => this.validateUserName(e)}
                                     value={this.state.discount_amount}
                                   />
-                                  <span class="input-group-addon p-1 px-2">
-                                    {coupon_type == "percentage" ? "%" : "VND"}
+                                  <span class='input-group-addon p-1 px-2'>
+                                    {coupon_type == 'percentage' ? '%' : 'VNĐ'}
                                   </span>
                                 </div>
                               </div>
                             </div>
                           </div>
-                          {coupon_type == "percentage" && (
-                            <div className="col-md-6">
-                              <div className="form-group row">
+                          {coupon_type == 'percentage' && (
+                            <div className='col-md-6'>
+                              <div className='form-group row'>
                                 <label
-                                  className="col-md-4 label-control"
-                                  htmlFor="max_payout"
+                                  className='col-md-4 label-control'
+                                  htmlFor='max_payout'
                                 >
-                                  Max payout
+                                  Giảm Tối Đa
                                 </label>
-                                <div className="col-md-8">
-                                  <div class="input-group">
+                                <div className='col-md-8'>
+                                  <div class='input-group'>
                                     <input
-                                      type="number"
+                                      type='number'
                                       min={0}
-                                      id="max_payout"
-                                      className="form-control border-primary"
-                                      placeholder="Max payout (VND) "
-                                      name="max_payout"
+                                      id='max_payout'
+                                      className='form-control border-primary'
+                                      placeholder='Giảm Tối Đa (VNĐ) '
+                                      name='max_payout'
                                       // required
                                       onChange={(e) =>
-                                        this.handleChange(e, "max_payout")
+                                        this.handleChange(e, 'max_payout')
                                       }
                                       value={this.state.max_payout}
                                     />
-                                    <span class="input-group-addon p-1 px-2">
-                                      VND
-                                    </span>{" "}
+                                    <span class='input-group-addon p-1 px-2'>
+                                      VNĐ
+                                    </span>{' '}
                                   </div>
                                 </div>
                               </div>
                             </div>
                           )}
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="min_requirement"
+                                className='col-md-4 label-control'
+                                htmlFor='min_requirement'
                               >
-                                Min-requirement (optional)
+                                Giá Trị Tối Thiểu (không bắt buộc)
                               </label>
-                              <div className="col-md-8">
-                                <div class="input-group">
+                              <div className='col-md-8'>
+                                <div class='input-group'>
                                   <input
-                                    type="number"
+                                    type='number'
                                     min={0}
-                                    id="min_requirement"
-                                    className="form-control border-primary"
-                                    placeholder="Min-requirement (VND)"
-                                    name="min_requirement"
+                                    id='min_requirement'
+                                    className='form-control border-primary'
+                                    placeholder='Giá trị tối thiểu của đơn hàng (VNĐ)'
+                                    name='min_requirement'
                                     // required
                                     onChange={(e) =>
-                                      this.handleChange(e, "min_requirement")
+                                      this.handleChange(e, 'min_requirement')
                                     }
                                     value={this.state.min_requirement}
                                   />
-                                  <span class="input-group-addon p-1 px-2">
-                                    VND
-                                  </span>{" "}
+                                  <span class='input-group-addon p-1 px-2'>
+                                    VNĐ
+                                  </span>{' '}
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="max_life"
+                                className='col-md-4 label-control'
+                                htmlFor='max_life'
                               >
-                                Max times for life *
+                                Lượng Sử Dụng Tối Đa *
                               </label>
-                              <div className="col-md-8">
-                                <div class="input-group">
+                              <div className='col-md-8'>
+                                <div class='input-group'>
                                   <input
-                                    type="number"
+                                    type='number'
                                     min={0}
-                                    id="max_life"
-                                    className="form-control border-primary"
-                                    placeholder="Max times for life"
-                                    name="max_life"
+                                    id='max_life'
+                                    className='form-control border-primary'
+                                    placeholder='Số lần sử dụng tối đa của mã này'
+                                    name='max_life'
                                     // required
                                     onChange={(e) =>
-                                      this.handleChange(e, "max_life")
+                                      this.handleChange(e, 'max_life')
                                     }
                                     // onBlur={(e) => this.validateEmail(e)}
                                     value={this.state.max_life}
                                   />
-                                  <span class="input-group-addon p-1 px-2">
-                                    Times
-                                  </span>{" "}
+                                  <span class='input-group-addon p-1 px-2'>
+                                    Lần
+                                  </span>{' '}
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="number_of_use_per_customer"
+                                className='col-md-4 label-control'
+                                htmlFor='number_of_use_per_customer'
                               >
-                                Max times per customer*
+                                Tối Đa Mỗi Khách*
                               </label>
-                              <div className="col-md-8">
-                                <div class="input-group">
+                              <div className='col-md-8'>
+                                <div class='input-group'>
                                   <input
-                                    type="number"
+                                    type='number'
                                     min={0}
-                                    id="number_of_use_per_customer"
-                                    className="form-control border-primary"
-                                    placeholder="Number of Use*"
-                                    name="number_of_use_per_customer"
+                                    id='number_of_use_per_customer'
+                                    className='form-control border-primary'
+                                    placeholder='Số lần khách hàng được xài mã này'
+                                    name='number_of_use_per_customer'
                                     // required
                                     onChange={(e) =>
                                       this.handleChange(
                                         e,
-                                        "number_of_use_per_customer"
+                                        'number_of_use_per_customer'
                                       )
                                     }
                                     // onBlur={(e) => this.validateEmail(e)}
@@ -468,35 +481,35 @@ if (this.state.tags.length == 0) {
                                       this.state.number_of_use_per_customer
                                     }
                                   />
-                                  <span class="input-group-addon p-1 px-2">
-                                    Times
-                                  </span>{" "}
+                                  <span class='input-group-addon p-1 px-2'>
+                                    Lần
+                                  </span>{' '}
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="start_date"
+                                className='col-md-4 label-control'
+                                htmlFor='start_date'
                               >
-                                Start Date*
+                                Ngày Bắt Đầu*
                               </label>
-                              <div className="col-md-8">
+                              <div className='col-md-8'>
                                 <input
-                                  type="date"
-                                  min={moment().format("YYYY-MM-DD")}
-                                  id="start_date"
-                                  className="form-control border-primary"
-                                  placeholder="Number of Use*"
-                                  name="start_date"
+                                  type='date'
+                                  min={moment().format('YYYY-MM-DD')}
+                                  id='start_date'
+                                  className='form-control border-primary'
+                                  placeholder='Number of Use*'
+                                  name='start_date'
                                   // required
                                   onChange={(e) =>
-                                    this.handleChange(e, "start_date")
+                                    this.handleChange(e, 'start_date')
                                   }
                                   // onBlur={(e) => this.validateEmail(e)}
                                   value={this.state.start_date}
@@ -504,25 +517,33 @@ if (this.state.tags.length == 0) {
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="end_date"
+                                className='col-md-4 label-control'
+                                htmlFor='end_date'
                               >
-                                End Date*
+                                Ngày Hết Hạn*
                               </label>
-                              <div className="col-md-8">
+                              <div className='col-md-8'>
                                 <input
-                                  min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0]}
-                                  type="date"
-                                  id="end_date"
-                                  className="form-control border-primary"
-                                  placeholder="Number of Use*"
-                                  name="end_date"
+                                  min={
+                                    new Date(
+                                      new Date().setDate(
+                                        new Date().getDate() + 1
+                                      )
+                                    )
+                                      .toISOString()
+                                      .split('T')[0]
+                                  }
+                                  type='date'
+                                  id='end_date'
+                                  className='form-control border-primary'
+                                  placeholder='Number of Use*'
+                                  name='end_date'
                                   // required
                                   onChange={(e) =>
-                                    this.handleChange(e, "end_date")
+                                    this.handleChange(e, 'end_date')
                                   }
                                   // onBlur={(e) => this.validateEmail(e)}
                                   value={this.state.end_date}
@@ -531,22 +552,22 @@ if (this.state.tags.length == 0) {
                             </div>
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-12">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-12'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-2 label-control"
-                                htmlFor="code"
+                                className='col-md-2 label-control'
+                                htmlFor='code'
                               >
-                                Coupon Code
+                                Mã Giảm Giá
                               </label>
-                              <div className="col-md-4">
+                              <div className='col-md-4'>
                                 <input
-                                  type="text"
-                                  id="code"
-                                  className="form-control border-primary"
-                                  placeholder="Coupon Code"
-                                  name="code"
+                                  type='text'
+                                  id='code'
+                                  className='form-control border-primary'
+                                  placeholder='Mã Giảm Giá'
+                                  name='code'
                                   // required
                                   onChange={(e) =>
                                     this.setState({
@@ -556,55 +577,55 @@ if (this.state.tags.length == 0) {
                                   value={this.state.code}
                                 />
                               </div>
-                              <div className="col-md-3">
+                              <div className='col-md-3'>
                                 <button
-                                  className={"btn btn-warning"}
-                                  type={"button"}
+                                  className={'btn btn-warning'}
+                                  type={'button'}
                                   onClick={() => {
                                     this.setState({
                                       code: this.makeid(8),
                                     });
                                   }}
                                 >
-                                  Generate Code
+                                  Hoặc TẠO MÃ NGẪU NHIÊN
                                 </button>
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="note"
+                                className='col-md-4 label-control'
+                                htmlFor='note'
                               >
-                                Coupon Note
+                                Ghi Chú
                               </label>
-                              <div className="col-md-8 ">
+                              <div className='col-md-8 '>
                                 <textarea
                                   onChange={(e) =>
                                     this.setState({ note: e.target.value })
                                   }
-                                  cols="40"
+                                  cols='40'
                                 ></textarea>
                               </div>
                             </div>
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-12">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-12'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-2 label-control"
-                                htmlFor="Coupon tags"
+                                className='col-md-2 label-control'
+                                htmlFor='Coupon tags'
                               >
-                                Coupon tags*
+                                Tags*
                               </label>
-                              <div className="col-md-9">
+                              <div className='col-md-9'>
                                 <input
-                                  type="text"
-                                  id="Coupon tags"
-                                  className="form-control border-primary"
-                                  placeholder="Coupon tags"
+                                  type='text'
+                                  id='Coupon tags'
+                                  className='form-control border-primary'
+                                  placeholder='Coupon tags'
                                   onChange={(e) =>
                                     this.setState({
                                       tag: e.target.value,
@@ -612,17 +633,20 @@ if (this.state.tags.length == 0) {
                                   }
                                   value={this.state.tag}
                                   onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
+                                    if (e.key === 'Enter') {
                                       const { tag } = this.state;
-                                      if (tag == "") {
-                                        OCAlert.alertError("Enter Coupon Tag", {
-                                          timeOut: 3000,
-                                        });
+                                      if (tag == '') {
+                                        OCAlert.alertError(
+                                          'Viết tags và bấm enter',
+                                          {
+                                            timeOut: 3000,
+                                          }
+                                        );
                                         return;
                                       } else {
                                         this.setState({
                                           tags: [...this.state.tags, tag],
-                                          tag: "",
+                                          tag: '',
                                         });
                                       }
                                     }
@@ -633,7 +657,7 @@ if (this.state.tags.length == 0) {
                                     this.state.tags.map((entry1, index) => {
                                       return (
                                         <span
-                                          className="product_tag"
+                                          className='product_tag'
                                           onClick={() => {
                                             let result = this.state.tags.filter(
                                               (k) => k !== entry1
@@ -653,101 +677,101 @@ if (this.state.tags.length == 0) {
                             </div>
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-12">
-                            <p>Eligible products </p>
+                        <div className='row'>
+                          <div className='col-md-12'>
+                            <p>Sản phẩm nào sẽ được nhận mã giảm giá?</p>
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-12">
-                            <div className="form-group row">
-                              <div className="col-md-3">
-                                <label className="radio-inline">
+                        <div className='row'>
+                          <div className='col-md-12'>
+                            <div className='form-group row'>
+                              <div className='col-md-3'>
+                                <label className='radio-inline'>
                                   <input
-                                    type="radio"
-                                    name="eligibility"
-                                    value="all"
+                                    type='radio'
+                                    name='eligibility'
+                                    value='all'
                                     onChange={(e) =>
                                       this.setState({
-                                        eligibility: "all",
+                                        eligibility: 'all',
                                       })
                                     }
-                                    checked={this.state.eligibility === "all"}
-                                    value="male"
+                                    checked={this.state.eligibility === 'all'}
+                                    value='male'
                                     required
-                                  />{" "}
-                                  All
+                                  />{' '}
+                                  Tất cả sản phẩm
                                 </label>
                               </div>
-                              <div className="col-md-3">
-                                <label className="radio-inline">
+                              <div className='col-md-3'>
+                                <label className='radio-inline'>
                                   <input
-                                    type="radio"
-                                    name="eligibility"
-                                    value="only"
+                                    type='radio'
+                                    name='eligibility'
+                                    value='only'
                                     onChange={(e) =>
                                       this.setState({
-                                        eligibility: "only",
+                                        eligibility: 'only',
                                       })
                                     }
                                     required
-                                    checked={this.state.eligibility === "only"}
-                                  />{" "}
-                                  ONLY
+                                    checked={this.state.eligibility === 'only'}
+                                  />{' '}
+                                  Chỉ Duy Nhất
                                 </label>
                               </div>
 
-                              <div className="col-md-3">
-                                <label className="radio-inline">
+                              <div className='col-md-3'>
+                                <label className='radio-inline'>
                                   <input
-                                    type="radio"
-                                    name="eligibility"
-                                    value="exclude"
+                                    type='radio'
+                                    name='eligibility'
+                                    value='exclude'
                                     onChange={(e) =>
                                       this.setState({
-                                        eligibility: "exclude",
+                                        eligibility: 'exclude',
                                       })
                                     }
                                     required
                                     checked={
-                                      this.state.eligibility === "exclude"
+                                      this.state.eligibility === 'exclude'
                                     }
-                                  />{" "}
-                                  EXCLUDE
+                                  />{' '}
+                                  Ngoại Trừ
                                 </label>
                               </div>
 
-                              <div className="col-md-3">
-                                <label className="radio-inline">
+                              <div className='col-md-3'>
+                                <label className='radio-inline'>
                                   <input
-                                    type="radio"
-                                    name="eligibility"
-                                    value="each"
+                                    type='radio'
+                                    name='eligibility'
+                                    value='each'
                                     onChange={(e) =>
                                       this.setState({
-                                        eligibility: "each",
+                                        eligibility: 'each',
                                       })
                                     }
                                     required
-                                    checked={this.state.eligibility === "each"}
-                                  />{" "}
-                                  EACH
+                                    checked={this.state.eligibility === 'each'}
+                                  />{' '}
+                                  Từng Sản Phẩm
                                 </label>
                               </div>
                             </div>
                           </div>
                         </div>
-                        {this.state.eligibility !== "all" && (
-                          <div className="row">
-                            <div className="col-md-6">
-                              <div className="form-group row">
-                                <div className="col-md-8">
+                        {this.state.eligibility !== 'all' && (
+                          <div className='row'>
+                            <div className='col-md-6'>
+                              <div className='form-group row'>
+                                <div className='col-md-8'>
                                   <input
-                                    type="text"
-                                    id="productId"
-                                    className="form-control border-primary"
-                                    placeholder="Add  6-digit Product ID"
-                                    name="productId"
+                                    type='text'
+                                    id='productId'
+                                    className='form-control border-primary'
+                                    placeholder='Điền 6 chữ số ID và bấm enter'
+                                    name='productId'
                                     minLength={6}
                                     maxLength={6}
                                     onChange={(e) => {
@@ -757,7 +781,7 @@ if (this.state.tags.length == 0) {
                                     }}
                                     value={this.state.productId}
                                     onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
+                                      if (e.key === 'Enter') {
                                         const { productId } = this.state;
                                         if (
                                           productId &&
@@ -768,13 +792,13 @@ if (this.state.tags.length == 0) {
                                               ...this.state.product_ids,
                                               productId,
                                             ],
-                                            productId: "",
+                                            productId: '',
                                           });
                                         } else {
                                           OCAlert.alertError(
-                                            "Product id length must be six",
+                                            'Mã sản phẩm cần phải có 6 chữ số',
                                             {
-                                              timeOut: 3000,
+                                              timeOut: 5000,
                                             }
                                           );
                                           return;
@@ -788,7 +812,7 @@ if (this.state.tags.length == 0) {
                                         (entry2, index) => {
                                           return (
                                             <span
-                                              className="product_tag"
+                                              className='product_tag'
                                               onClick={() => {
                                                 let result = this.state.product_ids.filter(
                                                   (k) => k !== entry2
@@ -808,14 +832,14 @@ if (this.state.tags.length == 0) {
                                 </div>
                               </div>
                             </div>
-                            <div className="col-md-6">
-                              <div className="form-group row">
-                                <div className="col-md-8">
+                            <div className='col-md-6'>
+                              <div className='form-group row'>
+                                <div className='col-md-8'>
                                   <input
-                                    type="text"
-                                    id="productTag"
-                                    className="form-control border-primary"
-                                    placeholder="Add item  tag"
+                                    type='text'
+                                    id='productTag'
+                                    className='form-control border-primary'
+                                    placeholder='Điền tags của sản phẩm và bấm enter'
                                     onChange={(e) =>
                                       this.setState({
                                         productTag: e.target.value,
@@ -823,13 +847,13 @@ if (this.state.tags.length == 0) {
                                     }
                                     value={this.state.productTag}
                                     onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
+                                      if (e.key === 'Enter') {
                                         const { productTag } = this.state;
-                                        if (productTag == "") {
+                                        if (productTag == '') {
                                           OCAlert.alertError(
-                                            "Enter Product Tag",
+                                            'Điền tags của sản phẩm và bấm enter',
                                             {
-                                              timeOut: 3000,
+                                              timeOut: 5000,
                                             }
                                           );
                                           return;
@@ -839,7 +863,7 @@ if (this.state.tags.length == 0) {
                                               ...this.state.product_tags,
                                               productTag,
                                             ],
-                                            productTag: "",
+                                            productTag: '',
                                           });
                                         }
                                       }
@@ -851,7 +875,7 @@ if (this.state.tags.length == 0) {
                                         (entry1, index) => {
                                           return (
                                             <span
-                                              className="product_tag"
+                                              className='product_tag'
                                               onClick={() => {
                                                 let result = this.state.product_tags.filter(
                                                   (k) => k !== entry1
@@ -873,13 +897,13 @@ if (this.state.tags.length == 0) {
                             </div>
                           </div>
                         )}
-                        <div className="form-actions top mt-3">
-                          <div className="col-md-6">
+                        <div className='form-actions top mt-3'>
+                          <div className='col-md-6'>
                             <button
-                              className="btn btn-primary"
+                              className='btn btn-primary'
                               onClick={() => this.onSubmit()}
                             >
-                              Submit
+                              Xuất Mã Giảm Giá
                             </button>
                           </div>
                         </div>
@@ -889,19 +913,19 @@ if (this.state.tags.length == 0) {
                 </div>
               </div>
             </div>
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>

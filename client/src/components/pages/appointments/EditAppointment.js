@@ -1,44 +1,44 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
-import { getCustomer } from "../../../actions/customer";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
+import { getCustomer } from '../../../actions/customer';
 import {
   addNewAppointment,
   getAppointmentbyId,
   updateAppointment,
-} from "../../../actions/appointment";
+} from '../../../actions/appointment';
 import {
   getPendingOrders,
   getOrderbyOrderNumber,
-} from "../../../actions/returnproduct";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import Alert from "../../layout/Alert";
-import Loader from "../../layout/Loader";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import * as moment from "moment";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
-import { registerLocale, setDefaultLocale } from "react-datepicker";
+} from '../../../actions/returnproduct';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Alert from '../../layout/Alert';
+import Loader from '../../layout/Loader';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import * as moment from 'moment';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
 
-import { vi } from "date-fns/esm/locale";
+import { vi } from 'date-fns/esm/locale';
 
-registerLocale("vi", vi);
-setDefaultLocale("vi");
+registerLocale('vi', vi);
+setDefaultLocale('vi');
 class EditAppointment extends Component {
   state = {
-    customer: "",
-    orderID: "",
-    latest_pendingOrder: "",
-    date: "",
-    note: "",
+    customer: '',
+    orderID: '',
+    latest_pendingOrder: '',
+    date: '',
+    note: '',
     categories: [],
-    category: "",
-    orders: "",
-    defaultSelected: "",
-    appointment: "",
+    category: '',
+    orders: '',
+    defaultSelected: '',
+    appointment: '',
     isEdit: false,
     showNoOrderRow: false,
   };
@@ -62,7 +62,7 @@ class EditAppointment extends Component {
           appointment.appointment.categories &&
           appointment.appointment.categories,
         orderID:
-          orders.length > 0 ? appointment.appointment.orderID : "No Order",
+          orders.length > 0 ? appointment.appointment.orderID : 'No Order',
         showNoOrderRow: true,
         // defaultSelected: orders.length > 0 ? orders :''
       });
@@ -71,15 +71,15 @@ class EditAppointment extends Component {
 
   dateValidity = () => {
     let { date } = this.state;
-    const currentDate = moment(new Date()).format("YYYY-MM-DD");
-    const e_Date = moment(date).format("YYYY-MM-DD");
+    const currentDate = moment(new Date()).format('YYYY-MM-DD');
+    const e_Date = moment(date).format('YYYY-MM-DD');
     var isToday = moment(currentDate).isSameOrBefore(e_Date);
     const app_date = new Date(date);
 
     if (isToday === false && app_date.getTime() - new Date().getTime() < 0) {
       OCAlert.alertError(`Invalid Date`, { timeOut: 3000 });
 
-      this.setState({ date: "", orderID: "", order: "", defaultSelected: "" });
+      this.setState({ date: '', orderID: '', order: '', defaultSelected: '' });
       return;
     }
   };
@@ -88,7 +88,7 @@ class EditAppointment extends Component {
     const { categories, category } = this.state;
     const isInclude = categories.includes(category);
     if (isInclude === true) {
-      return "";
+      return '';
     } else {
       return category;
     }
@@ -110,8 +110,8 @@ class EditAppointment extends Component {
       const d_selected = orders.shift();
       this.setState({
         orders: orders,
-        defaultSelected: orders.length > 0 ? d_selected : "",
-        orderID: orders.length > 0 ? d_selected.orderNumber : "No Order",
+        defaultSelected: orders.length > 0 ? d_selected : '',
+        orderID: orders.length > 0 ? d_selected.orderNumber : 'No Order',
         showNoOrderRow: true,
       });
     }
@@ -124,12 +124,12 @@ class EditAppointment extends Component {
           <td>
             <h5>
               <input
-                type="radio"
-                name="orderid"
+                type='radio'
+                name='orderid'
                 checked={this.state.orderID == order.orderNumber ? true : false}
                 onChange={(e) => this.selectOrder(order.orderNumber)}
-              />{" "}
-              Order# {order.orderNumber} &nbsp;&nbsp;&nbsp; {customer.name}{" "}
+              />{' '}
+              Order# {order.orderNumber} &nbsp;&nbsp;&nbsp; {customer.name}{' '}
               &nbsp;&nbsp;&nbsp; Status-{order.status}
             </h5>
           </td>
@@ -149,7 +149,7 @@ class EditAppointment extends Component {
     });
   };
 
-  handleChangeNote = (e, id = "") => {
+  handleChangeNote = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
   };
   handleChangeCategory = (e) => {
@@ -176,16 +176,16 @@ class EditAppointment extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to='/' />;
     }
     const { user } = auth;
-    if (user && user.systemRole === "Employee") {
-      if (user && !user.sections.includes("Appointments")) {
-        return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      if (user && !user.sections.includes('Appointments')) {
+        return <Redirect to='/Error' />;
       }
     }
     if (this.props.saved) {
-      return <Redirect to="/appointments" />;
+      return <Redirect to='/appointments' />;
     }
 
     const { customer, orders } = this.state;
@@ -193,105 +193,105 @@ class EditAppointment extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="form-action-layouts">
-                  <div className="form-body">
-                    <div className="card">
-                      <div className="card-header">
-                        <h4 className="form-section">
-                          <i className="icon-social-dropbox"></i>
-                          Appointment Details
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='form-action-layouts'>
+                  <div className='form-body'>
+                    <div className='card'>
+                      <div className='card-header'>
+                        <h4 className='form-section'>
+                          <i className='icon-social-dropbox'></i>
+                          Thông Tin Cuộc Hẹn
                         </h4>
                       </div>
                       <div>
-                        {" "}
+                        {' '}
                         <Alert />
                         <OCAlertsProvider />
                       </div>
 
-                      <div className="card-body">
+                      <div className='card-body'>
                         <form
-                          className="form form-horizontal form-bordered"
-                          method="POST"
+                          className='form form-horizontal form-bordered'
+                          method='POST'
                           onSubmit={(e) => this.onSubmit(e)}
                         >
-                          <h4 className="form-section mb-1">
-                            <i className="ft-info"></i> Appointment Information
+                          <h4 className='form-section mb-1'>
+                            <i className='ft-info'></i> Thông Tin Cuộc Hẹn
                           </h4>
 
-                          <div className="row mt-1">
-                            <div className="col-md-12 mb-1">
+                          <div className='row mt-1'>
+                            <div className='col-md-12 mb-1'>
                               <table
-                                className="table table-borderless table_indBcode"
-                                style={{ width: "100%" }}
+                                className='table table-borderless table_indBcode'
+                                style={{ width: '100%' }}
                               >
                                 <thead></thead>
                                 <tbody>
                                   <tr>
-                                    <th style={{ textAlign: "left" }}>
-                                      Customer Name :
+                                    <th style={{ textAlign: 'left' }}>
+                                      Tên Khách :
                                     </th>
-                                    <td style={{ textAlign: "left" }}>
-                                      {" "}
+                                    <td style={{ textAlign: 'left' }}>
+                                      {' '}
                                       {customer && customer.name}
                                     </td>
-                                    <th style={{ textAlign: "left" }}>
-                                      Phone Number :
+                                    <th style={{ textAlign: 'left' }}>
+                                      Số Điện Thoại :
                                     </th>
-                                    <td style={{ textAlign: "left" }}>
-                                      {" "}
+                                    <td style={{ textAlign: 'left' }}>
+                                      {' '}
                                       {customer && customer.contactnumber}
                                     </td>
                                   </tr>
 
                                   <tr>
-                                    <th style={{ textAlign: "left" }}>
-                                      Address :
+                                    <th style={{ textAlign: 'left' }}>
+                                      Địa Chỉ :
                                     </th>
-                                    <td style={{ textAlign: "left" }}>
-                                      {" "}
+                                    <td style={{ textAlign: 'left' }}>
+                                      {' '}
                                       {customer && customer.address}
                                     </td>
                                   </tr>
 
                                   <tr>
-                                    <th style={{ textAlign: "left" }}>
-                                      Company Name :
+                                    <th style={{ textAlign: 'left' }}>
+                                      Công Ty :
                                     </th>
-                                    <td style={{ textAlign: "left" }}>
-                                      {" "}
-                                      {customer && customer.company != ""
+                                    <td style={{ textAlign: 'left' }}>
+                                      {' '}
+                                      {customer && customer.company != ''
                                         ? customer.company
-                                        : "none"}
+                                        : 'none'}
                                     </td>
-                                    <th style={{ textAlign: "left" }}>
-                                      Company Address :
+                                    <th style={{ textAlign: 'left' }}>
+                                      Đ/c Công Ty :
                                     </th>
-                                    <td style={{ textAlign: "left" }}>
-                                      {" "}
+                                    <td style={{ textAlign: 'left' }}>
+                                      {' '}
                                       {customer &&
-                                      customer.company_address != ""
+                                      customer.company_address != ''
                                         ? customer.company_address
-                                        : "none"}
+                                        : 'none'}
                                     </td>
                                   </tr>
 
                                   <tr>
-                                    <th style={{ textAlign: "left" }}>
-                                      Date :
+                                    <th style={{ textAlign: 'left' }}>
+                                      Ngày Hẹn :
                                     </th>
-                                    <td style={{ textAlign: "left" }}>
+                                    <td style={{ textAlign: 'left' }}>
                                       <DatePicker
-                                        dateFormat="dd/MM/yyyy"
-                                        locale="vi"
+                                        dateFormat='dd/MM/yyyy'
+                                        locale='vi'
                                         selected={Date.parse(this.state.date)}
-                                        className="form-control border-primary"
+                                        className='form-control border-primary'
                                         onChange={(e) =>
                                           this.handleChangeForDate(e)
                                         }
@@ -300,23 +300,23 @@ class EditAppointment extends Component {
                                         onCalendarClose={(e) =>
                                           this.getPendingOrders(e)
                                         }
-                                        popperPlacement="top-start"
+                                        popperPlacement='top-start'
                                         // peekNextMonth
                                         showMonthDropdown
                                         showYearDropdown
-                                        dropdownMode="select"
+                                        dropdownMode='select'
                                       />
                                     </td>
-                                    <th style={{ textAlign: "left" }}>
-                                      Category :
+                                    <th style={{ textAlign: 'left' }}>
+                                      Thể Loại Cuộc Hẹn :
                                     </th>
-                                    <td style={{ textAlign: "left" }}>
+                                    <td style={{ textAlign: 'left' }}>
                                       <input
-                                        type="text"
+                                        type='text'
                                         required
-                                        class="form-control"
-                                        id="basicInput"
-                                        name="category"
+                                        class='form-control'
+                                        id='basicInput'
+                                        name='category'
                                         max={25}
                                         value={this.state.category}
                                         onChange={(e) =>
@@ -330,14 +330,14 @@ class EditAppointment extends Component {
                                     <td></td>
                                     <td></td>
                                     <td>
-                                      {" "}
+                                      {' '}
                                       {this.state.categories &&
                                         this.state.categories.map(
                                           (category, c_i) => {
                                             return (
                                               <span
                                                 key={c_i}
-                                                className="badge badge-light badge-category m-1"
+                                                className='badge badge-light badge-category m-1'
                                                 onClick={(e) =>
                                                   this.setCategoryfromSuggestions(
                                                     category
@@ -352,18 +352,18 @@ class EditAppointment extends Component {
                                     </td>
                                   </tr>
                                   <tr>
-                                    <th style={{ textAlign: "left" }}>
-                                      Note :
+                                    <th style={{ textAlign: 'left' }}>
+                                      Ghi Chú :
                                     </th>
                                     <td
                                       colSpan={3}
-                                      style={{ textAlign: "left" }}
+                                      style={{ textAlign: 'left' }}
                                     >
                                       <textarea
-                                        type="text"
-                                        class="form-control"
-                                        id="basicInput"
-                                        name="note"
+                                        type='text'
+                                        class='form-control'
+                                        id='basicInput'
+                                        name='note'
                                         value={this.state.note}
                                         onChange={(e) =>
                                           this.handleChangeNote(e)
@@ -374,33 +374,41 @@ class EditAppointment extends Component {
                                 </tbody>
                               </table>
                               <table
-                                className="table table-borderless table_indBcode"
-                                style={{ width: "100%" }}
+                                className='table table-borderless table_indBcode'
+                                style={{ width: '100%' }}
                               >
                                 <thead></thead>
                                 <tbody>
                                   <tr>
-                                    <th style={{ textAlign: "left" }}>
-                                      Is the appointment related to any of the
-                                      customer orders?
+                                    <th style={{ textAlign: 'left' }}>
+                                      Cuộc hẹn này có liên quan đến đơn hàng nào
+                                      của khách hàng không?
                                     </th>
                                   </tr>
-                                  {this.state.date != "" &&
-                                  this.state.defaultSelected != "" ? (
-                                    <tr onClick={(e) =>this.selectOrder(
-                                      this.state.date == ""
-                                        ? "No Order"
-                                        : this.state.defaultSelected.orderNumber
-                                    )}>                                      <td>
+                                  {this.state.date != '' &&
+                                  this.state.defaultSelected != '' ? (
+                                    <tr
+                                      onClick={(e) =>
+                                        this.selectOrder(
+                                          this.state.date == ''
+                                            ? 'Không tìm thấy đơn hàng nào'
+                                            : this.state.defaultSelected
+                                                .orderNumber
+                                        )
+                                      }
+                                    >
+                                      {' '}
+                                      <td>
                                         <h5>
                                           <input
-                                            type="radio"
-                                            name="defaultSelected"
+                                            type='radio'
+                                            name='defaultSelected'
                                             onChange={(e) =>
                                               this.selectOrder(
-                                                this.state.date == ""
-                                                  ? "No Order"
-                                                  : this.state.defaultSelected.orderNumber
+                                                this.state.date == ''
+                                                  ? 'No Order'
+                                                  : this.state.defaultSelected
+                                                      .orderNumber
                                               )
                                             }
                                             checked={
@@ -411,72 +419,75 @@ class EditAppointment extends Component {
                                                 ? true
                                                 : false
                                             }
-                                          />{" "}
-                                          Order#{" "}
+                                          />{' '}
+                                          Đơn Hàng #{' '}
                                           {
                                             this.state.defaultSelected
                                               .orderNumber
-                                          }{" "}
-                                          &nbsp;&nbsp;&nbsp; {customer.name}{" "}
+                                          }{' '}
+                                          &nbsp;&nbsp;&nbsp; {customer.name}{' '}
                                           &nbsp;&nbsp;&nbsp; Status-
                                           {this.state.defaultSelected.status}
                                         </h5>
                                       </td>
                                     </tr>
                                   ) : (
-                                    ""
+                                    ''
                                   )}
                                   {this.getOrderRows()}
 
                                   {this.state.showNoOrderRow ? (
                                     <tr
                                       onClick={(e) =>
-                                        this.selectOrder("No Order")
+                                        this.selectOrder('No Order')
                                       }
-                                    >                                      <td>
+                                    >
+                                      {' '}
+                                      <td>
                                         <h5>
                                           <input
-                                            type="radio"
-                                            name="orderid"
+                                            type='radio'
+                                            name='orderid'
                                             onChange={(e) =>
-                                              this.selectOrder("No Order")
+                                              this.selectOrder('No Order')
                                             }
                                             checked={
-                                              this.state.orderID == "No Order"
+                                              this.state.orderID == 'No Order'
                                                 ? true
                                                 : false
                                             }
-                                          />{" "}
-                                          No order
+                                          />{' '}
+                                          Không tìm thấy đơn hàng nào
                                         </h5>
                                       </td>
                                     </tr>
                                   ) : (
-                                    ""
+                                    ''
                                   )}
                                 </tbody>
                               </table>
                             </div>
                           </div>
 
-                          <div className="form-actions top">
+                          <div className='form-actions top'>
                             {this.state.saving ? (
                               <button
-                                type="button"
-                                className="mb-2 mr-2 btn btn-raised btn-primary"
+                                type='button'
+                                className='mb-2 mr-2 btn btn-raised btn-primary'
                               >
                                 <div
-                                  className="spinner-grow spinner-grow-sm "
-                                  role="status"
-                                ></div>{" "}
-                                &nbsp; Updating{" "}
+                                  className='spinner-grow spinner-grow-sm '
+                                  role='status'
+                                ></div>{' '}
+                                &nbsp; Đang Cập Nhật{' '}
                               </button>
                             ) : (
                               <button
-                                type="submit"
-                                className="mb-2 mr-2 btn btn-raised btn-primary"
+                                type='submit'
+                                className='mb-2 mr-2 btn btn-raised btn-primary'
                               >
-                                <i className="ft-check" /> Update Appointment
+                                <i className='ft-check' /> Cập Nhật Thông Tin
+                                Cuộc Hẹn
                               </button>
                             )}
                           </div>
@@ -487,20 +498,20 @@ class EditAppointment extends Component {
                 </section>
               </div>
             </div>
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    rel="noopener noreferrer"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    rel='noopener noreferrer'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>
