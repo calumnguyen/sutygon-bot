@@ -40,14 +40,15 @@ class Calender extends Component {
     let b_events = events.filter((a) => a.birthdate != "" && a.birthdate);
     b_events &&
       b_events.forEach((event) => {
-        const new_Date =
-          new Date(event.date).getFullYear() +
-          "-" +
-          new Date(event.birthdate).getMonth() +
-          1 +
-          "-" +
-          new Date(event.birthdate).getDate() +
-          "T22:20:52.000Z";
+         const new_Date =
+              new Date(event.date).getFullYear() +
+              "-" +
+              ("0" +( Number(new Date(event.birthdate).getMonth()) +
+              1)).slice(-2) +
+              "-" +
+              new Date(event.birthdate).getDate() +
+              "T22:20:52.000Z";
+
         m_events.push({
           date: new_Date,
           timeStart: event.timeStart,
@@ -94,11 +95,12 @@ class Calender extends Component {
             const new_Date =
               new Date(event.date).getFullYear() +
               "-" +
-              new Date(event.birthdate).getMonth() +
-              1 +
+              ("0" +( Number(new Date(event.birthdate).getMonth()) +
+              1)).slice(-2) +
               "-" +
               new Date(event.birthdate).getDate() +
               "T22:20:52.000Z";
+
             m_events.push({
               date: new_Date,
               timeStart: event.timeStart,
