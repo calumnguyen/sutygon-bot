@@ -47,8 +47,8 @@ class Dashboard extends Component {
           const new_Date =
             new Date(event.date).getFullYear() +
             "-" +
-            new Date(event.birthdate).getMonth() +
-            1 +
+            ("0" +( Number(new Date(event.birthdate).getMonth()) +
+          1)).slice(-2) +
             "-" +
             new Date(event.birthdate).getDate() +
             "T22:20:52.000Z";
@@ -70,8 +70,8 @@ class Dashboard extends Component {
         var m_date =
           new Date(a.date).getFullYear() +
           "-" +
-          new Date(a.date).getMonth() +
-          1 +
+        ("0" +( Number(new Date(a.birthdate).getMonth()) +
+          1)).slice(-2) +
           "-" +
           new Date(a.date).getDate() +
           "T22:20:52.000Z";
