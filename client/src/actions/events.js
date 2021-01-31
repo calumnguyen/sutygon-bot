@@ -13,14 +13,14 @@ export const addEvent = (event) => async (dispatch) => {
   dispatch({ type: EVENTS_LOADING });
   const config = {
     headers: {
-      // "content-type": "multipart/form-data",
-      "Content-Type": "application/json",
+      "content-type": "multipart/form-data",
+      // "Content-Type": "application/json",
     },
   };
   const body = JSON.stringify(event);
 
   try {
-    const res = await axios.post("/api/events/add", body, config);
+    const res = await axios.post("/api/events/add",event, config);
 
     dispatch({
       type: EVENT_SAVED,
@@ -79,14 +79,14 @@ export const updateEvent = (event, id) => async (dispatch) => {
 
   const config = {
     headers: {
-      // "content-type": "multipart/form-data",
-      "Content-Type": "application/json",
+      "content-type": "multipart/form-data",
+      // "Content-Type": "application/json",
     },
   };
   const body = JSON.stringify(event);
 
   try {
-    const res = await axios.post(`/api/events/${id}`, body, config);
+    const res = await axios.post(`/api/events/${id}`, event, config);
 
     dispatch({
       type: EVENT_UPDATED,

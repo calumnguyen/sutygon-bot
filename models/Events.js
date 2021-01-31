@@ -23,9 +23,20 @@ const EventSchema = new mongoose.Schema(
     note: {
       type: String,
     },
-    file: {
-      type: String,
-    },
+    file:[{
+      _id: false,
+      img:{type:String},
+      date: { type: Date, default: Date.now },
+    }],
+    // pdfFile:[{ 
+    //   _id: false,
+    //   file:{type:String},
+    //   date: { type: Date, default: Date.now },
+    // }],
+    user:
+      {
+        type: String,
+      }
   },
 
   { timestamps: true }

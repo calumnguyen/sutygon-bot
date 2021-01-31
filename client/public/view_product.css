@@ -263,6 +263,16 @@ div.products img {
   margin-bottom: 10px;
   border:1px solid rgb(109, 109, 109);
 }
+.hovereffect_event {
+  width: 15%;
+
+  float: left;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  cursor: default;
+  border:1px solid rgb(109, 109, 109);
+}
 
 .hovereffect .overlay {
   width: 100%;

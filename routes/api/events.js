@@ -2,11 +2,9 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
 const Events = require("../../models/Events");
-const { check, validationResult } = require("express-validator");
-const mongoose = require("mongoose");
 var moment = require("moment");
 var cloudinary = require("cloudinary");
-var multer = require('multer')
+var multer = require("multer");
 
 var storage = multer.diskStorage({
   filename: function (req, file, callback) {
@@ -21,61 +19,136 @@ const imageFilter = function (req, file, cb) {
   cb(null, true);
 };
 
-var upload = multer({ storage: storage, fileFilter: imageFilter });
+var upload = multer({ storage: storage });
 
 // @route   POST api/events/add
 // @desc    Add New Event
 // @access  private
-router.post("/add", auth, upload.single("file"), async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
+router.post(
+  "/add",
+  auth,
+  upload.any([{ name: "file" }, { name: "pdfFile" }]),
+  async (req, res) => {
+    try {
+      var files = req.files;
+      if (req.files != undefined) {
+        const all_paths = [];
+        var file_Arr = new Array();
 
-  try {
-    // const body = JSON.parse(JSON.stringify(req.body));
-    const body = req.body;
+        // const pdfs = files.filter(
+        //   (a) => !a.originalname.match(/\.(jpg|jpeg|png|gif)$/i)
+        // );
+        // const images = files.filter((a) =>
+        //   a.originalname.match(/\.(jpg|jpeg|png|gif)$/i)
+        // );
 
-    // const file = req.file.path;
-    // cloudinary.uploader.upload(file, async function (result) {
-      console.log(body)
-      let event = new Events({
-        name: body.name,
-        description: body.description,
-        timeStart: body.timeStart,
-        timeEnd: body.timeEnd,
-        location: body.location,
-        date: body.date,
-        note: body.note,
-        birthdate: body.birthday,
-        // file: result.secure_url,
-      });
-      await event.save();
-      res.status(200).json({ event, msg: "Event Added Successfully" });
-    // });
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Server error");
+        // if (pdfs) {
+        //   pdfs.forEach( async function (el) {
+        //     const fileContent = (el.originalname)
+        //     const name = el.originalname.slice(0,el.originalname.indexOf('.'))
+        //     const response =
+        //      await cloudinary.v2.uploader.upload(fileContent,{
+        //       transformation:{format:'pdf'}
+        //     })
+        //     console.log("response",response)
+        //   });
+        // }
+
+        if (files) {
+          files.forEach((file) => all_paths.push(file.path));
+        }
+        if (all_paths) {
+          all_paths.forEach(function (path) {
+            cloudinary.uploader.upload(path, async function (result) {
+              file_Arr.push({ img: result.secure_url });
+            });
+          });
+        }
+        setTimeout(async function () {
+          var event = new Events({
+            name: req.body.name,
+            description: req.body.description,
+            timeStart: req.body.timeStart,
+            timeEnd: req.body.timeEnd,
+            location: req.body.location,
+            date: req.body.date,
+            note: req.body.note,
+            birthdate: req.body.birthday == undefined ? "" : req.body.birthday,
+            user: req.body.user == undefined ? "" : req.body.user,
+            file: file_Arr,
+          });
+          await event.save();
+        }, 3000);
+      } else {
+        setTimeout(async function () {
+          var event = new Events({
+            name: req.body.name,
+            description: req.body.description,
+            timeStart: req.body.timeStart,
+            timeEnd: req.body.timeEnd,
+            location: req.body.location,
+            date: req.body.date,
+            note: req.body.note,
+            birthdate: req.body.birthday == undefined ? "" : req.body.birthday,
+            user: req.body.user == undefined ? "" : req.body.user,
+            file: "",
+          });
+          await event.save();
+        }, 3000);
+      }
+      setTimeout(async function () {
+        res.status(200).json({ msg: "Event Added Successfully" });
+      }, 3500);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server error");
+    }
   }
-});
+);
 
 // @route    POST api/events/:id
 //@desc      update events.
-router.post("/:id", auth, async (req, res) => {
+router.post("/:id", auth, upload.any("file"), async (req, res) => {
   try {
-    let event = await Events.findByIdAndUpdate(
-      req.params.id,
-      { ...req.body },
-      { new: true, runValidators: true }
-    ).lean();
+      var files = req.files;
+      if(files !=undefined){
+      const all_paths = [];
+      let event = await Events.findById(req.params.id);
+      if (files) {
+        files.forEach((file) => all_paths.push(file.path));
+      }
+      const images = new Array();
+      if (all_paths) {
+        all_paths.forEach(function (path) {
+          setTimeout(async function () {
 
-    if (!event) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: "No event found with this id." }] });
+          cloudinary.uploader.upload(path, async function (result) {
+            images.push({ img: result.secure_url });
+
+        });
+      }, 1000);
+    });
+        setTimeout(async function () {
+        let all_images = event.file.concat(images);
+        event.file = all_images;
+        event.name=req.body.name;
+        event.date=req.body.date;
+        event.timeEnd=req.body.timeEnd;
+        event.timeStart=req.body.timeStart;
+        event.note=req.body.note;
+        event.location=req.body.location;
+        event.save();
+      }, 2800);
+
+      }
     }
-
-    return res.status(200).json({ msg: "Event updated successfully!" });
+    else{
+      let event = await Events.findByIdAndUpdate({_id:req.params.id},{...req.body});
+    }
+   
+    setTimeout(async function () {
+      return res.status(200).json({ msg: "Event updated successfully!" });
+    }, 3000);
   } catch (err) {
     console.log(err);
     return res
@@ -93,7 +166,7 @@ router.get("/", auth, async (req, res) => {
     res.json(events);
   } catch (err) {
     console.log(err);
-    res.statu(500).send("Server Error!");
+    res.status(500).send("Server Error!");
   }
 });
 

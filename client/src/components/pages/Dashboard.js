@@ -7,10 +7,9 @@ import { connect } from "react-redux";
 import { getAllAppointments } from "../../actions/appointment";
 import { getAllRentedProducts } from "../../actions/rentproduct";
 import { getAllProducts } from "../../actions/product";
+import { getUser } from "../../actions/user";
 import { getAllEventts } from "../../actions/events";
 import { changeShopStatus, getShop } from "../../actions/dashboard";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
 import * as moment from "moment";
 import "../../login.css";
 import "../../dashbaord.css";
@@ -34,24 +33,39 @@ class Dashboard extends Component {
     await this.props.getShop();
   }
 
+  calculate_age = (dob1) => {
+    var today = new Date();
+    var birthDate = new Date(this.state.birthday);
+    var age_now = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age_now--;
+    }
+    {
+      this.setState({ age: age_now });
+    }
+    return age_now;
+  };
+
   getPendingEvents() {
-    // e.preventDefault()
     var dateAfterSevenDays = moment(moment().add(7, "days")).format();
     var currentdate = moment(moment().subtract(1, "days")).format();
     const { events } = this.props;
     if (events) {
       const m_events = [];
-      let b_events = events.filter((a) => a.birthdate != "" && a.birthdate);
+      let b_events = events.filter( 
+        async (a) => a.birthdate != "" && a.birthdate);
       b_events &&
         b_events.forEach((event) => {
           const new_Date =
-            new Date(event.date).getFullYear() +
+          new Date(event.date).getFullYear() +
             "-" +
-            new Date(event.birthdate).getMonth() +
-            1 +
+            ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(
+              -2
+            ) +
             "-" +
-            new Date(event.birthdate).getDate() +
-            "T22:20:52.000Z";
+            ("0" +(Number(new Date(event.birthdate).getDate()))).slice(-2) +"T22:20:52.000Z";
+            
           m_events.push({
             date: new_Date,
             timeStart: event.timeStart,
@@ -60,6 +74,7 @@ class Dashboard extends Component {
             note: event.note,
             location: event.location,
             _id: event._id,
+            age:this.calculate_age(event.birthdate),
             birthdate: event.birthdate,
           });
         });
@@ -70,11 +85,10 @@ class Dashboard extends Component {
         var m_date =
           new Date(a.date).getFullYear() +
           "-" +
-          new Date(a.date).getMonth() +
-          1 +
+          ("0" + (Number(new Date(a.birthdate).getMonth()) + 1)).slice(-2) +
           "-" +
-          new Date(a.date).getDate() +
-          "T22:20:52.000Z";
+          ("0" +(Number(new Date(a.date).getDate()))).slice(-2) +"T22:20:52.000Z" 
+         
         return m_date >= currentdate && a.date <= dateAfterSevenDays;
       });
       this.setState({
@@ -194,218 +208,219 @@ class Dashboard extends Component {
                   </h4>
                 </div>
                 <div className="row">
-                  <div className="col-md-8">
-                      <div className="card w-100">
-                      <div className="row w-100 m-1">
-
-                          <div className="col-xl-4 col-lg-4 col-md-6">
-                            <div className="card gradient-red-pink">
-                              <div className="card-content">
-                                <div className="card-body pt-2 pb-0">
-                                  <div className="media">
-                                    <div className="media-body white text-left">
-                                      <h3 className="font-large-1 mb-0">
-                                        {this.getTodaysAppointment()}
-                                      </h3>
-                                      <a
-                                        href="/calender"
-                                        style={{
-                                          textDecoration: "none",
-                                          color: "white",
-                                        }}
-                                      >
-                                        Today's Appointment
-                                      </a>
-                                    </div>
-                                    <div className="media-right white text-right">
-                                      <i className="icon-pie-chart font-large-1"></i>
-                                    </div>
+                  <div className={user && user.systemRole=="Employee" ?"col-md-8":"col-md-12" }>
+                    <div className="card w-100">
+                      <div className="row w-100">
+                        <div className="col-xl-4 col-lg-4 col-md-6">
+                          <div className="card gradient-red-pink">
+                            <div className="card-content">
+                              <div className="card-body pt-2 pb-0">
+                                <div className="media">
+                                  <div className="media-body white text-left">
+                                    <h3 className="font-large-1 mb-0">
+                                      {this.getTodaysAppointment()}
+                                    </h3>
+                                    <a
+                                      href="/calender"
+                                      style={{
+                                        textDecoration: "none",
+                                        color: "white",
+                                      }}
+                                    >
+                                      Today's Appointment
+                                    </a>
+                                  </div>
+                                  <div className="media-right white text-right">
+                                    <i className="icon-pie-chart font-large-1"></i>
                                   </div>
                                 </div>
-                                <div
-                                  id="Widget-line-chart"
-                                  className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                                ></div>
                               </div>
-                            </div>
-                          </div>
-                          <div className="col-xl-4 col-lg-4 col-md-6">
-                            <div className="card gradient-blueberry">
-                              <div className="card-content">
-                                <div className="card-body pt-2 pb-0">
-                                  <div className="media">
-                                    <div className="media-body white text-left">
-                                      <h3 className="font-large-1 mb-0">
-                                        {this.getReturnOrder()}
-                                      </h3>
-                                      <span>Đơn Hàng Phải Trả Hôm Nay</span>
-                                    </div>
-                                    <div className="media-right white text-right">
-                                      <i className="icon-bulb font-large-1"></i>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div
-                                  id="Widget-line-chart1"
-                                  className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="col-xl-4 col-lg-4 col-md-6">
-                            <div className="card gradient-mint">
-                              <div className="card-content">
-                                <div className="card-body pt-2 pb-0">
-                                  <div className="media">
-                                    <div className="media-body white text-left">
-                                      <h3 className="font-large-1 mb-0">
-                                        {this.getOverDueOrder()}
-                                      </h3>
-                                      <span>Đơn Hàng Quá Hạn</span>
-                                    </div>
-                                    <div className="media-right white text-right">
-                                      <i className="icon-graph font-large-1"></i>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div
-                                  id="Widget-line-chart2"
-                                  className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-xl-4 col-lg-4 col-md-6">
-                            <div className="card gradient-mini">
-                              <div className="card-content">
-                                <div className="card-body pt-2 pb-0">
-                                  <div className="media">
-                                    <div className="media-body white text-left">
-                                      <h3 className="font-large-1 mb-0">
-                                        {this.orderPickUpToday()}
-                                      </h3>
-                                      <span>Order Pickup Today</span>
-                                    </div>
-                                    <div className="media-right white text-right">
-                                      <i className="icon-wallet font-large-1"></i>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div
-                                  id="Widget-line-chart3"
-                                  className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-xl-4 col-lg-4 col-md-6">
-                            <div className="card gradient-brown-brown">
-                              <div className="card-content">
-                                <div className="card-body pt-2 pb-0">
-                                  <div className="media">
-                                    <div className="media-body white text-left">
-                                      <h3 className="font-large-1 mb-0">{}</h3>
-                                      <span>Order Needs Alteration</span>
-                                    </div>
-                                    <div className="media-right white text-right">
-                                      <i className="icon-wallet font-large-1"></i>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div
-                                  id="Widget-line-chart3"
-                                  className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-xl-4 col-lg-4 col-md-6">
-                            <div className="card gradient-orange">
-                              <div className="card-content">
-                                <div className="card-body pt-2 pb-0">
-                                  <div className="media">
-                                    <div className="media-body white text-left">
-                                      <h3 className="font-large-1 mb-0">
-                                        {this.getTodaysOrder()}
-                                      </h3>
-                                      <span>Today's Orders</span>
-                                    </div>
-                                    <div className="media-right white text-right">
-                                      <i className="fa-music font-large-1"></i>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div
-                                  id="Widget-line-chart3"
-                                  className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                                ></div>
-                              </div>
+                              <div
+                                id="Widget-line-chart"
+                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
+                              ></div>
                             </div>
                           </div>
                         </div>
+                        <div className="col-xl-4 col-lg-4 col-md-6">
+                          <div className="card gradient-blueberry">
+                            <div className="card-content">
+                              <div className="card-body pt-2 pb-0">
+                                <div className="media">
+                                  <div className="media-body white text-left">
+                                    <h3 className="font-large-1 mb-0">
+                                      {this.getReturnOrder()}
+                                    </h3>
+                                    <span>Đơn Hàng Phải Trả Hôm Nay</span>
+                                  </div>
+                                  <div className="media-right white text-right">
+                                    <i className="icon-bulb font-large-1"></i>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                id="Widget-line-chart1"
+                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-xl-4 col-lg-4 col-md-6">
+                          <div className="card gradient-mint">
+                            <div className="card-content">
+                              <div className="card-body pt-2 pb-0">
+                                <div className="media">
+                                  <div className="media-body white text-left">
+                                    <h3 className="font-large-1 mb-0">
+                                      {this.getOverDueOrder()}
+                                    </h3>
+                                    <span>Đơn Hàng Quá Hạn</span>
+                                  </div>
+                                  <div className="media-right white text-right">
+                                    <i className="icon-graph font-large-1"></i>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                id="Widget-line-chart2"
+                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-xl-4 col-lg-4 col-md-6">
+                          <div className="card gradient-mini">
+                            <div className="card-content">
+                              <div className="card-body pt-2 pb-0">
+                                <div className="media">
+                                  <div className="media-body white text-left">
+                                    <h3 className="font-large-1 mb-0">
+                                      {this.orderPickUpToday()}
+                                    </h3>
+                                    <span>Order Pickup Today</span>
+                                  </div>
+                                  <div className="media-right white text-right">
+                                    <i className="icon-wallet font-large-1"></i>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                id="Widget-line-chart3"
+                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-xl-4 col-lg-4 col-md-6">
+                          <div className="card gradient-brown-brown">
+                            <div className="card-content">
+                              <div className="card-body pt-2 pb-0">
+                                <div className="media">
+                                  <div className="media-body white text-left">
+                                    <h3 className="font-large-1 mb-0">{}</h3>
+                                    <span>Order Needs Alteration</span>
+                                  </div>
+                                  <div className="media-right white text-right">
+                                    <i className="icon-wallet font-large-1"></i>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                id="Widget-line-chart3"
+                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-xl-4 col-lg-4 col-md-6">
+                          <div className="card gradient-orange">
+                            <div className="card-content">
+                              <div className="card-body pt-2 pb-0">
+                                <div className="media">
+                                  <div className="media-body white text-left">
+                                    <h3 className="font-large-1 mb-0">
+                                      {this.getTodaysOrder()}
+                                    </h3>
+                                    <span>Today's Orders</span>
+                                  </div>
+                                  <div className="media-right white text-right">
+                                    <i className="fa-music font-large-1"></i>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                id="Widget-line-chart3"
+                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="col-md-4">
-                    {user && user.systemRole === "Employee" ? (
+                  <div className={user && user.systemRole=="Admin" ?"col-md-4":"" }>
+                    {user && user.systemRole === "Admin" ? (
                       <>
-                        <div className="card" style={{ height:390,overflowY:'scroll'}}>
+                        <div
+                          className="card"
+                          style={{ height: 390, overflowY: "scroll" }}
+                        >
                           <div className="card-body">
                             <div className="row w-100">
                               {this.state.currenWeekEvents &&
                                 this.state.currenWeekEvents.length > 0 &&
                                 this.state.currenWeekEvents.map((a, a_i) => {
                                   return (
-                                        <div
-                                          class="alert alert-secondary alert-dismissible mb-2 w-100"
-                                          role="alert"
-                                        >
-                                          <button
-                                            type="button"
-                                            class="close"
-                                            data-dismiss="alert"
-                                            aria-label="Close"
-                                          >
-                                            <span aria-hidden="true">
-                                              &times;
-                                            </span>
-                                          </button>
-                                          <p className="my-n1">
-                                            Name of Event :{" "}
-                                            <strong>{a.name}</strong>
-                                          </p>
-                                          <p className="my-n1">
-                                            <small class="text-muted">
-                                              Date :
-                                              {moment(a.date).format(
-                                                "MM/DD/YYYY"
-                                              )}{" "}
-                                            
-                                            </small>
-                                          </p>
-                                          <p className="my-n1">
-                                            <small class="text-muted">
-                                              From : 
-                                              {moment(a.timeStart).format(
-                                                "hh:mm A"
-                                              )}{" "}
-                                              To : {" "}
-                                              {moment(a.timeEnd).format(
-                                                "hh:mm A"
-                                              )}
-                                            </small>
-                                          </p>
-                                          <p className="my-n1">
-                                            <small class="text-muted">
-                                              Location:{a.location}
-                                            </small>
-                                          </p>
-                                          <p className="my-n1">
-                                            <small class="text-muted">
-                                              Note:{a.note}
-                                            </small>
-                                          </p>
-                                        </div>
+                                    <div
+                                      class="alert alert-secondary alert-dismissible mb-2 w-100"
+                                      role="alert"
+                                    >
+                                      <button
+                                        type="button"
+                                        class="close"
+                                        data-dismiss="alert"
+                                        aria-label="Close"
+                                      >
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                      <p className="my-n1">
+                                        Name of Event :{" "}
+                                        {a.age?
+                                        <>
+                                        <strong>{a.name}'s</strong>
+                                         {a.age} 'Birthday Anniversary. Happy Birthday',{a.name}`!
+                                  </>       :
+                                         <strong>{a.name}'s</strong>
+                                        }
+                                      </p>
+                                      <p className="my-n1">
+                                        <small class="text-muted">
+                                          Date :
+                                          {moment(a.date).format("MM/DD/YYYY")}{" "}
+                                        </small>
+                                      </p>
+                                      <p className="my-n1">
+                                        <small class="text-muted">
+                                          From :
+                                          {moment(a.timeStart).format(
+                                            "hh:mm A"
+                                          )}:{" "}
+                                          To :{" "}
+                                          {moment(a.timeEnd).format("hh:mm A")}
+                                        </small>
+                                      </p>
+                                      <p className="my-n1">
+                                        <small class="text-muted">
+                                          Location:{a.location}
+                                        </small>
+                                      </p>
+                                      <p className="my-n1">
+                                        <small class="text-muted">
+                                          Note:{a.note}
+                                        </small>
+                                      </p>
+                                    </div>
                                   );
                                 })}
                             </div>
@@ -537,6 +552,7 @@ Dashboard.propTypes = {
 
 const mapStateToProps = (state) => ({
   users: state.user.users,
+  user: state.user.user,
   auth: state.auth,
   products: state.product.products,
   appointment: state.appointment.appointments,
@@ -550,5 +566,5 @@ export default connect(mapStateToProps, {
   getAllRentedProducts,
   changeShopStatus,
   getShop,
-  getAllEventts,
+  getAllEventts,getUser
 })(Dashboard);

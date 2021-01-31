@@ -241,25 +241,11 @@ class EditUser extends Component {
     });
   };
 
-  calculate_age = (dob1) => {
-    var today = new Date();
-    var birthDate = new Date(this.state.birthday);
-    var age_now = today.getFullYear() - birthDate.getFullYear();
-    var m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age_now--;
-    }
-    {
-      this.setState({ age: age_now });
-    }
-    return age_now;
-  };
-
+  
   onSubmit = async (e) => {
     e.preventDefault();
     const state = { ...this.state };
     await this.selected();
-    await this.calculate_age(this.state.birthday);
     const sessionsArr = Object.values(this.state.sections);
 
     this.setState({ saving: true });
@@ -300,16 +286,17 @@ class EditUser extends Component {
     await this.props.updateUser(formData, state.id);
 
     if (state.birthday != "" || state.birthday != null) {
-      const event = {
-        name: `${state.username}'s ${this.state.age} Birthday Anniversary. Happy Birthday, ${state.username}!`,
-        note: `Birthday Anniversary`,
-        timeStart: new Date(state.birthday),
-        timeEnd: new Date(state.birthday),
-        date: new Date(),
-        birthday: new Date(state.birthday),
-        location: `SUTYGON`,
-      };
-      await this.props.addEvent(event);
+      const eventData = new FormData();
+      eventData.append("name", `${this.state.username}'s Birthday Anniversary`);
+      eventData.append("note", `${this.state.username}'s Birthday Anniversary`);
+      eventData.append("location", 'SUTYGON');
+      eventData.append("date", new Date());
+      eventData.append("timeStart", new Date(state.birthday));
+      eventData.append("timeEnd", new Date(state.birthday));
+      eventData.append("birthday", new Date(state.birthday));
+      eventData.append("user", state.id);
+  
+      await this.props.addEvent(eventData);
     }
   };
 
