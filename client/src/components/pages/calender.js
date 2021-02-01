@@ -10,40 +10,44 @@ import { connect } from "react-redux";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import shortid from "shortid";
 import {
-  getAllEventts,
+  getAllEvents,
   addEvent,
   getEventbyID,
+  getAllBirthdayEvents,
   updateEvent,
 } from "../../actions/events";
 import Modal from "react-awesome-modal";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "moment/locale/vi";
+import { OCAlert } from "@opuscapita/react-alerts";
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+
 const localizer = momentLocalizer(moment); // or globalizeLocalizer
 
 class Calender extends Component {
   state = {
-    id: "",
+    show: false,
+    events: [],
     name: "",
     note: "",
     timeStart: "",
     timeEnd: "",
     date: "",
     location: "",
-    images_edit: "",
-    saving: false,
-    isEdit: false,
     image: "",
     images: [],
-    filePdf: "",
-    events:[]
+    images_Edit: [],
   };
 
   async componentDidMount() {
-    await this.props.getAllEventts();
+    await this.props.getAllEvents();
+    await this.props.getAllBirthdayEvents();
+
     const { events } = this.props;
-    const m_events = [];
-    let b_events = events && events.filter((a) => a.birthdate != "" && a.birthdate);
+    const { b_events } = this.props;
+    const m_bevents = [];
+
     b_events &&
       b_events.forEach((event) => {
         const new_Date =
@@ -53,28 +57,86 @@ class Calender extends Component {
           "-" +
           ("0" + (Number(new Date(event.birthdate).getDate()) - 1)).slice(-2) +
           "T22:20:52.000Z";
-
-        m_events.push({
+        m_bevents.push({
           date: new_Date,
           timeStart: event.timeStart,
           timeEnd: event.timeEnd,
-          name: event.name,
+          name: `${event.name}'s ${this.calculate_age(
+            event.birthdate
+          )} Birthday Aniversary`,
           note: event.note,
           location: event.location,
-          _id: event._id,
-          birthdate: event.birthdate,
+          _id: "",
+          type: "birthdayEvent",
+          timeStart: event.timeStart,
+          timeEnd: event.timeEnd,
         });
       });
-    let c_events = events &&  events.filter((a) => a.birthdate == null);
+    let c_events = [];
+    let updatedEvents = [...m_bevents, ...events];
+    if (updatedEvents) {
+      c_events = updatedEvents.map((event) => ({
+        title: event.name,
+        start: new Date(event.date),
+        end: new Date(event.date),
+        id: event._id,
+      }));
+    }
 
     if (events) {
       this.setState({
-        events: [...c_events, ...m_events],
+        events: c_events,
       });
     }
   }
+  calculate_age = (dob1) => {
+    var today = new Date();
+    var birthDate = new Date(dob1);
+    var age_now = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age_now--;
+    }
+
+    return age_now;
+  };
+
+  onSubmit = async (e) => {
+    e.preventDefault();
+    await this.setState({ saving: true });
+    const state = { ...this.state };
+    const formData = new FormData();
+    formData.append("name", state.name);
+    formData.append("note", state.note);
+    formData.append("location", state.location);
+    formData.append("date", state.date);
+    formData.append("timeStart", state.timeStart);
+    formData.append("timeEnd", state.timeEnd);
+    formData.append("birthday", "");
+    formData.append("user", "");
+    if (this.state.images.length > 0) {
+      let m_image = [];
+      state.images.forEach((image, index) => {
+        m_image.push(image.image);
+      });
+
+      m_image.forEach((image) => {
+        formData.append("image", image);
+      });
+    } else {
+      formData.append("image", "");
+    }
+
+    if (state.id == "" || state.id == undefined) {
+      await this.props.addEvent(formData);
+    } else {
+      await this.props.updateEvent(formData, state.id);
+    }
+    this.setState({ saving: false, show: false });
+  };
+
   async componentDidUpdate(prevProps, prevState) {
-    if (prevState.id != this.state.id) {
+    if (prevState.id != this.state.id && this.state.id != "") {
       if (this.state.id) {
         await this.props.getEventbyID(this.state.id);
         const { event } = this.props;
@@ -86,56 +148,90 @@ class Calender extends Component {
           timeEnd: moment(event.timeEnd),
           location: event.location,
           isEdit: true,
-          images_edit: event.file,
+          images_Edit: event.images,
         });
       }
     }
     if (prevProps.events != this.props.events) {
       if (this.props.events) {
-        await this.props.getAllEventts();
+        await this.props.getAllEvents();
+        await this.props.getAllBirthdayEvents();
+
         const { events } = this.props;
-        const m_events = [];
-        let b_events = events.filter((a) => a.birthdate != "" && a.birthdate);
+        const { b_events } = this.props;
+        const m_bevents = [];
+
         b_events &&
           b_events.forEach((event) => {
             const new_Date =
               new Date(event.date).getFullYear() +
               "-" +
-              ("0" + (Number(new Date(event.date).getMonth()) + 1)).slice(
+              ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(
                 -2
               ) +
               "-" +
-              ("0" + (Number(new Date(event.date).getDate()) - 1)).slice(
+              ("0" + (Number(new Date(event.birthdate).getDate()) - 1)).slice(
                 -2
               ) +
               "T22:20:52.000Z";
-
-            m_events.push({
+            m_bevents.push({
               date: new_Date,
               timeStart: event.timeStart,
               timeEnd: event.timeEnd,
-              name: event.name,
+              name:
+                event.name &&
+                `${event.name}'s ${this.calculate_age(
+                  event.birthdate
+                )} Birthday Aniversary`,
               note: event.note,
               location: event.location,
-              _id: event._id,
-              birthdate: event.birthdate,
+              _id: "",
+              type: "birthdayEvent",
             });
           });
-        let c_events = events.filter((a) => a.birthdate == null);
+        let c_events = [];
+        let updatedEvents = [...m_bevents, ...events];
+        if (updatedEvents) {
+          c_events = updatedEvents.map((event) => ({
+            title: event.name,
+            start: new Date(event.date),
+            end: new Date(event.date),
+            id: event._id,
+            type: event.type ? event.type : "",
+            timeStart: event.timeStart,
+            timeEnd: event.timeEnd,
+          }));
+        }
         if (events) {
           this.setState({
-            events: [...c_events, ...m_events],
+            events: c_events,
           });
         }
       }
     }
   }
+  showError = (e) => {
+    OCAlert.alertError("Birthday event cannot be updated from here.", {
+      timeOut: 3000,
+    });
+    return;
+  };
+
+  closeBModal = (e) => {
+    e.preventDefault();
+    this.setState({
+      showBmodal: false,
+    });
+  };
+  //close modal
   closeModal = (e) => {
     e.preventDefault();
     this.setState({
       show: false,
+      image: "",
       id: "",
       name: "",
+      images: [],
       note: "",
       timeStart: "",
       timeEnd: "",
@@ -144,8 +240,20 @@ class Calender extends Component {
       isEdit: false,
     });
   };
+  //open modal for event
   openModal = (slot) => {
-    if (slot.id) {
+    if (!slot.id && slot.type == "birthdayEvent") {
+      this.setState({
+        showBmodal: true,
+        show: false,
+        name: slot.title,
+        date: slot.start,
+        timeStart: slot.timeStart,
+        timeEnd: slot.timeEnd,
+        location: `SUTYGON`,
+        note: slot.title,
+      });
+    } else if (slot.id && slot.type == "") {
       this.setState({
         show: true,
         id: slot.id,
@@ -164,21 +272,28 @@ class Calender extends Component {
         date: moment(new Date(slot.slots[0])),
         location: "",
         isEdit: false,
+        image: "",
       });
     }
   };
 
+  //global handle event
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
+
+  //handle event for images
   _onChange = async (e, id = "") => {
+    e.preventDefault();
     this.setState({
       [e.target.name]: e.target.files[0],
     });
     const { images } = this.state;
-    images.push({ img: e.target.files[0], id: shortid.generate() });
+    images.push({ image: e.target.files[0], id: shortid.generate() });
     this.setState(images);
   };
+
+  //handle event for date and time
   handleChangeForDate = (date, name, e) => {
     if (name === "date") {
       this.setState({
@@ -195,41 +310,6 @@ class Calender extends Component {
     }
   };
 
-  onSubmit = async (e) => {
-    e.preventDefault();
-    await this.setState({ saving: true });
-
-    const state = { ...this.state };
-    const formData = new FormData();
-    formData.append("name", this.state.name);
-    formData.append("note", this.state.note);
-    formData.append("location", this.state.location);
-    formData.append("date", this.state.date);
-    formData.append("timeStart", this.state.timeStart);
-    formData.append("timeEnd", this.state.timeEnd);
-    formData.append("birthday", "");
-    formData.append("user", "");
-    if (this.state.images.length > 0) {
-      let m_image = [];
-      state.images.forEach((img, color_i) => {
-        m_image.push(img.img);
-      });
-
-      m_image.forEach((imag) => {
-        formData.append("file", imag);
-      });
-    }
-    if (this.state.filePdf) {
-      formData.append("filePdf", this.state.filePdf);
-    }
-    if (state.id == "" || state.id == undefined) {
-      await this.props.addEvent(formData);
-    } else {
-      await this.props.updateEvent(formData, state.id);
-    }
-    this.setState({ saving: false, show: false });
-  };
-
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
@@ -241,18 +321,7 @@ class Calender extends Component {
         return <Redirect to="/Error" />;
       }
     }
-
     const { events } = this.state;
-    let newEvents;
-    if (events) {
-      newEvents = events.map((event) => ({
-        title: event.name,
-        start: new Date(event.date),
-        end: new Date(event.date),
-        id: event._id,
-      }));
-    }
-
     return (
       <React.Fragment>
         <div className="wrapper menu-collapsed">
@@ -273,7 +342,7 @@ class Calender extends Component {
                       <Alert />
 
                       <div className="card-body">
-                        {newEvents ? (
+                        {events ? (
                           <Calendar
                             eventPropGetter={(event) => ({
                               style: {
@@ -296,7 +365,7 @@ class Calender extends Component {
                             selectable
                             popup
                             localizer={localizer}
-                            events={newEvents}
+                            events={events}
                             defaultDate={new Date()}
                             views={{
                               month: true,
@@ -344,8 +413,9 @@ class Calender extends Component {
           <Modal
             visible={this.state.show}
             width="800"
-            height={"700"}
-            style={{ overflowY: "scroll" }}
+            height={
+              this.state.images && this.state.images.length > 4 ? "800" : "550"
+            }
             effect="fadeInUp"
             onClickAway={(e) => this.closeModal(e)}
           >
@@ -365,31 +435,47 @@ class Calender extends Component {
 
               <div className="modal-body">
                 <form
-                  // className="form form-horizontal form-bordered"
-                  // encType="multipart/form-data"
-                  // action="/upload"
+                  encType="multipart/form-data"
+                  action="/upload"
                   method="POST"
                   onSubmit={(e) => this.onSubmit(e)}
                 >
                   <div className="form-group">
-                    <label htmlFor="exampleInputEmail1">Event Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      className="form-control border-primary"
-                      id="exampleInputEmail1"
-                      aria-describedby="emailHelp"
-                      placeholder="Enter Name"
-                      value={this.state.name}
-                      required
-                      onChange={(e) => this.handleChange(e)}
-                    />
+                    <div className="row">
+                      <div className="col-xl-6 col-lg-6 col-md-6">
+                        <label htmlFor="exampleInputEmail1">Event Name</label>
+                        <input
+                          type="text"
+                          name="name"
+                          className="form-control border-primary"
+                          id="exampleInputEmail1"
+                          aria-describedby="emailHelp"
+                          placeholder="Enter Event Name"
+                          value={this.state.name}
+                          required
+                          onChange={(e) => this.handleChange(e)}
+                        />
+                      </div>
+                      <div className="col-xl-6 col-lg-6 col-md-6">
+                        <label htmlFor="exampleInputEmail1">Location</label>
+                        <input
+                          type="text"
+                          name="location"
+                          value={this.state.location}
+                          className="form-control border-primary"
+                          id="exampleInputEmail1"
+                          aria-describedby="emailHelp"
+                          placeholder="Enter location"
+                          onChange={(e) => this.handleChange(e)}
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="form-group">
-                    <div className="row">
-                      <div class="col-xl-4 col-lg-6 col-md-6">
-                        <fieldset class="form-group">
+                    <div className="row" style={{ margin: "-17px" }}>
+                      <div className="col-xl-6 col-lg-6 col-md-6">
+                        <fieldset className="form-group">
                           <label for="basicInput">Date</label>
                           <DatePicker
                             dateFormat="dd/MM/yyyy"
@@ -408,8 +494,8 @@ class Calender extends Component {
                           />
                         </fieldset>
                       </div>
-                      <div class="col-xl-4 col-lg-6 col-md-3">
-                        <fieldset class="form-group">
+                      <div className="col-xl-3 col-lg-6 col-md-3">
+                        <fieldset className="form-group">
                           <label for="helpInputTop">Start</label>
                           <DatePicker
                             locale="vi"
@@ -431,8 +517,8 @@ class Calender extends Component {
                           />{" "}
                         </fieldset>
                       </div>
-                      <div class="col-xl-4 col-lg-6 col-md-3">
-                        <fieldset class="form-group">
+                      <div className="col-xl-3 col-lg-6 col-md-3">
+                        <fieldset className="form-group">
                           <label for="disabledInput">End</label>
                           <DatePicker
                             locale="vi"
@@ -456,66 +542,65 @@ class Calender extends Component {
                       </div>
                     </div>
                   </div>
+
                   <div className="form-group">
-                    <label htmlFor="exampleInputEmail1">Location</label>
-                    <input
-                      type="text"
-                      name="location"
-                      value={this.state.location}
-                      className="form-control border-primary"
-                      id="exampleInputEmail1"
-                      aria-describedby="emailHelp"
-                      placeholder="Enter location"
-                      onChange={(e) => this.handleChange(e)}
-                    />
+                    <div className="row" style={{ marginTop: "-35px" }}>
+                      <div className="col-xl-12 col-lg-12 col-md-12">
+                        <label htmlFor="exampleInputEmail1">Note</label>
+                        <textarea
+                          type="text"
+                          name="note"
+                          value={this.state.note}
+                          className="form-control border-primary"
+                          id="exampleInputEmail1"
+                          aria-describedby="emailHelp"
+                          placeholder="Enter note"
+                          onChange={(e) => this.handleChange(e)}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="exampleInputEmail1">Note</label>
-                    <textarea
-                      type="text"
-                      name="note"
-                      value={this.state.note}
-                      className="form-control border-primary"
-                      id="exampleInputEmail1"
-                      aria-describedby="emailHelp"
-                      placeholder="Enter note"
-                      onChange={(e) => this.handleChange(e)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="exampleInputEmail1">Upload Images</label>
-                    <input
-                      name="image"
-                      type="file"
-                      className="border-primary col-md-6"
-                      id="inputGroupFile01"
-                      aria-describedby="inputGroupFileAddon01"
-                      required
-                      onChange={(e) => this._onChange(e)}
-                    />
-                    {this.state.saving ? (
-                      <button
-                        type="button"
-                        className="mb-2 mr-2 btn btn-raised btn-primary"
-                      >
-                        <div
-                          className="spinner-grow spinner-grow-sm "
-                          role="status"
-                        ></div>{" "}
-                        {this.state.isEdit ? `  Updating ` : `  Saving `}
-                      </button>
-                    ) : (
-                      <button
-                        type="submit"
-                        onClick={(e) => this.onSubmit(e)}
-                        className="mb-2 mr-2 btn btn-raised btn-primary"
-                      >
-                        <i className="ft-check" />
-                        {this.state.isEdit
-                          ? `  Update Event `
-                          : `  Save Event `}
-                      </button>
-                    )}
+                    <div className="row" style={{ marginTop: "-10px" }}>
+                      <div className="col-xl-8 col-lg-8 col-md-8">
+                        <label htmlFor="exampleInputEmail1">
+                          Upload Images
+                        </label>
+                        <input
+                          name="image"
+                          type="file"
+                          className="border-primary col-md-6"
+                          id="inputGroupFile01"
+                          aria-describedby="inputGroupFileAddon01"
+                          onChange={(e) => this._onChange(e)}
+                        />
+                      </div>
+                      <div className="col-xl-4 col-lg-4 col-md-4">
+                        {this.state.saving ? (
+                          <button
+                            type="button"
+                            className="mb-2 mr-2 btn btn-raised btn-primary float-right"
+                          >
+                            <div
+                              className="spinner-grow spinner-grow-sm "
+                              role="status"
+                            ></div>{" "}
+                            {this.state.isEdit ? `  Updating ` : `  Saving `}
+                          </button>
+                        ) : (
+                          <button
+                            type="submit"
+                            onClick={(e) => this.onSubmit(e)}
+                            className="mb-2 mr-2 btn btn-raised btn-primary float-right"
+                          >
+                            <i className="ft-check" />
+                            {this.state.isEdit
+                              ? `  Update Event `
+                              : `  Save Event `}
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   {/* <div className="custom-file col-md-9">
                   <label htmlFor="exampleInputEmail1">Upload PDF</label>
@@ -529,7 +614,7 @@ class Calender extends Component {
                       onChange={(e) => this._onChange(e)}
                     />
                   </div> */}
-                  <div className="form-group ">
+                  {/* <div className="form-group ">
                     {this.state.images_edit &&
                       this.state.images_edit.map((image) => {
                         return (
@@ -551,16 +636,17 @@ class Calender extends Component {
                           </div>
                         );
                       })}
-                  </div>
-                  {this.state.images.length > 0 ? (
+                  </div> */}
+                  {this.state.images && this.state.images.length > 0 && (
                     <div className="form-group">
                       {this.state.images &&
+                        this.state.images.length > 0 &&
                         this.state.images.map((image) => {
                           return (
                             <div className="hovereffect_event m-2">
                               <img
                                 className="img-responsive"
-                                src={URL.createObjectURL(image.img)}
+                                src={URL.createObjectURL(image.image)}
                                 width="80"
                                 height="80"
                                 alt=""
@@ -569,10 +655,187 @@ class Calender extends Component {
                           );
                         })}
                     </div>
+                  )}
+                  {this.state.isEdit == true &&
+                  this.state.images_Edit.length > 0 ? (
+                    <div className="form-group">
+                      <div className="row">
+                        {this.state.images_Edit &&
+                          this.state.images_Edit.length > 0 &&
+                          this.state.images_Edit.map((image) => {
+                            return (
+                              <div className="hovereffect_event m-2">
+                                <img
+                                  className="img-responsive"
+                                  src={image.image ? image.image : ""}
+                                  width="80"
+                                  height="80"
+                                  alt=""
+                                />
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </div>
                   ) : (
                     ""
                   )}
                 </form>
+              </div>
+            </div>
+          </Modal>
+
+          <Modal
+            visible={this.state.showBmodal}
+            width="800"
+            height={"450"}
+            effect="fadeInUp"
+            onClickAway={(e) => this.closeBModal(e)}
+          >
+            <div>
+              <div className="modal-header">
+                <h4 className="mt-2">
+                  <strong>Birthday Event Details</strong>
+                </h4>
+                <button
+                  type="button"
+                  onClick={(e) => this.closeBModal(e)}
+                  className="btn btn-sm"
+                >
+                  X
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <div className="form-group">
+                  <div className="row">
+                    <div className="col-xl-6 col-lg-6 col-md-6">
+                      <label htmlFor="exampleInputEmail1">Event Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        className="form-control border-primary"
+                        id="exampleInputEmail1"
+                        aria-describedby="emailHelp"
+                        placeholder="Enter Event Name"
+                        value={this.state.name}
+                        required
+                        onChange={(e) => this.handleChange(e)}
+                        readOnly
+                      />
+                    </div>
+                    <div className="col-xl-6 col-lg-6 col-md-6">
+                      <label htmlFor="exampleInputEmail1">Location</label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={this.state.location}
+                        className="form-control border-primary"
+                        id="exampleInputEmail1"
+                        aria-describedby="emailHelp"
+                        placeholder="Enter location"
+                        onChange={(e) => this.handleChange(e)}
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <div className="row" style={{ margin: "-8px px" }}>
+                    <div className="col-xl-6 col-lg-6 col-md-6">
+                      <fieldset className="form-group">
+                        <label for="basicInput">Date</label>
+                        <DatePicker
+                          dateFormat="dd/MM/yyyy"
+                          locale="vi"
+                          selected={
+                            this.state.date ? Date.parse(this.state.date) : ""
+                          }
+                          required
+                          className="form-control border-primary"
+                          onChange={(e) => this.handleChangeForDate(e, "date")}
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          readOnly
+                        />
+                      </fieldset>
+                    </div>
+                    <div className="col-xl-3 col-lg-6 col-md-3">
+                      <fieldset className="form-group">
+                        <label for="helpInputTop">Start</label>
+                        <DatePicker
+                          locale="vi"
+                          selected={
+                            this.state.timeStart
+                              ? Date.parse(this.state.timeStart)
+                              : ""
+                          }
+                          required
+                          className="form-control border-primary"
+                          onChange={(e) =>
+                            this.handleChangeForDate(e, "timeStart")
+                          }
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                          readOnly
+                        />{" "}
+                      </fieldset>
+                    </div>
+                    <div className="col-xl-3 col-lg-6 col-md-3">
+                      <fieldset className="form-group">
+                        <label for="disabledInput">End</label>
+                        <DatePicker
+                          locale="vi"
+                          selected={
+                            this.state.timeEnd
+                              ? Date.parse(this.state.timeEnd)
+                              : ""
+                          }
+                          required
+                          className="form-control border-primary"
+                          onChange={(e) =>
+                            this.handleChangeForDate(e, "timeEnd")
+                          }
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                          readOnly
+                        />{" "}
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <div className="row" style={{ marginTop: "-20px" }}>
+                    <div className="col-xl-12 col-lg-12 col-md-12">
+                      <label htmlFor="exampleInputEmail1">Note</label>
+                      <textarea
+                        type="text"
+                        name="note"
+                        value={this.state.note}
+                        className="form-control border-primary"
+                        id="exampleInputEmail1"
+                        aria-describedby="emailHelp"
+                        placeholder="Enter note"
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="form-group text-center">
+                  <button onClick={(e) => this.showError()} className="btn btn-primary text-center float-center">
+                    Update Event
+                  </button>
+                </div>
+                <OCAlertsProvider />
               </div>
             </div>
           </Modal>
@@ -592,10 +855,12 @@ const mapStateToProps = (state) => ({
   saved: state.events.saved,
   events: state.events.events,
   event: state.events.event,
+  b_events: state.events.birthdayevents,
 });
 export default connect(mapStateToProps, {
-  getAllEventts,
+  getAllEvents,
   getEventbyID,
   updateEvent,
   addEvent,
+  getAllBirthdayEvents,
 })(Calender);

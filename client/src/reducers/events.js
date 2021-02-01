@@ -2,13 +2,14 @@ import {
   GET_EVENTS,
   EVENTS_ERROR,
   EVENT_LOADING,
-  EVENT_SAVED,
+  EVENT_SAVED,GET_BEVENTS,
   GET_EVENT,
   EVENT_UPDATED,
 } from "../actions/types";
 const initialState = {
   event: null,
   events: null,
+  birthdayevents:null,
   loading: false,
   saved: false,
   error: {},
@@ -24,6 +25,13 @@ export default function (state = initialState, action) {
         loading: true,
       };
 
+      case GET_BEVENTS:
+        return {
+          ...state,
+          birthdayevents: payload,
+          loading: false,
+          saved: false,
+        };
     case GET_EVENTS:
       return {
         ...state,

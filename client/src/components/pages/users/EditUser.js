@@ -7,7 +7,7 @@ import {
   codeVerify,
   updatePassword,
 } from "../../../actions/user";
-import { addEvent } from "../../../actions/events";
+import { addBirthdayEvent } from "../../../actions/events";
 import Loader from "../../layout/Loader";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -286,17 +286,23 @@ class EditUser extends Component {
     await this.props.updateUser(formData, state.id);
 
     if (state.birthday != "" || state.birthday != null) {
+
+      var start = new Date(state.birthday);
+      start.setHours(0, 0, 0, 0);
+  
+      var end = new Date(state.birthday);
+      end.setHours(23, 59, 59, 999);  
       const eventData = new FormData();
-      eventData.append("name", `${this.state.username}'s Birthday Anniversary`);
-      eventData.append("note", `${this.state.username}'s Birthday Anniversary`);
+      eventData.append("name", this.state.username);
+      eventData.append("note", this.state.username);
       eventData.append("location", 'SUTYGON');
       eventData.append("date", new Date());
-      eventData.append("timeStart", new Date(state.birthday));
-      eventData.append("timeEnd", new Date(state.birthday));
+      eventData.append("timeStart", start);
+      eventData.append("timeEnd", end);
       eventData.append("birthday", new Date(state.birthday));
       eventData.append("user", state.id);
   
-      await this.props.addEvent(eventData);
+      await this.props.addBirthdayEvent(eventData,state.id);
     }
   };
 
@@ -1674,5 +1680,5 @@ export default connect(mapStateToProps, {
   getUser,
   updatePassword,
   logout,
-  addEvent,
+  addBirthdayEvent,
 })(EditUser);

@@ -4,20 +4,18 @@ import {
   EVENT_ERROR,
   GET_EVENTS,GET_EVENT,
   EVENTS_LOADING,
-  EVENT_UPDATED,
+  EVENT_UPDATED,GET_BEVENTS
 } from "./types";
 import { setAlert } from "./alert";
 
-// Add new product
+// Add new event
 export const addEvent = (event) => async (dispatch) => {
   dispatch({ type: EVENTS_LOADING });
   const config = {
     headers: {
       "content-type": "multipart/form-data",
-      // "Content-Type": "application/json",
     },
   };
-  const body = JSON.stringify(event);
 
   try {
     const res = await axios.post("/api/events/add",event, config);
@@ -38,13 +36,57 @@ export const addEvent = (event) => async (dispatch) => {
   }
 };
 
-// get All Users
-export const getAllEventts = () => async (dispatch) => {
+// Add new event
+export const addBirthdayEvent = (event,id) => async (dispatch) => {
+  dispatch({ type: EVENTS_LOADING });
+  const config = {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  };
+
+  try {
+    const res = await axios.post(`/api/events/${id}/addBirthdayEvents`,event, config);
+
+    dispatch({
+      type: EVENT_SAVED,
+    });
+
+    dispatch(setAlert(res.data.msg, "success"));
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
+    dispatch({
+      type: EVENT_ERROR,
+    });
+  }
+};
+
+// get All events
+export const getAllEvents = () => async (dispatch) => {
   dispatch({ type: EVENTS_LOADING });
   try {
     const res = await axios.get(`/api/events`);
     dispatch({
       type: GET_EVENTS,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: EVENT_ERROR,
+      payload: err.response,
+    });
+  }
+};
+// get All events
+export const getAllBirthdayEvents = () => async (dispatch) => {
+  dispatch({ type: EVENTS_LOADING });
+  try {
+    const res = await axios.get(`/api/events/bdayEvent`);
+    dispatch({
+      type: GET_BEVENTS,
       payload: res.data,
     });
   } catch (err) {
@@ -72,7 +114,7 @@ export const getEventbyID = (id) => async (dispatch) => {
   }
 };
 
-// Update product
+// Update event
 
 export const updateEvent = (event, id) => async (dispatch) => {
   dispatch({ type: EVENTS_LOADING });
@@ -80,11 +122,8 @@ export const updateEvent = (event, id) => async (dispatch) => {
   const config = {
     headers: {
       "content-type": "multipart/form-data",
-      // "Content-Type": "application/json",
     },
   };
-  const body = JSON.stringify(event);
-
   try {
     const res = await axios.post(`/api/events/${id}`, event, config);
 
@@ -93,7 +132,7 @@ export const updateEvent = (event, id) => async (dispatch) => {
       payload: res.data,
     });
     dispatch(setAlert(res.data.msg, "success"));
-    dispatch(getAllEventts());
+    dispatch(getAllEvents());
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {
@@ -104,4 +143,3 @@ export const updateEvent = (event, id) => async (dispatch) => {
     });
   }
 };
-// changeStatus

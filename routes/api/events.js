@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
 const Events = require("../../models/Events");
+const BirthdayEvents = require("../../models/BirthdayEvents");
 var moment = require("moment");
 var cloudinary = require("cloudinary");
 var multer = require("multer");
@@ -24,48 +25,128 @@ var upload = multer({ storage: storage });
 // @route   POST api/events/add
 // @desc    Add New Event
 // @access  private
+router.post("/add", auth, upload.any("image"), async (req, res) => {
+  try {
+    var files = req.files;
+    if (req.files != undefined) {
+      const all_paths = [];
+
+      // const pdfs = files.filter(
+      //   (a) => !a.originalname.match(/\.(jpg|jpeg|png|gif)$/i)
+      // );
+      // const images = files.filter((a) =>
+      //   a.originalname.match(/\.(jpg|jpeg|png|gif)$/i)
+      // );
+
+      // if (pdfs) {
+      //   pdfs.forEach( async function (el) {
+      //     const fileContent = (el.originalname)
+      //     const name = el.originalname.slice(0,el.originalname.indexOf('.'))
+      //     const response =
+      //      await cloudinary.v2.uploader.upload(fileContent,{
+      //       transformation:{format:'pdf'}
+      //     })
+      //     console.log("response",response)
+      //   });
+      // }
+
+      var file_Arr = new Array();
+      if (files) {
+        files.forEach((file) => all_paths.push(file.path));
+      }
+      if (all_paths) {
+        all_paths.forEach(function (path) {
+          cloudinary.uploader.upload(path, async function (result) {
+            file_Arr.push({ image: result.secure_url });
+          });
+        });
+      }
+      setTimeout(async function () {
+        var event = new Events({
+          name: req.body.name,
+          description: req.body.description,
+          timeStart: req.body.timeStart,
+          timeEnd: req.body.timeEnd,
+          location: req.body.location,
+          date: req.body.date,
+          note: req.body.note,
+          birthdate: req.body.birthday == undefined ? "" : req.body.birthday,
+          user: req.body.user == undefined ? "" : req.body.user,
+          images: file_Arr,
+        });
+        await event.save();
+      }, 3000);
+      setTimeout(async function () {
+        res.status(200).json({ msg: "Event Added Successfully" });
+      }, 3500);
+    } else {
+      setTimeout(async function () {
+        var event = new Events({
+          name: req.body.name,
+          description: req.body.description,
+          timeStart: req.body.timeStart,
+          timeEnd: req.body.timeEnd,
+          location: req.body.location,
+          date: req.body.date,
+          note: req.body.note,
+          birthdate: req.body.birthday == undefined ? "" : req.body.birthday,
+          user: req.body.user == undefined ? "" : req.body.user,
+          file: "",
+        });
+        await event.save();
+      }, 3000);
+      setTimeout(async function () {
+        res.status(200).json({ msg: "Event Added Successfully" });
+      }, 3500);
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server error");
+  }
+});
+
+// @route   POST api/events/add_bday
+// @desc    Add New Birthday Events
+// @access  private
 router.post(
-  "/add",
+  "/:id/addBirthdayEvents",
   auth,
-  upload.any([{ name: "file" }, { name: "pdfFile" }]),
+  upload.any("image"),
   async (req, res) => {
     try {
+      const event = await BirthdayEvents.findOne({ user: req.params.id });
+      if (event) {
+        let updteEvnt = await BirthdayEvents.updateOne(
+          { user: req.params.id },
+          {
+            $set: {
+              birthdate: req.body.birthday,
+              date: req.body.date,
+              timeStart: req.body.timeStart,
+              timeEnd: req.body.timeEnd,
+            },
+          }
+        );
+        res.status(200).json({ msg: "Birthday Aniversary Updated" });
+        return;
+      }
+
       var files = req.files;
       if (req.files != undefined) {
         const all_paths = [];
         var file_Arr = new Array();
-
-        // const pdfs = files.filter(
-        //   (a) => !a.originalname.match(/\.(jpg|jpeg|png|gif)$/i)
-        // );
-        // const images = files.filter((a) =>
-        //   a.originalname.match(/\.(jpg|jpeg|png|gif)$/i)
-        // );
-
-        // if (pdfs) {
-        //   pdfs.forEach( async function (el) {
-        //     const fileContent = (el.originalname)
-        //     const name = el.originalname.slice(0,el.originalname.indexOf('.'))
-        //     const response =
-        //      await cloudinary.v2.uploader.upload(fileContent,{
-        //       transformation:{format:'pdf'}
-        //     })
-        //     console.log("response",response)
-        //   });
-        // }
-
         if (files) {
           files.forEach((file) => all_paths.push(file.path));
         }
         if (all_paths) {
           all_paths.forEach(function (path) {
             cloudinary.uploader.upload(path, async function (result) {
-              file_Arr.push({ img: result.secure_url });
+              file_Arr.push({ image: result.secure_url });
             });
           });
         }
         setTimeout(async function () {
-          var event = new Events({
+          var event = new BirthdayEvents({
             name: req.body.name,
             description: req.body.description,
             timeStart: req.body.timeStart,
@@ -73,15 +154,18 @@ router.post(
             location: req.body.location,
             date: req.body.date,
             note: req.body.note,
-            birthdate: req.body.birthday == undefined ? "" : req.body.birthday,
-            user: req.body.user == undefined ? "" : req.body.user,
-            file: file_Arr,
+            birthdate: req.body.birthday,
+            user: req.body.user,
+            images: file_Arr,
           });
           await event.save();
         }, 3000);
+        setTimeout(async function () {
+          res.status(200).json({ msg: "Birthday Aniversary Added" });
+        }, 3500);
       } else {
         setTimeout(async function () {
-          var event = new Events({
+          var event = new BirthdayEvents({
             name: req.body.name,
             description: req.body.description,
             timeStart: req.body.timeStart,
@@ -89,16 +173,16 @@ router.post(
             location: req.body.location,
             date: req.body.date,
             note: req.body.note,
-            birthdate: req.body.birthday == undefined ? "" : req.body.birthday,
-            user: req.body.user == undefined ? "" : req.body.user,
+            birthdate: req.body.birthday,
+            user: req.body.user,
             file: "",
           });
           await event.save();
         }, 3000);
+        setTimeout(async function () {
+          res.status(200).json({ msg: "Birthday Aniversary Added" });
+        }, 3500);
       }
-      setTimeout(async function () {
-        res.status(200).json({ msg: "Event Added Successfully" });
-      }, 3500);
     } catch (err) {
       console.log(err);
       res.status(500).send("Server error");
@@ -108,10 +192,10 @@ router.post(
 
 // @route    POST api/events/:id
 //@desc      update events.
-router.post("/:id", auth, upload.any("file"), async (req, res) => {
+router.post("/:id", auth, upload.any("image"), async (req, res) => {
   try {
-      var files = req.files;
-      if(files !=undefined){
+    var files = req.files;
+    if (files != undefined) {
       const all_paths = [];
       let event = await Events.findById(req.params.id);
       if (files) {
@@ -121,31 +205,30 @@ router.post("/:id", auth, upload.any("file"), async (req, res) => {
       if (all_paths) {
         all_paths.forEach(function (path) {
           setTimeout(async function () {
-
-          cloudinary.uploader.upload(path, async function (result) {
-            images.push({ img: result.secure_url });
-
+            cloudinary.uploader.upload(path, async function (result) {
+              images.push({ image: result.secure_url });
+            });
+          }, 1000);
         });
-      }, 1000);
-    });
         setTimeout(async function () {
-        let all_images = event.file.concat(images);
-        event.file = all_images;
-        event.name=req.body.name;
-        event.date=req.body.date;
-        event.timeEnd=req.body.timeEnd;
-        event.timeStart=req.body.timeStart;
-        event.note=req.body.note;
-        event.location=req.body.location;
-        event.save();
-      }, 2800);
-
+          let all_images = event.images.concat(images);
+          event.images = all_images;
+          event.name = req.body.name;
+          event.date = req.body.date;
+          event.timeEnd = req.body.timeEnd;
+          event.timeStart = req.body.timeStart;
+          event.note = req.body.note;
+          event.location = req.body.location;
+          event.save();
+        }, 2800);
       }
+    } else {
+      let event = await Events.findByIdAndUpdate(
+        { _id: req.params.id },
+        { ...req.body }
+      );
     }
-    else{
-      let event = await Events.findByIdAndUpdate({_id:req.params.id},{...req.body});
-    }
-   
+
     setTimeout(async function () {
       return res.status(200).json({ msg: "Event updated successfully!" });
     }, 3000);
@@ -164,6 +247,22 @@ router.get("/", auth, async (req, res) => {
   try {
     const events = await Events.find();
     res.json(events);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error!");
+  }
+});
+
+// @route   GET api/events
+// @desc    Get all birthday events
+// @access  Private
+router.get("/bdayEvent", auth, async (req, res) => {
+  try {
+    const b_events = await BirthdayEvents.find().populate(
+      "user",
+      "accountStatus"
+    );
+    res.json(b_events);
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error!");

@@ -8,7 +8,7 @@ import { getAllAppointments } from "../../actions/appointment";
 import { getAllRentedProducts } from "../../actions/rentproduct";
 import { getAllProducts } from "../../actions/product";
 import { getUser } from "../../actions/user";
-import { getAllEventts } from "../../actions/events";
+import { getAllEvents,getAllBirthdayEvents } from "../../actions/events";
 import { changeShopStatus, getShop } from "../../actions/dashboard";
 import * as moment from "moment";
 import "../../login.css";
@@ -24,7 +24,8 @@ class Dashboard extends Component {
     await this.props.getAllRentedProducts();
     await this.props.getAllProducts();
     await this.props.getShop();
-    await this.props.getAllEventts();
+    await this.props.getAllEvents();
+    await this.props.getAllBirthdayEvents();
     await this.getPendingEvents();
   }
 
@@ -539,7 +540,7 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   getAllAppointments: PropTypes.func.isRequired,
   getAllProducts: PropTypes.func.isRequired,
-  getAllEventts: PropTypes.func.isRequired,
+  getAllEvents: PropTypes.func.isRequired,
   getAllRentedProducts: PropTypes.func.isRequired,
   changeShopStatus: PropTypes.func.isRequired,
   getShop: PropTypes.func.isRequired,
@@ -559,6 +560,8 @@ const mapStateToProps = (state) => ({
   shop: state.dashboard.shop,
   rentedproducts: state.rentproduct.rentproducts,
   events: state.events.events,
+  b_events: state.events.birthdayevents,
+
 });
 export default connect(mapStateToProps, {
   getAllAppointments,
@@ -566,5 +569,5 @@ export default connect(mapStateToProps, {
   getAllRentedProducts,
   changeShopStatus,
   getShop,
-  getAllEventts,getUser
+  getAllEvents,getUser,getAllBirthdayEvents
 })(Dashboard);
