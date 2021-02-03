@@ -11,6 +11,7 @@
     "axios": "^0.20.0",
     "cloudinary-react": "^1.6.8",
     "concurrently": "^5.3.0",
+    "date-diff": "^0.2.2",
     "loadjs": "^4.2.0",
     "moment-timezone": "^0.5.32",
     "react": "^16.13.1",

@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const Float = require("mongoose-float").loadType(mongoose, 2);
 const RentedProductSchema = new mongoose.Schema(
   {
     orderNumber: {
@@ -9,14 +9,14 @@ const RentedProductSchema = new mongoose.Schema(
     },
     user: {
       type: Schema.Types.ObjectId,
-      ref: 'user',
+      ref: "user",
     },
     customerContactNumber: {
       type: String,
     },
     customer: {
       type: Schema.Types.ObjectId,
-      ref: 'customer',
+      ref: "customer",
     },
     barcodes: {
       type: Array,
@@ -39,17 +39,17 @@ const RentedProductSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: 'pending',
+      default: "pending",
       enum: [
-        'pending',
-        'ready',
-        'active',
-        'past',
-        'overdue',
-        'lost',
-        'pickup_today',
-        'return_today',
-        'alteration',
+        "pending",
+        "ready",
+        "active",
+        "past",
+        "overdue",
+        "lost",
+        "pickup_today",
+        "return_today",
+        "alteration",
       ],
     },
     // This is the status before alteration and it is restored once all the alterations are marked as done...
@@ -78,12 +78,28 @@ const RentedProductSchema = new mongoose.Schema(
     leaveID: {
       type: Boolean,
     },
+    // new fields
+    customerId: {
+      type: String,
+    },
+    extraDays: {
+      type: Number,
+    },
+    extraDaysAmount: {
+      type: Float,
+    },
+    total_owe: {
+      type: Float,
+    },
+    pay_amount: {
+      type: Float,
+    },
     authorization_logs: [
       {
         _id: false,
         employee_id: {
           type: Schema.Types.ObjectId,
-          ref: 'user',
+          ref: "user",
         },
         employee_name: String,
         status: String,
@@ -93,6 +109,6 @@ const RentedProductSchema = new mongoose.Schema(
     ],
   },
   { timestamps: true }
-)
+);
 
-module.exports = RentedProduct = mongoose.model('orders', RentedProductSchema)
+module.exports = RentedProduct = mongoose.model("orders", RentedProductSchema);

@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import Sidebar from "../layout/Sidebar";
-import Header from "../layout/Header";
+import Sidebar from "../../layout/Sidebar";
+import Header from "../../layout/Header";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getCustomer } from "../../actions/rentproduct";
+import { getCustomer } from "../../../actions/rentproduct";
 import { Link } from "react-router-dom";
-import Loader from "../layout/Loader";
+import Loader from "../../layout/Loader";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 
 class RentProduct extends Component {
@@ -82,7 +82,7 @@ class RentProduct extends Component {
                 <div className="row justify-content-center">
                   <Link
                    to={{
-                      pathname: "/checkout",
+                      pathname: "/pickrentdate",
                       state:{ customer :!!this.props.customer.length
                         ? this.props.customer[0]._id
                         : ""},

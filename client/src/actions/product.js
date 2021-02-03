@@ -61,6 +61,26 @@ export const getAllProducts = (page) => async (dispatch) => {
   }
 };
 
+// get All Users
+export const getAllProductsAll = () => async (dispatch) => {
+  dispatch({ type: PRODUCT_LOADING });
+  try {
+    const res = await axios.get(`/api/products/all`);
+    dispatch({
+      type: GET_PRODUCTS,
+      payload: {
+        products: res.data.products,
+        total: res.data.total,
+      },
+    });
+  } catch (err) {
+    dispatch({
+      type: PRODUCTS_ERROR,
+      payload: err.response,
+    });
+  }
+};
+
 // Find products
 export const findProducts = (search) => async (dispatch) => {
   dispatch({ type: PRODUCT_LOADING });

@@ -18,7 +18,7 @@ export default function ListCustomItem({
       {...provided.dragHandleProps}
       className={getClassName(item.url)}
     >
-      <Link to={item.url} onClick={() => handleClick(item.url)}>
+      <Link to={`/${item.url}`} onClick={() => handleClick(item.url)}>
         <i {...provided.dragHandleProps} className={`${item.icons}`} />{" "}
         {item.title}
       </Link>

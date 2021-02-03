@@ -26,8 +26,11 @@ import EditAppointment from './components/pages/appointments/EditAppointment'
 import ViewCustomer from './components/pages/customers/Viewcustomer'
 import ViewProduct from './components/pages/products/Viewproduct'
 import Product from './components/pages/products/Product'
-import RentProduct from './components/pages/rentproduct'
-import Checkout from './components/pages/checkout'
+import RentProduct from './components/pages/rent/rentproduct'
+import PickRentDate from './components/pages/rent/PickRentDate'
+import Prepaid5 from './components/pages/rent/Prepaid5'
+
+import Checkout from './components/pages/rent/checkout'
 import ReturnProduct from './components/pages/returnproduct/returnproduct'
 import ScanBarcode from './components/pages/returnproduct/scanBarcode'
 import RentOrder from './components/pages/rentOrder'
@@ -126,8 +129,11 @@ const Main = () => {
 
           {/* rent product */}
           <PrivateRoute exact path='/rentproduct' component={RentProduct} />
+          <PrivateRoute exact path="/pickrentdate" component={PickRentDate}/>
           <PrivateRoute exact path='/checkout' component={Checkout} />
           <PrivateRoute exact path='/rentorder' component={RentOrder} />
+          <PrivateRoute exact path='/prepaid' component={Prepaid5} />
+          
           {/* <PrivateRoute exact path='/rentinvoice' component={RentInvoice} /> */}
 
           {/* return product */}
