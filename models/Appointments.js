@@ -30,7 +30,6 @@ const AppointmentsSchema = new mongoose.Schema(
 
   { timestamps: true }
 );
-AppointmentsSchema.set("autoIndex", false);
 module.exports = Appointments = mongoose.model(
   "appointments",
   AppointmentsSchema

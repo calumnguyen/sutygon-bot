@@ -14,6 +14,7 @@ import report from './report'
 import invoice from './invoice'
 import alternotes from './alternotes';
 import coupons from './coupons'
+import events from './events'
 
 export default combineReducers({
   alert,
@@ -29,5 +30,6 @@ export default combineReducers({
   dashboard,
   invoice,
   alternotes,
-  coupons
+  coupons,
+  events
 })

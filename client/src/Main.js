@@ -94,6 +94,8 @@ const Main = () => {
           <PrivateRoute exact path='/user/view/:id' component={View} />
           {/* <PrivateRoute exact path='/user/updatesalary/:id' component={SalaryUpdate} /> */}
           <PrivateRoute exact path='/storeclosed' component={StoreClosed} />
+
+          
           <PrivateRoute
             exact
             path='/ActivateAccount'

@@ -20,6 +20,19 @@ export const PASSWORD_ERROR = 'PASSWORD_ERROR'
 export const CODE_VERIFIED = 'CODE_VERIFIED'
 export const VERIFCATION_ERROR = 'VERIFCATION_ERROR'
 
+//events
+export const EVENTS_LOADING = 'EVENTS_LOADING'
+export const EVENT_LOADING = 'EVENT_LOADING'
+export const EVENT_SAVED = 'EVENT_SAVED'
+export const GET_EVENT = 'GET_EVENT'
+export const GET_EVENTS = 'GET_EVENTS'
+export const GET_BEVENTS = 'GET_BEVENTS'
+export const EVENTS_ERROR = 'EVENTS_ERROR'
+export const EVENT_ERROR = 'EVENT_ERROR'
+export const EVENT_DELETED = 'EVENT_DELETED'
+export const EVENT_UPDATED = 'EVENT_UPDATED'
+export const EVENT_CLOSED = 'EVENT_CLOSED'
+
 //change page
 export const CHANGE_PAGE = 'CHANGE_PAGE'
 
