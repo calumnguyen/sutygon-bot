@@ -9,6 +9,9 @@
   right: 0;
   top: 0;
 }
+.content-wrapper{
+  background-color: white;
+}
 .mm-input {
   border-radius: 50px;
   padding-left: 20px;
@@ -229,7 +232,6 @@
   margin: 18px 0px 0px 0px;
   font-size: 40px;
   text-align: center;
-
   -webkit-transform: rotate(226deg);
 }
 .center {
@@ -237,16 +239,17 @@
 }
 .card-alert {
   margin: 0px 0px !important;
-  /* overflow-y: scroll; */
   border-radius: 25px !important;
-  max-height: 80%;
-  border: 1px solid #f3f3f3;
+  max-height:80%;
+  height: 100%;
+  display:block;
+
+  /* border: 1px solid #f3f3f3; */
 }
 .card-alert-row {
   margin: 0px 0px !important;
   overflow-y: scroll;
   border-radius: 25px !important;
-  max-height: 80%;
   border: 1px solid #ffffff;
 }
 .alert-secondary {

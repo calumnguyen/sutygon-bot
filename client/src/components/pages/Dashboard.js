@@ -300,8 +300,8 @@ class Dashboard extends Component {
                   >
                     {user && user.systemRole === "Admin" ? (
                       <>
-                        <div className="card card-alert gradient-light-blue-indigo">
-                          <div className="card-alert-row w-100"  style={{height:'80%'}}>
+                        <div className="card card-alert gradient-light-blue-indigo mt-1">
+                          <div className="card-alert-row w-100"  style={{height:'100%'}}>
                             {this.state.currenWeekEvents &&
                               this.state.currenWeekEvents.length > 0 &&
                               this.state.currenWeekEvents.map((a, a_i) => {
