@@ -144,7 +144,7 @@
   color: #0093e9;
   font-size: medium;
   font-weight: bold;
-  margin-left: 5.5rem;
+  margin-left: 2rem;
   text-align: right;
   font-family: "Open Sans", sans-serif;
   text-transform: uppercase;
@@ -154,7 +154,7 @@
   color: #0093e9;
   font-size: medium;
   font-weight: bold;
-  margin-left: 4.8em;
+  margin-left: 2rem;
   text-align: center;
   font-family: "Open Sans", sans-serif;
   text-transform: uppercase;
@@ -163,7 +163,7 @@
   color: #0093e9;
   font-size: medium;
   font-weight: bold;
-  margin-left: 3.8rem;
+  margin-left: 1.5rem;
   text-align: center;
   font-family: "Open Sans", sans-serif;
   text-transform: uppercase;
@@ -173,7 +173,16 @@
   color: #0093e9;
   font-size: medium;
   font-weight: bold;
-  margin-left: 3.8rem;
+  margin-left: .9rem;
+  text-align: center;
+  font-family: "Open Sans", sans-serif;
+  text-transform: uppercase;
+}
+.text-card-req {
+  color: #0093e9;
+  font-size: medium;
+  font-weight: bold;
+  margin-left: .9rem;
   text-align: center;
   font-family: "Open Sans", sans-serif;
   text-transform: uppercase;
@@ -183,7 +192,7 @@
   color: #0093e9;
   font-size: medium;
   font-weight: bold;
-  margin-left: 6.6rem;
+  margin-left: 2.5rem;
   text-align: center;
   font-family: "Open Sans", sans-serif;
   text-transform: uppercase;
@@ -201,7 +210,8 @@
   opacity: 0.8;
   border-radius: 25px;
   font-size: large;
-  margin-left: 18rem;
+  margin-left: auto;
+  margin-right: 2px;
 }
 .btn-store > .btn {
   font-family: "Open Sans", sans-serif;
@@ -229,7 +239,7 @@
   margin: 0px 0px !important;
   /* overflow-y: scroll; */
   border-radius: 25px !important;
-  max-height: 76%;
+  max-height: 80%;
   border: 1px solid #f3f3f3;
 }
 .card-alert-row {

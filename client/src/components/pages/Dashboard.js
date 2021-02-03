@@ -214,7 +214,7 @@ class Dashboard extends Component {
             <div className="main-content">
               <div className="content-wrapper">
                 <div className="row">
-                  <h4 className="ml-2 mb-2 text-bold-400">
+                  <h4 className="ml-2 mb-4 text-bold-400">
                     Hello {user && user.fullname && `${user.fullname}`}, hope
                     you have a great day!
                   </h4>
@@ -256,12 +256,12 @@ class Dashboard extends Component {
                           </div>
                         </div>
                         {/* card4 */}
-                        <div className="flex items-center bg-white shadow-xs card-dashboard text-center">
+                        <div className="flex items-center bg-white shadow-xs card-dashboard">
                           <div className="text-orange-500 gradient-crystal-clear rounded-full card-dashboard-span">
                             <div className="text">0</div>
                           </div>
                           <div className="text-card-order">
-                            <span> Orders with</span> <br />{" "}
+                            <span> Orders with </span> <br />{" "}
                             <span> Request</span>
                           </div>
                         </div>{" "}
@@ -301,13 +301,13 @@ class Dashboard extends Component {
                     {user && user.systemRole === "Admin" ? (
                       <>
                         <div className="card card-alert gradient-light-blue-indigo">
-                          <div className=" card-alert-row w-100">
+                          <div className="card-alert-row w-100"  style={{height:'80%'}}>
                             {this.state.currenWeekEvents &&
                               this.state.currenWeekEvents.length > 0 &&
                               this.state.currenWeekEvents.map((a, a_i) => {
                                 return (
                                   <div
-                                    className="alert alert-secondary alert-dismissible m-1"
+                                    className="alert alert-secondary alert-dismissible m-1" 
                                     // role="alert"
                                   >
                                     <button
@@ -409,13 +409,15 @@ class Dashboard extends Component {
                                     .format("DD-MMM-YY")}
                               </span>
                             </div>
-                            <div className="gradient-blueberry btn-store">
+                            <div className="gradient-blueberry btn-store"
+                                                                >
                               {this.props.shop[0] &&
                                 (this.props.shop[0].status === "on" ? (
                                   <button
                                     type="button"
                                     onClick={() => this.changeShopStatus("off")}
                                     className="btn text-white m-1"
+
                                   >
                                     Close the door
                                     <i className="fa fa-lock ml-2 fa-1x"></i>
@@ -425,6 +427,7 @@ class Dashboard extends Component {
                                     type="button"
                                     onClick={() => this.changeShopStatus("on")}
                                     className="btn text-white m-1"
+                                    styles={{float: "right"}}
                                   >
                                     Open door{" "}
                                     <i className="fa fa-unlock-alt ml-2 fa-1x"></i>
