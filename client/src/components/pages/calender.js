@@ -36,8 +36,10 @@ class Calender extends Component {
     date: "",
     location: "",
     image: "",
+    isNew:false,
     images: [],
     images_Edit: [],
+    isEditTrue:false
   };
 
   async componentDidMount() {
@@ -232,6 +234,7 @@ class Calender extends Component {
       id: "",
       name: "",
       images: [],
+      isNew: false,
       note: "",
       timeStart: "",
       timeEnd: "",
@@ -265,6 +268,7 @@ class Calender extends Component {
       this.setState({
         show: true,
         id: "",
+        isNew: true,
         name: "",
         note: "",
         timeStart: moment(new Date(slot.slots[0])),
@@ -272,6 +276,8 @@ class Calender extends Component {
         date: moment(new Date(slot.slots[0])),
         location: "",
         isEdit: false,
+        isEditTrue: false,
+
         image: "",
       });
     }
@@ -309,6 +315,12 @@ class Calender extends Component {
       });
     }
   };
+  isEditTrue = () =>{
+    this.setState({
+      isEditTrue: true,
+
+    });
+  }
 
   render() {
     const { auth } = this.props;
@@ -424,6 +436,7 @@ class Calender extends Component {
                 <h4 className="mt-2">
                   <strong>Event Details</strong>
                 </h4>
+               
                 <button
                   type="button"
                   onClick={(e) => this.closeModal(e)}
@@ -431,6 +444,7 @@ class Calender extends Component {
                 >
                   X
                 </button>
+               
               </div>
 
               <div className="modal-body">
@@ -444,7 +458,10 @@ class Calender extends Component {
                     <div className="row">
                       <div className="col-xl-6 col-lg-6 col-md-6">
                         <label htmlFor="exampleInputEmail1">Event Name</label>
-                        <input
+                        
+                        
+                       {this.state.isEditTrue == true  || this.state.isNew == true?
+                         <input
                           type="text"
                           name="name"
                           className="form-control border-primary"
@@ -454,10 +471,33 @@ class Calender extends Component {
                           value={this.state.name}
                           required
                           onChange={(e) => this.handleChange(e)}
-                        />
+                        /> : 
+                        <input
+                          type="text"
+                          name="name"
+                          className="form-control border-primary"
+                          id="exampleInputEmail1"
+                          aria-describedby="emailHelp"
+                          placeholder="Enter Event Name"
+                          value={this.state.name}
+                          required
+                          readOnly
+                          // onChange={(e) => this.handleChange(e)}
+                        />}
                       </div>
                       <div className="col-xl-6 col-lg-6 col-md-6">
                         <label htmlFor="exampleInputEmail1">Location</label>
+                        {this.state.isEditTrue == true  || this.state.isNew == true?
+                         <input
+                         type="text"
+                         name="location"
+                         value={this.state.location}
+                         className="form-control border-primary"
+                         id="exampleInputEmail1"
+                         aria-describedby="emailHelp"
+                         placeholder="Enter location"
+                         onChange={(e) => this.handleChange(e)}
+                       />:
                         <input
                           type="text"
                           name="location"
@@ -465,9 +505,10 @@ class Calender extends Component {
                           className="form-control border-primary"
                           id="exampleInputEmail1"
                           aria-describedby="emailHelp"
+                          readOnly
                           placeholder="Enter location"
                           onChange={(e) => this.handleChange(e)}
-                        />
+                        />}
                       </div>
                     </div>
                   </div>
@@ -477,7 +518,8 @@ class Calender extends Component {
                       <div className="col-xl-6 col-lg-6 col-md-6">
                         <fieldset className="form-group">
                           <label for="basicInput">Date</label>
-                          <DatePicker
+                          {this.state.isEditTrue == true  || this.state.isNew == true?
+                            <DatePicker
                             dateFormat="dd/MM/yyyy"
                             locale="vi"
                             selected={
@@ -491,12 +533,28 @@ class Calender extends Component {
                             showMonthDropdown
                             showYearDropdown
                             dropdownMode="select"
-                          />
+                          /> :
+                          <DatePicker
+                            dateFormat="dd/MM/yyyy"
+                            locale="vi"
+                            selected={
+                              this.state.date ? Date.parse(this.state.date) : ""
+                            }
+                            required readOnly
+                            className="form-control border-primary"
+                            onChange={(e) =>
+                              this.handleChangeForDate(e, "date")
+                            }
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                          />}
                         </fieldset>
                       </div>
                       <div className="col-xl-3 col-lg-6 col-md-3">
                         <fieldset className="form-group">
                           <label for="helpInputTop">Start</label>
+                          {this.state.isEditTrue == true  || this.state.isNew == true?
                           <DatePicker
                             locale="vi"
                             selected={
@@ -512,14 +570,52 @@ class Calender extends Component {
                             showTimeSelect
                             showTimeSelectOnly
                             timeIntervals={15}
+                            
                             timeCaption="Time"
                             dateFormat="h:mm aa"
-                          />{" "}
+                          />:   <DatePicker
+                          locale="vi"
+                          selected={
+                            this.state.timeStart
+                              ? Date.parse(this.state.timeStart)
+                              : ""
+                          }
+                          required
+                          className="form-control border-primary"
+                          onChange={(e) =>
+                            this.handleChangeForDate(e, "timeStart")
+                          }
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={15} 
+                          readOnly
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                        />}
                         </fieldset>
                       </div>
                       <div className="col-xl-3 col-lg-6 col-md-3">
                         <fieldset className="form-group">
                           <label for="disabledInput">End</label>
+                          {this.state.isEditTrue == true  || this.state.isNew == true?
+                           <DatePicker
+                           locale="vi"
+                           selected={
+                             this.state.timeEnd
+                               ? Date.parse(this.state.timeEnd)
+                               : ""
+                           }
+                           required
+                           className="form-control border-primary"
+                           onChange={(e) =>
+                             this.handleChangeForDate(e, "timeEnd")
+                           }
+                           showTimeSelect
+                           showTimeSelectOnly
+                           timeIntervals={15}
+                           timeCaption="Time"
+                           dateFormat="h:mm aa"
+                         />:
                           <DatePicker
                             locale="vi"
                             selected={
@@ -527,6 +623,7 @@ class Calender extends Component {
                                 ? Date.parse(this.state.timeEnd)
                                 : ""
                             }
+                            readOnly
                             required
                             className="form-control border-primary"
                             onChange={(e) =>
@@ -537,7 +634,7 @@ class Calender extends Component {
                             timeIntervals={15}
                             timeCaption="Time"
                             dateFormat="h:mm aa"
-                          />{" "}
+                          /> }
                         </fieldset>
                       </div>
                     </div>
@@ -547,6 +644,7 @@ class Calender extends Component {
                     <div className="row" style={{ marginTop: "-35px" }}>
                       <div className="col-xl-12 col-lg-12 col-md-12">
                         <label htmlFor="exampleInputEmail1">Note</label>
+                        {this.state.isEditTrue == true  || this.state.isNew == true?
                         <textarea
                           type="text"
                           name="note"
@@ -556,14 +654,29 @@ class Calender extends Component {
                           aria-describedby="emailHelp"
                           placeholder="Enter note"
                           onChange={(e) => this.handleChange(e)}
-                        />
+                        />:
+                        <textarea
+                        type="text"
+                        name="note"
+                        readOnly
+                        value={this.state.note}
+                        className="form-control border-primary"
+                        id="exampleInputEmail1"
+                        aria-describedby="emailHelp"
+                        placeholder="Enter note"
+                        onChange={(e) => this.handleChange(e)}
+                      />
+                        }
                       </div>
                     </div>
                   </div>
                   <div className="form-group">
                     <div className="row" style={{ marginTop: "-10px" }}>
                       <div className="col-xl-8 col-lg-8 col-md-8">
+                      {this.state.isEditTrue == true  || this.state.isNew == true?
+<>
                         <label htmlFor="exampleInputEmail1">
+                          
                           Upload Images
                         </label>
                         <input
@@ -573,7 +686,7 @@ class Calender extends Component {
                           id="inputGroupFile01"
                           aria-describedby="inputGroupFileAddon01"
                           onChange={(e) => this._onChange(e)}
-                        />
+                        /></> :''}
                       </div>
                       <div className="col-xl-4 col-lg-4 col-md-4">
                         {this.state.saving ? (
@@ -588,16 +701,26 @@ class Calender extends Component {
                             {this.state.isEdit ? `  Updating ` : `  Saving `}
                           </button>
                         ) : (
+                          <>
                           <button
                             type="submit"
                             onClick={(e) => this.onSubmit(e)}
-                            className="mb-2 mr-2 btn btn-raised btn-primary float-right"
+                            className="mb-2 mr-2 ml-2 btn btn-raised btn-primary float-right"
                           >
                             <i className="ft-check" />
                             {this.state.isEdit
                               ? `  Update Event `
                               : `  Save Event `}
                           </button>
+                          {this.state.isEdit? (
+                          <button
+                            type="button"
+                            onClick={(e) => this.isEditTrue(e)}
+                            className="mb-2 mx-auto btn btn-raised btn-primary float-right"
+                          >
+                          <i className="fa fa-edit"> Edit</i>
+                            </button>):''}
+                          </>
                         )}
                       </div>
                     </div>

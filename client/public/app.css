@@ -49,6 +49,9 @@ html {
 article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
   display: block; }
 
+.wrapper{
+  background-color: #ffffff !important; 
+}
 body {
   margin: 0;
   font-family: "Montserrat", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -57,7 +60,8 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #f5f7fa; }
+  background-color: #ffffff; 
+}
 
 [tabindex="-1"]:focus {
   outline: 0 !important; }

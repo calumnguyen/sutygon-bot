@@ -8,7 +8,7 @@ import { getAllAppointments } from "../../actions/appointment";
 import { getAllRentedProducts } from "../../actions/rentproduct";
 import { getAllProducts } from "../../actions/product";
 import { getUser } from "../../actions/user";
-import { getAllEvents,getAllBirthdayEvents } from "../../actions/events";
+import { getAllEvents, getAllBirthdayEvents } from "../../actions/events";
 import { changeShopStatus, getShop } from "../../actions/dashboard";
 import * as moment from "moment";
 import "../../login.css";
@@ -36,11 +36,12 @@ class Dashboard extends Component {
 
   calculate_age = (dob1) => {
     var today = new Date();
-    var birthDate = new Date(this.state.birthday);
+    var birthDate = new Date(dob1);
     var age_now = today.getFullYear() - birthDate.getFullYear();
     var m = today.getMonth() - birthDate.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
       age_now--;
+      
     }
     {
       this.setState({ age: age_now });
@@ -50,52 +51,59 @@ class Dashboard extends Component {
 
   getPendingEvents() {
     var dateAfterSevenDays = moment(moment().add(7, "days")).format();
+    const new_Dateafter7days =
+      new Date(dateAfterSevenDays).getFullYear() +
+      "-" +
+      ("0" + (Number(new Date(dateAfterSevenDays).getMonth()) + 1)).slice(-2) +
+      "-" +
+      ("0" + (Number(new Date(dateAfterSevenDays).getDate()) - 1)).slice(-2) +
+      "T22:20:52.000Z";
+    console.log(new_Dateafter7days);
     var currentdate = moment(moment().subtract(1, "days")).format();
     const { events } = this.props;
-    if (events) {
-      const m_events = [];
-      let b_events = events.filter( 
-        async (a) => a.birthdate != "" && a.birthdate);
-      b_events &&
-        b_events.forEach((event) => {
-          const new_Date =
-          new Date(event.date).getFullYear() +
-            "-" +
-            ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(
-              -2
-            ) +
-            "-" +
-            ("0" +(Number(new Date(event.birthdate).getDate()))).slice(-2) +"T22:20:52.000Z";
-            
-          m_events.push({
-            date: new_Date,
-            timeStart: event.timeStart,
-            timeEnd: event.timeEnd,
-            name: event.name,
-            note: event.note,
-            location: event.location,
-            _id: event._id,
-            age:this.calculate_age(event.birthdate),
-            birthdate: event.birthdate,
-          });
-        });
-      let c_events = events.filter((a) => a.birthdate == null);
-      let modified_events = [...c_events, ...m_events];
+    const { b_events } = this.props;
+    const m_bevents = [];
 
-      var currenWeekEvents = modified_events.filter((a) => {
-        var m_date =
-          new Date(a.date).getFullYear() +
+    b_events &&
+      b_events.forEach((event) => {
+        const new_Date =
+          new Date(event.date).getFullYear() +
           "-" +
-          ("0" + (Number(new Date(a.birthdate).getMonth()) + 1)).slice(-2) +
+          ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(-2) +
           "-" +
-          ("0" +(Number(new Date(a.date).getDate()))).slice(-2) +"T22:20:52.000Z" 
-         
-        return m_date >= currentdate && a.date <= dateAfterSevenDays;
+          ("0" + (Number(new Date(event.birthdate).getDate()) - 1)).slice(-2) +
+          "T22:20:52.000Z";
+        const age = this.calculate_age(event.birthdate);
+        m_bevents.push({
+          date: new_Date,
+          timeStart: event.timeStart,
+          timeEnd: event.timeEnd,
+          name: event.name && `${event.name}'s ${age} Birthday Aniversary`,
+          note: event.note,
+          location: event.location,
+          _id: "",
+          type: "birthdayEvent",
+        });
       });
-      this.setState({
-        currenWeekEvents: currenWeekEvents,
-      });
-    }
+    let updatedEvents = [...m_bevents, ...events];
+
+
+    var currenWeekEvents = updatedEvents.filter((a) => {
+      var m_date =
+        new Date(a.date).getFullYear() +
+        "-" +
+        ("0" + (Number(new Date(a.date).getMonth()) + 1)).slice(-2) +
+        "-" +
+        ("0" + Number(new Date(a.date).getDate())).slice(-2) +
+        "T22:20:52.000Z";
+
+      return (
+        moment(m_date).format() >= currentdate && a.date <= dateAfterSevenDays
+      );
+    });
+    this.setState({
+      currenWeekEvents:currenWeekEvents
+    })
   }
 
   getPendingOrder = () => {
@@ -117,9 +125,12 @@ class Dashboard extends Component {
       let events = rentedproducts.filter((a) =>
         moment(moment(a.returnDate).format("MM/DD/YYYY")).isBefore(currentdate)
       );
+
       if (events.length > 0) {
-        let returningOrders = events.filter((f) => f.status !== "Completed");
+        let returningOrders = events.filter((f) => f.readyForPickUp == true);
         return returningOrders.length;
+      } else {
+        return 0;
       }
     }
   };
@@ -203,190 +214,111 @@ class Dashboard extends Component {
             <div className="main-content">
               <div className="content-wrapper">
                 <div className="row">
-                  <h4 className="ml-2 text-bold-400">
+                  <h4 className="ml-2 mb-2 text-bold-400">
                     Hello {user && user.fullname && `${user.fullname}`}, hope
                     you have a great day!
                   </h4>
                 </div>
                 <div className="row">
-                  <div className={user && user.systemRole=="Employee" ?"col-md-8":"col-md-12" }>
-                    <div className="card w-100">
-                      <div className="row w-100">
-                        <div className="col-xl-4 col-lg-4 col-md-6">
-                          <div className="card gradient-red-pink">
-                            <div className="card-content">
-                              <div className="card-body pt-2 pb-0">
-                                <div className="media">
-                                  <div className="media-body white text-left">
-                                    <h3 className="font-large-1 mb-0">
-                                      {this.getTodaysAppointment()}
-                                    </h3>
-                                    <a
-                                      href="/calender"
-                                      style={{
-                                        textDecoration: "none",
-                                        color: "white",
-                                      }}
-                                    >
-                                      Today's Appointment
-                                    </a>
-                                  </div>
-                                  <div className="media-right white text-right">
-                                    <i className="icon-pie-chart font-large-1"></i>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                id="Widget-line-chart"
-                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                              ></div>
+                  <div className="col-md-7">
+                    <div className="container px-6 mx-auto grid">
+                      <div className="grid gap-6 mb-8 md:grid-cols-4 xl:grid-cols-4">
+                        {/* card1 */}
+                        <div className="flex items-center bg-white shadow-xs card-dashboard">
+                          <div className="text-orange-500 gradient-blueberry rounded-full card-dashboard-span">
+                            <div className="text">
+                              {this.orderPickUpToday()}
                             </div>
                           </div>
-                        </div>
-                        <div className="col-xl-4 col-lg-4 col-md-6">
-                          <div className="card gradient-blueberry">
-                            <div className="card-content">
-                              <div className="card-body pt-2 pb-0">
-                                <div className="media">
-                                  <div className="media-body white text-left">
-                                    <h3 className="font-large-1 mb-0">
-                                      {this.getReturnOrder()}
-                                    </h3>
-                                    <span>Đơn Hàng Phải Trả Hôm Nay</span>
-                                  </div>
-                                  <div className="media-right white text-right">
-                                    <i className="icon-bulb font-large-1"></i>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                id="Widget-line-chart1"
-                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                              ></div>
-                            </div>
+                          <div className="text-card">
+                            <span>Pickup Today</span>
                           </div>
                         </div>
-
-                        <div className="col-xl-4 col-lg-4 col-md-6">
-                          <div className="card gradient-mint">
-                            <div className="card-content">
-                              <div className="card-body pt-2 pb-0">
-                                <div className="media">
-                                  <div className="media-body white text-left">
-                                    <h3 className="font-large-1 mb-0">
-                                      {this.getOverDueOrder()}
-                                    </h3>
-                                    <span>Đơn Hàng Quá Hạn</span>
-                                  </div>
-                                  <div className="media-right white text-right">
-                                    <i className="icon-graph font-large-1"></i>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                id="Widget-line-chart2"
-                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                              ></div>
-                            </div>
+                        {/* card2 */}
+                        <div className="flex items-center bg-white shadow-xs card-dashboard">
+                          <div className="text-orange-500 gradient-red-pink rounded-full card-dashboard-span">
+                            <div className="text">{this.getReturnOrder()}</div>
+                          </div>
+                          <div className="text-card">
+                            <span>Return Today</span>
                           </div>
                         </div>
-                        <div className="col-xl-4 col-lg-4 col-md-6">
-                          <div className="card gradient-mini">
-                            <div className="card-content">
-                              <div className="card-body pt-2 pb-0">
-                                <div className="media">
-                                  <div className="media-body white text-left">
-                                    <h3 className="font-large-1 mb-0">
-                                      {this.orderPickUpToday()}
-                                    </h3>
-                                    <span>Order Pickup Today</span>
-                                  </div>
-                                  <div className="media-right white text-right">
-                                    <i className="icon-wallet font-large-1"></i>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                id="Widget-line-chart3"
-                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                              ></div>
+                        {/* card3 */}
+                        <div className="flex items-center bg-white shadow-xs card-dashboard">
+                          <div className="gradient-light-blue-indigo rounded-full card-dashboard-span-op">
+                            <div className="text">
+                              {this.getTodaysAppointment()}
                             </div>
                           </div>
-                        </div>
-                        <div className="col-xl-4 col-lg-4 col-md-6">
-                          <div className="card gradient-brown-brown">
-                            <div className="card-content">
-                              <div className="card-body pt-2 pb-0">
-                                <div className="media">
-                                  <div className="media-body white text-left">
-                                    <h3 className="font-large-1 mb-0">{}</h3>
-                                    <span>Order Needs Alteration</span>
-                                  </div>
-                                  <div className="media-right white text-right">
-                                    <i className="icon-wallet font-large-1"></i>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                id="Widget-line-chart3"
-                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                              ></div>
-                            </div>
+                          <div className="text-card-app">
+                            <span> Appointments</span> <br />{" "}
+                            <span className="text-card-1"> Today</span>
                           </div>
                         </div>
-                        <div className="col-xl-4 col-lg-4 col-md-6">
-                          <div className="card gradient-orange">
-                            <div className="card-content">
-                              <div className="card-body pt-2 pb-0">
-                                <div className="media">
-                                  <div className="media-body white text-left">
-                                    <h3 className="font-large-1 mb-0">
-                                      {this.getTodaysOrder()}
-                                    </h3>
-                                    <span>Today's Orders</span>
-                                  </div>
-                                  <div className="media-right white text-right">
-                                    <i className="fa-music font-large-1"></i>
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                id="Widget-line-chart3"
-                                className="height-75 WidgetlineChart WidgetlineChartshadow mb-2"
-                              ></div>
+                        {/* card4 */}
+                        <div className="flex items-center bg-white shadow-xs card-dashboard text-center">
+                          <div className="text-orange-500 gradient-crystal-clear rounded-full card-dashboard-span">
+                            <div className="text">0</div>
+                          </div>
+                          <div className="text-card-order">
+                            <span> Orders with</span> <br />{" "}
+                            <span> Request</span>
+                          </div>
+                        </div>{" "}
+                        {/* card5 */}
+                        <div className="flex items-center bg-white shadow-xs card-dashboard">
+                          <div className="text-orange-500 gradient-orange rounded-full card-dashboard-span">
+                            <div className="text">
+                              {" "}
+                              {this.getOverDueOrder()}
                             </div>
+                          </div>
+                          <div className="text-card-overdue">
+                            <span> Overdue Orders</span>
+                          </div>
+                        </div>{" "}
+                        {/* card6 */}
+                        <div className="flex items-center bg-white shadow-xs card-dashboard">
+                          <div className="text-orange-500 gradient-love-couple rounded-full card-dashboard-span">
+                            {" "}
+                            <div className="text">
+                              {this.getTodaysOrder()}
+                            </div>{" "}
+                          </div>
+                          <div className="text-card-noorder">
+                            <span> New Orders Today</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className={user && user.systemRole=="Admin" ?"col-md-4":"" }>
+
+                  <div
+                    className={
+                      user && user.systemRole == "Admin" ? "col-md-5" : ""
+                    }
+                  >
                     {user && user.systemRole === "Admin" ? (
                       <>
-                        <div
-                          className="card"
-                          style={{ height: 390, overflowY: "scroll" }}
-                        >
-                          <div className="card-body">
-                            <div className="row w-100">
-                              {this.state.currenWeekEvents &&
-                                this.state.currenWeekEvents.length > 0 &&
-                                this.state.currenWeekEvents.map((a, a_i) => {
-                                  return (
-                                    <div
-                                      class="alert alert-secondary alert-dismissible mb-2 w-100"
-                                      role="alert"
+                        <div className="card card-alert gradient-light-blue-indigo">
+                          <div className=" card-alert-row w-100">
+                            {this.state.currenWeekEvents &&
+                              this.state.currenWeekEvents.length > 0 &&
+                              this.state.currenWeekEvents.map((a, a_i) => {
+                                return (
+                                  <div
+                                    className="alert alert-secondary alert-dismissible m-1"
+                                    // role="alert"
+                                  >
+                                    <button
+                                      type="button"
+                                      className="close"
+                                      data-dismiss="alert"
+                                      aria-label="Close"
                                     >
-                                      <button
-                                        type="button"
-                                        class="close"
-                                        data-dismiss="alert"
-                                        aria-label="Close"
-                                      >
-                                        <span aria-hidden="true">&times;</span>
-                                      </button>
-                                      <p className="my-n1">
-                                        Name of Event :{" "}
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <p className="my-n1">
                                         {a.age?
                                         <>
                                         <strong>{a.name}'s</strong>
@@ -421,10 +353,9 @@ class Dashboard extends Component {
                                           Note:{a.note}
                                         </small>
                                       </p>
-                                    </div>
-                                  );
-                                })}
-                            </div>
+                                                                      </div>
+                                );
+                              })}
                           </div>
                         </div>
                       </>
@@ -433,74 +364,72 @@ class Dashboard extends Component {
                     )}
                   </div>
                 </div>
+
                 {user && user.systemRole === "Admin" ? (
                   <>
-                    <div className="row">
-                      <div className="col-md-12">
-                        <div className="card">
-                          <div className="card-body">
-                            <div className="row">
-                              <div className="col-md-7 txt-sep">
-                                <h2>
-                                  Cửa Hàng Đã{" "}
-                                  {this.props.shop[0] &&
-                                    (this.props.shop[0].status === "on"
-                                      ? "Mở Cửa"
-                                      : "Đóng Cửa")}{" "}
-                                  lúc
-                                </h2>
-                                <h1>
-                                  {" "}
-                                  <span className="badge badge-info">
-                                    {this.props.shop[0] &&
-                                      startTime
-                                        .tz("Asia/Vientiane")
-                                        .format("hh:mm a")}
-                                  </span>
-                                </h1>
-                                <p>
-                                  <span className="badge badge-pill badge-light">
-                                    {this.props.shop[0] &&
-                                      startTime
-                                        .tz("Asia/Vientiane")
-                                        .format("DD-MMM-YY")}
-                                  </span>{" "}
-                                </p>
-                              </div>
-                              <div className="col-md-3 txt-sep">
-                                <h3 className="mt-1">Trạng thái</h3>
-                                <p className="badge badge-pill badge-light">
-                                  {this.props.shop[0] &&
-                                    (this.props.shop[0].status === "on"
-                                      ? "Mở Cửa"
-                                      : "Đóng Cửa")}
-                                </p>
-                              </div>
-                              <div className="col-md-2">
-                                <h3 className="mt-1">Hành động</h3>
+                    {" "}
+                    <div className="row mt-5">
+                      <div className="container-fluid px-6 mx-auto grid">
+                        <div className="grid gap-6 mb-8 md:grid-cols-4 xl:grid-cols-ab">
+                          {/* card1 */}
+                          <div className="flex items-center bg-white shadow-xs card-store">
+                            <div className="gradient-light-blue-indigo rounded-full card-dashboard-store">
+                              {this.props.shop[0] &&
+                                (this.props.shop[0].status === "on" ? (
+                                  <i className="fa fa-unlock-alt"></i>
+                                ) : (
+                                  <i className="fa fa-lock"></i>
+                                ))}{" "}
+                            </div>
+
+                            <div className="store-text">
+                              {" "}
+                              <span className="span-2">
+                                {" "}
+                                Store{" "}
                                 {this.props.shop[0] &&
-                                  (this.props.shop[0].status === "on" ? (
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        this.changeShopStatus("off")
-                                      }
-                                      className="btn btn-link"
-                                    >
-                                      Đóng Cửa
-                                    </button>
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        this.changeShopStatus("on")
-                                      }
-                                      className="btn btn-link"
-                                    >
-                                      Mở Cửa
-                                    </button>
-                                  ))}
-                              </div>
+                                  (this.props.shop[0].status === "on"
+                                    ? "open"
+                                    : "close")}{" "}
+                                at{" "}
+                              </span>
+                              <span className="span-1">
+                                {" "}
+                                {this.props.shop[0] &&
+                                  startTime
+                                    .tz("Asia/Vientiane")
+                                    .format("hh:mm a")}{" "}
+                              </span>{" "}
+                              <span className="span-2">on</span>
+                              <span className="span-1">
+                                {" "}
+                                {this.props.shop[0] &&
+                                  startTime
+                                    .tz("Asia/Vientiane")
+                                    .format("DD-MMM-YY")}
+                              </span>
+                            </div>
+                            <div className="gradient-blueberry btn-store">
+                              {this.props.shop[0] &&
+                                (this.props.shop[0].status === "on" ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => this.changeShopStatus("off")}
+                                    className="btn text-white m-1"
+                                  >
+                                    Close the door
+                                    <i className="fa fa-lock ml-2 fa-1x"></i>
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => this.changeShopStatus("on")}
+                                    className="btn text-white m-1"
+                                  >
+                                    Open door{" "}
+                                    <i className="fa fa-unlock-alt ml-2 fa-1x"></i>
+                                  </button>
+                                ))}
                             </div>
                           </div>
                         </div>
@@ -561,7 +490,6 @@ const mapStateToProps = (state) => ({
   rentedproducts: state.rentproduct.rentproducts,
   events: state.events.events,
   b_events: state.events.birthdayevents,
-
 });
 export default connect(mapStateToProps, {
   getAllAppointments,
@@ -569,5 +497,7 @@ export default connect(mapStateToProps, {
   getAllRentedProducts,
   changeShopStatus,
   getShop,
-  getAllEvents,getUser,getAllBirthdayEvents
+  getAllEvents,
+  getUser,
+  getAllBirthdayEvents,
 })(Dashboard);
