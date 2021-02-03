@@ -52,6 +52,9 @@ class RentOrder extends Component {
     discount_amount: 0,
     products_length: 0,
     coupon_type: "",
+    someOneName: "",
+    extraDays: null,
+    extraDaysAmount: null,
   };
 
   async componentDidMount() {
@@ -79,9 +82,14 @@ class RentOrder extends Component {
 
     const { state } = this.props.location;
     if (state) {
+      const { rentDate, returnDate, extraDays, extraDaysAmount } = state.data;
       this.setState({
         customer_id: state.customer_id,
         barcode_Array: state.barcode,
+        rentDate: rentDate,
+        returnDate: returnDate,
+        extraDays: extraDays,
+        extraDaysAmount: extraDaysAmount,
       });
     }
     const orderBarcode = shortid.generate();
@@ -126,26 +134,6 @@ class RentOrder extends Component {
       this.setState({ rentDate: "", returnDate: "" });
     }
   }
-  rentDateValidity = () => {
-    let { rentDate } = this.state;
-    var currentdate = moment(rentDate).format("YYYY-MM-DD");
-    const r_date = moment(new Date()).format("YYYY-MM-DD");
-    var isToday = moment(r_date).isSameOrBefore(currentdate); // true
-    const rent = new Date(rentDate);
-
-    if (isToday === false && rent.getTime() - new Date().getTime() < 0) {
-      OCAlert.alertError(`Invalid Date`, { timeOut: 3000 });
-      this.focousOut(isToday);
-      return;
-    } else if (rent.getTime() - new Date().getTime() > 0 || isToday === true) {
-      var threeDaysAfter =
-        new Date(rentDate).getTime() + 2 * 24 * 60 * 60 * 1000;
-      var momentthreeDaysAfter = moment(threeDaysAfter).format("DD-MM-YYYY");
-      this.state.returnDate = momentthreeDaysAfter;
-
-      this.state.m_returnDate = moment(threeDaysAfter).format("YYYY-MM-DD");
-    }
-  };
 
   onSubmit = async (e) => {
     e.preventDefault();
@@ -167,69 +155,47 @@ class RentOrder extends Component {
       customerContactNumber: customer.contactnumber,
       user: user._id,
       barcodes: barcodeArr,
-      total: state.total,
-      returnDate: state.m_returnDate,
+      total: state.total ? state.total : state.total_amt, //total_amt
       rentDate: state.rentDate,
+      returnDate: state.returnDate,
       leaveID: this.state.leaveID,
       insuranceAmt: state.insAmt,
       orderBarcode: state.orderBarcode,
       coupon_code: this.state.coupon_code,
     };
-    await this.props.addNewRentProduct(rentedOrder);
-
-    await this.props.getOrderbyOrderNumber(state.orderNumber);
-    const { order, auth } = this.props;
-    if (this.props.generateInvoice === true) {
-      if (order && state.orderBarcode && state.orderNumber) {
-        const invoiceRent = {
-          order_id: order[0]._id,
-          customer_id: order[0].customer,
-          user_id: auth.user._id,
-          type: "Rent-Invoice",
-          orderBarcode: state.orderNumber,
-        };
-        await this.props.addNewInvoice(invoiceRent);
-      }
-      this.printBarcode(state.orderNumber);
+    if (state.leaveID == true && state.someOneName == "") {
+      OCAlert.alertError(`Please Enter Some One Name`, { timeOut: 3000 });
+      return;
     }
-    let { product_Array } = this.state;
-
-    if (product_Array) {
-      let products = [];
-      // let counter = 1;
-
-      product_Array.forEach(async (pd, p_index) => {
-        await this.props.getProductById(pd[0].product_id); // <-- Error is here this should give updated product in every loop
-
-        let { product } = this.props;
-        // counter++;
-        if (product) {
-          product.color.forEach((color, c_index) => {
-            // get right color obj
-            if (color._id == pd[0].color_id) {
-              // get right size obj
-              if (color.sizes) {
-                color.sizes.forEach((size, s_index) => {
-                  if (size.id == pd[0].size_id) {
-                    // check if current size obj contain barcodes or not
-                    if (size.barcodes) {
-                      // Add isRented
-                      let bcode = {
-                        barcode: size.barcodes[pd[0].barcodeIndex].barcode,
-                      };
-                      this.props.updateProductIndex(bcode, pd[0].product_id);
-                    }
-                  }
-                });
-              }
-            }
-          });
-          products.push(product);
-          product = null;
-        }
-      });
+    if (state.leaveID == true && state.someOneName) {
+      rentedOrder["customerId"] = state.someOneName;
     }
-    this.printInvoice();
+    if (state.extraDays) {
+      rentedOrder["extraDays"] = state.extraDays;
+    }
+    if (state.extraDaysAmount) {
+      rentedOrder["extraDaysAmount"] = state.extraDaysAmount;
+    }
+
+    const pdfData = {
+
+      discount_amount: state.discount_amount,
+      insAmt: state.insAmt,
+      tax: state.tax,
+      taxper: state.taxper,
+      rentDate: state.rentDate,
+      returnDate: state.returnDate,
+      total_without_tax: this.calculateTotalWithoutTax(),
+    };
+
+    this.props.history.push("/prepaid", {
+      customer_id:state.customer_id,
+      rentedOrder,
+      product_Array: this.state.product_Array,
+      barcode_Array: barcode_Array,
+      pdfData: pdfData,
+    });
+    // return;
   };
 
   onHandleChange = (e) => {
@@ -381,7 +347,7 @@ class RentOrder extends Component {
   getInvoiceBarcodeRecord() {
     let { product_Array } = this.state;
     return product_Array.map((product, b_index) => (
-      <tr>
+      <tr key={b_index}>
         <td className="text-center">{product[0].barcode}</td>
         <td className="text-center">{product[0].title}</td>
         <td className="text-center">{product[0].color}</td>
@@ -424,8 +390,21 @@ class RentOrder extends Component {
   calculateTotal = () => {
     let sum = 0;
     let { tax, insAmt, total_amt, discount_amount } = this.state;
+
+    sum = Math.round(Number(total_amt) + Number(tax) + Number(insAmt));
+    this.state.total = sum;
+    return sum;
+  };
+
+  calculateTotalWithDiscount = () => {
+    let sum = 0;
+    let { tax, insAmt, total_amt, discount_amount } = this.state;
+    let discountAmount = 0;
+    if (discount_amount > 0) {
+      discountAmount = Number(discount_amount);
+    }
     sum = Math.round(
-      Number(total_amt) + Number(tax) + Number(insAmt) - Number(discount_amount)
+      Number(total_amt) + Number(tax) + Number(insAmt) - discountAmount
     );
     this.state.total = sum;
     return sum;
@@ -482,9 +461,12 @@ class RentOrder extends Component {
           end_date,
         } = res.data.result;
 
-        const startDate = new Date(start_date).getTime();
-        const endDate = new Date(end_date).getTime();
-        const new_date = new Date().getTime();
+        let startDate = new Date(start_date);
+        let endDate = new Date(end_date);
+        let new_date = new Date();
+        startDate = moment(startDate).format("DD-MM-YYYY");
+        endDate = moment(endDate).format("DD-MM-YYYY");
+        new_date = moment(new_date).format("DD-MM-YYYY");
 
         if (startDate > new_date || new_date > endDate) {
           OCAlert.alertError(`Coupon is expired`, { timeOut: 3000 });
@@ -639,6 +621,78 @@ class RentOrder extends Component {
                                     </Link>
 
                                     <br />
+                                    <div className="row">
+                                      <div className="col-md-6 text-center">
+                                        <label
+                                          className="text-center"
+                                          id="setName"
+                                        >
+                                          Rent Date
+                                        </label>
+                                      </div>
+
+                                      <div className="col-md-6 text-center">
+                                        <label
+                                          className="text-center"
+                                          id="setName"
+                                        >
+                                          Return Date
+                                        </label>
+                                      </div>
+                                    </div>
+
+                                    <div className="row justify-content-center">
+                                      <div className="col-md-6 text-center">
+                                        <input
+                                          id="issueinput4"
+                                          className="form-control round text-center"
+                                          name="rentDate"
+                                          style={{
+                                            border: "1px solid #A6A9AE",
+                                            color: "#75787d",
+                                            padding: "0.375rem 0.75rem",
+                                            lineHeight: "1.5",
+                                          }}
+                                          required
+                                          readOnly
+                                          data-title="Return Date"
+                                          value={
+                                            this.state.rentDate ===
+                                            "Invalid date"
+                                              ? ""
+                                              : moment(
+                                                  this.state.rentDate
+                                                ).format("DD-MM-YYYY")
+                                          }
+                                        />
+                                      </div>
+
+                                      <div className="col-md-6 text-center">
+                                        <input
+                                          id="issueinput4"
+                                          className="form-control round text-center"
+                                          name="returnDate"
+                                          style={{
+                                            border: "1px solid #A6A9AE",
+                                            color: "#75787d",
+                                            padding: "0.375rem 0.75rem",
+                                            lineHeight: "1.5",
+                                          }}
+                                          required
+                                          readOnly
+                                          data-title="Return Date"
+                                          value={
+                                            this.state.returnDate ===
+                                            "Invalid date"
+                                              ? ""
+                                              : moment(
+                                                  this.state.returnDate
+                                                ).format("DD-MM-YYYY")
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                    <br />
 
                                     <div className="row">
                                       <div className="col-md-12">
@@ -663,13 +717,13 @@ class RentOrder extends Component {
                                               }
                                               value={
                                                 this.state.product_Array
-                                                  ? `${this.calculateTotalWithoutTax()}` -
-                                                    (this.state
-                                                      .discount_amount !== ""
-                                                      ? this.state
-                                                          .discount_amount
-                                                      : 0)
-                                                  : ""
+                                                  ? `${this.calculateTotalWithoutTax()}`
+                                                  : //  - (this.state
+                                                    //   .discount_amount !== ""
+                                                    //   ? this.state
+                                                    //       .discount_amount
+                                                    //   : 0)
+                                                    ""
                                               }
                                             />
                                           </div>
@@ -785,11 +839,15 @@ class RentOrder extends Component {
                                                 type="radio"
                                                 name="leaveID"
                                                 value={true}
-                                                onChange={(e) =>
-                                                  this.onHandleChange(e)
+                                                onChange={
+                                                  (e) =>
+                                                    this.setState({
+                                                      leaveID: true,
+                                                    })
+                                                  // this.onHandleChange(e)
                                                 }
                                                 checked={
-                                                  this.state.leaveID === "true"
+                                                  this.state.leaveID == true
                                                 }
                                               />
                                               <label htmlFor="yes">
@@ -802,11 +860,15 @@ class RentOrder extends Component {
                                                 type="radio"
                                                 name="leaveID"
                                                 value={false}
-                                                onChange={(e) =>
-                                                  this.onHandleChange(e)
+                                                onChange={
+                                                  (e) =>
+                                                    this.setState({
+                                                      leaveID: false,
+                                                    })
+                                                  // this.onHandleChange(e)
                                                 }
                                                 checked={
-                                                  this.state.leaveID === "false"
+                                                  this.state.leaveID == false
                                                 }
                                               />
                                               <label htmlFor="no">
@@ -814,6 +876,27 @@ class RentOrder extends Component {
                                               </label>
                                             </div>
                                           </div>
+                                          {this.state.leaveID == true && (
+                                            <div
+                                              style={{ paddingLeft: "650px" }}
+                                            >
+                                              <input
+                                                name="some_one_name"
+                                                style={{ width: "65%" }}
+                                                type="text"
+                                                className="form-control mm-input s-input text-center"
+                                                placeholder="Customer Id"
+                                                autoComplete="off"
+                                                value={this.state.someOneName}
+                                                onChange={(e) =>
+                                                  this.setState({
+                                                    someOneName: e.target.value,
+                                                  })
+                                                }
+                                              />
+                                            </div>
+                                          )}
+                                          <br />
                                         </div>
                                       </div>
                                     </div>
@@ -888,82 +971,6 @@ class RentOrder extends Component {
                                     </div>
                                     <br />
 
-                                    <div className="row">
-                                      <div className="col-md-6 text-center">
-                                        <label
-                                          className="text-center"
-                                          id="setName"
-                                        >
-                                          Rent Date
-                                        </label>
-                                      </div>
-
-                                      <div className="col-md-6 text-center">
-                                        <label
-                                          className="text-center"
-                                          id="setName"
-                                        >
-                                          Return Date
-                                        </label>
-                                      </div>
-                                    </div>
-
-                                    <div className="row justify-content-center">
-                                      <div className="col-md-6 text-center">
-                                        <DatePicker
-                                          id="issueinput4"
-                                          locale="vi"
-                                          selected={this.state.rentDate}
-                                          className="form-control round text-center"
-                                          onChange={(e) =>
-                                            this.handleChangeForDate(e)
-                                          }
-                                          onInput={this.rentDateValidity()}
-                                          dateFormat="dd-MM-yyyy"
-                                          popperPlacement="top-start"
-                                        />
-
-                                        {/* <input
-                                          type="date"
-                                          id="issueinput3"
-                                          className="form-control round text-center"
-                                          name="rentDate"
-                                          data-toggle="tooltip"
-                                          data-trigger="hover"
-                                          data-placement="top"
-                                          data-title="Rent Date"
-                                          required
-                                          onChange={(e) => this.onHandleChange(e)}
-                                          value={this.state.rentDate}
-                                          onInput={this.rentDateValidity()}
-
-                                        /> */}
-                                      </div>
-
-                                      <div className="col-md-6 text-center">
-                                        <input
-                                          id="issueinput4"
-                                          className="form-control round text-center"
-                                          name="returnDate"
-                                          style={{
-                                            border: "1px solid #A6A9AE",
-                                            color: "#75787d",
-                                            padding: "0.375rem 0.75rem",
-                                            lineHeight: "1.5",
-                                          }}
-                                          required
-                                          readOnly
-                                          data-title="Return Date"
-                                          value={
-                                            this.state.returnDate ===
-                                            "Invalid date"
-                                              ? ""
-                                              : this.state.returnDate
-                                          }
-                                        />
-                                      </div>
-                                    </div>
-
                                     <br />
                                     <div className="row">
                                       <div className="col-md-12">
@@ -990,7 +997,7 @@ class RentOrder extends Component {
                                               id="setSizeFloat"
                                               value={
                                                 this.state.total_amt
-                                                  ? this.state.total_amt
+                                                  ? this.calculateTotal()
                                                   : ""
                                               }
                                             />
@@ -1022,7 +1029,7 @@ class RentOrder extends Component {
                                                 id="setSizeFloat"
                                                 value={
                                                   this.state.total_amt
-                                                    ? `${this.calculateTotal()}`
+                                                    ? `${this.calculateTotalWithDiscount()}`
                                                     : ""
                                                 }
                                               />
@@ -1043,7 +1050,7 @@ class RentOrder extends Component {
                                           id="btnSize2"
                                         >
                                           <i className="ft-check"></i>
-                                          Submit &amp; Get Invoice
+                                          Proceed to pay
                                         </button>
                                       </div>
                                     </div>
@@ -1078,380 +1085,6 @@ class RentOrder extends Component {
               </p>
             </footer>
           </div>
-
-          {/* pdf invoice  */}
-
-          <div id="invoiceDiv" style={{ width: "100%", display: "none" }}>
-            <h1 style={{ "text-align": "center" }}>
-              {customer
-                ? `${customer.name}${"#"}${customer.contactnumber}`
-                : ""}
-            </h1>
-            <h1 style={{ "text-align": "center" }}>
-              {this.state.orderNumber
-                ? `${"Order"}${"#"} ${this.state.orderNumber}`
-                : ""}
-            </h1>
-
-            <table style={{ width: "100%" }} cellpadding="10">
-              <thead></thead>
-              <tbody>{this.getInvoiceBarcodeRecord()}</tbody>
-            </table>
-            <hr />
-            <table style={{ width: "100%" }} cellpadding="10">
-              <thead></thead>
-              <tbody>
-                <tr>
-                  <td style={{ width: "90%" }}>Total Without Tax</td>
-                  <td>{`${this.state.total_amt}`}</td>
-                </tr>
-                <tr>
-                  <td style={{ width: "90%" }}>Discount</td>
-                  <td>{`${this.state.discount_amount}`}</td>
-                </tr>
-                <tr>
-                  <td>Tax Percentage</td>
-                  <td>{`${this.state.taxper}${"%"}`}</td>
-                </tr>
-
-                <tr>
-                  <td>Tax Amount</td>
-                  <td>{`${this.state.tax}`}</td>
-                </tr>
-                <tr>
-                  <td>Insurance Amount</td>
-                  <td>{`${this.state.insAmt}`}</td>
-                </tr>
-              </tbody>
-            </table>
-            <br />
-            <h4 style={{ "text-align": "center" }}>{`${"PAID TOTAL: "}${
-              this.state.total
-            }`}</h4>
-            <br />
-
-            <table style={{ width: "100%" }} cellpadding="10">
-              <thead></thead>
-              <tbody>
-                <tr>
-                  <td style={{ width: "90%" }}>Leave ID</td>
-                  <td>
-                    {this.state.leaveID === "true" ? `${"Yes"}` : `${"No"}`}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Rent From</td>
-                  <td>{moment(this.state.rentDate).format("DD-MM-YYYY")}</td>
-                </tr>
-                <tr>
-                  <td>Return Date</td>
-                  <td>
-                    {moment(this.state.m_returnDate).format("DD-MM-YYYY")}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <table style={{ width: "100%" }}>
-              <thead></thead>
-              <tbody>
-                <tr>
-                  <td
-                    className="col-md-6"
-                    style={{
-                      backgroundColor: "white",
-                      textAlign: "center",
-                      padding: "8px",
-                      width: "50%",
-                    }}
-                  >
-                    <svg id="barcode"></svg>
-                  </td>
-                  <td
-                    className="col-md-6"
-                    style={{
-                      textAlign: "center",
-                      padding: "8px",
-                      width: "50%",
-                    }}
-                  >
-                    Authorized by <br />
-                    Sutygon-Bot
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <br />
-            <br />
-            <br />
-            <br />
-
-            <table style={{ width: "100%" }}>
-              <thead></thead>
-              <tbody>
-                <tr>
-                  <td style={{ "text-align": "center" }}>
-                    For questions and information please contact out
-                    www.sutygon-bot.com
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Invoice Modal */}
-          <div
-            className="modal fade text-left"
-            id="primary"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="myModalLabel8"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header bg-primary white">
-                  <h4 className="modal-title text-center" id="myModalLabel8">
-                    Invoice
-                  </h4>
-                  <button
-                    type="button"
-                    className="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <button
-                    type="button"
-                    className=""
-                    data-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span
-                      className="fa fa-print"
-                      aria-hidden="true"
-                      onClick={(e) => this.printInvoice(e)}
-                    ></span>
-                  </button>
-                </div>
-                <div className="modal-body">
-                  <div id="colors_box" id="modal-body">
-                    <div className="row color-row">
-                      <div className="col-md-12">
-                        <div className="form-group">
-                          <div className="text-center">
-                            <h4>
-                              {customer
-                                ? `${customer.name}${"#"}${
-                                    customer.contactnumber
-                                  }`
-                                : ""}
-                            </h4>
-                          </div>
-                          <div className="text-center">
-                            <h4>
-                              {order
-                                ? `${"Order"}${"#"} ${order[0].orderNumber}`
-                                : ""}
-                            </h4>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-md-12">
-                        <div>
-                          {this.getInvoiceBarcodeRecord()}
-                          <hr />
-                          <div className="row">
-                            <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
-                            >
-                              <h6 id="padLeft">Total Without Tax</h6>
-                            </div>
-                            <div
-                              className="col-md-6"
-                              style={{ textAlign: "center", color: "black" }}
-                            >
-                              <h6>{`${this.state.total_amt}`}</h6>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
-                            >
-                              <h6 id="padLeft">Tax Percentage</h6>
-                            </div>
-                            <div
-                              className="col-md-6"
-                              style={{ textAlign: "center", color: "black" }}
-                            >
-                              <h6>{`${this.state.taxper}${"%"}`}</h6>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
-                            >
-                              <h6 id="padLeft">Tax Amount</h6>
-                            </div>
-                            <div
-                              className="col-md-6"
-                              style={{ textAlign: "center", color: "black" }}
-                            >
-                              <h6>{`${this.state.tax}`}</h6>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
-                            >
-                              <h6 id="padLeft">Insurance Amount</h6>
-                            </div>
-                            <div
-                              className="col-md-6"
-                              style={{ textAlign: "center", color: "black" }}
-                            >
-                              <h6>{`${this.state.insAmt}`}</h6>
-                            </div>
-                          </div>
-                          <div className="row justify-content-center">
-                            <div className="form-group">
-                              <div className="" style={{ width: "300%" }}>
-                                <input
-                                  type="text"
-                                  readOnly
-                                  className="form-control mm-input s-input text-center"
-                                  placeholder="Total"
-                                  style={{ color: "black" }}
-                                  id="setSizeFloat"
-                                  value={`${"PAID TOTAL: $"}${
-                                    this.state.total
-                                  }`}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
-                            >
-                              <h6>Amount to be returned to customer</h6>
-                            </div>
-                            <div
-                              className="col-md-6"
-                              style={{ textAlign: "center", color: "black" }}
-                            >
-                              <h6>{`${this.state.insAmt}`}</h6>
-                            </div>
-                          </div>
-                          <br />
-                          <div className="row">
-                            <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
-                            >
-                              <h6 id="padLeft">Leave ID</h6>
-                            </div>
-                            <div
-                              className="col-md-6"
-                              style={{ textAlign: "center", color: "black" }}
-                            >
-                              <h6>
-                                {this.state.leaveID === "true"
-                                  ? `${"Yes"}`
-                                  : `${"No"}`}
-                              </h6>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
-                            >
-                              <h6 id="padLeft">Rent From</h6>
-                            </div>
-                            <div style={{ textAlign: "end", color: "black" }}>
-                              <h6 style={{ textAlign: "end", color: "black" }}>
-                                {moment(this.state.rentDate).format(
-                                  "DD-MM-YYYY"
-                                )}
-                              </h6>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
-                            >
-                              <h6>Return Date</h6>
-                            </div>
-
-                            <div style={{ textAlign: "end", color: "black" }}>
-                              <h6 style={{ textAlign: "end", color: "black" }}>
-                                {moment(this.state.m_returnDate).format(
-                                  "DD-MM-YYYY"
-                                )}
-                              </h6>
-                            </div>
-                          </div>
-                          <div className="col-md-12">
-                            <table>
-                              <tbody>
-                                <tr>
-                                  <td
-                                    className="col-md-6"
-                                    style={{
-                                      backgroundColor: "white",
-                                      textAlign: "center",
-                                      padding: "8px",
-                                      width: "50%",
-                                    }}
-                                  >
-                                    <svg id="barcode"></svg>
-                                  </td>
-                                  <td
-                                    className="col-md-6"
-                                    style={{
-                                      textAlign: "center",
-                                      padding: "8px",
-                                      width: "50%",
-                                    }}
-                                  >
-                                    Authorized by <br />
-                                    Sutygon-Bot
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                          <div className="row">
-                            <p>
-                              For questions and contact information please check
-                              out
-                              <a
-                                href="https://www.sutygon.com"
-                                id="pixinventLink"
-                                rel="noopener noreferrer"
-                                target="_blank"
-                                className="text-bold-800 primary darken-2"
-                              >
-                                www.sutygon-bot.com
-                              </a>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
         <div className="clearfix"></div>
       </React.Fragment>
@@ -1470,7 +1103,7 @@ RentOrder.propTypes = {
   getLastRecord: PropTypes.func.isRequired,
   auth: PropTypes.object,
   products: PropTypes.array,
-  customer: PropTypes.array,
+  customer: PropTypes.object,
   order: PropTypes.array,
   saved: PropTypes.bool,
   generateInvoice: PropTypes.bool,

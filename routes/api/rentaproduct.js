@@ -33,6 +33,10 @@ router.post(
         insuranceAmt: req.body.insuranceAmt,
         leaveID: req.body.leaveID,
         user: req.user.id,
+        pay_amount: req.body.pay_amount,
+        extraDaysAmount: req.body.extraDaysAmount,
+        extraDays: req.body.extraDays,
+        customerId: req.body.customerId,
         authorization_logs: [
           {
             employee_id: req.user.id,
@@ -201,7 +205,6 @@ router.get("/search", auth, async (req, res) => {
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
 });
-
 
 // @route  GET api/nvoices/getLastRecord
 // @desc   Get Last Enter Record
@@ -653,6 +656,22 @@ router.get("/:barcode/findorderbybarcode", auth, async (req, res) => {
     return res.status(200).json(result);
   } catch (err) {
     console.log(err);
+    res.status(500).send("Server Error!");
+  }
+});
+
+router.get("/checkBarcode/:barcode", auth, async (req, res) => {
+  try {
+    const result = await RentedProduct.findOne(
+      {
+        barcodes: { $in: [req.params.barcode] },
+        status: { $nin: ["past", "lost", "Completed"] },
+      },
+      { rentDate: 1, returnDate: 1, orderNumber: 1 }
+    ).sort({ returnDate: -1 });
+
+    return res.status(200).json(result);
+  } catch (err) {
     res.status(500).send("Server Error!");
   }
 });

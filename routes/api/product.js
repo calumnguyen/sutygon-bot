@@ -475,6 +475,25 @@ router.post(
   }
 );
 
+// @route   GET api/products/all
+// @desc    Get all products/all
+// @access  Private
+router.get(
+  "/all",
+  auth,
+
+  async (req, res) => {
+    try {
+      const products = await Product.find({})
+        .sort({ date: -1 })
+      res.status(200).json({ products: products, total: products.length });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server Error!");
+    }
+  }
+);
+
 // router.get(
 //   '/',
 //   auth,
