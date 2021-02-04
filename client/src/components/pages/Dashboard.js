@@ -330,7 +330,7 @@ class Dashboard extends Component {
                                       <p className="my-n1">
                                         <small class="text-muted">
                                           Date :
-                                          {moment(a.date).format("MM/DD/YYYY")}{" "}
+                                          {moment(a.date).format("DD-MM-YYYY")}{" "}
                                         </small>
                                       </p>
                                       <p className="my-n1">
@@ -406,7 +406,7 @@ class Dashboard extends Component {
                                 {this.props.shop[0] &&
                                   startTime
                                     .tz("Asia/Vientiane")
-                                    .format("DD-MMM-YY")}
+                                    .format("DD-MM-YY")}
                               </span>
                             </div>
                             <div className="gradient-blueberry btn-store"
