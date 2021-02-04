@@ -58,7 +58,6 @@ class Dashboard extends Component {
       "-" +
       ("0" + (Number(new Date(dateAfterSevenDays).getDate()) - 1)).slice(-2) +
       "T22:20:52.000Z";
-    console.log(new_Dateafter7days);
     var currentdate = moment(moment().subtract(1, "days")).format();
     const { events } = this.props;
     const { b_events } = this.props;
@@ -85,10 +84,10 @@ class Dashboard extends Component {
           type: "birthdayEvent",
         });
       });
-    let updatedEvents = [...m_bevents, ...events];
+    let updatedEvents = events && [...m_bevents, ...events];
 
 
-    var currenWeekEvents = updatedEvents.filter((a) => {
+    var currenWeekEvents = updatedEvents && updatedEvents.filter((a) => {
       var m_date =
         new Date(a.date).getFullYear() +
         "-" +
@@ -173,10 +172,12 @@ class Dashboard extends Component {
     // e.preventDefault()
     const { appointment } = this.props;
     if (appointment) {
-      var currentdate = moment(new Date()).format("MM/DD/YYYY");
-      let events = appointment.filter((a) =>
-        moment(moment(a.start).format("MM/DD/YYYY")).isSame(currentdate)
-      );
+          var currentdate = moment(new Date()).format('YYYY-MM-DD') + 'T19:00:00.000Z'
+      let events = appointment.filter((a) =>{
+        let ap_date = moment(new Date(a.date)).format('YYYY-MM-DD') + 'T19:00:00.000Z';
+      return (ap_date) == (currentdate)
+      });
+
       return events.length;
     }
   };
