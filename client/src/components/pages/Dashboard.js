@@ -406,7 +406,7 @@ class Dashboard extends Component {
                                 {this.props.shop[0] &&
                                   startTime
                                     .tz("Asia/Vientiane")
-                                    .format("DD-MM-YY")}
+                                    .format("DD-MM-YYYY")}
                               </span>
                             </div>
                             <div className="gradient-blueberry btn-store"
