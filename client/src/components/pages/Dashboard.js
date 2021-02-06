@@ -243,12 +243,10 @@ class Dashboard extends Component {
     // e.preventDefault()
     const { appointment } = this.props;
     if (appointment) {
-      var currentdate =
-        moment(new Date()).format("YYYY-MM-DD") + "T19:00:00.000Z";
-      let events = appointment.filter((a) => {
-        let ap_date =
-          moment(new Date(a.date)).format("YYYY-MM-DD") + "T19:00:00.000Z";
-        return ap_date == currentdate;
+          var currentdate = moment(new Date()).format('YYYY-MM-DD') + 'T19:00:00.000Z'
+      let events = appointment.filter((a) =>{
+        let ap_date = moment(new Date(a.date)).format('YYYY-MM-DD') + 'T19:00:00.000Z';
+      return (ap_date) == (currentdate)
       });
 
       return events.length;

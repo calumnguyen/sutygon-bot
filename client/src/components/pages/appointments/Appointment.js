@@ -148,21 +148,7 @@ class Appointment extends Component {
                       title='Thay đổi thông tin'
                     ></i>
                   </Link>
-                  {isToday === true ? (
-                    <Link
-                      to='/appointments'
-                      onClick={() => this.onChecked(app._id)}
-                      className='warning p-0 mb-1'
-                    >
-                      <i
-                        className='
-                  icon-user-following font-medium-3 mr-2 '
-                        title='Checkin'
-                      ></i>
-                    </Link>
-                  ) : (
-                    ''
-                  )}
+               
                   <Link
                     to='/appointments'
                     onClick={() => this.onCancel(app._id)}
