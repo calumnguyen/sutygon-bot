@@ -36,7 +36,7 @@ router.get("/", auth, async (req, res) => {
     res.json(appointments);
   } catch (err) {
     console.log(err);
-    res.statu(500).send("Server Error!");
+    res.status(500).send("Server Error!");
   }
 });
 

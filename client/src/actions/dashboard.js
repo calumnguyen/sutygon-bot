@@ -4,7 +4,7 @@ import {
     DASHBOARD_LOADING,
     DASHBOARD_LOADED,
     DASHBOARD_ERROR,
-    SHOP_LOADING,
+    SHOP_LOADING,GET_DBEVENTS,
     SHOP_LOADED,
     SHOP_ERROR,
 } from "./types";
@@ -60,3 +60,5 @@ export const getShop = () => async (dispatch) => {
       });
     }
   };
+
+ 

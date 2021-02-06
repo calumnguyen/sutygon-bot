@@ -1,7 +1,7 @@
 import {
     DASHBOARD_LOADING,
     DASHBOARD_LOADED,
-    DASHBOARD_ERROR,
+    DASHBOARD_ERROR,GET_DBEVENTS,
     SHOP_LOADING,
     SHOP_LOADED,
     SHOP_ERROR,
@@ -9,6 +9,7 @@ import {
   
   const initialState = {
     shop: {},
+    events:null,
     loading: false,
     error: {},
   };
@@ -37,6 +38,7 @@ import {
             error: payload,
             loading: false,
         };
+       
         case SHOP_ERROR:
         case DASHBOARD_ERROR:
         return {

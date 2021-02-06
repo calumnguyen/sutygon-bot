@@ -7,28 +7,50 @@ import { connect } from "react-redux";
 import { getAllAppointments } from "../../actions/appointment";
 import { getAllRentedProducts } from "../../actions/rentproduct";
 import { getAllProducts } from "../../actions/product";
-import { getUser } from "../../actions/user";
+import { getUser, updateEvents, getremoveEvents } from "../../actions/user";
 import { getAllEvents, getAllBirthdayEvents } from "../../actions/events";
 import { changeShopStatus, getShop } from "../../actions/dashboard";
 import * as moment from "moment";
 import "../../login.css";
 import "../../dashbaord.css";
 import { Redirect } from "react-router-dom";
+import { cssNumber } from "jquery";
 
 class Dashboard extends Component {
   state = {
     currenWeekEvents: [],
+    removedevents: "",
   };
   async componentDidMount() {
+    const { auth } = this.props;
+    const { user } = auth && auth;
+    if (user) {
+      this.setState({ id: user._id });
+    }
     await this.props.getAllAppointments();
     await this.props.getAllRentedProducts();
     await this.props.getAllProducts();
     await this.props.getShop();
     await this.props.getAllEvents();
     await this.props.getAllBirthdayEvents();
-    await this.getPendingEvents();
-  }
 
+    const { r_events } = this.props;
+    this.setState({ removedevents: r_events });
+    await this.getEvents();
+  }
+  async componentDidUpdate(prevProps, prevState) {
+    const { auth } = this.props;
+    const { user } = auth && auth;
+    if (user) {
+      await this.props.getremoveEvents(user._id);
+    }
+    if (prevProps.r_events != this.props.r_events) {
+      const { r_events } = this.props;
+      // await this.getEvents();
+
+      this.setState({ removedevents: r_events });
+    }
+  }
   async changeShopStatus(status) {
     await this.props.changeShopStatus(status);
     await this.props.getShop();
@@ -41,29 +63,56 @@ class Dashboard extends Component {
     var m = today.getMonth() - birthDate.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
       age_now--;
-      
     }
-    {
-      this.setState({ age: age_now });
-    }
+
     return age_now;
   };
 
-  getPendingEvents() {
-    var dateAfterSevenDays = moment(moment().add(7, "days")).format();
-    const new_Dateafter7days =
-      new Date(dateAfterSevenDays).getFullYear() +
-      "-" +
-      ("0" + (Number(new Date(dateAfterSevenDays).getMonth()) + 1)).slice(-2) +
-      "-" +
-      ("0" + (Number(new Date(dateAfterSevenDays).getDate()) - 1)).slice(-2) +
-      "T22:20:52.000Z";
-    console.log(new_Dateafter7days);
-    var currentdate = moment(moment().subtract(1, "days")).format();
-    const { events } = this.props;
+  getfilteredEvents = (currenWeekEvents) =>{
+    const { r_events } = this.props;
+    const { remove_arr } = r_events && r_events;
+    var filteredEvents =
+      currenWeekEvents &&
+      currenWeekEvents.filter((a) => remove_arr && !remove_arr.includes(a._id));
+
+      return filteredEvents;
+  }
+  getcurrentdaysEvents = (updatedEvents, currentdate) => {
+    var currenDayEvents =
+      updatedEvents &&
+      updatedEvents.filter((a) => {
+        var m_date =
+          new Date(a.date).getFullYear() +
+          "-" +
+          ("0" + (Number(new Date(a.date).getMonth()) + 1)).slice(-2) +
+          "-" +
+          ("0" + Number(new Date(a.date).getDate())).slice(-2) +
+          "T19:00:00.000Z";
+
+        return m_date == currentdate;
+      });
+    return currenDayEvents;
+  };
+  getcurrentWeeksEvents = (currentdate, updatedEvents) => {
+    var dateAfterSevenDays = moment(moment().add(5, "days")).format();
+    var currenWeekEvents =
+      updatedEvents &&
+      updatedEvents.filter((a) => {
+        var m_date =
+          new Date(a.date).getFullYear() +
+          "-" +
+          ("0" + (Number(new Date(a.date).getMonth()) + 1)).slice(-2) +
+          "-" +
+          ("0" + Number(new Date(a.date).getDate())).slice(-2) +
+          "T19:00:00.000Z";
+
+        return m_date > currentdate && a.date <= dateAfterSevenDays;
+      });
+    return currenWeekEvents;
+  };
+  getbdayevent = () => {
     const { b_events } = this.props;
     const m_bevents = [];
-
     b_events &&
       b_events.forEach((event) => {
         const new_Date =
@@ -71,39 +120,55 @@ class Dashboard extends Component {
           "-" +
           ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(-2) +
           "-" +
-          ("0" + (Number(new Date(event.birthdate).getDate()) - 1)).slice(-2) +
-          "T22:20:52.000Z";
+          ("0" + (Number(new Date(event.birthdate).getDate()))).slice(-2) +
+          "T19:00:00.000Z";
         const age = this.calculate_age(event.birthdate);
-        m_bevents.push({
-          date: new_Date,
-          timeStart: event.timeStart,
-          timeEnd: event.timeEnd,
-          name: event.name && `${event.name}'s ${age} Birthday Aniversary`,
-          note: event.note,
-          location: event.location,
-          _id: "",
-          type: "birthdayEvent",
-        });
+
+        if (
+          event.user.accountStatus == "active"
+            ? m_bevents.push({
+                date: new_Date,
+                timeStart: event.timeStart,
+                timeEnd: event.timeEnd,
+                name:
+                  event.name && `${event.name}'s ${age} Birthday Aniversary`,
+                note: event.note,
+                location: event.location,
+                _id: event._id,
+              })
+            : ""
+        );
       });
-    let updatedEvents = [...m_bevents, ...events];
+    return m_bevents;
+  };
+  getEvents() {
+    const { events } = this.props;
+    var currentdate =
+      new Date().getFullYear() +
+      "-" +
+      ("0" + (Number(new Date().getMonth()) + 1)).slice(-2) +
+      "-" +
+      ("0" + Number(new Date().getDate())).slice(-2) +
+      "T19:00:00.000Z";
+    var m_bevents = this.getbdayevent();
+    //updating all events
+    let updatedEvents = events && m_bevents && [...m_bevents, ...events];
+    const currenWeekEvents = this.getcurrentWeeksEvents(
+      currentdate,
+      updatedEvents
+    );
+    const currenDaysEvents = this.getcurrentdaysEvents(
+      updatedEvents,
+      currentdate
+    );
+    const filteredEvents = this.getfilteredEvents(currenWeekEvents)
 
+    var events_arr = events &&
+      filteredEvents && [...filteredEvents, ...currenDaysEvents];
 
-    var currenWeekEvents = updatedEvents.filter((a) => {
-      var m_date =
-        new Date(a.date).getFullYear() +
-        "-" +
-        ("0" + (Number(new Date(a.date).getMonth()) + 1)).slice(-2) +
-        "-" +
-        ("0" + Number(new Date(a.date).getDate())).slice(-2) +
-        "T22:20:52.000Z";
-
-      return (
-        moment(m_date).format() >= currentdate && a.date <= dateAfterSevenDays
-      );
-    });
     this.setState({
-      currenWeekEvents:currenWeekEvents
-    })
+      currenWeekEvents: events_arr,
+    });
   }
 
   getPendingOrder = () => {
@@ -169,14 +234,23 @@ class Dashboard extends Component {
       return events.length;
     }
   };
+
+  hideAlert = async (e, id, eventID) => {
+    e.preventDefault();
+    await this.props.updateEvents(id, eventID);
+  };
   getTodaysAppointment = () => {
     // e.preventDefault()
     const { appointment } = this.props;
     if (appointment) {
-      var currentdate = moment(new Date()).format("MM/DD/YYYY");
-      let events = appointment.filter((a) =>
-        moment(moment(a.start).format("MM/DD/YYYY")).isSame(currentdate)
-      );
+      var currentdate =
+        moment(new Date()).format("YYYY-MM-DD") + "T19:00:00.000Z";
+      let events = appointment.filter((a) => {
+        let ap_date =
+          moment(new Date(a.date)).format("YYYY-MM-DD") + "T19:00:00.000Z";
+        return ap_date == currentdate;
+      });
+
       return events.length;
     }
   };
@@ -214,7 +288,7 @@ class Dashboard extends Component {
             <div className="main-content">
               <div className="content-wrapper">
                 <div className="row">
-                  <h4 className="ml-2 mb-4 text-bold-400">
+                  <h4 className="ml-4 mb-4 text-bold-400">
                     Hello {user && user.fullname && `${user.fullname}`}, hope
                     you have a great day!
                   </h4>
@@ -293,75 +367,55 @@ class Dashboard extends Component {
                     </div>
                   </div>
 
-                  <div
-                    className={
-                      user && user.systemRole == "Admin" ? "col-md-5" : ""
-                    }
-                  >
-                    {user && user.systemRole === "Admin" ? (
-                      <>
-                        <div className="card card-alert gradient-light-blue-indigo mt-1">
-                          <div className="card-alert-row w-100"  style={{height:'100%'}}>
-                            {this.state.currenWeekEvents &&
-                              this.state.currenWeekEvents.length > 0 &&
-                              this.state.currenWeekEvents.map((a, a_i) => {
-                                return (
-                                  <div
-                                    className="alert alert-secondary alert-dismissible m-1" 
-                                    // role="alert"
-                                  >
-                                    <button
-                                      type="button"
-                                      className="close"
-                                      data-dismiss="alert"
-                                      aria-label="Close"
-                                    >
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                    <p className="my-n1">
-                                        {a.age?
-                                        <>
-                                        <strong>{a.name}'s</strong>
-                                         {a.age} 'Birthday Anniversary. Happy Birthday',{a.name}`!
-                                  </>       :
-                                         <strong>{a.name}'s</strong>
-                                        }
-                                      </p>
-                                      <p className="my-n1">
-                                        <small class="text-muted">
-                                          Date :
-                                          {moment(a.date).format("MM/DD/YYYY")}{" "}
-                                        </small>
-                                      </p>
-                                      <p className="my-n1">
-                                        <small class="text-muted">
-                                          From :
-                                          {moment(a.timeStart).format(
-                                            "hh:mm A"
-                                          )}:{" "}
-                                          To :{" "}
-                                          {moment(a.timeEnd).format("hh:mm A")}
-                                        </small>
-                                      </p>
-                                      <p className="my-n1">
-                                        <small class="text-muted">
-                                          Location:{a.location}
-                                        </small>
-                                      </p>
-                                      <p className="my-n1">
-                                        <small class="text-muted">
-                                          Note:{a.note}
-                                        </small>
-                                      </p>
-                                                                      </div>
-                                );
-                              })}
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      " "
-                    )}
+                  <div className="col-md-5">
+                    <div className="card card-alert gradient-light-blue-indigo">
+                      {this.state.currenWeekEvents &&
+                        this.state.currenWeekEvents.length > 0 &&
+                        this.state.currenWeekEvents.slice(0).reverse().map((a, a_i) => {
+                          return (
+                            <div className="alert alert-secondary alert-dismissible m-1">
+                              <button
+                                type="button"
+                                className="close"
+                                data-dismiss="alert"
+                                onClick={(e) =>
+                                  this.hideAlert(e, user && user._id, a._id)
+                                }
+                                aria-label="Close"
+                              >
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                              <p className="my-n1">
+                              
+                                  <strong>{a.name}</strong>
+                              
+                              </p>
+                              <p className="my-n1">
+                                <small className="text-muted">
+                                  Date :{moment(a.date).format("DD-MM-YYYY")}{" "}
+                                </small>
+                              </p>
+                              <p className="my-n1">
+                                <small className="text-muted">
+                                  From :{moment(a.timeStart).format("hh:mm A")}, {" "}
+                                  To : {moment(a.timeEnd).format("hh:mm A")}
+                                </small>
+                              </p>
+                              {a.location ?   <p className="my-n1">
+                                <small className="text-muted">
+                                  Location:{a.location}
+                                </small>
+                              </p> :''}
+                            
+                            {a.note ?  <p className="my-n1">
+                                <small className="text-muted">
+                                  Note:{a.note}
+                                </small>
+                              </p> :''} 
+                            </div>
+                          );
+                        })}
+                    </div>
                   </div>
                 </div>
 
@@ -406,18 +460,16 @@ class Dashboard extends Component {
                                 {this.props.shop[0] &&
                                   startTime
                                     .tz("Asia/Vientiane")
-                                    .format("DD-MMM-YY")}
+                                    .format("DD-MM-YYYY")}
                               </span>
                             </div>
-                            <div className="gradient-blueberry btn-store"
-                                                                >
+                            <div className="gradient-blueberry btn-store">
                               {this.props.shop[0] &&
                                 (this.props.shop[0].status === "on" ? (
                                   <button
                                     type="button"
                                     onClick={() => this.changeShopStatus("off")}
                                     className="btn text-white m-1"
-
                                   >
                                     Close the door
                                     <i className="fa fa-lock ml-2 fa-1x"></i>
@@ -427,7 +479,7 @@ class Dashboard extends Component {
                                     type="button"
                                     onClick={() => this.changeShopStatus("on")}
                                     className="btn text-white m-1"
-                                    styles={{float: "right"}}
+                                    styles={{ float: "right" }}
                                   >
                                     Open door{" "}
                                     <i className="fa fa-unlock-alt ml-2 fa-1x"></i>
@@ -493,6 +545,7 @@ const mapStateToProps = (state) => ({
   rentedproducts: state.rentproduct.rentproducts,
   events: state.events.events,
   b_events: state.events.birthdayevents,
+  r_events: state.events.removedevents,
 });
 export default connect(mapStateToProps, {
   getAllAppointments,
@@ -503,4 +556,8 @@ export default connect(mapStateToProps, {
   getAllEvents,
   getUser,
   getAllBirthdayEvents,
+  updateEvents,
+  getremoveEvents,
+  // changeStatus,
+  // getAllDashboardEvents
 })(Dashboard);

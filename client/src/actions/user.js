@@ -6,7 +6,7 @@ import {
   USER_ERROR,
   GET_USERS,
   GET_USER,
-  USERS_ERROR,
+  USERS_ERROR,GET_R_EVENT,
   USERS_LOADING,
   USER_DELETED,
   USER_UPDATED,
@@ -107,6 +107,23 @@ export const getUser = (id) => async (dispatch) => {
   }
 };
 
+export const getremoveEvents = (id) => async (dispatch) => {
+  dispatch({ type: USERS_LOADING });
+
+  try {
+    const res = await axios.get(`/api/users/${id}/getEvents`);
+    dispatch({
+      type: GET_R_EVENT,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: USERS_ERROR,
+      payload: err.response,
+    });
+  }
+};
+
 // Update User
 export const updateUser = (user, id) => async (dispatch) => {
   dispatch({ type: USERS_LOADING });
@@ -195,7 +212,27 @@ export const blockUser = (id) => async (dispatch) => {
     });
   }
 };
-
+// get removeevents
+export const updateEvents = (id,eventid) => async (dispatch) => {
+  dispatch({ type: USER_LOADING });
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const res = await axios.post(`/api/users/${id}/${eventid}/remove`, config);
+    dispatch({
+      type: USER_UPDATED,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: USER_ERROR,
+      payload: err.response,
+    });
+  }
+};
   // Delete User
 export const deleteUser = (id) => async (dispatch) => {
   dispatch({ type: USERS_LOADING });

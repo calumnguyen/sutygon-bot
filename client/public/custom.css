@@ -240,32 +240,30 @@
 .card-alert {
   margin: 0px 0px !important;
   border-radius: 25px !important;
-  max-height:80%;
-  height: 100%;
-  display:block;
-
-  /* border: 1px solid #f3f3f3; */
-}
-.card-alert-row {
-  margin: 0px 0px !important;
+  max-height:47%;
   overflow-y: scroll;
-  border-radius: 25px !important;
-  border: 1px solid #ffffff;
+  box-shadow: 5px 10px 5px 5px;
+  height: 47%;
+  position:fixed !important;
+  width: 30%;
 }
+
 .alert-secondary {
   border-radius: 25px !important;
+  cursor: pointer;
+
 }
 
-.card-alert-row::-webkit-scrollbar {
+.card-alert::-webkit-scrollbar {
   width: 10px;
 }
 
-.card-alert-row::-webkit-scrollbar-track {
+.card-alert::-webkit-scrollbar-track {
   -webkit-box-shadow: inset 0 0 6px rgba(122, 121, 121, 0.3);
   border-radius: 10px;
 }
 
-.card-alert-row::-webkit-scrollbar-thumb {
+.card-alert::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(116, 116, 116, 0.5);
 }

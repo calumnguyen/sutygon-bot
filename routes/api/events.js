@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../../middleware/auth");
 const Events = require("../../models/Events");
 const BirthdayEvents = require("../../models/BirthdayEvents");
+const DashboardEvents = require("../../models/DashboardEvents");
 var moment = require("moment");
 var cloudinary = require("cloudinary");
 var multer = require("multer");
@@ -30,25 +31,6 @@ router.post("/add", auth, upload.any("image"), async (req, res) => {
     var files = req.files;
     if (req.files != undefined) {
       const all_paths = [];
-
-      // const pdfs = files.filter(
-      //   (a) => !a.originalname.match(/\.(jpg|jpeg|png|gif)$/i)
-      // );
-      // const images = files.filter((a) =>
-      //   a.originalname.match(/\.(jpg|jpeg|png|gif)$/i)
-      // );
-
-      // if (pdfs) {
-      //   pdfs.forEach( async function (el) {
-      //     const fileContent = (el.originalname)
-      //     const name = el.originalname.slice(0,el.originalname.indexOf('.'))
-      //     const response =
-      //      await cloudinary.v2.uploader.upload(fileContent,{
-      //       transformation:{format:'pdf'}
-      //     })
-      //     console.log("response",response)
-      //   });
-      // }
 
       var file_Arr = new Array();
       if (files) {
@@ -239,13 +221,25 @@ router.post("/:id", auth, upload.any("image"), async (req, res) => {
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
 });
-
 // @route   GET api/events
 // @desc    Get all events
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
     const events = await Events.find();
+    res.json(events);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error!");
+  }
+});
+
+// @route   GET api/events
+// @desc    Get dashboard_events by id
+// @access  Private
+router.get("/dashboard/:id/events", auth, async (req, res) => {
+  try {
+    const events = await DashboardEvents.find({ user: req.params.id });
     res.json(events);
   } catch (err) {
     console.log(err);
@@ -277,7 +271,7 @@ router.get("/:id", auth, async (req, res) => {
     const event = await Events.findById(req.params.id);
 
     if (!event) {
-      return res.status(404).json({ msg: "No Customer found" });
+      return res.status(404).json({ msg: "No Event found" });
     }
 
     res.json(event);
@@ -285,7 +279,7 @@ router.get("/:id", auth, async (req, res) => {
     console.error(err.message);
     // Check if id is not valid
     if (err.kind === "ObjectId") {
-      return res.status(404).json({ msg: "No Customer found" });
+      return res.status(404).json({ msg: "No Event found" });
     }
     res
       .status(500)
