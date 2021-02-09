@@ -94,6 +94,22 @@ const RentedProductSchema = new mongoose.Schema(
     pay_amount: {
       type: Float,
     },
+    taxper: {
+      type: String,
+    },
+    tax: {
+      type: Float,
+    },
+    coupon_code: {
+      type: String,
+    },
+    discount_amount: {
+      type: Float,
+    },
+    total_without_tax: {
+      type: Float,
+    },
+
     authorization_logs: [
       {
         _id: false,

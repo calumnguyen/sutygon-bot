@@ -113,7 +113,6 @@ async (req, res) => {
        return res.json(result);
 
    } catch (err) {
-       console.error(err.message);
        // Check if id is not valid
        if (err.kind === "ObjectId") {
            return res

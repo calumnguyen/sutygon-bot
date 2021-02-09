@@ -89,6 +89,7 @@ export const checkBarcode = (barcode) => async (dispatch) => {
 
 // Get Order by id.
 export const getOrderById = (id) => async (dispatch) => {
+
   dispatch({ type: RENTPRODUCT_LOADING })
   try {
     const config = {
@@ -98,7 +99,6 @@ export const getOrderById = (id) => async (dispatch) => {
     }
 
     const res = await axios.get(`/api/rentedproducts/${id}`, config)
-
     dispatch({
       type: GET_RENTPRODUCT,
       payload: res.data,
@@ -238,6 +238,18 @@ export const orderStatusActive = (id) => async (dispatch) => {
     })
   }
 }
+export const orderUpdatePayAmount = (id,pay_amount) => async (dispatch) => {
+  dispatch({ type: RENTPRODUCTS_LOADING })
+  try {
+    const res = await axios.post(`/api/rentedproducts/${id}/UpdatePayAmount`,{pay_amount:pay_amount})
+  } catch (err) {
+    dispatch({
+      type: RENTPRODUCTS_ERROR,
+      payload: err.response,
+    })
+  }
+}
+
 
 //api/rentedproducts/:id/status/cancel
 export const orderStatusCancel = (id) => async (dispatch) => {

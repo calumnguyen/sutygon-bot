@@ -37,6 +37,10 @@ router.post(
         extraDaysAmount: req.body.extraDaysAmount,
         extraDays: req.body.extraDays,
         customerId: req.body.customerId,
+        coupon_code: req.body.coupon_code,
+        tax: req.body.tax,
+        taxper: req.body.taxper,
+        discount_amount: req.body.discount_amount,
         authorization_logs: [
           {
             employee_id: req.user.id,
@@ -417,8 +421,7 @@ router.get("/:id", auth, async (req, res) => {
       .populate("product")
       .populate("user", "username")
       .lean();
-
-    res.json(rentedProducts);
+    return res.json(rentedProducts);
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error!");
@@ -483,6 +486,25 @@ router.post("/:id/status/active", auth, async (req, res) => {
         "readyForPickUp pickedUpStatus returnStatus status authorization_logs"
       )
       .lean();
+
+    return res.status(200).json(rentedProducts);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send("Server Error!");
+  }
+});
+// @route  POST api/rentedproducts/:id/status/active
+// @desc   Make status active.
+// @access Private
+router.post("/:id/UpdatePayAmount", auth, async (req, res) => {
+  try {
+    const rentedProducts = await RentedProduct.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        pay_amount: req.body.pay_amount,
+      },
+      { new: true }
+    ).lean();
 
     return res.status(200).json(rentedProducts);
   } catch (err) {
