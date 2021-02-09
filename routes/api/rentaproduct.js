@@ -6,6 +6,7 @@ const Customer = require("../../models/Customer");
 const Product = require("../../models/Product");
 const { check, validationResult } = require("express-validator");
 const shortid = require("shortid");
+const moment = require("moment");
 const Coupon = require("../../models/Coupons");
 
 // @route   POST api/rentedproducts/add
@@ -76,7 +77,42 @@ router.post(
     }
   }
 );
-
+router.get("/countOrders", auth, async (req, res) => {
+  try {
+    const today = moment().startOf("day");
+    const today_order = await RentedProduct.count({
+      createdAt: {
+        $gte: today.toDate(),
+        $lte: moment(today).endOf("day").toDate(),
+      },
+    });
+    const return_today = await RentedProduct.count({
+      returnDate: {
+        $gte: today.toDate(),
+        $lte: moment(today).endOf("day").toDate(),
+      },
+    });
+    const pickup_today = await RentedProduct.count({
+      rentDate: {
+        $gte: today.toDate(),
+        $lte: moment(today).endOf("day").toDate(),
+      },
+    });
+    const overdue_today = await RentedProduct.count({
+      returnDate: {
+        $lte: moment(today).endOf("day").toDate(),
+      },
+    });
+    return res.status(200).json({
+      today_order: today_order,
+      return_today: return_today,
+      pickup_today: pickup_today,
+      overdue_today: overdue_today
+    });
+  } catch (err) {
+    res.status(500).send("Server Error!");
+  }
+});
 // @route  POST api/rentedproducts/:id
 // @desc   Update RentedProduct
 // @access Private
@@ -698,4 +734,9 @@ router.get("/checkBarcode/:barcode", auth, async (req, res) => {
   }
 });
 
+// const moment = require("moment");
+
+// const today = moment().startOf("day");
+// console.log("today------", today.toDate());
+// console.log(moment(today).endOf("day").toDate());
 module.exports = router;

@@ -5,7 +5,7 @@ import {
   GET_USER,
   USER_ERROR,
   USER_UPDATED,
-  USER_SAVED,
+  USER_SAVED,GET_REMOVEDEVENTS,
   GET_USERS,
   PASSWORD_ERROR,
   PASSWORD_UPDATED,
@@ -47,6 +47,13 @@ export default function (state = initialState, action) {
         saved: false,
 
       };
+      case GET_REMOVEDEVENTS:
+        return{
+          ...state,
+        users: payload,
+        loading: false,
+        saved: false,
+        }
     case GET_USER:
       return {
         ...state,
@@ -74,12 +81,7 @@ export default function (state = initialState, action) {
         saved: false,
         codeverified:false,
         passwordUpdated: false
-
-
-
       };
-
-
     case USER_UPDATED:
       return {
         ...state,

@@ -13,6 +13,10 @@ const B_EventSchema = new mongoose.Schema(
     birthdate: {
       type: Date,
     },
+    show: {
+      type: Boolean,
+      default: true,
+    },
     timeStart: {
       required: true,
       type: String,

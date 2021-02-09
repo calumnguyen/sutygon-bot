@@ -21,6 +21,8 @@ export const CODE_VERIFIED = 'CODE_VERIFIED'
 export const VERIFCATION_ERROR = 'VERIFCATION_ERROR'
 
 //events
+export const GET_R_EVENT = 'GET_R_EVENT'
+export const GET_REMOVEDEVENTS = 'GET_REMOVEDEVENTS'
 export const EVENTS_LOADING = 'EVENTS_LOADING'
 export const EVENT_LOADING = 'EVENT_LOADING'
 export const EVENT_SAVED = 'EVENT_SAVED'
@@ -109,6 +111,8 @@ export const ORDER_ERROR = 'ORDER_ERROR'
 export const ORDERS_ERROR = 'ORDERS_ERROR'
 export const ORDER_DELETED = 'ORDER_DELETED'
 export const ORDER_UPDATED = 'ORDER_UPDATED'
+export const GET_COUNT_ORDERS = 'GET_COUNT_ORDERS'
+
 
 // alter notes
 export const ALTERNOTES_LOADING = 'ALTERNOTES_LOADING'
