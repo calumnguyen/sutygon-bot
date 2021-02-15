@@ -162,6 +162,9 @@ class RentOrder extends Component {
       insuranceAmt: state.insAmt,
       orderBarcode: state.orderBarcode,
       coupon_code: this.state.coupon_code,
+      tax: state.tax,
+      taxper: state.taxper,
+      discount_amount: state.discount_amount,
     };
     if (state.leaveID == true && state.someOneName == "") {
       OCAlert.alertError(`Please Enter Some One Name`, { timeOut: 3000 });
@@ -178,7 +181,6 @@ class RentOrder extends Component {
     }
 
     const pdfData = {
-
       discount_amount: state.discount_amount,
       insAmt: state.insAmt,
       tax: state.tax,
@@ -189,7 +191,7 @@ class RentOrder extends Component {
     };
 
     this.props.history.push("/prepaid", {
-      customer_id:state.customer_id,
+      customer_id: state.customer_id,
       rentedOrder,
       product_Array: this.state.product_Array,
       barcode_Array: barcode_Array,

@@ -5,7 +5,10 @@ import Loader from "../layout/Loader";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getAllAppointments } from "../../actions/appointment";
-import { getAllRentedProducts } from "../../actions/rentproduct";
+import {
+  getAllRentedProducts,
+  getDashboardCountOrders,
+} from "../../actions/rentproduct";
 import { getAllProducts } from "../../actions/product";
 import { getUser, updateEvents, getremoveEvents } from "../../actions/user";
 import { getAllEvents, getAllBirthdayEvents } from "../../actions/events";
@@ -27,6 +30,7 @@ class Dashboard extends Component {
     if (user) {
       this.setState({ id: user._id });
     }
+    await this.props.getDashboardCountOrders();
     await this.props.getAllAppointments();
     await this.props.getAllRentedProducts();
     await this.props.getAllProducts();
@@ -64,19 +68,18 @@ class Dashboard extends Component {
     if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
       age_now--;
     }
-
     return age_now;
   };
 
-  getfilteredEvents = (currenWeekEvents) =>{
+  getfilteredEvents = (currenWeekEvents) => {
     const { r_events } = this.props;
     const { remove_arr } = r_events && r_events;
     var filteredEvents =
       currenWeekEvents &&
       currenWeekEvents.filter((a) => remove_arr && !remove_arr.includes(a._id));
 
-      return filteredEvents;
-  }
+    return filteredEvents;
+  };
   getcurrentdaysEvents = (updatedEvents, currentdate) => {
     var currenDayEvents =
       updatedEvents &&
@@ -120,7 +123,7 @@ class Dashboard extends Component {
           "-" +
           ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(-2) +
           "-" +
-          ("0" + (Number(new Date(event.birthdate).getDate()))).slice(-2) +
+          ("0" + Number(new Date(event.birthdate).getDate())).slice(-2) +
           "T19:00:00.000Z";
         const age = this.calculate_age(event.birthdate);
 
@@ -161,7 +164,7 @@ class Dashboard extends Component {
       updatedEvents,
       currentdate
     );
-    const filteredEvents = this.getfilteredEvents(currenWeekEvents)
+    const filteredEvents = this.getfilteredEvents(currenWeekEvents);
 
     var events_arr = events &&
       filteredEvents && [...filteredEvents, ...currenDaysEvents];
@@ -243,10 +246,12 @@ class Dashboard extends Component {
     // e.preventDefault()
     const { appointment } = this.props;
     if (appointment) {
-          var currentdate = moment(new Date()).format('YYYY-MM-DD') + 'T19:00:00.000Z'
-      let events = appointment.filter((a) =>{
-        let ap_date = moment(new Date(a.date)).format('YYYY-MM-DD') + 'T19:00:00.000Z';
-      return (ap_date) == (currentdate)
+      var currentdate =
+        moment(new Date()).format("YYYY-MM-DD") + "T19:00:00.000Z";
+      let events = appointment.filter((a) => {
+        let ap_date =
+          moment(new Date(a.date)).format("YYYY-MM-DD") + "T19:00:00.000Z";
+        return ap_date == currentdate;
       });
 
       return events.length;
@@ -274,7 +279,7 @@ class Dashboard extends Component {
     }
     const startTime =
       this.props.shop[0] && moment(this.props.shop[0].shopStartTime);
-
+    const { today_order, return_today, pickup_today ,overdue_today} = this.props.count_orders;
     return (
       <React.Fragment>
         <Loader />
@@ -299,7 +304,7 @@ class Dashboard extends Component {
                         <div className="flex items-center bg-white shadow-xs card-dashboard">
                           <div className="text-orange-500 gradient-blueberry rounded-full card-dashboard-span">
                             <div className="text">
-                              {this.orderPickUpToday()}
+                              {pickup_today ? pickup_today : 0}
                             </div>
                           </div>
                           <div className="text-card">
@@ -309,7 +314,9 @@ class Dashboard extends Component {
                         {/* card2 */}
                         <div className="flex items-center bg-white shadow-xs card-dashboard">
                           <div className="text-orange-500 gradient-red-pink rounded-full card-dashboard-span">
-                            <div className="text">{this.getReturnOrder()}</div>
+                            <div className="text">
+                              {return_today ? return_today : 0}
+                            </div>
                           </div>
                           <div className="text-card">
                             <span>Return Today</span>
@@ -342,7 +349,7 @@ class Dashboard extends Component {
                           <div className="text-orange-500 gradient-orange rounded-full card-dashboard-span">
                             <div className="text">
                               {" "}
-                              {this.getOverDueOrder()}
+                              {overdue_today ? overdue_today : 0}
                             </div>
                           </div>
                           <div className="text-card-overdue">
@@ -354,7 +361,7 @@ class Dashboard extends Component {
                           <div className="text-orange-500 gradient-love-couple rounded-full card-dashboard-span">
                             {" "}
                             <div className="text">
-                              {this.getTodaysOrder()}
+                              {today_order ? today_order : 0}
                             </div>{" "}
                           </div>
                           <div className="text-card-noorder">
@@ -369,50 +376,60 @@ class Dashboard extends Component {
                     <div className="card card-alert gradient-light-blue-indigo">
                       {this.state.currenWeekEvents &&
                         this.state.currenWeekEvents.length > 0 &&
-                        this.state.currenWeekEvents.slice(0).reverse().map((a, a_i) => {
-                          return (
-                            <div className="alert alert-secondary alert-dismissible m-1">
-                              <button
-                                type="button"
-                                className="close"
-                                data-dismiss="alert"
-                                onClick={(e) =>
-                                  this.hideAlert(e, user && user._id, a._id)
-                                }
-                                aria-label="Close"
-                              >
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                              <p className="my-n1">
-                              
+                        this.state.currenWeekEvents
+                          .slice(0)
+                          .reverse()
+                          .map((a, a_i) => {
+                            return (
+                              <div className="alert alert-secondary alert-dismissible m-1">
+                                <button
+                                  type="button"
+                                  className="close"
+                                  data-dismiss="alert"
+                                  onClick={(e) =>
+                                    this.hideAlert(e, user && user._id, a._id)
+                                  }
+                                  aria-label="Close"
+                                >
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                                <p className="my-n1">
                                   <strong>{a.name}</strong>
-                              
-                              </p>
-                              <p className="my-n1">
-                                <small className="text-muted">
-                                  Date :{moment(a.date).format("DD-MM-YYYY")}{" "}
-                                </small>
-                              </p>
-                              <p className="my-n1">
-                                <small className="text-muted">
-                                  From :{moment(a.timeStart).format("hh:mm A")}, {" "}
-                                  To : {moment(a.timeEnd).format("hh:mm A")}
-                                </small>
-                              </p>
-                              {a.location ?   <p className="my-n1">
-                                <small className="text-muted">
-                                  Location:{a.location}
-                                </small>
-                              </p> :''}
-                            
-                            {a.note ?  <p className="my-n1">
-                                <small className="text-muted">
-                                  Note:{a.note}
-                                </small>
-                              </p> :''} 
-                            </div>
-                          );
-                        })}
+                                </p>
+                                <p className="my-n1">
+                                  <small className="text-muted">
+                                    Date :{moment(a.date).format("DD-MM-YYYY")}{" "}
+                                  </small>
+                                </p>
+                                <p className="my-n1">
+                                  <small className="text-muted">
+                                    From :
+                                    {moment(a.timeStart).format("hh:mm A")}, To
+                                    : {moment(a.timeEnd).format("hh:mm A")}
+                                  </small>
+                                </p>
+                                {a.location ? (
+                                  <p className="my-n1">
+                                    <small className="text-muted">
+                                      Location:{a.location}
+                                    </small>
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
+
+                                {a.note ? (
+                                  <p className="my-n1">
+                                    <small className="text-muted">
+                                      Note:{a.note}
+                                    </small>
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                            );
+                          })}
                     </div>
                   </div>
                 </div>
@@ -541,6 +558,7 @@ const mapStateToProps = (state) => ({
   appointment: state.appointment.appointments,
   shop: state.dashboard.shop,
   rentedproducts: state.rentproduct.rentproducts,
+  count_orders: state.rentproduct.get_count_order,
   events: state.events.events,
   b_events: state.events.birthdayevents,
   r_events: state.events.removedevents,
@@ -556,6 +574,7 @@ export default connect(mapStateToProps, {
   getAllBirthdayEvents,
   updateEvents,
   getremoveEvents,
+  getDashboardCountOrders,
   // changeStatus,
   // getAllDashboardEvents
 })(Dashboard);

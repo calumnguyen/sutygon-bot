@@ -13,6 +13,7 @@ import {
   RENTPRODUCT_ITEMS,
   RENTPRODUCT_STATUS_SEARCH,
   GET_BARCODE_ORDER,
+  GET_COUNT_ORDERS
 } from '../actions/types'
 const initialState = {
   rentproduct: null,
@@ -24,6 +25,7 @@ const initialState = {
   orderItems: null,
   barcoderec:null,
   error: {},
+  get_count_order:{},
 }
 
 export default function (state = initialState, action) {
@@ -130,6 +132,13 @@ export default function (state = initialState, action) {
         rentproducts: payload,
         loading: false,
       }
+    case GET_COUNT_ORDERS:
+      return {
+        ...state,
+        get_count_order: payload,
+        loading: false,
+      }
+    
     default:
       return state
   }

@@ -111,6 +111,8 @@ export const ORDER_ERROR = 'ORDER_ERROR'
 export const ORDERS_ERROR = 'ORDERS_ERROR'
 export const ORDER_DELETED = 'ORDER_DELETED'
 export const ORDER_UPDATED = 'ORDER_UPDATED'
+export const GET_COUNT_ORDERS = 'GET_COUNT_ORDERS'
+
 
 // alter notes
 export const ALTERNOTES_LOADING = 'ALTERNOTES_LOADING'
