@@ -20,8 +20,6 @@ router.post(
     check("address", "Address Required").not().isEmpty(),
     check("birthday", "Enter birth date.").not().isEmpty(),
   ],
-  auth,
-
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

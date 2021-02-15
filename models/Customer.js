@@ -56,6 +56,9 @@ const CutomerSchema = new mongoose.Schema(
     noOfOrders: {
       type: String,
     },
+    password:{
+      type: String,
+    },
     date: {
       type: Date,
       default: Date.now,

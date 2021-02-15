@@ -4,6 +4,9 @@ const app = express()
 const dotenv = require('dotenv')
 const { salaryUpdateJob, lostOrderJob } = require('./cronJobs/jobs')
 const connectDB = require('./config/db')
+const cors = require('cors');
+
+app.use(cors());
 
 // cron Jobs
 salaryUpdateJob()
@@ -33,6 +36,7 @@ app.use('/api/invoices', require('./routes/api/Invoices'))
 app.use('/api/alternotes', require('./routes/api/alterNotes'))
 app.use('/api/coupons', require('./routes/api/coupons'))
 app.use('/api/events', require('./routes/api/events'))
+app.use('/api/verify', require('./routes/api/verifyCode'))
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'))
