@@ -1,9 +1,6 @@
 const express = require("express");
-const { conformsTo } = require("lodash");
-const mongoose = require("mongoose");
 const router = express.Router();
 require('dotenv').config();
-
 
 //twilio configuration
 var ACCOUNT_SID = process.env.ACCOUNT_SID; 
