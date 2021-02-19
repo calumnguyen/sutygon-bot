@@ -20,7 +20,7 @@ router.get('/searchbyContactNumber',
 
             const result = await RentedProduct.find({
                 customerContactNumber: { $eq: req.query.number }
-            })
+            }).populate("customer",{name:1,contactnumber:1})
             .sort({ rentDate:1 })
             if (result == null) {
                 return res
@@ -104,7 +104,7 @@ async (req, res) => {
    try {
        const result = await RentedProduct.find({
            orderNumber: { $eq: req.query.orderNumber }
-       })
+       }).populate("customer",{name:1,contactnumber:1})
        if (!result) {
            return res
                .status(404)
