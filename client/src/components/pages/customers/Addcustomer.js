@@ -215,9 +215,35 @@ class AddCustomer extends Component {
 
     if (state.id === '') {
       await this.props.addNewCustomer(customerData);
-    } else {
-      await this.props.updateCustomer(customerData, state.id);
     }
+    this.setState({ saving: false });
+  };
+
+  onUpdate = async (e) => {
+    e.preventDefault();
+    this.setState({ saving: true });
+    const state = { ...this.state };
+    const { customer } = this.props;
+    let m_oc = {
+      exist: this.state.online_account.exist,
+      membership: this.state.membership === '' ? null : this.state.membership,
+      username: this.state.name,
+      email: 'unverified',
+      deactivate: false,
+    };
+    var customerData = {
+      name: state.name,
+      email: state.email,
+      contactnumber: state.contactnumber,
+      address: state.address,
+      birthday: state.id === '' ? moment(state.birthday) : customer.birthday,
+      company: state.company,
+      company_address: state.company_address,
+      online_account: m_oc,
+      block_account: state.block_account === '' ? false : state.block_account,
+    };
+      await this.props.updateCustomer(customerData, state.id);
+    
     this.setState({ saving: false });
   };
 
@@ -293,7 +319,6 @@ class AddCustomer extends Component {
                         <form
                           className='form form-horizontal form-bordered'
                           method='POST'
-                          onSubmit={(e) => this.onSubmit(e)}
                         >
                           <h4 className='form-section '>
                             <i className='ft-info'></i> Personal information
@@ -725,6 +750,31 @@ class AddCustomer extends Component {
                               </>
                             ) : (
                               <>
+                              {this.state.id ?
+                              <>
+                              {this.state.saving ? (
+                                  <button
+                                    type='button'
+                                    className='mb-2 mr-2 btn btn-raised btn-primary'
+                                  >
+                                    <div
+                                      className='spinner-grow spinner-grow-sm '
+                                      role='status'
+                                    ></div>{' '}
+                                    &nbsp; Updating...{' '}
+                                  </button>
+                                ) : (
+                                  <button
+                                    type='submit'
+                                    className='mb-2 mr-2 btn btn-raised btn-primary'
+                                    onClick={(e) => this.onUpdate(e)}
+                                  >
+                                    <i className='ft-check' /> Update Changes
+                                  </button>
+                                )}
+                               </>
+                              :
+                              <>
                                 {this.state.saving ? (
                                   <button
                                     type='button'
@@ -734,16 +784,18 @@ class AddCustomer extends Component {
                                       className='spinner-grow spinner-grow-sm '
                                       role='status'
                                     ></div>{' '}
-                                    &nbsp; Save{' '}
+                                    &nbsp; Saving...{' '}
                                   </button>
                                 ) : (
                                   <button
                                     type='submit'
+                                    onClick={(e) => this.onSubmit(e)}
                                     className='mb-2 mr-2 btn btn-raised btn-primary'
                                   >
                                     <i className='ft-check' /> Save Changes
                                   </button>
                                 )}
+                         </>   }
                               </>
                             )}
                           </div>
