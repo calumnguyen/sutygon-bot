@@ -20,8 +20,6 @@ router.post(
     check("address", "Address Required").not().isEmpty(),
     check("birthday", "Enter birth date.").not().isEmpty(),
   ],
-  auth,
-
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -78,7 +76,7 @@ router.post("/:id", auth, async (req, res) => {
 // @route   GET api/customers
 // @desc    Get all customers
 // @access  Private
-router.get("/", auth, async (req, res) => {
+router.get("/",  async (req, res) => {
   try {
     const customers = await Customer.find();
     res.json(customers);

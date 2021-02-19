@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const CutomerSchema = new mongoose.Schema(
+const CustomerSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -56,6 +56,9 @@ const CutomerSchema = new mongoose.Schema(
     noOfOrders: {
       type: String,
     },
+    password:{
+      type: String,
+    },
     date: {
       type: Date,
       default: Date.now,
@@ -63,5 +66,5 @@ const CutomerSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-module.exports = Customer = mongoose.model("customer", CutomerSchema);
+CustomerSchema.set("autoIndex", true);
+module.exports = Customer = mongoose.model("customer", CustomerSchema);
