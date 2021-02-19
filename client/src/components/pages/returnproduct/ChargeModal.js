@@ -61,14 +61,21 @@ export default function TransitionsModal({
                     <thead>
                       <tr>
                         <th scope="col">
-                           <TextField
-                                style={{ width: "200px" }}
-                                onChange={onHandleModalFields("name")}
-                                placeholder={modal_type=="charge"?"Charge":"Discount"}
-                                margin="normal"
-                                variant="outlined"
-                              />
-                        
+                          <TextField
+                            style={{ width: "200px" }}
+                            onChange={onHandleModalFields("name")}
+                            placeholder={
+                              modal_type == "charge" ? "Charge" : "Discount"
+                            }
+                            margin="normal"
+                            variant="outlined"
+                            inputProps={{
+                              style: {
+                                height: 35,
+                                padding: "0 14px",
+                              },
+                            }}
+                          />
                         </th>
                         <th scope="col">
                           {" "}
@@ -81,7 +88,6 @@ export default function TransitionsModal({
                             )}
                             renderInput={(params) => (
                               <TextField
-                                
                                 style={{ width: "200px" }}
                                 {...params}
                                 onChange={onHandleModalFields("category")}
@@ -89,6 +95,10 @@ export default function TransitionsModal({
                                 margin="normal"
                                 variant="outlined"
                                 InputProps={{
+                                  style: {
+                                    height: 35,
+                                    padding: "0 14px",
+                                  },
                                   ...params.InputProps,
                                   type: "search",
                                 }}
@@ -99,14 +109,19 @@ export default function TransitionsModal({
                         <th scope="col">
                           {" "}
                           <TextField
-                             type="number"
-                                style={{ width: "200px" }}
-                                onChange={onHandleModalFields("amount")}
-                                placeholder="Amount"
-                                margin="normal"
-                                variant="outlined"
-                              />
-                        
+                            type="number"
+                            style={{ width: "200px" }}
+                            onChange={onHandleModalFields("amount")}
+                            placeholder="Amount"
+                            margin="normal"
+                            variant="outlined"
+                            inputProps={{
+                              style: {
+                                height: 35,
+                                padding: "0 14px",
+                              },
+                            }}
+                          />
                         </th>
                         <th scope="col">
                           <button
