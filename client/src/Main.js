@@ -42,6 +42,8 @@ import Report from "./components/pages/report/report";
 
 import ReportOrder from "./components/pages/report/reportOrder";
 import MatchBarcodes from "./components/pages/returnproduct/matchBarcodes";
+import ReturnPrepaid from "./components/pages/returnproduct/ReturnPrepaid";
+import ReturnSummary from "./components/pages/returnproduct/ReturnSummary";
 // import Calender from "./components/pages/calender";
 
 // Redux
@@ -139,9 +141,10 @@ const Main = () => {
 
           {/* return product */}
           <PrivateRoute exact path="/returnproduct" component={ReturnProduct} />
-          <PrivateRoute exact path="/matchbarcodes" component={MatchBarcodes} />
           <PrivateRoute exact path="/scanbarcode" component={ScanBarcode} />
-
+          <PrivateRoute exact path="/matchbarcodes" component={MatchBarcodes} />
+          <PrivateRoute exact path="/returnSummary" component={ReturnSummary} />
+          <PrivateRoute exact path="/returnPrepaid" component={ReturnPrepaid} />
           {/* orders */}
           <PrivateRoute exact path="/orders" component={Orders} />
           <PrivateRoute

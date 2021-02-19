@@ -109,6 +109,13 @@ const RentedProductSchema = new mongoose.Schema(
     total_without_tax: {
       type: Float,
     },
+    ammount_steps: [
+      {
+        _id: false,
+        status: String,
+        date: { type: Date, default: Date.now },
+      },
+    ],
 
     authorization_logs: [
       {

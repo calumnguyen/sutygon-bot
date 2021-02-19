@@ -9,17 +9,17 @@ const cors = require('cors');
 app.use(cors());
 
 // cron Jobs
-salaryUpdateJob()
-lostOrderJob()
+salaryUpdateJob();
+lostOrderJob();
 
 // Load env vars
-dotenv.config({ path: './config/config.env' })
+dotenv.config({ path: "./config/config.env" });
 
-connectDB()
+connectDB();
 
 // Middlewares
-app.use(express.json({ extended: false }))
-app.use(express.static(path.join(__dirname, '/public')))
+app.use(express.json({ extended: false }));
+app.use(express.static(path.join(__dirname, "/public")));
 
 // Routes
 app.use('/api/dashboard', require('./routes/api/dashboard'))
@@ -37,6 +37,7 @@ app.use('/api/alternotes', require('./routes/api/alterNotes'))
 app.use('/api/coupons', require('./routes/api/coupons'))
 app.use('/api/events', require('./routes/api/events'))
 app.use('/api/verify', require('./routes/api/verifyCode'))
+app.use("/api/categories", require("./routes/api/category"));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'))
@@ -46,5 +47,5 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-const port = process.env.PORT || 5000
-app.listen(port, () => console.log(`Server Running on port: ${port}`))
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Server Running on port: ${port}`));

@@ -18,7 +18,6 @@ export const addNewInvoice = (invoice) => async (dispatch) => {
       'Content-Type': 'application/json',
     },
   }
-
   const body = JSON.stringify(invoice)
   try {
     const res = await axios.post('/api/invoices/add', body, config)

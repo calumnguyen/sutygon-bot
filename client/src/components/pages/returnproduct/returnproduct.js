@@ -17,7 +17,9 @@ import { connect } from "react-redux";
 import moment from "moment";
 import "moment-timezone";
 import "../../../custom.css";
-
+import BootstrapTable from "react-bootstrap-table-next";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
+import OrderStatus from "../orders/small/Status";
 class ReturnProduct extends Component {
   state = {
     customer: "",
@@ -62,7 +64,7 @@ class ReturnProduct extends Component {
     await this.props.getOrderbyCustomerNumber(state.customer.trim());
     const { orders } = this.props;
     if (!!orders.length) {
-      await this.props.getCustomer(orders[0].customer);
+      await this.props.getCustomer(orders[0].customer._id);
       var returningOrder = orders.filter((f) => f.status === "active");
     }
     this.setState({
@@ -81,7 +83,7 @@ class ReturnProduct extends Component {
     await this.props.getOrderbyOrderNumber(state.orderNumber.trim());
     const { orders } = this.props;
     if (!!orders.length) {
-      await this.props.getCustomer(orders[0].customer);
+      await this.props.getCustomer(orders[0].customer._id);
       var returningOrder = orders.filter((f) => f.status === "active");
     }
     this.setState({
@@ -171,7 +173,9 @@ class ReturnProduct extends Component {
                       fontSize: "larger",
                     }}
                   >
-                    {`${p[0]?p[0].title:''} ${"|"} ${p[0]?p[0].barcode:''}`}
+                    {`${p[0] ? p[0].title : ""} ${"|"} ${
+                      p[0] ? p[0].barcode : ""
+                    }`}
                   </h6>
                 </div>
               </div>
@@ -229,12 +233,108 @@ class ReturnProduct extends Component {
     });
   };
 
+  orderTable = () => {
+    const { orders } = this.props;
+    const { customeR } = this.props;
+    // zohaib
+    let returningOrders = orders.filter((f) => f.status === "active");
+    if (returningOrders) {
+      let returningOrdersDataArray = [];
+      returningOrders.forEach((order, idx) => {
+        returningOrdersDataArray.push({
+          orderNumber: order.orderNumber,
+          name: order.customer ? order.customer.name : "",
+          phone: order.customer ? order.customer.contactnumber : "",
+          status: (
+            <OrderStatus
+              title={order.status}
+              reservedStatus={order.reservedStatus}
+              readyForPickUp={order.readyForPickUp}
+              pickedUpStatus={order.pickedUpStatus}
+              total={order.total_notes ? order.total_notes : 0}
+              remain={
+                order.notes
+                  ? order.notes.filter((i) => i.done == false).length
+                  : 0
+              }
+            />
+          ),
+
+          actions: (
+            <>
+              <button
+             
+                onClick={(e) => this.selectedOrder(e, order._id)}
+                className="btn btn-sm btn-primary"
+              >
+                <i
+                  className="ft-eye font-medium-3"
+                  title="View Order"
+                ></i>
+              </button>
+            </>
+          ),
+        });
+      });
+      const columns = [
+        {
+          dataField: "orderNumber",
+          text: "Order Id",
+          sort: true,
+        },
+        {
+          dataField: "name",
+          text: "Customer name",
+          sort: true,
+        },
+        {
+          dataField: "phone",
+          text: "Phone number",
+          sort: true,
+        },
+        {
+          dataField: "status",
+          text: "Status",
+          sort: true,
+        },
+        {
+          dataField: "actions",
+          text: "View Order",
+          sort: true,
+        },
+      ];
+
+      return (
+        <ToolkitProvider
+          keyField="id"
+          data={
+            returningOrdersDataArray.length === 0
+              ? []
+              : returningOrdersDataArray
+          }
+          columns={columns}
+          // defaultSorted={defaultSorted}
+          search
+        >
+          {(props) => (
+            <div>
+              <BootstrapTable {...props.baseProps} />
+              <br />
+            </div>
+          )}
+        </ToolkitProvider>
+      );
+    } else {
+      return <div>No Active order found.</div>;
+    }
+  };
+
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/" />;
     }
-   
+
     const { orders } = this.state;
     const { customeR } = this.props;
 
@@ -321,8 +421,11 @@ class ReturnProduct extends Component {
                                     <>
                                       {this.state.returningOrder &&
                                       this.state.returningOrder.length > 0 ? (
-                                        this.CutomerBox()
+                                        <div className="col-md-12">
+                                          {this.orderTable()}
+                                        </div>
                                       ) : (
+                                        // this.CutomerBox()
                                         <div className="col-md-12">
                                           <div className="form-group text-center p-1">
                                             <h6
@@ -333,7 +436,7 @@ class ReturnProduct extends Component {
                                                 fontSize: "larger",
                                               }}
                                             >
-                                          {"No Active order found"}
+                                              {"No Active order found"}
                                             </h6>
                                           </div>
                                         </div>
