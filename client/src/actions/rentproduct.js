@@ -19,7 +19,7 @@ import {
   CUSTOMER_LOADING,
   CUSTOMER_ERROR,
   RENTPRODUCT_STATUS_SEARCH,
-  GET_COUNT_ORDERS
+  GET_COUNT_ORDERS,
 } from "./types";
 import { setAlert } from "./alert";
 
@@ -238,11 +238,18 @@ export const orderStatusActive = (id) => async (dispatch) => {
     });
   }
 };
-export const orderUpdatePayAmount = (id, pay_amount) => async (dispatch) => {
+export const orderUpdatePayAmount = (
+  id,
+  pay_amount,
+  currentPay,
+  payStepsLength
+) => async (dispatch) => {
   dispatch({ type: RENTPRODUCTS_LOADING });
   try {
     const res = await axios.post(`/api/rentedproducts/${id}/UpdatePayAmount`, {
       pay_amount: pay_amount,
+      currentPay: currentPay,
+      payStepsLength: Number(payStepsLength),
     });
   } catch (err) {
     dispatch({
@@ -373,20 +380,19 @@ export const searchByBarcode = (barcode) => async (dispatch) => {
     });
   }
 };
-  export const getDashboardCountOrders = () => async (dispatch) => {
-    dispatch({ type: RENTPRODUCT_LOADING });
-    try {
-      const res = await axios.get(`/api/rentedproducts/countOrders`);
+export const getDashboardCountOrders = () => async (dispatch) => {
+  dispatch({ type: RENTPRODUCT_LOADING });
+  try {
+    const res = await axios.get(`/api/rentedproducts/countOrders`);
 
-      dispatch({
-        type: GET_COUNT_ORDERS,
-        payload: res.data,
-      });
-    } catch (err) {
-      dispatch({
-        type: RENTPRODUCTS_ERROR,
-        payload: err.response,
-      });
-    }
-  };
-
+    dispatch({
+      type: GET_COUNT_ORDERS,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: RENTPRODUCTS_ERROR,
+      payload: err.response,
+    });
+  }
+};

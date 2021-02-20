@@ -38,20 +38,21 @@ class Prepaid5 extends Component {
     pay_amount: "",
     pdfData: "",
     redirect: false,
-    customer_id:'',
+    customer_id: "",
   };
   async componentDidMount() {
     const { state } = this.props.location;
     console.log("state", state);
     if (state) {
       this.setState({
-         customer_id: state.customer_id,
+        customer_id: state.customer_id,
         barcode_Array: state.barcode_Array,
         rentedOrder: state.rentedOrder,
         product_Array: state.product_Array,
         insuranceAmt: state.rentedOrder.insuranceAmt,
         total: state.rentedOrder.total,
         pdfData: state.pdfData,
+        customer: state.customer,
       });
     }
     await this.props.getCustomer(state.customer_id);
@@ -170,7 +171,7 @@ class Prepaid5 extends Component {
       }
     }
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
     if (this.state.redirect === true) {
       return <Redirect to="/rentproduct" />;
@@ -187,7 +188,6 @@ class Prepaid5 extends Component {
       pdfData,
     } = this.state;
     const { customer } = this.props;
-    console.log("customer--",customer)
     return (
       <React.Fragment>
         <Loader />
@@ -250,6 +250,7 @@ class Prepaid5 extends Component {
                                 insuranceAmt={insuranceAmt}
                                 total={total}
                                 pay_amount={pay_amount}
+                                customer={this.state.customer}
                               />
                             )}
 
@@ -279,6 +280,16 @@ class Prepaid5 extends Component {
                                           if (this.state.pay_amount == "") {
                                             OCAlert.alertError(
                                               `Pay Amount is required `,
+                                              { timeOut: 3000 }
+                                            );
+                                            return;
+                                          }
+                                          if (
+                                            this.state.pay_amount >
+                                            this.state.total
+                                          ) {
+                                            OCAlert.alertError(
+                                              ` Total + Insurance Amount Is The Max `,
                                               { timeOut: 3000 }
                                             );
                                             return;

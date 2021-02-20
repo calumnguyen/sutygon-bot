@@ -109,10 +109,11 @@ const RentedProductSchema = new mongoose.Schema(
     total_without_tax: {
       type: Float,
     },
-    ammount_steps: [
+    amount_steps: [
       {
         _id: false,
         status: String,
+        pay: Float,
         date: { type: Date, default: Date.now },
       },
     ],

@@ -68,6 +68,7 @@ class ViewOrder extends Component {
       returnOn: order.returnOn ? order.returnOn : "Not Returned",
       auth_logs: order.authorization_logs && order.authorization_logs,
       orderItems: orderItems,
+      amount_logs: order.amount_steps && order.amount_steps,
     });
   }
 
@@ -118,7 +119,7 @@ class ViewOrder extends Component {
 
   async statusToPickup(id) {
     // status to pickup
-     this.props.history.push(`/orders/prepaid/${id}`)
+    this.props.history.push(`/orders/prepaid/${id}`,{isPayAmount:false});
     // await this.props.orderStatusActive(id);
 
     // let { order } = this.props;
@@ -186,6 +187,71 @@ class ViewOrder extends Component {
         // bootstrap4
         keyField="id"
         data={authLogArr.length > 0 ? authLogArr : []}
+        columns={columns}
+        defaultSorted={defaultSorted}
+        // search
+      >
+        {(props) => (
+          <div>
+            <BootstrapTable {...props.baseProps} />
+            <br />
+          </div>
+        )}
+      </ToolkitProvider>
+    );
+  }
+
+  payAmountStepLogs() {
+    const amount_logsArray = [];
+
+    const { amount_logs } = this.state;
+
+    if (amount_logs) {
+      amount_logs.forEach((log, idx) => {
+        amount_logsArray.push({
+          sno: idx + 1,
+          date: moment(log.date).format("ddd, MMM Do YYYY"),
+          status: <span className="badge badge-info">{log.status}</span>,
+          amount: `${log.pay} VND`,
+        });
+      });
+    }
+
+    const columns = [
+      {
+        dataField: "sno",
+        text: "#",
+        sort: true,
+      },
+      {
+        dataField: "date",
+        text: "Date",
+        sort: true,
+      },
+      {
+        dataField: "status",
+        text: "Status",
+        sort: true,
+      },
+      {
+        dataField: "amount",
+        text: "Amount",
+        sort: true,
+      },
+    ];
+
+    const defaultSorted = [
+      {
+        dataField: "contactnumber",
+        order: "asc",
+      },
+    ];
+
+    return (
+      <ToolkitProvider
+        // bootstrap4
+        keyField="id"
+        data={amount_logsArray.length > 0 ? amount_logsArray : []}
         columns={columns}
         defaultSorted={defaultSorted}
         // search
@@ -523,6 +589,22 @@ class ViewOrder extends Component {
                           </div>
                         </form>
                       </div>
+
+                      <div className="card card-body">
+                        <form
+                          className="form form-horizontal form-bordered"
+                          method="POST"
+                        >
+                          <h4 className="form-section ">
+                            <i className="ft-info"></i> Pay Amount Logs
+                          </h4>
+                          <div className="row">
+                            <div className="col-md-12">
+                              {this.payAmountStepLogs()}
+                            </div>
+                          </div>
+                        </form>
+                      </div>
                     </div>
                   </section>
                   <div>
@@ -540,19 +622,38 @@ class ViewOrder extends Component {
                               <i className="ft-check" /> Cancel Order
                             </button>
                           ) : (
-                            <button
-                              to={{ pathname: `/report` }}
-                              type="submit"
-                              className="mb-2 mr-2 btn btn-raised btn-primary"
-                              onClick={
-                                this.state.status == "past"
-                                  ? () => this.pastOrderAlert()
-                                  : () =>
-                                      this.props.history.push("/returnproduct")
-                              }
-                            >
-                              <i className="ft-check" /> Refund
-                            </button>
+                            <React.Fragment>
+                              <button
+                                to={{ pathname: `/report` }}
+                                type="submit"
+                                className="mb-2 mr-2 btn btn-raised btn-primary"
+                                onClick={
+                                  this.state.status == "past"
+                                    ? () => this.pastOrderAlert()
+                                    : () =>
+                                        this.props.history.push(
+                                          "/returnproduct"
+                                        )
+                                }
+                              >
+                                <i className="ft-check" /> Refund
+                              </button>
+                              <button
+                                to={{ pathname: `/report` }}
+                                type="submit"
+                                className="mb-2 mr-2 btn btn-raised btn-warning"
+                                onClick={
+                                  this.state.status == "past"
+                                    ? () => this.pastOrderAlert()
+                                    : () =>
+                                        this.props.history.push(
+                                          `/orders/prepaid/${this.state.id}`
+                                        ,{isPayAmount:true})
+                                }
+                              >
+                                <i className="ft-check" /> Pay Amount
+                              </button>
+                            </React.Fragment>
                           )}
                         </div>
                         <div className="">

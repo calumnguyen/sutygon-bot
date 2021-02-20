@@ -167,7 +167,7 @@ class RentProduct extends Component {
   render() {
     const { auth } = this.props
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/' />
+      return <Redirect to='/login' />
     }
 
     return (

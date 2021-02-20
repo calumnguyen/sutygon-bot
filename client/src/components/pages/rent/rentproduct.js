@@ -210,7 +210,7 @@ class RentProduct extends Component {
       }
     }
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
 
     return (

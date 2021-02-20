@@ -48,7 +48,7 @@ class ReturnPrepaid extends Component {
     totalPaid: "",
     charge_data: [],
     discount_data: [],
-    order:''
+    order: "",
   };
   async componentDidMount() {
     await this.props.getAllProducts();
@@ -59,7 +59,7 @@ class ReturnPrepaid extends Component {
         customer_id: state.customer_id,
         charge_data: state.charge_data,
         discount_data: state.discount_data,
-        order:state.order,
+        order: state.order,
         //   barcode_Array: state.barcode_Array,
         //   rentedOrder: state.rentedOrder,
         product_Array: state.product_Array,
@@ -380,7 +380,7 @@ class ReturnPrepaid extends Component {
       }
     }
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
     if (this.props.saved === true) {
       return <Redirect to="/returnproduct" />;
@@ -439,6 +439,18 @@ class ReturnPrepaid extends Component {
                                   </strong>
                                   from the customer.
                                 </h1>
+                                <hr />
+                                {this.state.order.leaveID ? (
+                                  <h3 className="text-center">
+                                    Please return CUSTOMER ID '
+                                    {this.state.order.customerId}' back to the
+                                    customer.
+                                  </h3>
+                                ) : (
+                                  <h3 className="text-center">
+                                    Customer did not leave ID
+                                  </h3>
+                                )}
                                 <form onSubmit={this.onSubmit}>
                                   <div className="row text-center">
                                     <div className="col-md-12 btn-cont">
@@ -476,10 +488,20 @@ class ReturnPrepaid extends Component {
                                   </strong>
                                   to the customer.
                                 </h1>
-                                  <hr />
-                         
-                                  <h3>Customer did not leave ID</h3>
-                                  <hr/>
+                                <hr />
+                                {this.state.order.leaveID ? (
+                                  <h3 className="text-center">
+                                    Please return CUSTOMER ID '$
+                                    {this.state.order.customerId}' back to the
+                                    customer.
+                                  </h3>
+                                ) : (
+                                  <h3 className="text-center">
+                                    Customer did not leave ID
+                                  </h3>
+                                )}
+
+                                <hr />
                                 <form onSubmit={this.onSubmit}>
                                   <div className="row text-center">
                                     <div className="col-md-12 btn-cont">

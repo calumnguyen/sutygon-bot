@@ -7,6 +7,7 @@ import {
   Switch,
   withRouter,
 } from "react-router-dom";
+import HomePage from './components/pages/Home/HomePage'
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./routing/PrivateRoute";
@@ -207,6 +208,7 @@ const Main = () => {
           />
 
           <PrivateRoute exact path="/Error" component={Error} />
+            <Route exact path="/home" component={HomePage} />
         </Switch>
       </Router>
     </Provider>

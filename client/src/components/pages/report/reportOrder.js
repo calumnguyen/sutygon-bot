@@ -106,7 +106,7 @@ class ReportOrder extends Component {
     render() {
         const { auth } = this.props;
         if (!auth.loading && !auth.isAuthenticated) {
-            return <Redirect to="/" />;
+            return <Redirect to="/login" />;
         }
         const { data } = this.props.location;
         const { user } = this.props.auth;

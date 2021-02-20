@@ -138,7 +138,7 @@ class PickRentDate extends Component {
       }
     }
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
     if (this.props.location.state === undefined) {
       return <Redirect to="/rentproduct" />;

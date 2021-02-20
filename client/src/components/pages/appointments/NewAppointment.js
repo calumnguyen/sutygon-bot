@@ -142,7 +142,7 @@ class NewAppointment extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/' />;
+      return <Redirect to='/login' />;
     }
     const { user } = auth;
     if (user && user.systemRole === 'Employee') {

@@ -53,8 +53,9 @@ class RentOrder extends Component {
     products_length: 0,
     coupon_type: "",
     someOneName: "",
-    extraDays: null,
-    extraDaysAmount: null,
+    extraDays: 0,
+    extraDaysAmount: 0,
+    someoneElseCheckBox: false,
   };
 
   async componentDidMount() {
@@ -166,12 +167,19 @@ class RentOrder extends Component {
       taxper: state.taxper,
       discount_amount: state.discount_amount,
     };
-    if (state.leaveID == true && state.someOneName == "") {
+    if (
+      state.leaveID == true &&
+      this.state.someoneElseCheckBox &&
+      state.someOneName == ""
+    ) {
       OCAlert.alertError(`Please Enter Some One Name`, { timeOut: 3000 });
       return;
     }
-    if (state.leaveID == true && state.someOneName) {
+    if (state.leaveID == true && this.state.someoneElseCheckBox) {
       rentedOrder["customerId"] = state.someOneName;
+    }
+    if (state.leaveID == true && !this.state.someoneElseCheckBox) {
+      rentedOrder["customerId"] = customer.name;
     }
     if (state.extraDays) {
       rentedOrder["extraDays"] = state.extraDays;
@@ -196,6 +204,7 @@ class RentOrder extends Component {
       product_Array: this.state.product_Array,
       barcode_Array: barcode_Array,
       pdfData: pdfData,
+      customer: customer,
     });
     // return;
   };
@@ -359,8 +368,9 @@ class RentOrder extends Component {
   }
 
   calculateTotalWithoutTax = () => {
-    let sum = 0;
-    let { product_Array } = this.state;
+    let { product_Array, extraDaysAmount } = this.state;
+    let sum = extraDaysAmount ? Number(extraDaysAmount) : 0;
+
     if (product_Array) {
       for (var i = 0; i < product_Array.length; i++) {
         sum += Number(product_Array[i][0].price);
@@ -551,7 +561,7 @@ class RentOrder extends Component {
   render() {
     const { auth, order } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
     const { user } = auth;
     if (user && user.systemRole === "Employee") {
@@ -694,8 +704,61 @@ class RentOrder extends Component {
                                         />
                                       </div>
                                     </div>
+                                    {/* <br />
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="padLeft">Extra Days</h4>
+                                          </div>
+                                          <div style={{ paddingLeft: "650px" }}>
+                                            <input
+                                              style={{ width: "65%" }}
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="Total"
+                                              required
+                                              readOnly
+                                              id="setSizeFloat"
+                                              value={
+                                                this.state.extraDays
+                                                  ? this.state.extraDays
+                                                  : 0
+                                              }
+                                            />
+                                          </div>{" "}
+                                        </div>
+                                      </div>
+                                    </div> */}
                                     <br />
-
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="padLeft">
+                                              Extra Days Amount
+                                            </h4>
+                                          </div>
+                                          <div style={{ paddingLeft: "650px" }}>
+                                            <input
+                                              style={{ width: "65%" }}
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="Total"
+                                              required
+                                              readOnly
+                                              id="setSizeFloat"
+                                              value={
+                                                this.state.extraDaysAmount
+                                                  ? this.state.extraDaysAmount
+                                                  : 0
+                                              }
+                                            />
+                                          </div>{" "}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <br />
                                     <div className="row">
                                       <div className="col-md-12">
                                         <div className="form-group">
@@ -879,31 +942,62 @@ class RentOrder extends Component {
                                             </div>
                                           </div>
                                           {this.state.leaveID == true && (
-                                            <div
-                                              style={{ paddingLeft: "650px" }}
-                                            >
-                                              <input
-                                                name="some_one_name"
-                                                style={{ width: "65%" }}
-                                                type="text"
-                                                className="form-control mm-input s-input text-center"
-                                                placeholder="Customer Id"
-                                                autoComplete="off"
-                                                value={this.state.someOneName}
-                                                onChange={(e) =>
-                                                  this.setState({
-                                                    someOneName: e.target.value,
-                                                  })
-                                                }
-                                              />
-                                            </div>
+                                            <React.Fragment>
+                                              <div
+                                                style={{ paddingLeft: "650px" }}
+                                              >
+                                                <input
+                                                  type="checkbox"
+                                                  // className="form-control mm-input s-input text-center"
+                                                  value={
+                                                    this.state
+                                                      .someoneElseCheckBox
+                                                  }
+                                                  onChange={(e) =>
+                                                    this.setState({
+                                                      someoneElseCheckBox: !this
+                                                        .state
+                                                        .someoneElseCheckBox,
+                                                    })
+                                                  }
+                                                />{" "}
+                                                Use someone else's ID?
+                                              </div>
+
+                                              {this.state
+                                                .someoneElseCheckBox && (
+                                                <div
+                                                  style={{
+                                                    paddingLeft: "650px",
+                                                  }}
+                                                >
+                                                  <input
+                                                    name="some_one_name"
+                                                    style={{ width: "65%" }}
+                                                    type="text"
+                                                    className="form-control mm-input s-input text-center"
+                                                    placeholder="Customer Id"
+                                                    autoComplete="off"
+                                                    value={
+                                                      this.state.someOneName
+                                                    }
+                                                    onChange={(e) =>
+                                                      this.setState({
+                                                        someOneName:
+                                                          e.target.value,
+                                                      })
+                                                    }
+                                                  />
+                                                </div>
+                                              )}
+                                            </React.Fragment>
                                           )}
                                           <br />
                                         </div>
                                       </div>
                                     </div>
-                                    <br />
 
+                                    <br />
                                     <div className="row">
                                       <div className="col-md-12">
                                         <div className="form-group">
@@ -955,18 +1049,6 @@ class RentOrder extends Component {
                                             >
                                               Apply Coupon
                                             </span>
-                                            {/* <span
-                                              style={{ cursor: "pointer" }}
-                                              className="btn btn-warning mt-1 btn-sm ml-2"
-                                              onClick={() =>
-                                                this.setState({
-                                                  discount_amount: 0,
-                                                  coupon_code: "",
-                                                })
-                                              }
-                                            >
-                                              Reset
-                                            </span> */}
                                           </div>
                                         </div>
                                       </div>

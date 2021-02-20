@@ -395,7 +395,7 @@ class EditUser extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
     if (this.props.passwordUpdated === true) {
       if (window.localstorage) {
@@ -406,7 +406,7 @@ class EditUser extends Component {
     const { user } = auth;
     if (this.props.saved) {
       if (user.systemRole === "Employee") {
-        return <Redirect push to="/" />;
+        return <Redirect push to="/login" />;
       } else if (user.systemRole == "Admin") {
         return <Redirect to="/user" />;
       }

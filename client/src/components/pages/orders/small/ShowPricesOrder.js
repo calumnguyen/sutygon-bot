@@ -114,7 +114,7 @@ export default function ShowPricesOrder({
       <div className="col-md-12">
         <div className="row ">
           <div className="mx-auto col-4 text-center">
-            How much would {customerName} want to pay for this order today?
+            How much would <strong>{customerName}</strong> want to pay for this order today?
             <div className="input-group">
               <input
                 type="number"

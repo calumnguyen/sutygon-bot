@@ -499,25 +499,16 @@ class MatchBarcodes extends Component {
     var title = this.state.category;
 
     if (name == "") {
-      OCAlert.alertError(
-        `Title is required`,
-        { timeOut: 3000 }
-      );
-      return
+      OCAlert.alertError(`Title is required`, { timeOut: 3000 });
+      return;
     }
-     if (category == "") {
-      OCAlert.alertError(
-        `Category is required`,
-        { timeOut: 3000 }
-       );
-       return
+    if (category == "") {
+      OCAlert.alertError(`Category is required`, { timeOut: 3000 });
+      return;
     }
-     if (amount == "") {
-      OCAlert.alertError(
-        `Amount is required`,
-        { timeOut: 3000 }
-      );
-      return
+    if (amount == "") {
+      OCAlert.alertError(`Amount is required`, { timeOut: 3000 });
+      return;
     }
     if (type == "charge") {
       this.setState({
@@ -573,7 +564,7 @@ class MatchBarcodes extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
 
     const { customer } = this.props;
@@ -761,13 +752,13 @@ class MatchBarcodes extends Component {
                                   <div className="row">
                                     <div className="col-md-12">
                                       <div className="form-group">
-                                        <div style={{ float: "left" }}>
+                                        {/* <div style={{ float: "left" }}>
                                           <h4 id="padLeft">
                                             Insurance return to customer
                                           </h4>
-                                        </div>
-                                        <div style={{ paddingLeft: "700px" }}>
-                                          <input
+                                        </div> */}
+                                        <div style={{ paddingLeft: "900px" }}>
+                                          {/* <input
                                             name="insuranceAmt"
                                             style={{
                                               width: "85%",
@@ -787,14 +778,14 @@ class MatchBarcodes extends Component {
                                             onChange={(e) =>
                                               this.handleChange(e)
                                             }
-                                          />
+                                          /> */}
                                         </div>
                                       </div>
                                     </div>
                                   </div>
                                   <br />
 
-                                  <div className="row">
+                                  {/* <div className="row">
                                     <div className="col-md-12">
                                       <div className="form-group">
                                         <div style={{ float: "left" }}>
@@ -825,8 +816,8 @@ class MatchBarcodes extends Component {
                                       </div>
                                     </div>
                                   </div>
-                                  <br />
-
+                                  <br /> */}
+                                  {/* 
                                   <div className="row">
                                     <div className="col-md-12">
                                       <div className="form-group">
@@ -856,7 +847,7 @@ class MatchBarcodes extends Component {
                                         </div>
                                       </div>
                                     </div>
-                                  </div>
+                                  </div> */}
                                   <br />
 
                                   {/* <div className="row">
@@ -881,7 +872,7 @@ class MatchBarcodes extends Component {
                                       </div>
                                     </div>
                                   </div> */}
-                                  <br />
+                                  {/* <br /> */}
                                   <div className="col-md-12">
                                     <div id="sizes_box">
                                       <div className="row text-center">
@@ -1369,7 +1360,7 @@ class MatchBarcodes extends Component {
             <br />
           </div>
         </div>
-               <OCAlertsProvider />
+        <OCAlertsProvider />
       </React.Fragment>
     );
   }

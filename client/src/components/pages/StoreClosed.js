@@ -34,7 +34,7 @@ class StoreClosed extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
     if (this.props.saved) {
       return <Redirect to="/user" />;

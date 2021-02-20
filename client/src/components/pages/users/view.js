@@ -22,7 +22,7 @@ class View extends Component {
         if (user) {
 
         } if (!auth.loading && !auth.isAuthenticated) {
-            return <Redirect to="/" />;
+            return <Redirect to="/login" />;
         }
 
         return (

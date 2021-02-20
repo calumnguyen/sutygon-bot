@@ -50,6 +50,12 @@ router.post(
             message: `Authorized order : ${req.body.orderNumber}. Status is now pending. `,
           },
         ],
+        amount_steps: [
+          {
+            status: "Payment 1 Rent a product",
+            pay: req.body.pay_amount,
+          },
+        ],
       });
       await rentedProduct.save();
       const { coupon_code } = req.body;
@@ -107,7 +113,7 @@ router.get("/countOrders", auth, async (req, res) => {
       today_order: today_order,
       return_today: return_today,
       pickup_today: pickup_today,
-      overdue_today: overdue_today
+      overdue_today: overdue_today,
     });
   } catch (err) {
     res.status(500).send("Server Error!");
@@ -534,9 +540,16 @@ router.post("/:id/status/active", auth, async (req, res) => {
 // @access Private
 router.post("/:id/UpdatePayAmount", auth, async (req, res) => {
   try {
+    const pickUpPay = {
+      status: `Payment ${req.body.payStepsLength + 1} ${
+        req.body.payStepsLength > 2 ? "" : "PickUp a product"
+      } `,
+      pay: req.body.currentPay,
+    };
     const rentedProducts = await RentedProduct.findByIdAndUpdate(
       { _id: req.params.id },
       {
+        $push: { amount_steps: pickUpPay },
         pay_amount: req.body.pay_amount,
       },
       { new: true }

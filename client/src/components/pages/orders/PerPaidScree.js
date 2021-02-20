@@ -11,7 +11,11 @@ import * as moment from "moment";
 import ShowPricesOrder from "./small/ShowPricesOrder";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
-import { getOrderById, orderStatusActive ,orderUpdatePayAmount} from "../../../actions/rentproduct";
+import {
+  getOrderById,
+  orderStatusActive,
+  orderUpdatePayAmount,
+} from "../../../actions/rentproduct";
 import { vi } from "date-fns/esm/locale";
 import axios from "axios";
 
@@ -39,12 +43,13 @@ class PerPaidScree extends Component {
     pdfData: "",
     redirect: false,
     customer_id: "",
+    isPayAmount: false,
   };
   async componentDidMount() {
+    let { state } = this.props.location;
     const { params } = this.props.match;
     await this.props.getOrderById(params.id);
     let { order } = this.props;
-console.log(order)
     if (params) {
       this.setState({
         orderId: params.id,
@@ -56,6 +61,8 @@ console.log(order)
         leaveID: order.leaveID,
         customerId: order.customerId,
         orderNumber: order.orderNumber,
+        payStepsLength: order.amount_steps.length,
+        isPayAmount: state.isPayAmount,
       });
     }
   }
@@ -63,12 +70,29 @@ console.log(order)
   onSubmit = async (e) => {
     e.preventDefault();
     this.setState({ saving: true });
-      const state = { ...this.state };
-          let final_paid = Number(state.already_pay_amount) + Number(state.pay_amount);
-    await this.props.orderStatusActive(state.orderId);
-    await this.props.orderUpdatePayAmount(state.orderId,final_paid);
-    this.printInvoice();
-    this.redirect();
+    const state = { ...this.state };
+    let final_paid =
+      Number(state.already_pay_amount) + Number(state.pay_amount);
+    if (state.isPayAmount) {
+      await this.props.orderUpdatePayAmount(
+        state.orderId,
+        final_paid,
+        state.pay_amount,
+        state.payStepsLength
+      );
+      this.printInvoice();
+      this.redirect();
+    } else {
+      await this.props.orderStatusActive(state.orderId);
+      await this.props.orderUpdatePayAmount(
+        state.orderId,
+        final_paid,
+        state.pay_amount,
+        state.payStepsLength
+      );
+      this.printInvoice();
+      this.redirect();
+    }
   };
   printInvoice = () => {
     var css =
@@ -109,6 +133,10 @@ console.log(order)
         { timeOut: 3000 }
       );
       return;
+    }
+    if (total < final_paid) {
+      OCAlert.alertError(`Max Must be Total + Insurance.`, { timeOut: 3000 });
+      return;
     } else {
       this.setState({
         CustomerPay: true,
@@ -122,22 +150,25 @@ console.log(order)
   };
   getInvoiceBarcodeRecord() {
     let { Myorder } = this.state;
-      let productArray = [];
+    let productArray = [];
     const { products } = this.props;
     if (products) {
       let sortedAray = this.getSortedData(products);
       if (sortedAray) {
-        Myorder && Myorder.barcodes.forEach((element) => {
-          productArray.push(
-            sortedAray.filter((f) => f.barcode == element.barcode)
-          );
-          return productArray;
-        });
+        Myorder &&
+          Myorder.barcodes.forEach((element) => {
+            productArray.push(
+              sortedAray.filter((f) => f.barcode == element.barcode)
+            );
+            return productArray;
+          });
       }
     }
     return productArray.map((product, b_index) => (
       <tr key={b_index}>
-        <td className="text-center">{b_index+1}) {product}</td>
+        <td className="text-center">
+          {b_index + 1}) {product}
+        </td>
       </tr>
     ));
     // return product_Array.map((product, b_index) => (
@@ -159,7 +190,7 @@ console.log(order)
       }
     }
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
     if (this.state.redirect === true) {
       return <Redirect to={`/orders/vieworder/${this.state.orderId}`} />;
@@ -325,12 +356,13 @@ console.log(order)
         </div>
         <OCAlertsProvider />
 
-    
         {/* pdf invoice  */}
 
         <div id="invoiceDiv" style={{ width: "100%", display: "none" }}>
           <h1 style={{ "text-align": "center" }}>
-            {Myorder ? `${Myorder.customer.name}${"#"}${Myorder.customerContactNumber}` : ""}
+            {Myorder
+              ? `${Myorder.customer.name}${"#"}${Myorder.customerContactNumber}`
+              : ""}
           </h1>
           <h1 style={{ "text-align": "center" }}>
             {this.state.orderNumber
@@ -350,7 +382,9 @@ console.log(order)
             <tbody>
               <tr>
                 <td style={{ width: "90%" }}>Total Without Tax</td>
-                <td>{`${Myorder?Number(Myorder.total)-Number(Myorder.tax) : 0}`}</td>
+                <td>{`${
+                  Myorder ? Number(Myorder.total) - Number(Myorder.tax) : 0
+                }`}</td>
               </tr>
               <tr>
                 <td style={{ width: "90%" }}>Discount</td>
@@ -525,7 +559,11 @@ console.log(order)
                             className="col-md-6"
                             style={{ textAlign: "center", color: "black" }}
                           >
-                            <h6>{`${Myorder?Number(Myorder.total)-Number(Myorder.tax):0}`}</h6>
+                            <h6>{`${
+                              Myorder
+                                ? Number(Myorder.total) - Number(Myorder.tax)
+                                : 0
+                            }`}</h6>
                           </div>
                         </div>
                         <div className="row">
@@ -539,7 +577,7 @@ console.log(order)
                             className="col-md-6"
                             style={{ textAlign: "center", color: "black" }}
                           >
-                            <h6>{`${Myorder?Myorder.taxper:0}${"%"}`}</h6>
+                            <h6>{`${Myorder ? Myorder.taxper : 0}${"%"}`}</h6>
                           </div>
                         </div>
                         <div className="row">
@@ -553,7 +591,7 @@ console.log(order)
                             className="col-md-6"
                             style={{ textAlign: "center", color: "black" }}
                           >
-                            <h6>{`${Myorder?Myorder.tax:0}`}</h6>
+                            <h6>{`${Myorder ? Myorder.tax : 0}`}</h6>
                           </div>
                         </div>
                         <div className="row">
@@ -567,7 +605,7 @@ console.log(order)
                             className="col-md-6"
                             style={{ textAlign: "center", color: "black" }}
                           >
-                            <h6>{`${Myorder?Myorder.insuranceAmt:0}`}</h6>
+                            <h6>{`${Myorder ? Myorder.insuranceAmt : 0}`}</h6>
                           </div>
                         </div>
                         <div className="row justify-content-center">
@@ -628,9 +666,7 @@ console.log(order)
                           <div style={{ textAlign: "end", color: "black" }}>
                             <h6 style={{ textAlign: "end", color: "black" }}>
                               {Myorder && Myorder
-                                ? moment(Myorder.rentDate).format(
-                                    "DD-MM-YYYY"
-                                  )
+                                ? moment(Myorder.rentDate).format("DD-MM-YYYY")
                                 : ""}
                             </h6>
                           </div>
@@ -707,7 +743,6 @@ console.log(order)
             </div>
           </div>
         </div>
-       
       </React.Fragment>
     );
   }
@@ -724,5 +759,5 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   getOrderById,
   orderStatusActive,
-  orderUpdatePayAmount 
+  orderUpdatePayAmount,
 })(PerPaidScree);

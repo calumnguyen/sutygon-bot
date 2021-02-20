@@ -5,6 +5,7 @@ export default function ShowPrices({
   total,
   onChangePay,
   pay_amount,
+  customer
 }) {
   return (
     <>
@@ -112,7 +113,7 @@ export default function ShowPrices({
       <div className="col-md-12">
         <div className="row ">
           <div className="mx-auto col-4 text-center">
-            How much would Sam Smith want to pay for this order today?
+            How much would <strong>{ customer?customer.name:''}</strong> want to pay for this order today?
             <div class="input-group">
               <input
                 type="number"
