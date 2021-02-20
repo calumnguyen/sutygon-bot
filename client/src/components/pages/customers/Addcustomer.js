@@ -120,7 +120,7 @@ class AddCustomer extends Component {
       this.setState({
         visible: false,
       });
-      OCAlert.alertError('Một thiếu một số thông tin cần thiết.', {
+      OCAlert.alertError('Còn thiếu một số thông tin cần thiết.', {
         timeOut: 3000,
       });
       return;
@@ -369,7 +369,7 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput4'
                                 >
-                                  Số Điện Thoại *
+                                  Điện Thoại *
                                 </label>
 
                                 <div className='col-md-9'>
@@ -433,7 +433,7 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput1'
                                 >
-                                  Địa Chỉ Nhà
+                                  Địa Chỉ Nhà *
                                 </label>
                                 <div className='col-md-9'>
                                   <textarea
