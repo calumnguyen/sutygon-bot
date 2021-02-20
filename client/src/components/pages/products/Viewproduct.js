@@ -23,10 +23,10 @@ class ViewProduct extends Component {
     filter: "",
     modal_product: null,
     page: 1,
-    prodName: "",
-    prodId: "",
-    barcodeId: "",
-    tags: "",
+    prodName: '',
+    prodId: '',
+    barcodeId: '',
+    tags: '',
   };
 
   async componentDidMount() {

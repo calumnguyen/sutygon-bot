@@ -1,36 +1,35 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
-import Alert from "../../layout/Alert";
-import { addNewUser, updateUser, getUser } from "../../../actions/user";
-import Loader from "../../layout/Loader";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import shortid from "shortid";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
-
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
+import Alert from '../../layout/Alert';
+import { addNewUser, updateUser, getUser } from '../../../actions/user';
+import Loader from '../../layout/Loader';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import shortid from 'shortid';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
 
 class AddUser extends Component {
   state = {
-    id: "",
-    fullname: "",
-    username: "",
-    email: "",
-    contactnumber: "",
-    gender: "",
-    avatar: "",
-    jobTitle: "",
+    id: '',
+    fullname: '',
+    username: '',
+    email: '',
+    contactnumber: '',
+    gender: '',
+    avatar: '',
+    jobTitle: '',
     saving: false,
     isEdit: false,
     imgUpd: false,
-    src: "",
-    systemRole: "",
-    userID: "",
-    usernamesArr: "",
-    emailArr: "",
+    src: '',
+    systemRole: '',
+    userID: '',
+    usernamesArr: '',
+    emailArr: '',
   };
 
   async componentDidMount() {
@@ -70,8 +69,8 @@ class AddUser extends Component {
     }
   }
 
-  _onChange = async(e, id = "") => {
-       this.setState({
+  _onChange = async (e, id = '') => {
+    this.setState({
       [e.target.name]: e.target.files[0],
       imgUpd: true,
       src: URL.createObjectURL(e.target.files[0]),
@@ -82,45 +81,46 @@ class AddUser extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
   validateEmail = (e) => {
-    const {emailArr} = this.state;
+    const { emailArr } = this.state;
     if (e.target.value.length > 0) {
       let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-      var isInclude = emailArr.includes(e.target.value)
-      if ((re.test(e.target.value)) && !isInclude) {
+      var isInclude = emailArr.includes(e.target.value);
+      if (re.test(e.target.value) && !isInclude) {
         this.setState({ email: e.target.value });
-      } 
-
-     else if((re.test(e.target.value)) && isInclude) {
-        OCAlert.alertError("Email Already exists", { timeOut: 3000 });
-        this.setState({ email: "" });
-        return;     
-       } 
-
-       else {
-        OCAlert.alertError("Email is not valid", { timeOut: 3000 });
-        this.setState({ email: "" });
+      } else if (re.test(e.target.value) && isInclude) {
+        OCAlert.alertError('Một nhân viên khác đã sử dụng email này', {
+          timeOut: 3000,
+        });
+        this.setState({ email: '' });
+        return;
+      } else {
+        OCAlert.alertError('Email không hợp lệ. Vui lòng thử lại.', {
+          timeOut: 3000,
+        });
+        this.setState({ email: '' });
         return;
       }
-
     }
   };
-  validateUserName = (e)=>{
-    const {usernamesArr} = this.state;
-    var isUserNameInclude = usernamesArr.includes(e.target.value)
+  validateUserName = (e) => {
+    const { usernamesArr } = this.state;
+    var isUserNameInclude = usernamesArr.includes(e.target.value);
     if (!isUserNameInclude) {
       this.setState({ username: e.target.value });
-    } 
-    else {
-      OCAlert.alertError("Username already exists", { timeOut: 3000 });
-      this.setState({ username: "" });
+    } else {
+      OCAlert.alertError(
+        'Tên đăng nhập này đã được sử dụng. Vui lòng chọn tên đăng nhập khác.',
+        { timeOut: 5000 }
+      );
+      this.setState({ username: '' });
       return;
     }
-  }
+  };
 
   handleChangeNumber = (e) => {
     const re = /^[0-9\b]+$/;
-    if (e.target.value === "" || re.test(e.target.value)) {
+    if (e.target.value === '' || re.test(e.target.value)) {
       this.setState({ [e.target.name]: e.target.value });
     }
   };
@@ -129,23 +129,23 @@ class AddUser extends Component {
     e.preventDefault();
     this.setState({ saving: true });
     const formData = new FormData();
-    if (this.state.avatar === "") {
-      OCAlert.alertError("Select Profile Picture", { timeOut: 3000 });
+    if (this.state.avatar === '') {
+      OCAlert.alertError('Chọn ảnh đại diện', { timeOut: 3000 });
       return;
     } else {
-      formData.append("avatar", this.state.avatar);
+      formData.append('avatar', this.state.avatar);
     }
-    formData.append("username", this.state.username);
-    formData.append("fullname", this.state.fullname);
-    formData.append("contactnumber", this.state.contactnumber);
-    formData.append("email", this.state.email);
-    formData.append("password", this.state.tempPwd);
-    formData.append("systemRole", this.state.systemRole);
-    formData.append("gender", this.state.gender);
-    formData.append("jobTitle", this.state.jobTitle);
-    formData.append("userID", this.state.userID);
+    formData.append('username', this.state.username);
+    formData.append('fullname', this.state.fullname);
+    formData.append('contactnumber', this.state.contactnumber);
+    formData.append('email', this.state.email);
+    formData.append('password', this.state.tempPwd);
+    formData.append('systemRole', this.state.systemRole);
+    formData.append('gender', this.state.gender);
+    formData.append('jobTitle', this.state.jobTitle);
+    formData.append('userID', this.state.userID);
 
-    if (this.state.id === "") {
+    if (this.state.id === '') {
       await this.props.addNewUser(formData);
     } else {
       await this.props.updateUser(formData, this.state.id);
@@ -157,18 +157,18 @@ class AddUser extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/login" />;
+      return <Redirect to='/login' />;
     }
     const { user } = auth;
-    if (user && user.systemRole === "Employee") {
-      return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      return <Redirect to='/Error' />;
     }
     if (this.props.saved === true) {
       return (
         <Redirect
           push
           to={{
-            pathname: "/user/configuresystemuser",
+            pathname: '/user/configuresystemuser',
             state: { state: this.state, user: this.props.user },
           }}
         />
@@ -177,130 +177,131 @@ class AddUser extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <div className="form-body">
-                  <div className="card">
-                    <div className="card-header">
-                      <h4 className="form-section">
-                        <i className="ft-user"></i>
-                        {this.state.id === "" ? "Add New User" : "Update User"}
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <div className='form-body'>
+                  <div className='card'>
+                    <div className='card-header'>
+                      <h4 className='form-section'>
+                        <i className='ft-user'></i>
+                        {this.state.id === ''
+                          ? 'Thêm nhân viên'
+                          : 'Chỉnh sửa thông tin'}
                       </h4>
                     </div>
 
-                    <div className="card-body">
+                    <div className='card-body'>
                       <form
-                        className="form form-horizontal form-bordered"
-                        encType="multipart/form-data"
-                        action="/upload"
-                        method="POST"
+                        className='form form-horizontal form-bordered'
+                        encType='multipart/form-data'
+                        action='/upload'
+                        method='POST'
                         // onSubmit={(e) => this.onSubmit(e)}
                       >
                         <Alert />
                         <OCAlertsProvider />
 
-                        <div className="row">
-                          <div className="form-group col-md-6 mb-2">
+                        <div className='row'>
+                          <div className='form-group col-md-6 mb-2'>
                             <label
-                              className="col-md-3 label-control"
-                              htmlFor="inputGroupFile01"
+                              className='col-md-3 label-control'
+                              htmlFor='inputGroupFile01'
                             >
-                              Profile Image
+                              Ảnh Đại Diện
                             </label>
-                            <div className="custom-file col-md-9">
+                            <div className='custom-file col-md-9'>
                               <input
-                                name="avatar"
-                                type="file"
-                                className="custom-file-input border-primary"
-                                id="inputGroupFile01"
-                                aria-describedby="inputGroupFileAddon01"
-                                accept="image/jpeg,image/gif,image/jpg,image/png,image/x-eps"
+                                name='avatar'
+                                type='file'
+                                className='custom-file-input border-primary'
+                                id='inputGroupFile01'
+                                aria-describedby='inputGroupFileAddon01'
+                                accept='image/jpeg,image/gif,image/jpg,image/png,image/x-eps'
                                 required
                                 onChange={(e) => this._onChange(e)}
                               />
                               <label
-                                className="custom-file-label"
-                                htmlFor="inputGroupFile01"
+                                className='custom-file-label'
+                                htmlFor='inputGroupFile01'
                               >
-                                Select Profile Image
+                                Chọn Ảnh Đại Diện
                               </label>
                             </div>
                           </div>
-                          <div className="form-group col-md-6 mb-2 text-center">
+                          <div className='form-group col-md-6 mb-2 text-center'>
                             {this.state.isEdit === true &&
                             this.state.imgUpd === false ? (
                               <img
-                                className="media-object round-media"
+                                className='media-object round-media'
                                 src={this.state.avatar}
-                                alt="User"
+                                alt='User'
                                 height={100}
                               />
                             ) : (
-                              ""
+                              ''
                             )}
                             {this.state.imgUpd === true ? (
                               <img
-                                className="media-object round-media"
+                                className='media-object round-media'
                                 src={`${this.state.src}`}
-                                alt="User"
+                                alt='User'
                                 height={100}
                               />
                             ) : (
-                              ""
+                              ''
                             )}
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-3 label-control"
-                                htmlFor="userinput1"
+                                className='col-md-3 label-control'
+                                htmlFor='userinput1'
                               >
-                                User Name
+                                Tên Đăng Nhập
                               </label>
-                              <div className="col-md-9">
+                              <div className='col-md-9'>
                                 <input
-                                  type="text"
-                                  id="userinput1"
-                                  className="form-control border-primary"
-                                  placeholder="User Name"
+                                  type='text'
+                                  id='userinput1'
+                                  className='form-control border-primary'
+                                  placeholder='Tên Đăng Nhập'
                                   required
-                                  data-validation-required-message="This field is required"
-                                  name="username"
+                                  data-validation-required-message='This field is required'
+                                  name='username'
                                   onChange={(e) =>
-                                    this.handleChange(e, "username")
+                                    this.handleChange(e, 'username')
                                   }
                                   onBlur={(e) => this.validateUserName(e)}
-
                                   value={this.state.username}
                                 />
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-3 label-control"
-                                htmlFor="userinput1"
+                                className='col-md-3 label-control'
+                                htmlFor='userinput1'
                               >
-                                Full Name
+                                Họ và Tên
                               </label>
-                              <div className="col-md-9">
+                              <div className='col-md-9'>
                                 <input
-                                  type="text"
-                                  id="userinput1"
-                                  className="form-control border-primary"
-                                  placeholder="Full Name"
-                                  name="fullname"
+                                  type='text'
+                                  id='userinput1'
+                                  className='form-control border-primary'
+                                  placeholder='Họ và Tên'
+                                  name='fullname'
                                   required
                                   onChange={(e) =>
-                                    this.handleChange(e, "fullname")
+                                    this.handleChange(e, 'fullname')
                                   }
                                   value={this.state.fullname}
                                 />
@@ -308,25 +309,25 @@ class AddUser extends Component {
                             </div>
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-3 label-control"
-                                htmlFor="userinput1"
+                                className='col-md-3 label-control'
+                                htmlFor='userinput1'
                               >
                                 E-mail
                               </label>
-                              <div className="col-md-9">
+                              <div className='col-md-9'>
                                 <input
-                                  type="text"
-                                  id="userinput2"
-                                  className="form-control border-primary"
-                                  placeholder="E-mail"
-                                  name="email"
+                                  type='text'
+                                  id='userinput2'
+                                  className='form-control border-primary'
+                                  placeholder='E-mail'
+                                  name='email'
                                   required
                                   onChange={(e) =>
-                                    this.handleChange(e, "email")
+                                    this.handleChange(e, 'email')
                                   }
                                   onBlur={(e) => this.validateEmail(e)}
                                   value={this.state.email}
@@ -334,22 +335,22 @@ class AddUser extends Component {
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-3 label-control"
-                                htmlFor="userinput1"
+                                className='col-md-3 label-control'
+                                htmlFor='userinput1'
                               >
-                                Contact Number
+                                Số Điện Thoại
                               </label>
-                              <div className="col-md-9">
+                              <div className='col-md-9'>
                                 <input
-                                  type="text"
-                                  id="userinput2"
-                                  className="form-control border-primary"
+                                  type='text'
+                                  id='userinput2'
+                                  className='form-control border-primary'
                                   required
-                                  placeholder="Phone"
-                                  name="contactnumber"
+                                  placeholder='Số Điện Thoại'
+                                  name='contactnumber'
                                   // onKeyPress={(e)=>this.isNumberKey(e)}
                                   onChange={(e) => this.handleChangeNumber(e)}
                                   minLength={10}
@@ -360,61 +361,61 @@ class AddUser extends Component {
                             </div>
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-3 label-control"
-                                htmlFor="userinput1"
+                                className='col-md-3 label-control'
+                                htmlFor='userinput1'
                               >
-                                Job Title
+                                Chức Vụ
                               </label>
-                              <div className="col-md-9">
+                              <div className='col-md-9'>
                                 <input
-                                  type="text"
-                                  id="userinput1"
-                                  className="form-control border-primary"
-                                  placeholder="Job Title"
-                                  name="jobTitle"
+                                  type='text'
+                                  id='userinput1'
+                                  className='form-control border-primary'
+                                  placeholder='Chức Vụ'
+                                  name='jobTitle'
                                   required
                                   onChange={(e) =>
-                                    this.handleChange(e, "jobTitle")
+                                    this.handleChange(e, 'jobTitle')
                                   }
                                   value={this.state.jobTitle}
                                 />
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-3 label-control"
-                                htmlFor="userinput1"
+                                className='col-md-3 label-control'
+                                htmlFor='userinput1'
                               >
-                                Select Type
+                                Tài Khoản Cho
                               </label>
-                              <div className="col-md-9 ">
+                              <div className='col-md-9 '>
                                 <select
-                                  id="type"
-                                  name="systemRole"
+                                  id='type'
+                                  name='systemRole'
                                   required
-                                  defaultValue="----"
-                                  className="form-control border-primary"
+                                  defaultValue='----'
+                                  className='form-control border-primary'
                                   onChange={(e) =>
-                                    this.handleChange(e, "systemRole")
+                                    this.handleChange(e, 'systemRole')
                                   }
                                 >
-                                  <option name="systemRole" value="">
-                                    {" "}
-                                    --- Select ---{" "}
+                                  <option name='systemRole' value=''>
+                                    {' '}
+                                    --- Chọn Một Cài Đặt ---{' '}
                                   </option>
-                                  <option name="systemRole" value="Admin">
-                                    {" "}
-                                    Admin{" "}
+                                  <option name='systemRole' value='Admin'>
+                                    {' '}
+                                    Quản Lý{' '}
                                   </option>
-                                  <option name="systemRole" value="Employee">
-                                    {" "}
-                                    Employee{" "}
+                                  <option name='systemRole' value='Employee'>
+                                    {' '}
+                                    Nhân Viên{' '}
                                   </option>
                                 </select>
                               </div>
@@ -422,94 +423,94 @@ class AddUser extends Component {
                           </div>
                         </div>
 
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-3 label-control"
-                                htmlFor="userinput1"
+                                className='col-md-3 label-control'
+                                htmlFor='userinput1'
                               >
-                                Gender
+                                Giới Tính
                               </label>
-                              <div className="col-md-9">
-                                <label className="radio-inline">
+                              <div className='col-md-9'>
+                                <label className='radio-inline mr-2'>
                                   <input
-                                    type="radio"
-                                    name="gender"
+                                    type='radio'
+                                    name='gender'
                                     onChange={(e) =>
-                                      this.handleChange(e, "gender")
+                                      this.handleChange(e, 'gender')
                                     }
                                     // checked={this.state.gender === 'male'}
-                                    value="male"
+                                    value='male'
                                     required
-                                  />{" "}
-                                  Male
+                                  />{' '}
+                                  Nam
                                 </label>
-                                <label className="radio-inline">
+                                <label className='radio-inline mr-2'>
                                   <input
-                                    type="radio"
-                                    name="gender"
-                                    value="female"
+                                    type='radio'
+                                    name='gender'
+                                    value='female'
                                     onChange={(e) =>
-                                      this.handleChange(e, "gender")
-
+                                      this.handleChange(e, 'gender')
                                     }
                                     required
 
                                     // checked={this.state.gender === 'female'}
-                                  />{" "}
-                                  Female
+                                  />{' '}
+                                  Nữ
                                 </label>
-                                <label className="radio-inline">
+                                <label className='radio-inline'>
                                   <input
-                                    type="radio"
-                                    name="gender"
-                                    value="other"
+                                    type='radio'
+                                    name='gender'
+                                    value='other'
                                     onChange={(e) =>
-                                      this.handleChange(e, "gender")
+                                      this.handleChange(e, 'gender')
                                     }
                                     required
 
                                     // checked={this.state.gender === 'other'}
-                                  />{" "}
-
-                                  Others
+                                  />{' '}
+                                  Khác / Không muốn trả lời
                                 </label>
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6"></div>
+                          <div className='col-md-6'></div>
                         </div>
-                        <div className="form-actions top">
-                          {this.state.avatar === "" ||
-                          this.state.contactnumber === "" ||
-                          this.state.email === "" ||
-                          this.state.fullname === "" ||
-                          this.state.gender === "" ||
-                          this.state.systemRole === "" ||
-                          this.state.jobTitle === "" ? (
-                            <button className="mb-2 mr-2 btn btn-raised btn-primary disabled">
-                              <i className="ft-chevron-right" /> Next
+                        <div className='form-actions top'>
+                          {this.state.avatar === '' ||
+                          this.state.contactnumber === '' ||
+                          this.state.email === '' ||
+                          this.state.fullname === '' ||
+                          this.state.gender === '' ||
+                          this.state.systemRole === '' ||
+                          this.state.jobTitle === '' ? (
+                            <button className='mb-2 mr-2 btn btn-raised btn-primary disabled'>
+                              <i className='ft-chevron-right' /> Bước Tiếp Theo
                             </button>
                           ) : (
                             <>
-                              {this.state.systemRole === "Employee" ? (
+                              {this.state.systemRole === 'Employee' ? (
                                 <Link
                                   to={{
-                                    pathname: "/user/configuresystem",
+                                    pathname: '/user/configuresystem',
                                     state: this.state,
                                   }}
-                                  className="mb-2 mr-2 btn btn-raised btn-primary"
+                                  className='mb-2 mr-2 btn btn-raised btn-primary'
                                 >
-                                  <i className="ft-chevron-right" /> Next
+                                  <i className='ft-chevron-right' /> Bước Tiếp
+                                  Theo
                                 </Link>
                               ) : (
                                 <button
-                                  type="submit"
+                                  type='submit'
                                   onClick={(e) => this.onSubmit(e)}
-                                  className="mb-2 mr-2 btn btn-raised btn-primary"
+                                  className='mb-2 mr-2 btn btn-raised btn-primary'
                                 >
-                                  <i className="ft-chevron-right" /> Next
+                                  <i className='ft-chevron-right' /> Bước Tiếp
+                                  Theo
                                 </button>
                               )}
                             </>
@@ -521,19 +522,19 @@ class AddUser extends Component {
                 </div>
               </div>
             </div>
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>

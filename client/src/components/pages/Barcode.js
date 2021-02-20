@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import Sidebar from "../layout/Sidebar";
-import Header from "../layout/Header";
+import React, { Component } from 'react';
+import Sidebar from '../layout/Sidebar';
+import Header from '../layout/Header';
 import {
   getAllProducts,
   updateProduct,
@@ -9,31 +9,31 @@ import {
   deleteItem,
   deleteProduct,
   getFilteredProducts
-} from "../../actions/product";
-import { searchByBarcode } from "../../actions/rentproduct";
-import Loader from "../layout/Loader";
-import { Redirect, Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
-import { confirmAlert } from "react-confirm-alert";
-import BootstrapTable from "react-bootstrap-table-next";
-import "../../custom.css";
-import MPagination from "../../components/pagination/MPagination";
+} from '../../actions/product';
+import { searchByBarcode } from '../../actions/rentproduct';
+import Loader from '../layout/Loader';
+import { Redirect, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
+import { confirmAlert } from 'react-confirm-alert';
+import BootstrapTable from 'react-bootstrap-table-next';
+import '../../custom.css';
+import MPagination from '../../components/pagination/MPagination';
 
-var JsBarcode = require("jsbarcode");
-var { createCanvas } = require("canvas");
+var JsBarcode = require('jsbarcode');
+var { createCanvas } = require('canvas');
 
 class Barcode extends Component {
   state = {
-    dataType: "without_barcode",
+    dataType: 'without_barcode',
     saving: false,
     page: 1,
-    prodName: "",
-    prodId: "",
-    barcodeId: "",
-    tags: "",
+    prodName: '',
+    prodId: '',
+    barcodeId: '',
+    tags: '',
   };
 
   async componentDidMount() {
@@ -119,7 +119,7 @@ class Barcode extends Component {
               let size_id = size.id;
 
               let length;
-              if (this.state.dataType === "without_barcode") {
+              if (this.state.dataType === 'without_barcode') {
                 // show sizes without barcodes
                 // if we have some barcodes then skip that
                 // number of rows for the current size
@@ -146,7 +146,7 @@ class Barcode extends Component {
                   size_id: size_id,
                   short_product_id: product.productId,
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
-                  title: product_name + " | " + color_name + " | " + size_name,
+                  title: product_name + ' | ' + color_name + ' | ' + size_name,
                   barcodes: size.barcodes ? size.barcodes : [],
                 };
                 rows.push(row);
@@ -159,11 +159,11 @@ class Barcode extends Component {
     return rows;
   };
 
-  handleChange = (type = "") => {
-    this.setState({ dataType: type, page: 1 });
-  };
-  _handleChange = (e, id = "") => {
+  _handleChange = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
+  }
+  handleChange = (type = '') => {
+    this.setState({ dataType: type, page: 1 });
   };
   getTable = () => {
     let products = this.props.products;
@@ -176,7 +176,7 @@ class Barcode extends Component {
           prodID: product.short_product_id,
           product: product.title,
           barcodeID:
-            this.state.dataType === "with_barcode" ? (
+            this.state.dataType === 'with_barcode' ? (
               <Link
                 to={{
                   pathname: `/individualbarcode/${
@@ -184,20 +184,20 @@ class Barcode extends Component {
                   }`,
                   state: { p_id: product.product_id },
                 }}
-                data-toggle="tooltip"
-                title="Click me!"
-                className="individual_item"
+                data-toggle='tooltip'
+                title='Bấm để xem thông tin sản phẩm'
+                className='individual_item'
               >
                 {product.barcodes[product.barcodeIndex].barcode}
               </Link>
             ) : (
-              ""
+              ''
             ),
           changeBarcode:
-            this.state.dataType === "without_barcode" ? (
+            this.state.dataType === 'without_barcode' ? (
               <button
-                type="button"
-                className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                type='button'
+                className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
                 onClick={(e) =>
                   this.genPrintRandBarcode(
                     e,
@@ -207,12 +207,12 @@ class Barcode extends Component {
                   )
                 }
               >
-                Generate &amp; PRINT random barcode
+                Tạo một mã đồ ngẫu nhiên
               </button>
             ) : (
               <button
-                type="button"
-                className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                type='button'
+                className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
                 onClick={(e) =>
                   this.changeBarcode(
                     e,
@@ -223,11 +223,11 @@ class Barcode extends Component {
                   )
                 }
               >
-                Change Barcode
+                Đổi Mã
               </button>
             ),
           scanBarcode:
-            this.state.dataType === "without_barcode" ? (
+            this.state.dataType === 'without_barcode' ? (
               <form
                 onSubmit={(e) =>
                   this.OnSubmitScanBarcode(
@@ -239,31 +239,31 @@ class Barcode extends Component {
                 }
               >
                 <input
-                  type="text"
-                  className="form-control mm-input"
-                  placeholder={"Scan existing Barcode"}
+                  type='text'
+                  className='form-control mm-input'
+                  placeholder={'Nhập mã 8 chữ số'}
                   maxLength={8}
                   minLength={8}
                 />
               </form>
             ) : (
               <button
-                type="button"
-                className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                type='button'
+                className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
                 onClick={(e) =>
                   this.printBarcode(
                     product.barcodes[product.barcodeIndex].barcode
                   )
                 }
               >
-                Print Barcode
+                In Mã
               </button>
             ),
           deleteItem:
-            this.state.dataType === "without_barcode" ? (
+            this.state.dataType === 'without_barcode' ? (
               <button
-                type="button"
-                className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                type='button'
+                className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
                 onClick={(e) =>
                   this.deleteConfirm(
                     e,
@@ -273,12 +273,12 @@ class Barcode extends Component {
                   )
                 }
               >
-                Delete Item
+                Xoá Đồ
               </button>
             ) : (
               <button
-                type="button"
-                className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                type='button'
+                className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
                 onClick={(e) =>
                   this.deleteConfirm(
                     e,
@@ -290,7 +290,7 @@ class Barcode extends Component {
                   )
                 }
               >
-                Delete Item
+                Xoá Đồ
               </button>
             ),
         });
@@ -299,38 +299,36 @@ class Barcode extends Component {
     if (sortedProducts) {
       const columns = [
         {
-          dataField: "prodID",
-          text: "Product ID",
+          dataField: 'prodID',
+          text: 'ID',
           sort: true,
         },
         {
-          dataField: "product",
-          text: "Product",
+          dataField: 'product',
+          text: 'Tên Sản Phẩm',
           sort: true,
         },
-        this.state.dataType === "with_barcode"
+        this.state.dataType === 'with_barcode'
           ? {
-              dataField: "barcodeID",
-              text: "Barcode",
+              dataField: 'barcodeID',
+              text: 'Mã Đồ',
               sort: true,
             }
-          : "",
+          : '',
         {
-          dataField: "changeBarcode",
+          dataField: 'changeBarcode',
           text:
-            this.state.dataType === "with_barcode"
-              ? "Change Barcode"
-              : "Print Barcode",
+            this.state.dataType === 'with_barcode' ? 'Change Barcode' : 'In Mã',
           sort: true,
         },
         {
-          dataField: "scanBarcode",
-          text: "Scan Barcode",
+          dataField: 'scanBarcode',
+          text: 'Nhập Mã',
           sort: true,
         },
         {
-          dataField: "deleteItem",
-          text: "Delete",
+          dataField: 'deleteItem',
+          text: 'Xoá Đồ',
           sort: true,
         },
       ];
@@ -339,10 +337,10 @@ class Barcode extends Component {
         <>
           {m_prod && m_prod.length === 0 ? (
             <BootstrapTable
-              keyField="id"
+              keyField='id'
               data={[]}
               columns={columns}
-              noDataIndication="No product found"
+              noDataIndication='Không có sản phẩm nào'
             />
           ) : (
             <>
@@ -354,11 +352,11 @@ class Barcode extends Component {
               <br />
               <BootstrapTable
                 // bootstrap4
-                keyField="id"
+                keyField='id'
                 data={m_prod}
                 columns={columns}
-                defaultSortDirection="asc"
-                headerClasses="hoveredheader"
+                defaultSortDirection='asc'
+                headerClasses='hoveredheader'
               />
             </>
           )}
@@ -403,17 +401,20 @@ class Barcode extends Component {
     const isInclude = barcodesData.includes(barcode);
     if (isInclude === true) {
       // error message
-      OCAlert.alertError("This barcode already exist! Try again", {
-        timeOut: 3000,
-      });
+      OCAlert.alertError(
+        'Mã đồ này đã ở trong hệ thống. Mỗi mã đồ chỉ có thể được sử dụng một lần.',
+        {
+          timeOut: 5000,
+        }
+      );
       return;
     }
     // empty barcode input
     else if (isInclude === false) {
-      e.target[0].value = "";
+      e.target[0].value = '';
       this.saveBarCode(barcode, product_id, color_id, size_id);
       // success message
-      OCAlert.alertSuccess("Barcode Scanned and Added Successfully!");
+      OCAlert.alertSuccess('Đã cập nhật mã đồ cho sản phẩm này');
     }
   };
 
@@ -423,7 +424,7 @@ class Barcode extends Component {
     let barcode = Math.floor(Math.random() * 89999999 + 10000000);
     this.saveBarCode(barcode, product_id, color_id, size_id);
     this.printBarcode(barcode);
-    OCAlert.alertSuccess("Barcode Generated and Saved Successfully!");
+    OCAlert.alertSuccess('Đã thiết lập một mã đồ 8 chữ số cho sản phẩm này');
   };
 
   deleteConfirm = async (
@@ -438,17 +439,17 @@ class Barcode extends Component {
     const { barcoderec } = this.props;
     if (barcoderec && barcoderec.length == 0) {
       confirmAlert({
-        title: "Delete Item",
-        message: "Are you sure you want to delete this Item?",
+        title: 'Xóa Đồ',
+        message: 'Bạn có chắc chắn muốn xóa sản phẩm naỳ không?',
         buttons: [
           {
-            label: "Yes",
+            label: 'Có, xoá ngay',
             onClick: () => {
               this.deleteItem(e, product_id, color_id, size_id, barcodeIndex);
             },
           },
           {
-            label: "No",
+            label: 'Không, hủy',
             onClick: () => {},
           },
         ],
@@ -456,9 +457,9 @@ class Barcode extends Component {
     } else {
       // error message
       OCAlert.alertError(
-        `Barcode ID ${barcode && barcode} is being used in Order# ${
+        `Mã đồ ${barcode && barcode} đang được sử dụng trong đơn hàng ${
           barcoderec && barcoderec[0].orderNumber
-        }, You cannot delete it.`,
+        }, Bạn không thể xoá nó vào lúc này.`,
         {
           timeOut: 3000,
         }
@@ -490,7 +491,7 @@ class Barcode extends Component {
                   size.qty = parseInt(size.qty) - 1;
 
                   // if barcode is availble remove it too
-                  if (typeof barcodeIndex !== "undefined") {
+                  if (typeof barcodeIndex !== 'undefined') {
                     size.barcodes.splice(barcodeIndex, 1);
                   }
                 }
@@ -504,7 +505,7 @@ class Barcode extends Component {
     }
     this._deleteProduct(product);
 
-    OCAlert.alertSuccess("Item Deleted Successfully!");
+    OCAlert.alertSuccess('Đã xóa sản phẩm thành công');
   };
 
   _deleteProduct = async (product) => {
@@ -524,7 +525,7 @@ class Barcode extends Component {
 
       if (total_qty === 0) {
         await this.props.deleteProduct(product._id);
-        OCAlert.alertSuccess("Product Deleted Successfully!");
+        OCAlert.alertSuccess('Đã xoá mặt hàng khỏi kho hàng');
       }
       return;
     }
@@ -533,27 +534,28 @@ class Barcode extends Component {
   // change existing barcode in size object and correct index
   changeBarcode = async (e, product_id, color_id, size_id, barcodeIndex) => {
     confirmAlert({
-      title: "Change Barcode",
-      message: "Are you sure you want to Remove barcode for this item?",
+      title: 'Đổi Mã',
+      message:
+        'Đổi mã sẽ xóa mã đồ hiện tại và chuyển sản phẩm này sang nhóm sản phẩm chưa có mã đồ. Ok?',
       buttons: [
         {
-          label: "Yes",
+          label: 'Ok, đổi mã',
           onClick: () => {
             this.saveBarCode(
               null,
               product_id,
               color_id,
               size_id,
-              "update",
+              'update',
               barcodeIndex
             );
             OCAlert.alertSuccess(
-              "Barcode is Removed and moved to Without barcode tab"
+              'Mã đồ đã được xóa. Sản phẩn bây giờ đang nằm với các sản phẩm chưa có mã.'
             );
           },
         },
         {
-          label: "No",
+          label: 'Không, hủy',
           onClick: () => {},
         },
       ],
@@ -567,9 +569,9 @@ class Barcode extends Component {
     JsBarcode(canvas, barcode);
     let html = '<img src="' + canvas.toDataURL() + '" style="width: 100%" />';
     let newWindow = window.open(
-      "",
-      "_blank",
-      "location=yes,height=570,width=720,scrollbars=yes,status=yes"
+      '',
+      '_blank',
+      'location=yes,height=570,width=720,scrollbars=yes,status=yes'
     );
     newWindow.document.write(html);
     newWindow.window.print();
@@ -582,8 +584,8 @@ class Barcode extends Component {
     product_id,
     color_id,
     size_id,
-    mode = "add",
-    barcodeIndex = ""
+    mode = 'add',
+    barcodeIndex = ''
   ) => {
     // get product by id
     await this.props.getProductById(product_id);
@@ -600,14 +602,14 @@ class Barcode extends Component {
               if (size.id === size_id) {
                 // check if current size obj contain barcodes or not
                 if (size.barcodes) {
-                  if (mode === "add") {
+                  if (mode === 'add') {
                     size.barcodes.push({
                       barcode, // Add barcode
                       authorization_logs: [
                         {
                           employee_id: auth.user._id,
-                          employee_name: auth.user.username,
-                          message: `Item added to inventory`,
+                          employee_name: auth.user.fullname,
+                          message: `Sản phẩm được bỏ vào kho.`,
                         },
                       ],
                     }); // Add barcode
@@ -636,12 +638,12 @@ class Barcode extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/login" />;
+      return <Redirect to='/login' />;
     }
     const { user } = auth;
-    if (user && user.systemRole === "Employee") {
-      if (user && !user.sections.includes("Barcode")) {
-        return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      if (user && !user.sections.includes('Barcode')) {
+        return <Redirect to='/Error' />;
       }
     }
     // if (this.props.saved) {
@@ -651,54 +653,54 @@ class Barcode extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="form-action-layouts">
-                  <div className="form-body">
-                    <div className="card">
-                      <div className="card-header">
-                        <h4 className="form-section">Barcode</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='form-action-layouts'>
+                  <div className='form-body'>
+                    <div className='card'>
+                      <div className='card-header'>
+                        <h4 className='form-section'>Barcode</h4>
                       </div>
 
-                      <div className="card-body">
-                        <div className="custom-radio custom-control-inline ml-3">
+                      <div className='card-body'>
+                        <div className='custom-radio custom-control-inline ml-3'>
                           <input
-                            type="radio"
-                            id="customRadioInline1"
-                            name="dataType"
-                            className="custom-control-input"
+                            type='radio'
+                            id='customRadioInline1'
+                            name='dataType'
+                            className='custom-control-input'
                             onChange={(e) =>
-                              this.handleChange("without_barcode")
+                              this.handleChange('without_barcode')
                             }
-                            checked={this.state.dataType === "without_barcode"}
+                            checked={this.state.dataType === 'without_barcode'}
                           />
                           <label
-                            className="custom-control-label"
-                            htmlFor="customRadioInline1"
+                            className='custom-control-label'
+                            htmlFor='customRadioInline1'
                           >
-                            Items Without Barcode
+                            Sản Phầm Chưa Có Mã
                           </label>
                         </div>
 
-                        <div className="custom-radio custom-control-inline ml-3">
+                        <div className='custom-radio custom-control-inline ml-3'>
                           <input
-                            type="radio"
-                            id="customRadioInline2"
-                            name="dataType"
-                            className="custom-control-input"
-                            onChange={(e) => this.handleChange("with_barcode")}
-                            checked={this.state.dataType === "with_barcode"}
+                            type='radio'
+                            id='customRadioInline2'
+                            name='dataType'
+                            className='custom-control-input'
+                            onChange={(e) => this.handleChange('with_barcode')}
+                            checked={this.state.dataType === 'with_barcode'}
                           />
                           <label
-                            className="custom-control-label"
-                            htmlFor="customRadioInline2"
+                            className='custom-control-label'
+                            htmlFor='customRadioInline2'
                           >
-                            Items With Barcode
+                            Sản Phẩm Với Mã
                           </label>
                         </div>
 
@@ -791,20 +793,20 @@ class Barcode extends Component {
                 </section>
               </div>
             </div>
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    rel="noopener noreferrer"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    rel='noopener noreferrer'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>

@@ -62,11 +62,12 @@ class Header extends Component {
           >
             <DropdownToggle caret color='white'>
               <img
-                style={{ height: '40px' }}
+                className='mr-2'
+                style={{ height: '40px', borderRadius: '50px' }}
                 src={user && user.avatar && user && user.avatar}
                 alt={'User'}
               />
-              {user && user.username && user && user.username}
+              {user && user.fullname && user && user.fullname}
             </DropdownToggle>
             <DropdownMenu right>
               <DropdownItem>
