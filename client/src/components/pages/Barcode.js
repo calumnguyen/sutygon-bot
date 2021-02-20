@@ -742,7 +742,7 @@ class Barcode extends Component {
                               />
                             </div>
                           </div>
-                          <div className="col-sm-2">
+                          <div className="col-sm-4">
                             <div className="form-group">
                               <button
                                 className="btn btn-primary"
@@ -754,7 +754,7 @@ class Barcode extends Component {
                                 className="btn btn-primary ml-2"
                                 onClick={this.clearFilter}
                               >
-                                <i className="fa fa-reset"></i> Clear
+                                <i className="fa fa-refresh"></i> Clear
                               </button>
                             </div>
                           </div>
