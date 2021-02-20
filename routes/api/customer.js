@@ -2,13 +2,63 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
 const Customer = require("../../models/Customer");
-const RentedProduct = require("../../models/RentedProducts");
 const { check, validationResult } = require("express-validator");
 const RentedProducts = require("../../models/RentedProducts");
 const mongoose = require("mongoose");
-const Invoice = require("../../models/Invoices");
 const Product = require("../../models/Product");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 var moment = require("moment");
+
+// @route   POST api/customer
+// @desc    Authenticate Customer and get Token
+// @access  Public
+router.post(
+  '/login',
+  async (req, res) => {
+    const { fullname, password } = req.body
+
+    try {
+      // check for existing user
+      let customer = await Customer.findOne({ fullname })
+
+      if (!customer) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'Customer does not exists' }] })
+      }
+      const salt = await bcrypt.genSalt(10)
+      const passwordEntered = await bcrypt.hash(password, salt)
+
+      const isMatch = await bcrypt.compare(password, customer.password)
+
+      if (!isMatch) {
+        return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
+      }
+      const payload = {
+        customer: {
+          id: customer._id,
+          name: customer.fullname,
+        },
+      }
+
+      jwt.sign(
+        payload,
+        config.get("jwtSecret_Customer"),
+        { expiresIn: '1d' },
+
+        (err, token) => {
+          if (err) throw err
+          res.json({ token })
+        }
+      )
+    } catch (err) {
+      console.log(err)
+      res.status(500).json({ errors: [{ msg: 'Server error' }] })
+    }
+  }
+)
+
 
 // @route   POST api/customers/add
 // @desc    Add New Customer
@@ -27,9 +77,19 @@ router.post(
     }
 
     try {
+      let body =req.body;
       // Check if email already exist.
-   
-      let customer = new Customer(req.body);
+      var password = ""
+      if(body.password){
+      const salt = await bcrypt.genSalt(10);
+      password = await bcrypt.hash(body.password, salt);
+      }
+      console.log("password",password)
+      customerBody = {
+        ...body,
+        password: password 
+      };
+      let customer = new Customer(customerBody);
       await customer.save();
       res.status(200).json({ msg: "Customer Added Successfully" });
     } catch (err) {
@@ -41,7 +101,7 @@ router.post(
 
 // @route    POST api/customers/:id
 //@desc      update customers.
-router.post("/:id", auth, async (req, res) => {
+router.post("/:id", async (req, res) => {
   try {
     let { name, birthday, online_account } = req.body;
     let { username } = { ...online_account };
@@ -113,15 +173,14 @@ router.get("/:id", auth, async (req, res) => {
 // @route  GET api/customer/:name
 // @desc   Get Customer (Search for customer)
 // @access Private
-router.get("/search/:contactnumber", auth, async (req, res) => {
+router.get("/search/:contactnumber",  async (req, res) => {
   try {
     const customer = await Customer.findOne({
-      contactnumber: { $eq: req.params.contactnumber },
+      contactnumber: { $eq: req.params.contactnumber }
     });
-    if (!customer) {
+    if (customer == null) {
       return status(404).json({ msg: "No Customer found" });
     }
-
     return res.status(200).json(customer);
   } catch (err) {
     console.error(err.message);
@@ -129,7 +188,7 @@ router.get("/search/:contactnumber", auth, async (req, res) => {
     if (err.kind === "ObjectId") {
       return res.status(404).json({ msg: "No Customer found" });
     }
-    res
+ return res
       .status(500)
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
