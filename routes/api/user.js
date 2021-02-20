@@ -126,31 +126,6 @@ router.post(
   }
 );
 
-// if (req.file == undefined) {
-//   userBody = {
-//     username: body.username,
-//     fullname: body.fullname,
-//     email: body.email,
-//     password: password,
-//     gender: body.gender,
-//     contactnumber: body.contactnumber,
-//     type: body.type,
-//     avatar: avatar,
-//     sections: body.sections,
-//   }
-// } else {
-//   userBody = {
-//     username: body.username,
-//     fullname: body.fullname,
-//     email: body.email,
-//     password: password,
-//     gender: body.gender,
-//     contactnumber: body.contactnumber,
-//     type: body.type,
-//     sections: body.sections,
-//     avatar: `/uploads/user/${req.file.originalname}`,
-//   }
-// }
 
 // @route   GET api/users
 // @desc    Get all users
