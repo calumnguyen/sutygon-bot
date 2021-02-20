@@ -7,6 +7,7 @@ import {
   getProductById,
   findProducts,
   changeStatus,
+  getFilteredProducts,
 } from "../../../actions/product";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { Link } from "react-router-dom";
@@ -22,9 +23,54 @@ class ViewProduct extends Component {
     filter: "",
     modal_product: null,
     page: 1,
+    prodName: "",
+    prodId: "",
+    barcodeId: "",
+    tags: "",
   };
 
   async componentDidMount() {
+    // await this.props.getAllProducts(this.state.page);
+    // const { products } = this.props;
+    // if (products) {
+    //   this.calculateTotals(products);
+    // }
+    this.getFilterProducts();
+  }
+
+  getFilterProducts = async () => {
+    if(!this.state.barcodeId && !this.state.prodName && !this.state.prodId && !this.state.tags){
+      await this.props.getAllProducts(this.state.page);
+    } else{
+      if(this.state.tags.length>0){
+        let tags = this.state.tags.split(',');
+        tags = tags.map((tag)=>tag.trim());
+        tags = tags.join(', ');
+        this.setState({tags});
+      }
+      let queryObj = {
+        page: this.state.page,
+        prodId: (!this.state.prodId)?this.state.prodId:Number(this.state.prodId),
+        barcodeId: (!this.state.barcodeId)?this.state.barcodeId:Number(this.state.barcodeId),
+        tags: this.state.tags,
+        prodName: this.state.prodName,
+      };
+      await this.props.getFilteredProducts(queryObj);
+    }
+    const { products } = this.props;
+    if (products) {
+      this.calculateTotals(products);
+    }
+  };
+  clearFilter = async () => {
+    let queryObj = {
+      page: 1,
+      prodId: '',
+      barcodeId: '',
+      tags: '',
+      prodName: '',
+    };
+    this.setState({...queryObj});
     await this.props.getAllProducts(this.state.page);
     const { products } = this.props;
     if (products) {
@@ -338,11 +384,8 @@ class ViewProduct extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevState.page !== this.state.page) {
-      await this.props.getAllProducts(this.state.page);
-      const { products } = this.props;
-      if (products) {
-        this.calculateTotals(products);
-      }
+      //await this.props.getAllProducts(this.state.page);
+      this.getFilterProducts();
     }
   }
   render() {
@@ -393,6 +436,72 @@ class ViewProduct extends Component {
                                 >
                                   <i className="fa fa-plus"></i> New Product
                                 </Link>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="col-sm-2">
+                                <div className="form-group">
+                                  <input
+                                    name="prodName"
+                                    type="text"
+                                    placeholder="product name"
+                                    className="form-control"
+                                    value={this.state.prodName}
+                                    onChange={this.handleChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-sm-2">
+                                <div className="form-group">
+                                  <input
+                                    name="prodId"
+                                    type="number"
+                                    placeholder="product id"
+                                    className="form-control"
+                                    value={this.state.prodId}
+                                    onChange={this.handleChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-sm-2">
+                                <div className="form-group">
+                                  <input
+                                    name="barcodeId"
+                                    type="number"
+                                    placeholder="barcode id"
+                                    className="form-control"
+                                    value={this.state.barcodeId}
+                                    onChange={this.handleChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-sm-2">
+                                <div className="form-group">
+                                  <input
+                                    name="tags"
+                                    type="text"
+                                    placeholder="tags"
+                                    className="form-control"
+                                    value={this.state.tags}
+                                    onChange={this.handleChange}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-sm-2">
+                                <div className="form-group">
+                                  <button
+                                    className="btn btn-primary"
+                                    onClick={this.getFilterProducts}
+                                  >
+                                    <i className="fa fa-search"></i> Apply
+                                  </button>
+                                  <button
+                                    className="btn btn-primary ml-2"
+                                    onClick={this.clearFilter}
+                                  >
+                                    <i className="fa fa-reset"></i> Clear
+                                  </button>
+                                </div>
                               </div>
                             </div>
                             <Alert />
@@ -478,4 +587,5 @@ export default connect(mapStateToProps, {
   deleteProduct,
   getProductById,
   findProducts,
+  getFilteredProducts,
 })(ViewProduct);

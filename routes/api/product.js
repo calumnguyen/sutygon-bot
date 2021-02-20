@@ -660,4 +660,119 @@ router.get(
   }
 );
 
+// @route   POST api/products/filter_products?prodName=sth?prodId=XX?barcodeId=XXX?tags=XX
+// @desc    Search products by name, product id,barcode id, tags
+// @access  Private
+router.post(
+  "/filter/filter_products",
+  auth,
+  async (req, res) => {
+    try {
+      const {prodName, prodId, barcodeId, tags} = req.body;
+      let page = req.body.currentPage ? parseInt(req.body.currentPage) : 1;
+      let skip = (page - 1) * pagination_limit;
+
+      let queryConditions = [];
+
+      //condition for barcode Id
+      if(barcodeId){
+        queryConditions.push({
+          color: {
+            $elemMatch: {
+              sizes: {
+                $elemMatch: {
+                  barcodes: {
+                    $elemMatch: {
+                      barcode: barcodeId
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      //condition for product ID
+      if(prodId){
+        queryConditions.push({
+          "productId": prodId
+        });
+      }
+
+      //condition for product name
+      if(prodName && prodName.length>0){
+        queryConditions.push({
+          "name": {
+            $regex: prodName,
+            $options: "i"
+          }
+        });
+      }
+
+      //condition for tags
+      if(tags && tags.length>0){
+        queryConditions.push({
+          "tags": {
+            $regex: tags,
+            $options: "i"
+          }
+        });
+      }
+      //if no query condition, fetch all products
+      if(queryConditions.length===0){
+        queryConditions.push({});
+      }
+
+      /* let productConditions = [
+        {
+          color: {
+            $elemMatch: {
+              sizes: {
+                $elemMatch: {
+                  barcodes: {
+                    $elemMatch: {
+                      barcode: barcodeId
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": {
+            $regex: prodName,
+            $options: "i"
+          }
+        },
+        {
+          "productId": prodId
+        },
+        {
+          "tags": {
+            $regex: tags,
+            $options: "i"
+          }
+        }
+      ]; */
+      
+      const products = await Product.find({
+        $or: queryConditions,
+      })
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(pagination_limit);
+      const total = await Product.find({
+        $or: queryConditions,
+      })
+      .countDocuments();
+      res.status(200).json({ products: products, total: total });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Server Error!");
+    }
+  }
+);
+
 module.exports = router;
