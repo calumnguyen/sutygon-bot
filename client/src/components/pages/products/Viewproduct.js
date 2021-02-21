@@ -1,25 +1,25 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
 import {
   getAllProducts,
   deleteProduct,
   getProductById,
   findProducts,
   changeStatus,
-} from "../../../actions/product";
-import "react-confirm-alert/src/react-confirm-alert.css";
-import { Link } from "react-router-dom";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import Alert from "../../layout/Alert";
-import Loader from "../../layout/Loader";
-import MPagination from "../../../components/pagination/MPagination";
+} from '../../../actions/product';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Alert from '../../layout/Alert';
+import Loader from '../../layout/Loader';
+import MPagination from '../../../components/pagination/MPagination';
 
 class ViewProduct extends Component {
   state = {
-    filter: "",
+    filter: '',
     modal_product: null,
     page: 1,
   };
@@ -32,11 +32,11 @@ class ViewProduct extends Component {
     }
   }
   encodeURI = (src) => {
-    var uri = src.split(" ").join("_");
+    var uri = src.split(' ').join('_');
     return uri;
   };
 
-  handleChange = (e, id = "") => {
+  handleChange = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -80,8 +80,8 @@ class ViewProduct extends Component {
                   color_id: color_id,
                   size_id: size_id,
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
-                  title: product_name + " | " + color_name + " | " + size_name,
-                  barcode: size.barcodes ? size.barcodes[i].barcode : "",
+                  title: product_name + ' | ' + color_name + ' | ' + size_name,
+                  barcode: size.barcodes ? size.barcodes[i].barcode : '',
                   price: price,
                 };
                 rows.push(row);
@@ -110,32 +110,32 @@ class ViewProduct extends Component {
     if (product) {
       return (
         <div>
-          <p>Colors, Sizes & Barcodes</p>
-          <div className="tree ">
+          <p>Màu Sắc, Kích Cỡ, và Mã Sản Phẩm</p>
+          <div className='tree '>
             <ul>
               {product.color &&
                 product.color.map((color, color_i) => (
                   <li key={color_i}>
                     <span>
                       <div
-                        className="s1"
-                        data-toggle="collapse"
-                        aria-expanded="true"
-                        aria-controls="Web"
+                        className='s1'
+                        data-toggle='collapse'
+                        aria-expanded='true'
+                        aria-controls='Web'
                       >
-                        <i className="expanded">
-                          <i className="fa fa-arrow-right"></i>
-                        </i>{" "}
+                        <i className='expanded'>
+                          <i className='fa fa-arrow-right'></i>
+                        </i>{' '}
                         {color.colorname} : {color.total}
                       </div>
                     </span>
-                    <div id="Web" className="collapse show">
+                    <div id='Web' className='collapse show'>
                       <ul>
                         {color.sizes &&
                           color.sizes.map((size, size_i) => (
                             <li key={size_i}>
                               <span>
-                                <i className="fa fa-arrow-right"></i>
+                                <i className='fa fa-arrow-right'></i>
                                 {size.size} : {size.qty}
                               </span>
                               <ul>
@@ -143,8 +143,8 @@ class ViewProduct extends Component {
                                   size.barcodes.map((barcode, barcode_i) => (
                                     <li key={barcode_i}>
                                       <span>
-                                        <i className="fa fa-arrow-right"></i>
-                                        BARCODE ID # {barcode.barcode}
+                                        <i className='fa fa-arrow-right'></i>
+                                        MÃ SẢN PHẨM # {barcode.barcode}
                                       </span>
                                     </li>
                                   ))}
@@ -185,8 +185,8 @@ class ViewProduct extends Component {
         product.total = product_total;
       }
       // break tags by comma
-      if (product.tags && typeof product.tags === "string") {
-        let tags_arr = product.tags.split(",");
+      if (product.tags && typeof product.tags === 'string') {
+        let tags_arr = product.tags.split(',');
         product.tags = tags_arr;
       }
       rows.push(product);
@@ -223,83 +223,85 @@ class ViewProduct extends Component {
         if (formated_products.length === 0) {
           return (
             <tr>
-              <td colSpan={10} className="text-center">
-                No product Found
+              <td colSpan={10} className='text-center'>
+                Chưa có mẫu hàng nào
               </td>
             </tr>
           );
         }
         return formated_products.map((product, i) => (
-          <div className="col-xl-4 col-lg-6 col-md-12" key={i}>
-            <div className="card product_card">
-              <div className="card-content">
+          <div className='col-xl-4 col-lg-6 col-md-12' key={i}>
+            <div className='card product_card'>
+              <div className='card-content'>
                 <div
-                  className="imeg_container"
+                  className='imeg_container'
                   style={{ backgroundImage: `url(${product.image})` }}
                 >
                   <span
                     className={
-                      "badge badge-pill badge-" +
-                      (product.disabled === "true" ? "secondary" : "success") +
-                      " bdg"
+                      'badge badge-pill badge-' +
+                      (product.disabled === 'true' ? 'secondary' : 'success') +
+                      ' bdg center'
                     }
                   >
-                    {product.disabled === "false" ? "active" : "disabled"}
+                    {product.disabled === 'false' ? 'Active' : 'Inactive'}
                   </span>
                 </div>
-                <div className="textbbody">
-                  <h4 className="card-title">{product.name}</h4>
-                  <h6 className="card-subtitle text-muted">
-                    Product id: {product.productId}
+                <div className='textbbody'>
+                  <h4 className='card-title'>{product.name}</h4>
+                  <h6 className='card-subtitle text-muted my-2'>
+                    Mẫu Hàng (6 chữ số): {product.productId}
                   </h6>
-                  <h6 className="card-subtitle text-muted">
-                    Total Items: {product.total}
+                  <h6 className='card-subtitle text-muted my-2'>
+                    Mẫu hàng này có{' '}
+                    <span style={{ color: 'red' }}>{product.total}</span> sản
+                    phẩm.
                   </h6>
                   {product.tags &&
                     product.tags.map((tag, tag_i) => (
                       <span
-                        className="badge badge-pill badge-light"
+                        className='badge badge-pill badge-light'
                         key={tag_i}
                       >
                         {tag}
                       </span>
                     ))}
                 </div>
-                <div className="card-footer">
+                <div className='card-footer'>
                   <Link
                     to={{
                       pathname: `/product/editproduct/${product._id}`,
                       data: product,
                     }}
-                    className="btn btn-default mx-n1 my-n2"
+                    className='btn btn-default mx-n1 my-n2'
                   >
-                    {" "}
-                    <i className="icon-pencil"></i> Edit{" "}
+                    {' '}
+                    <i className='icon-pencil'></i> Cập Nhật{' '}
                   </Link>
                   <button
                     // href="javascript:void(0)"
                     onClick={(e) =>
                       this.toggleStatus(product.disabled, product._id)
                     }
-                    className="btn btn-default mx-n1 my-n2"
+                    className='btn btn-default mx-n1 my-n2'
                   >
-                    {" "}
+                    {' '}
                     <i
                       className={
-                        "icon-control-" +
-                        (product.disabled === "true" ? "play" : "pause")
+                        'icon-control-' +
+                        (product.disabled === 'true' ? 'play' : 'pause')
                       }
-                    ></i>{" "}
-                    {product.disabled === "true" ? "Reactivate" : "Disable"}
+                    ></i>{' '}
+                    {product.disabled === 'true' ? 'Mở Khoá' : 'Ngừng'}
                   </button>
                   <button
                     // href="javascript:void(0)"
-                    className="btn btn-default mx-n1 my-n2"
-                    data-toggle="modal"
-                    data-target="#viewModal"
+                    className='btn btn-default mx-n1 my-n2'
+                    data-toggle='modal'
+                    data-target='#viewModal'
                     onClick={(e) => this.setModalProduct(product._id)}
                   >
-                    <i className="icon-eye"></i> View Details
+                    <i className='icon-eye'></i> Sản Phẩm
                   </button>
                 </div>
               </div>
@@ -319,10 +321,10 @@ class ViewProduct extends Component {
   }
 
   async toggleStatus(status, product_id) {
-    if (status === "true") {
-      status = "false";
+    if (status === 'true') {
+      status = 'false';
     } else {
-      status = "true";
+      status = 'true';
     }
     await this.props.changeStatus(status, product_id);
     await this.props.getAllProducts(this.state.page);
@@ -348,35 +350,35 @@ class ViewProduct extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/login" />;
+      return <Redirect to='/login' />;
     }
     const { user } = auth;
-    if (user && user.systemRole === "Employee") {
-      if (user && !user.sections.includes("Inventory")) {
-        return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      if (user && !user.sections.includes('Inventory')) {
+        return <Redirect to='/Error' />;
       }
     }
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Header />
           <Sidebar location={this.props.location} />
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="extended">
-                  <div className="row">
-                    <div className="col-sm-12">
-                      <div className="card">
-                        <div className="card-header">
-                          <h4 className="card-title">All Products</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='extended'>
+                  <div className='row'>
+                    <div className='col-sm-12'>
+                      <div className='card'>
+                        <div className='card-header'>
+                          <h4 className='card-title'>Hàng Kho</h4>
                         </div>
-                        <div className="card-content">
-                          <div className="card-body table-responsive">
-                            <div className="row">
-                              <div className="col-md-4"></div>
-                              <div className="col-md-4">
+                        <div className='card-content'>
+                          <div className='card-body table-responsive'>
+                            <div className='row'>
+                              <div className='col-md-4'></div>
+                              <div className='col-md-4'>
                                 {/* <a
                                   href="/product"
                                   className="btn btn-success"
@@ -385,13 +387,13 @@ class ViewProduct extends Component {
                                   <i className="fa fa-search"></i> Search{" "}
                                 </a> */}
                               </div>
-                              <div className="col-md-4">
+                              <div className='col-md-4'>
                                 <Link
                                   // onClick={((e)=>this.redirectToAdd(e))}
-                                  to="/product/add"
-                                  className="btn btn-primary pull-right"
+                                  to='/product/add'
+                                  className='btn btn-primary pull-right'
                                 >
-                                  <i className="fa fa-plus"></i> New Product
+                                  <i className='fa fa-plus'></i> Thêm Mẫu Hàng
                                 </Link>
                               </div>
                             </div>
@@ -406,37 +408,37 @@ class ViewProduct extends Component {
                     currentPage={this.state.page}
                     products_total={this.props.products_total}
                   />
-                  <div className="row">{this.getTAble()}</div>
+                  <div className='row'>{this.getTAble()}</div>
                 </section>
               </div>
             </div>
           </div>
-          <div style={{ clear: "both" }}></div>
+          <div style={{ clear: 'both' }}></div>
 
           <div
-            className="modal fade"
-            id="viewModal"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="viewModalLabel"
-            aria-hidden="true"
+            className='modal fade'
+            id='viewModal'
+            tabIndex='-1'
+            role='dialog'
+            aria-labelledby='viewModalLabel'
+            aria-hidden='true'
           >
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="viewModalLabel">
-                    Product Details
+            <div className='modal-dialog' role='document'>
+              <div className='modal-content'>
+                <div className='modal-header'>
+                  <h5 className='modal-title' id='viewModalLabel'>
+                    Thông Tin Mẫu Hàng
                   </h5>
                   <button
-                    type="button"
-                    className="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
+                    type='button'
+                    className='close'
+                    data-dismiss='modal'
+                    aria-label='Close'
                   >
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden='true'>&times;</span>
                   </button>
                 </div>
-                <div className="modal-body">
+                <div className='modal-body'>
                   {this.getViewModal()}
                   <br />
                   <br />

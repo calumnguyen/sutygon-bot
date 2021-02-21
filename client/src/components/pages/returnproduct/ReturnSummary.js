@@ -1,52 +1,52 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
 import {
   getAllProducts,
   getProductById,
   updateProductIndex,
-} from "../../../actions/product";
-import { getCustomer } from "../../../actions/customer";
-import { addNewInvoice } from "../../../actions/invoices";
-import { updateRentedProduct } from "../../../actions/rentproduct";
-import Loader from "../../layout/Loader";
-import * as moment from "moment";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import "../../../custom.css";
-import ChargeModal from "./ChargeModal";
+} from '../../../actions/product';
+import { getCustomer } from '../../../actions/customer';
+import { addNewInvoice } from '../../../actions/invoices';
+import { updateRentedProduct } from '../../../actions/rentproduct';
+import Loader from '../../layout/Loader';
+import * as moment from 'moment';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import '../../../custom.css';
+import ChargeModal from './ChargeModal';
 
-var JsBarcode = require("jsbarcode");
+var JsBarcode = require('jsbarcode');
 
 class ReturnSummary extends Component {
   state = {
-    customer: "",
-    barcodesArray: "",
-    taxAmt: "",
-    customer: "",
-    order: "",
-    missingItmCharges: "",
-    customerOwe: "",
-    insuranceAmt: "",
-    orderNumber: "",
-    leaveID: "",
-    returnAmt: "",
-    totalPaid: "",
-    orderBarcode: "",
-    product_Array: "",
-    m_product: "",
-    m_productarray: "",
-    m_total: "",
+    customer: '',
+    barcodesArray: '',
+    taxAmt: '',
+    customer: '',
+    order: '',
+    missingItmCharges: '',
+    customerOwe: '',
+    insuranceAmt: '',
+    orderNumber: '',
+    leaveID: '',
+    returnAmt: '',
+    totalPaid: '',
+    orderBarcode: '',
+    product_Array: '',
+    m_product: '',
+    m_productarray: '',
+    m_total: '',
 
     generateInvoice: true,
     sum_charges: 0,
     sum_discount: 0,
     charge_data: [],
     discount_data: [],
-    charges_total_sum: "",
-    discount_total_sum: "",
-    sum_of_all_items: "",
+    charges_total_sum: '',
+    discount_total_sum: '',
+    sum_of_all_items: '',
   };
   async componentDidMount() {
     await this.props.getAllProducts();
@@ -69,7 +69,7 @@ class ReturnSummary extends Component {
     }
   }
 
-  handleChange = (e, id = "") => {
+  handleChange = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
     this.customerOwe();
     this.returnAmt();
@@ -95,7 +95,7 @@ class ReturnSummary extends Component {
     if (this.remaining_final() < order.pay_amount) {
       owe_from_customer = false;
     }
-    this.props.history.push("returnPrepaid", {
+    this.props.history.push('returnPrepaid', {
       orderNumber: order.orderNumber,
       user_id: user._id,
       order: order,
@@ -104,8 +104,8 @@ class ReturnSummary extends Component {
       owe_from_customer: owe_from_customer,
       amount_remaing: Math.abs(this.remaining_final()),
       barcodesArray: this.state.barcodesArray,
-      charge_data:  this.state.charge_data,
-      discount_data:this.state.discount_data,
+      charge_data: this.state.charge_data,
+      discount_data: this.state.discount_data,
     });
   };
 
@@ -145,7 +145,7 @@ class ReturnSummary extends Component {
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
                   title: product_name,
                   barcode: size.barcodes[i].barcode,
-                  color: color_name + " | " + size_name,
+                  color: color_name + ' | ' + size_name,
                   price: price,
                 };
                 rows.push(row);
@@ -183,34 +183,34 @@ class ReturnSummary extends Component {
 
     return productarray.map((b, b_index) => (
       <>
-        <div id="sizes_box" key={b_index}>
-          <div className="row">
-            <div style={{ float: "left", width: "90%" }}>
+        <div id='sizes_box' key={b_index}>
+          <div className='row'>
+            <div style={{ float: 'left', width: '90%' }}>
               <table
-                className="table table-bordered table-light"
+                className='table table-bordered table-light'
                 style={{
-                  borderWidth: "1px",
-                  borderColor: "#aaaaaa",
-                  borderStyle: "solid",
+                  borderWidth: '1px',
+                  borderColor: '#aaaaaa',
+                  borderStyle: 'solid',
                 }}
               >
                 <thead></thead>
                 <tbody>
-                  <tr key={b_index} style={{ margin: "3px" }}>
-                    <td className="text-center">{b[0].barcode}</td>
-                    <td className="text-center">{b[0].title}</td>
-                    <td className="text-center">{b[0].color}</td>
-                    <td className="text-center">{b[0].price}</td>
+                  <tr key={b_index} style={{ margin: '3px' }}>
+                    <td className='text-center'>{b[0].barcode}</td>
+                    <td className='text-center'>{b[0].title}</td>
+                    <td className='text-center'>{b[0].color}</td>
+                    <td className='text-center'>{b[0].price}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div className="right ml-2">
+            <div className='right ml-2'>
               <button
-                type="button"
-                className="btn btn-raised btn-sm btn-icon mt-1"
+                type='button'
+                className='btn btn-raised btn-sm btn-icon mt-1'
               >
-                <i className="fa fa-check fa-2x text-success"></i>
+                <i className='fa fa-check fa-2x text-success'></i>
               </button>
             </div>
           </div>
@@ -224,19 +224,19 @@ class ReturnSummary extends Component {
     if (charge_data) {
       return charge_data.map((charge, b_index) => (
         <tr key={b_index}>
-          <th scope="row">{b_index + 1}</th>
-          <td>{charge.name ? charge.name : ""}</td>
-          <td>{charge.category ? charge.category : ""}</td>
-          <td>{charge.amount ? charge.amount : ""}</td>
+          <th scope='row'>{b_index + 1}</th>
+          <td>{charge.name ? charge.name : ''}</td>
+          <td>{charge.category ? charge.category : ''}</td>
+          <td>{charge.amount ? charge.amount : ''}</td>
           <td>
             <button
-              onClick={() => this.onRemoveRow(b_index, "charge")}
-              type="button"
-              className="btn btn-raised btn-sm btn-icon btn-default mt-1"
+              onClick={() => this.onRemoveRow(b_index, 'charge')}
+              type='button'
+              className='btn btn-raised btn-sm btn-icon btn-default mt-1'
             >
               <i
-                style={{ fontSize: "20px" }}
-                className="fa fa-times  text-danger"
+                style={{ fontSize: '20px' }}
+                className='fa fa-times  text-danger'
               ></i>
             </button>
           </td>
@@ -250,19 +250,19 @@ class ReturnSummary extends Component {
     if (discount_data) {
       return discount_data.map((discount, b_index) => (
         <tr key={b_index}>
-          <th scope="row">{b_index + 1}</th>
-          <td>{discount.name ? discount.name : ""}</td>
-          <td>{discount.category ? discount.category : ""}</td>
-          <td>{discount.amount ? discount.amount : ""}</td>
+          <th scope='row'>{b_index + 1}</th>
+          <td>{discount.name ? discount.name : ''}</td>
+          <td>{discount.category ? discount.category : ''}</td>
+          <td>{discount.amount ? discount.amount : ''}</td>
           <td>
             <button
-              onClick={() => this.onRemoveRow(b_index, "discount")}
-              type="button"
-              className="btn btn-raised btn-sm btn-icon btn-default mt-1"
+              onClick={() => this.onRemoveRow(b_index, 'discount')}
+              type='button'
+              className='btn btn-raised btn-sm btn-icon btn-default mt-1'
             >
               <i
-                style={{ fontSize: "20px" }}
-                className="fa fa-times text-danger"
+                style={{ fontSize: '20px' }}
+                className='fa fa-times text-danger'
               ></i>
             </button>
           </td>
@@ -272,12 +272,12 @@ class ReturnSummary extends Component {
   };
   onRemoveRow = (valueIndex, type) => {
     let { discount_data, charge_data } = this.state;
-    if (type == "discount") {
+    if (type == 'discount') {
       this.setState({
         discount_data: discount_data.filter((_, index) => index !== valueIndex),
       });
     }
-    if (type == "charge") {
+    if (type == 'charge') {
       this.setState({
         charge_data: charge_data.filter((_, index) => index !== valueIndex),
       });
@@ -287,38 +287,38 @@ class ReturnSummary extends Component {
   onAddCharge = (type) => {
     let { name, category, amount } = this.state;
 
-    if (type == "charge") {
+    if (type == 'charge') {
       this.setState({
         charge_data: [...this.state.charge_data, { name, category, amount }],
-        name: "",
-        category: "",
-        amount: "",
+        name: '',
+        category: '',
+        amount: '',
 
-        modal_type: "",
+        modal_type: '',
         openModal: false,
       });
     }
-    if (type == "discount") {
+    if (type == 'discount') {
       this.setState({
         discount_data: [
           ...this.state.discount_data,
           { name, category, amount },
         ],
-        name: "",
-        category: "",
-        amount: "",
+        name: '',
+        category: '',
+        amount: '',
         openModal: false,
-        modal_type: "",
+        modal_type: '',
       });
     }
   };
   handleClose = () => {
     this.setState({
       openModal: false,
-      name: "",
-      category: "",
-      amount: "",
-      modal_type: "",
+      name: '',
+      category: '',
+      amount: '',
+      modal_type: '',
     });
   };
 
@@ -363,14 +363,14 @@ class ReturnSummary extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/login" />;
+      return <Redirect to='/login' />;
     }
 
     const { customer } = this.props;
     const { state } = this.props.location;
     const { user } = this.props.auth;
     if (this.props.saved === true) {
-      return <Redirect to="/returnproduct" />;
+      return <Redirect to='/returnproduct' />;
     }
 
     const { order } = state;
@@ -387,25 +387,25 @@ class ReturnSummary extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="form-action-layouts">
-                  <div className="form-body">
-                    <div className="card">
-                      <div className="card-header">
-                        <h4 className="form-section">Return Product</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='form-action-layouts'>
+                  <div className='form-body'>
+                    <div className='card'>
+                      <div className='card-header'>
+                        <h4 className='form-section'>Trả Đồ</h4>
                       </div>
 
-                      <div className="card-body table-responsive">
-                        <div id="colors_box">
-                          <div className="row color-row">
-                            <div className="col-md-12">
-                              <div className="">
-                                <h2>List of all the items </h2>
+                      <div className='card-body table-responsive'>
+                        <div id='colors_box'>
+                          <div className='row color-row'>
+                            <div className='col-md-12'>
+                              <div className=''>
+                                <h2>Danh Sách Sản Phẩm Hoàn Trả </h2>
                                 {this.productBox()}
                                 <br />
                                 {/* {barcodesArray.length !==
@@ -418,51 +418,52 @@ class ReturnSummary extends Component {
                                   order[0].barcodes.length
                                     ? this.missingProducts()
                                     : ""} */}
-                                <div className="row">
-                                  <div className="col-md-11 ">
-                                    <h3 className="float-right mr-3">
-                                      Total : {this.state.sum_of_all_items} VND{" "}
+                                <div className='row'>
+                                  <div className='col-md-11 '>
+                                    <h3 className='float-right mr-3'>
+                                      Thành tiền: {this.state.sum_of_all_items}{' '}
+                                      VNĐ{' '}
                                     </h3>
                                   </div>
                                 </div>
                                 <br />
 
-                                <div className="row">
-                                  <div className="col-md-12 ">
-                                    <h3>Charges</h3>
-                                    <table class="table table-borderless">
+                                <div className='row'>
+                                  <div className='col-md-12 '>
+                                    <h3>Kinh Phí</h3>
+                                    <table class='table table-borderless'>
                                       <tbody>
                                         <tr>
-                                          <th className="float-left">Tax</th>
+                                          <th className='float-left'>Thuế</th>
                                           <td>
-                                            {order ? order.tax : 0} VND (
+                                            {order ? order.tax : 0} VNĐ (
                                             {order ? order.taxper : 0}%)
                                           </td>
                                         </tr>
                                         {charge_data &&
                                           charge_data.map((i, index1) => (
                                             <tr key={index1}>
-                                              <th className="float-left">
+                                              <th className='float-left'>
                                                 {i.category}
                                               </th>
-                                              <td> {i.amount} VND</td>
+                                              <td> {i.amount} VNĐ</td>
                                             </tr>
                                           ))}
 
                                         <tr>
-                                          <th className="float-left">
-                                            Extended rental at order
+                                          <th className='float-left'>
+                                            Phí Gia Hạn Ngày Thuê
                                           </th>
                                           <td>
                                             {order.extraDaysAmount
                                               ? order.extraDaysAmount
-                                              : 0}{" "}
-                                            VND
+                                              : 0}{' '}
+                                            VNĐ
                                           </td>
                                         </tr>
                                         <tr>
-                                          <th className="float-left"></th>
-                                          <th>{this.chargesSum()} VND</th>
+                                          <th className='float-left'></th>
+                                          <th>{this.chargesSum()} VNĐ</th>
                                         </tr>
                                       </tbody>
                                     </table>
@@ -470,30 +471,32 @@ class ReturnSummary extends Component {
                                 </div>
                                 <br />
 
-                                <div className="row">
-                                  <div className="col-md-12 ">
-                                    <h3>Discount</h3>
-                                    <table class="table table-borderless">
+                                <div className='row'>
+                                  <div className='col-md-12 '>
+                                    <h3>Giảm Giá</h3>
+                                    <table class='table table-borderless'>
                                       <tbody>
                                         <tr>
-                                          <th className="float-left mr-3">Coupon</th>
-                                          <td >
-                                            {order ? order.discount_amount : 0}{" "}
-                                            VND
+                                          <th className='float-left mr-3'>
+                                            Coupon/Voucher
+                                          </th>
+                                          <td>
+                                            {order ? order.discount_amount : 0}{' '}
+                                            VNĐ
                                           </td>
                                         </tr>
                                         {discount_data &&
                                           discount_data.map((d, index2) => (
                                             <tr key={index2}>
-                                              <th className="float-left">
+                                              <th className='float-left'>
                                                 {d.category}
                                               </th>
-                                              <td> {d.amount} VND</td>
+                                              <td> {d.amount} VNĐ</td>
                                             </tr>
                                           ))}
                                         <tr>
-                                          <th className="float-left"></th>
-                                          <th>{this.discountSum()} VND</th>
+                                          <th className='float-left'></th>
+                                          <th>{this.discountSum()} VNĐ</th>
                                         </tr>
                                       </tbody>
                                     </table>
@@ -501,7 +504,7 @@ class ReturnSummary extends Component {
                                 </div>
                               </div>
 
-                              <div className="form-group">
+                              <div className='form-group'>
                                 {/* <div style={{ float: "left" }}>
                                   <h3>
                                     {customer
@@ -521,40 +524,40 @@ class ReturnSummary extends Component {
                                       : ""}
                                   </h3>
                                 </div> */}
-                                <div className="row">
-                                  <div className="col-md-11 ">
-                                    <h3 className="float-right mr-3">
-                                      Final Sale : {this.final_sale_total()} VND{" "}
+                                <div className='row'>
+                                  <div className='col-md-11 '>
+                                    <h3 className='float-right mr-3'>
+                                      Tổng tiền: {this.final_sale_total()} VNĐ{' '}
                                     </h3>
                                   </div>
                                 </div>
                               </div>
                               <br />
-                              <div className="row">
-                                <div className="col-md-11 ">
-                                  <h3 className="float-left ml-1">Prepaid</h3>
-                                  <h3 className="float-right mr-3">
-                                    {order && order.pay_amount} VND
+                              <div className='row'>
+                                <div className='col-md-11 '>
+                                  <h3 className='float-left ml-1'>Đã Trả</h3>
+                                  <h3 className='float-right mr-3'>
+                                    {order && order.pay_amount} VNĐ
                                   </h3>
                                 </div>
                               </div>
                               <br />
-                              <div className="row">
-                                <div className="col-md-11 ">
+                              <div className='row'>
+                                <div className='col-md-11 '>
                                   <h3
-                                    className="float-right mr-3"
+                                    className='float-right mr-3'
                                     style={{
-                                      border: "1px solid black",
-                                      padding: "10px",
+                                      border: '1px solid black',
+                                      padding: '10px',
                                     }}
                                   >
                                     {this.remaining_final() >= order.pay_amount
-                                      ? "Customer owe "
+                                      ? 'Khách hàng nợ '
                                       : this.remaining_final() <
                                         order.pay_amount
-                                      ? "Refund to customer "
-                                      : ""}
-                                    {Math.abs(this.remaining_final())} VND
+                                      ? 'Hoàn tiền cho khách '
+                                      : ''}
+                                    {Math.abs(this.remaining_final())} VNĐ
                                   </h3>
                                 </div>
                               </div>
@@ -563,8 +566,8 @@ class ReturnSummary extends Component {
                             <br />
 
                             <form onSubmit={(e) => this.onSubmit(e)}>
-                              <div className="col-md-12">
-                                <div id="sizes_box">
+                              <div className='col-md-12'>
+                                <div id='sizes_box'>
                                   {/* <div className="row">
                                     <div className="col-md-11 ">
                                       <h3 className="float-right mr-3">
@@ -575,17 +578,18 @@ class ReturnSummary extends Component {
 
                                   <br />
 
-                                  <div className="col-md-12">
-                                    <div id="sizes_box">
-                                      <div className="row text-center">
-                                        <div className="col-md-12 btn-cont">
-                                          <div className="form-group">
+                                  <div className='col-md-12'>
+                                    <div id='sizes_box'>
+                                      <div className='row text-center'>
+                                        <div className='col-md-12 btn-cont'>
+                                          <div className='form-group'>
                                             <button
-                                              type="submit"
-                                              className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                                              id="btnSize2"
+                                              type='submit'
+                                              className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
+                                              id='btnSize2'
                                             >
-                                              <i className="ft-check"></i> Next
+                                              <i className='ft-check'></i> Thanh
+                                              Toán Hoá Đơn
                                               {/* Submit &amp; Generate Invoice{" "} */}
                                             </button>
                                           </div>
@@ -605,20 +609,20 @@ class ReturnSummary extends Component {
               </div>
             </div>
 
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    rel="noopener noreferrer"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    rel='noopener noreferrer'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>

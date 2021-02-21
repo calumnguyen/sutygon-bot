@@ -173,7 +173,7 @@ class AddProduct extends Component {
                   onClick={() => this.addSizeRow(color._id)}
                   className='btn '
                 >
-                  <i className='fa fa-plus'></i> Thêm Size Khách
+                  <i className='fa fa-plus'></i> Thêm Size Khác
                 </button>
               </div>
             </div>

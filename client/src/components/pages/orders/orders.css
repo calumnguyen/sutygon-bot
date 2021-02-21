@@ -20,50 +20,50 @@
 }
 .lost {
   background: #163a5f;
-  border-radius: 0 !important;
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .active {
   background: #8c52ff;
-  border-radius: 0 !important;
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .ready {
   background: #45eba5;
-  color: "#fff";
+  color: '#fff';
 }
 .past {
   background: #ff66c4;
-  border-radius: 0 !important;
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .alteration {
   background: #ff914d;
   border-radius: 0 !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .overdue {
   background: #ff914d;
-  border-radius: 0 !important;
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 
 .Completed {
   background: #ff66c4;
-  border-radius: 0 !important;
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .cancelled {
   background: #ff914d;
-  border-radius: 0 !important;
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .font-weight-600 {
   /* font-weight: 600; */
