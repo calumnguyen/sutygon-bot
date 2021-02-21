@@ -397,3 +397,25 @@ export const changeItemQuality = (quality, barcode) => async (dispatch) => {
     });
   }
 };
+
+//Filter products based on Name, Product ID, barcode Id, Tags
+// get All Users
+export const getFilteredProducts = (reqObj) => async (dispatch) => {
+  dispatch({ type: PRODUCT_LOADING });
+  try {
+    const currentPage = reqObj.page || 1;
+    const res = await axios.post(`/api/products/filter/filter_products`,{...reqObj, currentPage:currentPage});
+    dispatch({
+      type: GET_PRODUCTS,
+      payload: {
+        products: res.data.products,
+        total: res.data.total,
+      },
+    });
+  } catch (err) {
+    dispatch({
+      type: PRODUCTS_ERROR,
+      payload: err.response,
+    });
+  }
+};

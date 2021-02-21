@@ -8,6 +8,7 @@ import {
   barcodeUpdateProduct,
   deleteItem,
   deleteProduct,
+  getFilteredProducts
 } from '../../actions/product';
 import { searchByBarcode } from '../../actions/rentproduct';
 import Loader from '../layout/Loader';
@@ -29,19 +30,71 @@ class Barcode extends Component {
     dataType: 'without_barcode',
     saving: false,
     page: 1,
+    prodName: '',
+    prodId: '',
+    barcodeId: '',
+    tags: '',
   };
 
   async componentDidMount() {
-    await this.props.getAllProducts();
+    //await this.props.getAllProducts();
+    this.getFilterProducts();
   }
-
+  getFilterProducts = async () => {
+    if (
+      !this.state.barcodeId &&
+      !this.state.prodName &&
+      !this.state.prodId
+    ) {
+      await this.props.getAllProducts(this.state.page);
+    } else {
+      if (this.state.tags.length > 0) {
+        let tags = this.state.tags.split(",");
+        tags = tags.map((tag) => tag.trim());
+        tags = tags.join(", ");
+        this.setState({ tags });
+      }
+      let queryObj = {
+        page: this.state.page,
+        prodId: !this.state.prodId
+          ? this.state.prodId
+          : Number(this.state.prodId),
+        barcodeId: !this.state.barcodeId
+          ? this.state.barcodeId
+          : Number(this.state.barcodeId),
+        tags: this.state.tags,
+        prodName: this.state.prodName,
+      };
+      await this.props.getFilteredProducts(queryObj);
+    }
+    // const { products } = this.props;
+    // if (products) {
+    //   this.calculateTotals(products);
+    // }
+  };
+  clearFilter = async () => {
+    let queryObj = {
+      page: 1,
+      prodId: "",
+      barcodeId: "",
+      tags: "",
+      prodName: "",
+    };
+    this.setState({ ...queryObj });
+    await this.props.getAllProducts(this.state.page);
+    // const { products } = this.props;
+    // if (products) {
+    //   this.calculateTotals(products);
+    // }
+  };
   onChangePage = (page) => {
     this.setState({ page: page });
   };
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevState.page !== this.state.page) {
-      await this.props.getAllProducts(this.state.page);
+      //await this.props.getAllProducts(this.state.page);
+      this.getFilterProducts();
     }
   }
 
@@ -106,10 +159,12 @@ class Barcode extends Component {
     return rows;
   };
 
+  _handleChange = (e, id = '') => {
+    this.setState({ [e.target.name]: e.target.value });
+  }
   handleChange = (type = '') => {
     this.setState({ dataType: type, page: 1 });
   };
-
   getTable = () => {
     let products = this.props.products;
     if (products) {
@@ -650,7 +705,61 @@ class Barcode extends Component {
                         </div>
 
                         <br />
-
+                        <div className="row mt-2">
+                          <div className="col-sm-2">
+                            <div className="form-group">
+                              <input
+                                name="prodName"
+                                type="text"
+                                placeholder="product name"
+                                className="form-control"
+                                value={this.state.prodName}
+                                onChange={this._handleChange}
+                              />
+                            </div>
+                          </div>
+                          <div className="col-sm-2">
+                            <div className="form-group">
+                              <input
+                                name="prodId"
+                                type="number"
+                                placeholder="product id"
+                                className="form-control"
+                                value={this.state.prodId}
+                                onChange={this._handleChange}
+                              />
+                            </div>
+                          </div>
+                          <div className="col-sm-2">
+                            <div className="form-group">
+                              <input
+                                name="barcodeId"
+                                type="number"
+                                placeholder="barcode id"
+                                className="form-control"
+                                value={this.state.barcodeId}
+                                onChange={this._handleChange}
+                              />
+                            </div>
+                          </div>
+                          <div className="col-sm-4">
+                            <div className="form-group">
+                              <button
+                                className="btn btn-primary"
+                                onClick={this.getFilterProducts}
+                              >
+                                <i className="fa fa-search"></i> Apply
+                              </button>
+                              <button
+                                className="btn btn-primary ml-2"
+                                onClick={this.clearFilter}
+                              >
+                                <i className="fa fa-refresh"></i> Clear
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <br />
                         {/* <BootstrapTable
                           bootstrap4
                           keyField="id"
@@ -736,4 +845,5 @@ export default connect(mapStateToProps, {
   deleteItem,
   deleteProduct,
   searchByBarcode,
+  getFilteredProducts
 })(Barcode);
