@@ -14,6 +14,7 @@ import {
   getProductById,
   getAllProducts,
   updateProductIndex,
+  getAllProductsAll
 } from '../../actions/product';
 import { getCustomer } from '../../actions/customer';
 import { addNewRentProduct, getLastRecord } from '../../actions/rentproduct';
@@ -59,7 +60,7 @@ class RentOrder extends Component {
   };
 
   async componentDidMount() {
-    await this.props.getAllProducts();
+    await this.props.getAllProductsAll();
     await this.props.getLastRecord();
     const { lastRecord } = this.props;
 
@@ -302,6 +303,7 @@ class RentOrder extends Component {
   getBarcodeRecord() {
     let productarray = [];
     let { barcode_Array } = this.state;
+ 
     const { products } = this.props;
     if (products) {
       let sortedAray = this.getSortedData(products);
@@ -1214,9 +1216,11 @@ const mapStateToProps = (state) => ({
   customer: state.customer.customer,
   generateInvoice: state.rentproduct.generateInvoice,
   saved: state.product.saved,
+   products: state.product.products,
 });
 export default connect(mapStateToProps, {
   getAllProducts,
+  getAllProductsAll,
   getCustomer,
   addNewRentProduct,
   getProductById,
