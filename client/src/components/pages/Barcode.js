@@ -8,7 +8,7 @@ import {
   barcodeUpdateProduct,
   deleteItem,
   deleteProduct,
-  getFilteredProducts
+  getFilteredProducts,
 } from '../../actions/product';
 import { searchByBarcode } from '../../actions/rentproduct';
 import Loader from '../layout/Loader';
@@ -41,17 +41,13 @@ class Barcode extends Component {
     this.getFilterProducts();
   }
   getFilterProducts = async () => {
-    if (
-      !this.state.barcodeId &&
-      !this.state.prodName &&
-      !this.state.prodId
-    ) {
+    if (!this.state.barcodeId && !this.state.prodName && !this.state.prodId) {
       await this.props.getAllProducts(this.state.page);
     } else {
       if (this.state.tags.length > 0) {
-        let tags = this.state.tags.split(",");
+        let tags = this.state.tags.split(',');
         tags = tags.map((tag) => tag.trim());
-        tags = tags.join(", ");
+        tags = tags.join(', ');
         this.setState({ tags });
       }
       let queryObj = {
@@ -75,10 +71,10 @@ class Barcode extends Component {
   clearFilter = async () => {
     let queryObj = {
       page: 1,
-      prodId: "",
-      barcodeId: "",
-      tags: "",
-      prodName: "",
+      prodId: '',
+      barcodeId: '',
+      tags: '',
+      prodName: '',
     };
     this.setState({ ...queryObj });
     await this.props.getAllProducts(this.state.page);
@@ -161,7 +157,7 @@ class Barcode extends Component {
 
   _handleChange = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
-  }
+  };
   handleChange = (type = '') => {
     this.setState({ dataType: type, page: 1 });
   };
@@ -705,56 +701,56 @@ class Barcode extends Component {
                         </div>
 
                         <br />
-                        <div className="row mt-2">
-                          <div className="col-sm-2">
-                            <div className="form-group">
+                        <div className='row mt-2'>
+                          <div className='col-sm-2'>
+                            <div className='form-group'>
                               <input
-                                name="prodName"
-                                type="text"
-                                placeholder="product name"
-                                className="form-control"
+                                name='prodName'
+                                type='text'
+                                placeholder='Tên Sản Phẩm'
+                                className='form-control'
                                 value={this.state.prodName}
                                 onChange={this._handleChange}
                               />
                             </div>
                           </div>
-                          <div className="col-sm-2">
-                            <div className="form-group">
+                          <div className='col-sm-2'>
+                            <div className='form-group'>
                               <input
-                                name="prodId"
-                                type="number"
-                                placeholder="product id"
-                                className="form-control"
+                                name='prodId'
+                                type='number'
+                                placeholder='Mã Mẫu Hàng'
+                                className='form-control'
                                 value={this.state.prodId}
                                 onChange={this._handleChange}
                               />
                             </div>
                           </div>
-                          <div className="col-sm-2">
-                            <div className="form-group">
+                          <div className='col-sm-2'>
+                            <div className='form-group'>
                               <input
-                                name="barcodeId"
-                                type="number"
-                                placeholder="barcode id"
-                                className="form-control"
+                                name='barcodeId'
+                                type='number'
+                                placeholder='Mã Sản Phẩm'
+                                className='form-control'
                                 value={this.state.barcodeId}
                                 onChange={this._handleChange}
                               />
                             </div>
                           </div>
-                          <div className="col-sm-4">
-                            <div className="form-group">
+                          <div className='col-sm-4'>
+                            <div className='form-group'>
                               <button
-                                className="btn btn-primary"
+                                className='btn btn-primary'
                                 onClick={this.getFilterProducts}
                               >
-                                <i className="fa fa-search"></i> Apply
+                                <i className='fa fa-search'></i> Tìm
                               </button>
                               <button
-                                className="btn btn-primary ml-2"
+                                className='btn btn-primary ml-2'
                                 onClick={this.clearFilter}
                               >
-                                <i className="fa fa-refresh"></i> Clear
+                                <i className='fa fa-refresh'></i> Xóa Tiêu Chí
                               </button>
                             </div>
                           </div>
@@ -845,5 +841,5 @@ export default connect(mapStateToProps, {
   deleteItem,
   deleteProduct,
   searchByBarcode,
-  getFilteredProducts
+  getFilteredProducts,
 })(Barcode);

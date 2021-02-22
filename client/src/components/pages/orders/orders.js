@@ -70,12 +70,12 @@ class Orders extends Component {
               reservedStatus={order.reservedStatus}
               readyForPickUp={order.readyForPickUp}
               pickedUpStatus={order.pickedUpStatus}
-              total={order.total_notes ? order.total_notes : 0}
-              remain={
+              total={`${order.total_notes ? order.total_notes : 0} g/c`}
+              remain={`${
                 order.notes
                   ? order.notes.filter((i) => i.done == false).length
                   : 0
-              }
+              } y/c`}
             />
           ),
 
@@ -146,35 +146,7 @@ class Orders extends Component {
               </div>
             </div>
             <div className='row '>
-              <div className='form-group col' style={{ marginTop: '-20px' }}>
-                <br></br>
-                <h3 className=''>
-                  {' '}
-                  <span
-                    className='py-2 btn-custom font-weight-600 badge '
-                    style={{
-                      cursor: 'pointer',
-                      backgroundColor: `${
-                        this.state.status.find((s) => s == 'pending')
-                          ? '#FFDC1F'
-                          : '#737373'
-                      }`,
-                      color: `${
-                        this.state.status.find((s) => s == 'pending')
-                          ? '#000'
-                          : '#fff'
-                      }`,
-                      borderColor: '#fff',
-                      borderRadius: 'none',
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle('pending');
-                    }}
-                  >
-                    Đang Xử Lý
-                  </span>
-                </h3>
-              </div>
+              {/* Pickup Today */}
 
               <div className='form-group col' style={{ marginTop: '-20px' }}>
                 <br></br>
@@ -184,40 +156,14 @@ class Orders extends Component {
                     className='py-2 btn-custom font-weight-600 badge '
                     style={{
                       cursor: 'pointer',
-                      backgroundColor: `${
-                        this.state.status.find((s) => s == 'active')
-                          ? '#8C52FF'
-                          : '#737373'
-                      }`,
-                      color: '#fff',
-                      borderColor: '#fff',
-                      borderRadius: 'none',
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle('active');
-                    }}
-                  >
-                    Đang Sử Dụng
-                  </span>
-                </h3>
-              </div>
-
-              <div className='form-group col' style={{ marginTop: '-20px' }}>
-                <br></br>
-                <h3>
-                  {' '}
-                  <span
-                    className='py-2 btn-custom font-weight-600 badge '
-                    style={{
-                      cursor: 'pointer',
-                      backgroundColor: `${
+                      backgroundImage: `${
                         this.state.status.find((s) => s == 'pickup')
-                          ? '#FF914D'
-                          : '#737373'
+                          ? 'linear-gradient(to bottom right, #348F50, #56b4d3)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
                       }`,
                       color: '#fff',
                       borderColor: '#fff',
-                      borderRadius: 'none',
+                      borderRadius: '10px',
                     }}
                     onClick={() => {
                       this.handleStatusToggle('pickup');
@@ -228,6 +174,8 @@ class Orders extends Component {
                 </h3>
               </div>
 
+              {/* Return Today */}
+
               <div className='form-group col' style={{ marginTop: '-20px' }}>
                 <br></br>
                 <h3>
@@ -235,14 +183,14 @@ class Orders extends Component {
                     className='py-2 btn-custom font-weight-600 badge '
                     style={{
                       cursor: 'pointer',
-                      backgroundColor: `${
+                      backgroundImage: `${
                         this.state.status.find((s) => s == 'return')
-                          ? '#FF914D'
-                          : '#737373'
+                          ? 'linear-gradient(to bottom right, #FEAC5E, #C779D0)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
                       }`,
                       color: '#fff',
                       borderColor: '#fff',
-                      borderRadius: 'none',
+                      borderRadius: '10px',
                     }}
                     onClick={() => {
                       this.handleStatusToggle('return');
@@ -253,6 +201,8 @@ class Orders extends Component {
                 </h3>
               </div>
 
+              {/* Alteration */}
+
               <div className='form-group col' style={{ marginTop: '-20px' }}>
                 <br></br>
                 <h3>
@@ -260,14 +210,14 @@ class Orders extends Component {
                     className='py-2 btn-custom font-weight-600 badge '
                     style={{
                       cursor: 'pointer',
-                      backgroundColor: `${
+                      backgroundImage: `${
                         this.state.status.find((s) => s == 'alteration')
-                          ? '#FF914D'
-                          : '#737373'
+                          ? 'linear-gradient(to bottom right, #6441A5, #2a0845)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
                       }`,
                       color: '#fff',
                       borderColor: '#fff',
-                      borderRadius: 'none',
+                      borderRadius: '10px',
                     }}
                     onClick={() => {
                       this.handleStatusToggle('alteration');
@@ -277,9 +227,41 @@ class Orders extends Component {
                   </span>
                 </h3>
               </div>
-            </div>
-            <div className='row'>
-              <div className='form-group col' style={{ marginTop: '-30px' }}>
+
+              {/* Pending */}
+              <div className='form-group col' style={{ marginTop: '-20px' }}>
+                <br></br>
+                <h3 className=''>
+                  {' '}
+                  <span
+                    className='py-2 btn-custom font-weight-600 badge '
+                    style={{
+                      cursor: 'pointer',
+                      backgroundImage: `${
+                        this.state.status.find((s) => s == 'pending')
+                          ? 'linear-gradient(to bottom right, #4ca1af, #c4e0e5)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
+                      }`,
+                      color: `${
+                        this.state.status.find((s) => s == 'pending')
+                          ? '#000'
+                          : '#fff'
+                      }`,
+                      borderColor: '#fff',
+                      borderRadius: '10px',
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle('pending');
+                    }}
+                  >
+                    Đang Xử Lý
+                  </span>
+                </h3>
+              </div>
+
+              {/* Ready */}
+
+              <div className='form-group col' style={{ marginTop: '-20px' }}>
                 <br></br>
                 <h3>
                   {' '}
@@ -287,14 +269,14 @@ class Orders extends Component {
                     className='py-2 btn-custom font-weight-600 badge '
                     style={{
                       cursor: 'pointer',
-                      backgroundColor: `${
+                      backgroundImage: `${
                         this.state.status.find((s) => s == 'ready')
-                          ? '#45EBA5'
-                          : '#737373'
+                          ? 'linear-gradient(to bottom right, #136a8a, #267871)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
                       }`,
                       color: '#fff',
                       borderColor: '#fff',
-                      borderRadius: 'none',
+                      borderRadius: '10px',
                     }}
                     onClick={() => {
                       this.handleStatusToggle('ready');
@@ -304,6 +286,10 @@ class Orders extends Component {
                   </span>
                 </h3>
               </div>
+            </div>
+
+            <div className='row'>
+              {/* Active */}
 
               <div className='form-group col' style={{ marginTop: '-30px' }}>
                 <br></br>
@@ -313,14 +299,68 @@ class Orders extends Component {
                     className='py-2 btn-custom font-weight-600 badge '
                     style={{
                       cursor: 'pointer',
-                      backgroundColor: `${
-                        this.state.status.find((s) => s == 'overdue')
-                          ? '#ff1616'
-                          : '#737373'
+                      backgroundImage: `${
+                        this.state.status.find((s) => s == 'active')
+                          ? 'linear-gradient(to bottom right, #3a7bd5, #3a6073)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
                       }`,
                       color: '#fff',
                       borderColor: '#fff',
-                      borderRadius: 'none',
+                      borderRadius: '10px',
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle('active');
+                    }}
+                  >
+                    Đang Sử Dụng
+                  </span>
+                </h3>
+              </div>
+
+              {/* Completed */}
+              <div className='form-group col' style={{ marginTop: '-30px' }}>
+                <br></br>
+                <h3>
+                  <span
+                    className='py-2 btn-custom font-weight-600 badge '
+                    style={{
+                      cursor: 'pointer',
+                      backgroundImage: `${
+                        this.state.status.find((s) => s == 'Completed')
+                          ? 'linear-gradient(to bottom right, #b24592, #f15f79)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
+                      }`,
+                      color: '#fff',
+                      borderColor: '#fff',
+                      borderRadius: '10px',
+                    }}
+                    onClick={() => {
+                      this.handleStatusToggle('Completed');
+                    }}
+                  >
+                    Hoàn Tất
+                  </span>
+                </h3>
+              </div>
+
+              {/* Overdue */}
+
+              <div className='form-group col' style={{ marginTop: '-30px' }}>
+                <br></br>
+                <h3>
+                  {' '}
+                  <span
+                    className='py-2 btn-custom font-weight-600 badge '
+                    style={{
+                      cursor: 'pointer',
+                      backgroundImage: `${
+                        this.state.status.find((s) => s == 'overdue')
+                          ? 'linear-gradient(to bottom right, #ff5f6d, #ffc371)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
+                      }`,
+                      color: '#fff',
+                      borderColor: '#fff',
+                      borderRadius: '10px',
                     }}
                     onClick={() => {
                       this.handleStatusToggle('overdue');
@@ -331,6 +371,8 @@ class Orders extends Component {
                 </h3>
               </div>
 
+              {/* Lost */}
+
               <div className='form-group col' style={{ marginTop: '-30px' }}>
                 <br></br>
                 <h3>
@@ -338,14 +380,14 @@ class Orders extends Component {
                     className='py-2 btn-custom font-weight-600 badge '
                     style={{
                       cursor: 'pointer',
-                      backgroundColor: `${
+                      backgroundImage: `${
                         this.state.status.find((s) => s == 'lost')
-                          ? '#163A5F'
-                          : '#737373'
+                          ? 'linear-gradient(to bottom right, #603813, #b29f94)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
                       }`,
                       color: '#fff',
                       borderColor: '#fff',
-                      borderRadius: 'none',
+                      borderRadius: '10px',
                     }}
                     onClick={() => {
                       this.handleStatusToggle('lost');
@@ -356,6 +398,8 @@ class Orders extends Component {
                 </h3>
               </div>
 
+              {/* Cancelled */}
+
               <div className='form-group col' style={{ marginTop: '-30px' }}>
                 <br></br>
                 <h3>
@@ -363,24 +407,23 @@ class Orders extends Component {
                     className='py-2 btn-custom font-weight-600 badge '
                     style={{
                       cursor: 'pointer',
-                      backgroundColor: `${
-                        this.state.status.find((s) => s == 'past')
-                          ? '#FF66c4'
-                          : '#737373'
+                      backgroundImage: `${
+                        this.state.status.find((s) => s == 'cancelled')
+                          ? 'linear-gradient(to bottom right, #e96443, #904e95)'
+                          : 'linear-gradient(to bottom right, #000000, #434343)'
                       }`,
                       color: '#fff',
                       borderColor: '#fff',
-                      borderRadius: 'none',
+                      borderRadius: '10px',
                     }}
                     onClick={() => {
-                      this.handleStatusToggle('past');
+                      this.handleStatusToggle('cancelled');
                     }}
                   >
-                    Hoàn Tất
+                    Hủy Đồ
                   </span>
                 </h3>
               </div>
-              <div className='col'></div>
             </div>
           </>
         );
