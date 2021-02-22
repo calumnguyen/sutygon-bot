@@ -53,6 +53,7 @@ class MatchBarcodes extends Component {
     openModal: false,
     modal_type: '',
     allCategoryList: [],
+    sum_of_all_items:''
   };
   async componentDidMount() {
     await this.props.getAllProducts();
@@ -176,6 +177,12 @@ class MatchBarcodes extends Component {
           return productarray;
         });
       }
+    }
+    if (productarray.length) {
+      let sum_of_all_items = productarray
+        .map((p) => Number(p[0].price))
+        .reduce((a2, b2) => a2 + b2);
+      this.state.sum_of_all_items = sum_of_all_items;
     }
     this.state.product_Array = productarray;
     return productarray.map((b, b_index) => (
@@ -339,6 +346,7 @@ class MatchBarcodes extends Component {
       customer: order[0].customer,
       barcodesArray: this.state.barcodesArray,
       product_Array: this.state.product_Array,
+      sum_of_all_items:this.state.sum_of_all_items
     });
 
     //

@@ -49,7 +49,7 @@ class ReturnSummary extends Component {
     sum_of_all_items: '',
   };
   async componentDidMount() {
-    await this.props.getAllProducts();
+  
     const { state } = this.props.location;
     if (state) {
       this.setState({
@@ -65,8 +65,10 @@ class ReturnSummary extends Component {
         //   totalPaid: state.order[0].total,
         //   leaveID: state.order[0].leaveID,
         product_Array: state.product_Array,
+        sum_of_all_items:state.sum_of_all_items
       });
     }
+      await this.props.getAllProducts();
   }
 
   handleChange = (e, id = '') => {
@@ -551,9 +553,9 @@ class ReturnSummary extends Component {
                                       padding: '10px',
                                     }}
                                   >
-                                    {this.remaining_final() >= order.pay_amount
+                                    {this.final_sale_total() >= order.pay_amount
                                       ? 'Khách hàng nợ '
-                                      : this.remaining_final() <
+                                      : this.final_sale_total() <
                                         order.pay_amount
                                       ? 'Hoàn tiền cho khách '
                                       : ''}
