@@ -65,7 +65,7 @@ class ViewOrder extends Component {
       status: order.status,
       total: order.total,
       createdAt: moment(order.createdAt).format("ddd, MMM Do YYYY"),
-      returnOn: order.returnOn ? order.returnOn : "Not Returned",
+      returnOn: order.returnedOn ? order.returnedOn : "Not Returned",
       auth_logs: order.authorization_logs && order.authorization_logs,
       orderItems: orderItems,
       amount_logs: order.amount_steps && order.amount_steps,

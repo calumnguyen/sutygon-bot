@@ -7,7 +7,7 @@ import {
   getOrderbyID,
   emptyReturnOrder,
 } from '../../../actions/returnproduct';
-import { getAllProducts } from '../../../actions/product';
+import { getAllProducts,getAllProductsAll } from '../../../actions/product';
 import { getCustomer } from '../../../actions/customer';
 import Loader from '../../layout/Loader';
 import { Link } from 'react-router-dom';
@@ -35,7 +35,7 @@ class ReturnProduct extends Component {
   };
 
   async componentDidMount() {
-    await this.props.getAllProducts();
+    await this.props.getAllProductsAll();
     await this.props.emptyReturnOrder();
   }
 
@@ -157,7 +157,7 @@ class ReturnProduct extends Component {
             sortedAray.filter((f) => f.barcode.toString() === element)
           );
         });
-
+console.log("productarray",productarray)
         this.state.product_Array = productarray;
         return productarray.map((p, p_index) => {
           return (
@@ -572,7 +572,7 @@ ReturnProduct.propTypes = {
   getOrderbyOrderNumber: PropTypes.func.isRequired,
   emptyReturnOrder: PropTypes.func.isRequired,
   getCustomer: PropTypes.func.isRequired,
-  getAllProducts: PropTypes.func.isRequired,
+  getAllProductsAll: PropTypes.func.isRequired,
   getOrderbyID: PropTypes.func.isRequired,
   orders: PropTypes.array,
   customeR: PropTypes.object,
@@ -589,7 +589,8 @@ export default connect(mapStateToProps, {
   getOrderbyCustomerNumber,
   getOrderbyOrderNumber,
   getCustomer,
-  getAllProducts,
+  // getAllProducts,
   getOrderbyID,
   emptyReturnOrder,
+  getAllProductsAll,
 })(ReturnProduct);

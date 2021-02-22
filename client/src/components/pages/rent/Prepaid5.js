@@ -16,7 +16,7 @@ import { OCAlert } from '@opuscapita/react-alerts';
 import { addNewInvoice } from '../../../actions/invoices';
 import {
   getProductById,
-  getAllProducts,
+  getAllProductsAll,
   updateProductIndex,
 } from '../../../actions/product';
 import { getOrderbyOrderNumber } from '../../../actions/returnproduct';
@@ -726,7 +726,7 @@ class Prepaid5 extends Component {
 }
 
 Prepaid5.propTypes = {
-  getAllProducts: PropTypes.func.isRequired,
+  getAllProductsAll: PropTypes.func.isRequired,
   getCustomer: PropTypes.func.isRequired,
   addNewRentProduct: PropTypes.func.isRequired,
   getProductById: PropTypes.func.isRequired,
@@ -753,7 +753,7 @@ const mapStateToProps = (state) => ({
   saved: state.product.saved,
 });
 export default connect(mapStateToProps, {
-  getAllProducts,
+  getAllProductsAll,
   getCustomer,
   addNewRentProduct,
   getProductById,

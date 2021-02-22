@@ -16,7 +16,7 @@ import { OCAlert } from "@opuscapita/react-alerts";
 import { addNewInvoice } from "../../../actions/invoices";
 import {
   getProductById,
-  getAllProducts,
+  getAllProductsAll,
   updateProductIndex,
 } from "../../../actions/product";
 import { updateRentedProduct } from "../../../actions/rentproduct";
@@ -51,7 +51,7 @@ class ReturnPrepaid extends Component {
     order: "",
   };
   async componentDidMount() {
-    await this.props.getAllProducts();
+    await this.props.getAllProductsAll();
     const { state } = this.props.location;
 
     if (state) {
@@ -133,7 +133,7 @@ class ReturnPrepaid extends Component {
         }
 
         const rentedProduct = {
-          status: "Completed",
+          status: "Completed"
         };
         this.props.updateRentedProduct(rentedProduct, order._id);
       });
@@ -422,15 +422,15 @@ class ReturnPrepaid extends Component {
                             {owe_from_customer ? (
                               <React.Fragment>
                                 <h3 className="text-center">
-                                  Customer Owe :
+                                 {amount_remaing>0?'Customer Owe' :'Order Settled'}  :
                                   <strong>
                                     <span className="text-warning ml-2">
-                                      {amount_remaing ? amount_remaing : 0} VND
+                                      {amount_remaing>0 ? `${amount_remaing} VND` : 'Order Settled'} 
                                     </span>
                                   </strong>
                                 </h3>
                                 <br />
-                                <h1 className="text-center">
+                                {amount_remaing>0 ? <h1 className="text-center">
                                   Please take{" "}
                                   <strong>
                                     <span className="text-success">
@@ -438,7 +438,8 @@ class ReturnPrepaid extends Component {
                                     </span>
                                   </strong>
                                   from the customer.
-                                </h1>
+                                </h1>:''}
+                               
                                 <hr />
                                 {this.state.order.leaveID ? (
                                   <h3 className="text-center">
@@ -992,7 +993,7 @@ class ReturnPrepaid extends Component {
 }
 
 ReturnPrepaid.propTypes = {
-  getAllProducts: PropTypes.func.isRequired,
+  getAllProductsAll: PropTypes.func.isRequired,
   getCustomer: PropTypes.func.isRequired,
   addNewRentProduct: PropTypes.func.isRequired,
   getProductById: PropTypes.func.isRequired,
@@ -1019,7 +1020,7 @@ const mapStateToProps = (state) => ({
   saved: state.product.saved,
 });
 export default connect(mapStateToProps, {
-  getAllProducts,
+  getAllProductsAll,
   getCustomer,
   addNewRentProduct,
   getProductById,

@@ -37,6 +37,10 @@ const RentedProductSchema = new mongoose.Schema(
     returnedOn: {
       type: Date,
     },
+    // The actual date of pickup..It may be on-time or late.
+    pickUpOn: {
+      type: Date,
+    },
     status: {
       type: String,
       default: "pending",

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Sidebar from '../../layout/Sidebar';
 import Header from '../../layout/Header';
 import {
-  getAllProducts,
+  getAllProductsAll,
   getProductById,
   updateProductIndex,
 } from '../../../actions/product';
@@ -56,7 +56,7 @@ class MatchBarcodes extends Component {
     sum_of_all_items:''
   };
   async componentDidMount() {
-    await this.props.getAllProducts();
+    await this.props.getAllProductsAll();
     const { state } = this.props.location;
     if (state) {
       this.setState({
@@ -1374,7 +1374,7 @@ class MatchBarcodes extends Component {
 
 MatchBarcodes.propTypes = {
   getCustomer: PropTypes.func.isRequired,
-  getAllProducts: PropTypes.func.isRequired,
+  getAllProductsAll: PropTypes.func.isRequired,
   getProductById: PropTypes.func.isRequired,
   updateProductIndex: PropTypes.func.isRequired,
   updateRentedProduct: PropTypes.func.isRequired,
@@ -1396,7 +1396,7 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   getCustomer,
-  getAllProducts,
+  getAllProductsAll,
   getProductById,
   updateProductIndex,
   updateRentedProduct,

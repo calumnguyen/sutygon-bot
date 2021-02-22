@@ -87,33 +87,45 @@ router.get("/countOrders", auth, async (req, res) => {
   try {
     const today = moment().startOf("day");
     const today_order = await RentedProduct.count({
+      status: "pending",
       createdAt: {
         $gte: today.toDate(),
         $lte: moment(today).endOf("day").toDate(),
       },
     });
     const return_today = await RentedProduct.count({
+      status: "active",
       returnDate: {
         $gte: today.toDate(),
         $lte: moment(today).endOf("day").toDate(),
       },
     });
+
     const pickup_today = await RentedProduct.count({
+      $or: [{ status: "pending" }, { status: "ready" }],
       rentDate: {
         $gte: today.toDate(),
         $lte: moment(today).endOf("day").toDate(),
       },
     });
+
     const overdue_today = await RentedProduct.count({
+      status: "active",
       returnDate: {
-        $lte: moment(today).endOf("day").toDate(),
+        $lte: today.toDate(),
       },
     });
+    const alterations = await RentedProduct.count({
+      status: "alteration",
+    });
+
+    // active
     return res.status(200).json({
       today_order: today_order,
       return_today: return_today,
       pickup_today: pickup_today,
       overdue_today: overdue_today,
+      alterations: alterations,
     });
   } catch (err) {
     res.status(500).send("Server Error!");
@@ -132,14 +144,15 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
       }
-      await RentedProduct.updateOne(
-        { _id: req.params.id },
-        {
-          $set: {
-            status: req.body.status,
-          },
-        }
-      );
+
+      var updatedData = {
+        status: req.body.status,
+      };
+
+      if (req.body.status == "Completed") {
+        updatedData["returnedOn"] = Date.now();
+      }
+      await RentedProduct.findByIdAndUpdate(req.params.id, updatedData);
       res.json({ msg: "Order Completed Successfully" });
     } catch (err) {
       console.error(err.message);

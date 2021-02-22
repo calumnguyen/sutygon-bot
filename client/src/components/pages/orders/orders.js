@@ -13,7 +13,7 @@ import {
   deleteRentedProduct,
   getOrderSearchStatus,
 } from '../../../actions/rentproduct';
-import { getAllProducts } from '../../../actions/product';
+import { getAllProductsAll } from '../../../actions/product';
 import { confirmAlert } from 'react-confirm-alert';
 import * as moment from 'moment';
 import 'react-confirm-alert/src/react-confirm-alert.css';
@@ -512,7 +512,7 @@ class Orders extends Component {
 Orders.propTypes = {
   auth: PropTypes.object,
   getAllRentedProducts: PropTypes.func.isRequired,
-  getAllProducts: PropTypes.func.isRequired,
+  getAllProductsAll: PropTypes.func.isRequired,
   deleteRentedProduct: PropTypes.func.isRequired,
   getOrderSearchStatus: PropTypes.func.isRequired,
   rentproducts: PropTypes.array,
@@ -527,6 +527,6 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   getAllRentedProducts,
   deleteRentedProduct,
-  getAllProducts,
+  getAllProductsAll,
   getOrderSearchStatus,
 })(Orders);
