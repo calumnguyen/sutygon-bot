@@ -455,7 +455,7 @@ class ViewProduct extends Component {
                                   <input
                                     name='prodName'
                                     type='text'
-                                    placeholder='product name'
+                                    placeholder='Tên Sản Phẩm'
                                     className='form-control'
                                     value={this.state.prodName}
                                     onChange={this.handleChange}
@@ -467,7 +467,7 @@ class ViewProduct extends Component {
                                   <input
                                     name='prodId'
                                     type='number'
-                                    placeholder='product id'
+                                    placeholder='Mã Mẫu Hàng'
                                     className='form-control'
                                     value={this.state.prodId}
                                     onChange={this.handleChange}
@@ -479,7 +479,7 @@ class ViewProduct extends Component {
                                   <input
                                     name='barcodeId'
                                     type='number'
-                                    placeholder='barcode id'
+                                    placeholder='Mã Sản Phẩm'
                                     className='form-control'
                                     value={this.state.barcodeId}
                                     onChange={this.handleChange}
@@ -504,13 +504,14 @@ class ViewProduct extends Component {
                                     className='btn btn-primary'
                                     onClick={this.getFilterProducts}
                                   >
-                                    <i className='fa fa-search'></i> Apply
+                                    <i className='fa fa-search'></i> Tìm
                                   </button>
                                   <button
                                     className='btn btn-primary ml-2'
                                     onClick={this.clearFilter}
                                   >
-                                    <i className='fa fa-refresh'></i> Clear
+                                    <i className='fa fa-refresh'></i> Xóa Tiêu
+                                    Chí
                                   </button>
                                 </div>
                               </div>
