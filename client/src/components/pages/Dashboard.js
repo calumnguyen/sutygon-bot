@@ -297,8 +297,8 @@ class Dashboard extends Component {
               <div className='content-wrapper'>
                 <div className='row'>
                   <h4 className='ml-4 mb-4 text-bold-400'>
-                    Hello {user && user.fullname && `${user.fullname}`}, hope
-                    you have a great day!
+                    Xin chào {user && user.fullname && `${user.fullname}`}, chúc
+                    bạn một ngày thật vui vẻ!
                   </h4>
                 </div>
                 <div className='row'>
@@ -345,8 +345,7 @@ class Dashboard extends Component {
                             <div className='text'>0</div>
                           </div>
                           <div className='text-card-order'>
-                            <span> Đơn Hàng </span> <br />{' '}
-                            <span> Cần Sửa Đồ</span>
+                            <span>Đơn Hàng</span> <br /> <span>Cần Sửa Đồ</span>
                           </div>
                         </div>{' '}
                         {/* card5 */}
@@ -369,7 +368,7 @@ class Dashboard extends Component {
                               {today_order ? today_order : 0}
                             </div>{' '}
                           </div>
-                          <div className='text-card-noorder'>
+                          <div className='text-card-order'>
                             <span> Đơn Hàng Mới </span> <br />{' '}
                             <span> Hôm Nay</span>
                           </div>
