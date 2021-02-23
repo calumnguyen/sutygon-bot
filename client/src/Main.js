@@ -74,7 +74,8 @@ const Main = () => {
     <Provider store={store}>
       <Router>
         <Switch>
-          <Route exact path="/" component={Login} />
+          {/* <Route exact path="/home" component={HomePage} /> */}
+          <Route exact path="/" component={HomePage} />
           <Route exact path="/Login" component={Login} />
 
           {/* Dashboard */}
@@ -208,7 +209,7 @@ const Main = () => {
           />
 
           <PrivateRoute exact path="/Error" component={Error} />
-            <Route exact path="/home" component={HomePage} />
+            
         </Switch>
       </Router>
     </Provider>

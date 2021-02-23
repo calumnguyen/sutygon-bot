@@ -1,11 +1,27 @@
 import React from "react";
 import { Link } from "react-router-dom";
 export default function HomePage() {
-  React.useEffect(() => window.scrollTo(0, 0), []);
+  const [loading,setLoading]=React.useState(true)
+  React.useEffect(() => 
+  {
+    window.scrollTo(0, 0)
+    setTimeout(() => {
+      setLoading(false)
+    },1000)
+  }
+  
+    , []);
+  if (loading) {
+    return (<div id="preloader">
+        <div class="loader" id="loader-1"></div>
+      </div>)
+  }
   return (
     <React.Fragment>
+       {/*  */}
       <header id="header-wrap">
-        <nav class="navbar navbar-expand-md bg-inverse fixed-top scrolling-navbar">
+        <div className="">
+          <nav class="navbar navbar-expand-md bg-inverse fixed-top scrolling-navbar">
           <div class="container">
             <Link
               to={"/"}
@@ -26,7 +42,7 @@ export default function HomePage() {
               <i class="lni-menu"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-              <ul class="navbar-nav mr-auto w-100 justify-content-end clearfix">
+              <ul class="navbar-nav ml-auto justify-content-end clearfix">
                 <li class="nav-item active">
                   <a class="nav-link" href="#hero-area">
                     Home
@@ -66,7 +82,8 @@ export default function HomePage() {
             </div>
           </div>
         </nav>
-
+        </div>
+        </header>
         <div id="hero-area" class="hero-area-bg">
           <div class="container">
             <div class="row">
@@ -91,7 +108,7 @@ export default function HomePage() {
                     <a
                       rel="nofollow"
                       href="https://www.sutygon.app/"
-                      class="btn btn-common"
+                      class="btn1 btn1-common"
                     >
                       Get started
                     </a>
@@ -110,7 +127,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </header>
+     
 
       <section id="services" class="section-padding">
         <div class="container">
@@ -242,7 +259,7 @@ export default function HomePage() {
                       and convenient payment options, and easy delivery and
                       returns.
                     </p>
-                    <a href="#" class="btn btn-common mt-3">
+                    <a href="#" class="btn1 btn1-common mt-3">
                       Read More
                     </a>
                   </div>
@@ -274,7 +291,7 @@ export default function HomePage() {
                   <span class="icon">
                     <i class="lni-rocket"></i>
                   </span>
-                  <div class="text">
+                  <div class="text1">
                     <h4>Invoicing</h4>
                     <p>
                       Invoices are synced with your orders to reduce human error
@@ -286,7 +303,7 @@ export default function HomePage() {
                   <span class="icon">
                     <i class="lni-laptop-phone"></i>
                   </span>
-                  <div class="text">
+                  <div class="text1">
                     <h4>Dashboard</h4>
                     <p>
                       Get a single view of upcoming pickups and returns so
@@ -298,7 +315,7 @@ export default function HomePage() {
                   <span class="icon">
                     <i class="lni-cog"></i>
                   </span>
-                  <div class="text">
+                  <div class="text1">
                     <h4>ORDER MANAGEMENT</h4>
                     <p>
                       Let your team create and manage orders, and always be
@@ -319,7 +336,7 @@ export default function HomePage() {
                   <span class="icon">
                     <i class="lni-map-marker"></i>
                   </span>
-                  <div class="text">
+                  <div class="text1">
                     <h4>Trackable inventory</h4>
                     <p>
                       Keep detailed track of stock by using unique identifiers
@@ -331,7 +348,7 @@ export default function HomePage() {
                   <span class="icon">
                     <i class="lni-layers"></i>
                   </span>
-                  <div class="text">
+                  <div class="text1">
                     <h4>DOCUMENT TEMPLATES</h4>
                     <p>
                       Enjoy customizable templates for quotes, contracts, and
@@ -343,7 +360,7 @@ export default function HomePage() {
                   <span class="icon">
                     <i class="lni-calendar"></i>
                   </span>
-                  <div class="text">
+                  <div class="text1">
                     <h4>Availability calendar</h4>
                     <p>
                       Zoom in on specific products, spot potential conflicts,
@@ -387,7 +404,7 @@ export default function HomePage() {
                     weekly
                   </li>
                 </ul>
-                <button class="btn btn-common">GET NOW</button>
+                <button class="btn1 btn1-common">GET NOW</button>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-xs-12 active">
@@ -413,7 +430,7 @@ export default function HomePage() {
                     weekly
                   </li>
                 </ul>
-                <button class="btn btn-common">GET NOW</button>
+                <button class="btn1 btn1-common">GET NOW</button>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-xs-12">
@@ -435,7 +452,7 @@ export default function HomePage() {
                     weekly
                   </li>
                 </ul>
-                <button class="btn btn-common">GET NOW</button>
+                <button class="btn1 btn1-common">GET NOW</button>
               </div>
             </div>
           </div>
@@ -620,7 +637,7 @@ export default function HomePage() {
               class="col-lg-6 col-md-6 col-xs-12 wow fadeInLeft"
               data-wow-delay="0.3s"
             >
-              <div class="cta-text">
+              <div class="cta-text1">
                 <h4>Try SUTYGON</h4>
                 <p>Everything you need to manage rentals</p>
               </div>
@@ -630,7 +647,7 @@ export default function HomePage() {
               data-wow-delay="0.3s"
             >
               <br />
-              <a href="#" class="btn btn-common">
+              <a href="#" class="btn1 btn1-common">
                 Get Started
               </a>
             </div>
@@ -660,7 +677,7 @@ export default function HomePage() {
                       <form>
                         <div class="form-group">
                           <input
-                            type="text"
+                            type="text1"
                             class="form-control"
                             id="exampleInputEmail1"
                             aria-describedby="emailHelp"
@@ -678,7 +695,7 @@ export default function HomePage() {
                         </div>
                         <div class="form-group">
                           <input
-                            type="text"
+                            type="text1"
                             class="form-control"
                             id="exampleInputEmail1"
                             aria-describedby="emailHelp"
@@ -687,12 +704,12 @@ export default function HomePage() {
                         </div>
                         <textarea
                           class="contactfieldarea"
-                          type="text"
+                          type="text1"
                           name="msg"
                           placeholder="Your Message"
                           required=""
                         ></textarea>
-                        <button type="submit" class="btn btn-common">
+                        <button type="submit" class="btn1 btn1-common">
                           Submit
                         </button>
                       </form>
@@ -834,9 +851,9 @@ export default function HomePage() {
         <i class="lni-arrow-up"></i>
       </a>
       {/* preloader */}
-      <div id="preloader">
+      {/* <div id="preloader">
         <div class="loader" id="loader-1"></div>
-      </div>
+      </div> */}
     </React.Fragment>
   );
 }
