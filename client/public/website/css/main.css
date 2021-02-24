@@ -124,7 +124,7 @@ a:not([href]):not([tabindex]) {
   transition: all 0.2s linear;
   display: inline-block;
 }
-.active {
+.activeNav {
   background: transparent !important;
 }
 .btn1:focus,

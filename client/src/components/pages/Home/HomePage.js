@@ -28,7 +28,7 @@ export default function HomePage() {
               onClick={() => window.scrollTo(0, 0)}
               class="navbar-brand"
             >
-              <img height="50px" src="website/img/Capture.PNG" alt="" />
+              <img height="100px" src="website/logo.png" alt="" />
             </Link>
             <button
               class="navbar-toggler"
@@ -43,7 +43,7 @@ export default function HomePage() {
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
               <ul class="navbar-nav ml-auto justify-content-end clearfix">
-                <li class="nav-item active">
+                <li class="nav-item activeNav">
                   <a class="nav-link" href="#hero-area">
                     Home
                   </a>
@@ -95,10 +95,10 @@ export default function HomePage() {
                   </h2>
                   <span class="d-flex">
                     <span class="my-auto text-dark">
-                      At Sutygon, our mission is to develop a fully customer
+                      At Sutygon-Bot, our mission is to develop a fully customer
                       centric company; to develop a junction where anyone can
                       join to find and discover anything they want to take on
-                      rental. SutyGon is an online rental service whose primary
+                      rental. SutyGon-Bot is an online rental service whose primary
                       aim is to support its customers as it makes surplus rental
                       services easy on customers? pockets, which otherwise
                       exceeds the affordability of a normal person.
@@ -407,7 +407,7 @@ export default function HomePage() {
                 <button class="btn1 btn1-common">GET NOW</button>
               </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-xs-12 active">
+            <div class="col-lg-4 col-md-6 col-xs-12 activeNav">
               <div
                 class="table wow fadeInUp"
                 id="active-tb"
@@ -638,7 +638,7 @@ export default function HomePage() {
               data-wow-delay="0.3s"
             >
               <div class="cta-text1">
-                <h4>Try SUTYGON</h4>
+                <h4>Try SUTYGON-BOT</h4>
                 <p>Everything you need to manage rentals</p>
               </div>
             </div>
@@ -737,7 +737,7 @@ export default function HomePage() {
               <div class="col-lg-3 col-md-6 col-sm-6 col-xs-6 col-mb-12">
                 <div class="widget">
                   <h3 class="footer-logo">
-                    <img src="website/img/Capture.PNG" height="50px" alt="" />
+                    <img src="website/logo.png" height="100px" alt="" />
                   </h3>
                   <div class="textwidget">
                     <p>
