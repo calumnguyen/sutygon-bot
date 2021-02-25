@@ -101,13 +101,13 @@ router.post("/verify_email",
   [
     check('email', 'email Required').exists(),
     check('password', 'Password Required').exists(),
-  ], () => {
+  ],async () => {
    try {
     const { email, password } = req.body;
  // check for existing user
-      let user = await User.findOne({ email })
+      let userCheck = await User.findOne({ email })
 
-      if (user) {
+      if (userCheck) {
         return res
           .status(400)
           .json({ errors: [{ msg: 'email already exists' }] })
