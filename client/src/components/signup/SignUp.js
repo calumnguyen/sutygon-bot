@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import { Redirect, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { login } from "../actions/auth";
-import { updatePassword, getUser } from "../actions/user";
+import { login } from "../../actions/auth";
+import { updatePassword, getUser } from "../../actions/user";
 
-import Alert from "./layout/Alert";
-import { getShop } from "../actions/dashboard";
+import Alert from "../layout/Alert";
+import { getShop } from "../../actions/dashboard";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
-class Login extends Component {
+class Signup extends Component {
   state = {
     username: "",
     email: "",
@@ -154,10 +154,10 @@ class Login extends Component {
                                   className="mb-2 card-title text-center align-middle"
                                   style={{}}
                                 >
-                                  Đăng Nhập
+                                  Sign Up
                                 </h4>
                                 <p className="card-text mb-3 text-center align-middle">
-                                  Đăng Nhập Với Một Nụ Cười Nào
+                                  Sign Up With A Smile
                                 </p>
                                 <form onSubmit={(e) => this.onSubmit(e)}>
                                   <Alert />
@@ -183,13 +183,13 @@ class Login extends Component {
                                       <input
                                         className="btn btn-primary btn-lg btn-block"
                                         type="submit"
-                                        value="Tôi đã sẵn sàng để chăm sóc khách hàng"
+                                        value="Create You Account"
                                       />
                                     </div>
                                   </div>
-                                    {/* <Link class="nav-link" to={"/signup"}>
-                    Sign Up
-                  </Link> */}
+                                  <Link class="nav-link" to={"/Login"}>
+                                    Login
+                                  </Link>
                                 </form>
                               </div>
                             </div>
@@ -320,7 +320,7 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+Signup.propTypes = {
   auth: PropTypes.object,
   passwordUpdated: PropTypes.bool,
   userID: PropTypes.object,
@@ -347,4 +347,4 @@ export default connect(mapStateToProps, {
   updatePassword,
   getUser,
   getShop,
-})(Login);
+})(Signup);

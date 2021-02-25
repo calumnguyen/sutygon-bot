@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Dashboard from "./components/pages/Dashboard";
 import Login from "./components/Login";
+import SignUp from './components/signup/SignUp'
 import {
   Route,
   BrowserRouter as Router,
@@ -77,6 +78,7 @@ const Main = () => {
           {/* <Route exact path="/home" component={HomePage} /> */}
           <Route exact path="/" component={HomePage} />
           <Route exact path="/Login" component={Login} />
+           <Route exact path="/signup" component={SignUp} />
 
           {/* Dashboard */}
           <PrivateRoute exact path="/dashboard" component={Dashboard} />

@@ -28,7 +28,7 @@ export default function HomePage() {
               onClick={() => window.scrollTo(0, 0)}
               class="navbar-brand"
             >
-              <img height="100px" src="website/logo.png" alt="" />
+              <img height="100px" src="website/sutygon-03.png" alt="" />
             </Link>
             <button
               class="navbar-toggler"
@@ -73,7 +73,7 @@ export default function HomePage() {
                     Contact
                   </a>
                 </li>
-                <li class="nav-item">
+                 <li class="nav-item">
                   <Link class="nav-link" to={"/login"}>
                     Login
                   </Link>
