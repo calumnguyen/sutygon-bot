@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AnchorLink from 'react-anchor-link-smooth-scroll';
 export default function HomePage() {
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
@@ -377,7 +378,11 @@ export default function HomePage() {
       <section id='pricing' class='section-padding'>
         <div class='container'>
           <div class='section-header text-center'>
-            <h2 class='section-title wow fadeInDown' data-wow-delay='0.3s'>
+            <h2
+              class='section-title wow fadeInDown'
+              id='price'
+              data-wow-delay='0.3s'
+            >
               Pricing
             </h2>
             <div class='shape wow fadeInDown' data-wow-delay='0.3s'></div>
@@ -818,28 +823,26 @@ export default function HomePage() {
                   <li>
                     <a href='#'>Enterprise</a>
                   </li>
-                  <li>
-                    <a href='#'>Employee Management</a>
-                  </li>
                 </ul>
               </div>
               <div class='col-lg-3 col-md-6 col-sm-12 col-xs-12'>
                 <h3 class='footer-titel'>Resources</h3>
                 <ul class='footer-link'>
                   <li>
-                    <a href='#'>Payment Options</a>
+                    <AnchorLink href='#price'>Payment Options</AnchorLink>
                   </li>
                   <li>
-                    <a href='#'>Fee Schedule</a>
+                    <a href='https://www.sutygon.app/login'>Getting Started</a>
                   </li>
                   <li>
-                    <a href='#'>Getting Started</a>
+                    <a href='https://www.sutygon.app/login'>
+                      Identity Verification
+                    </a>
                   </li>
                   <li>
-                    <a href='#'>Identity Verification</a>
-                  </li>
-                  <li>
-                    <a href='#'>Card Verification</a>
+                    <a href='https://www.sutygon.app/login'>
+                      Card Verification
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -848,8 +851,8 @@ export default function HomePage() {
                 <ul class='address'>
                   <li>
                     <a href='#'>
-                      <i class='lni-map-marker'></i> 105 Madison Avenue - <br />{' '}
-                      Third Floor New York, NY 10016
+                      <i class='lni-map-marker'></i> 105 Madison Avenue - Third
+                      Floor New York, NY 10016
                     </a>
                   </li>
                   <li>
@@ -859,7 +862,7 @@ export default function HomePage() {
                   </li>
                   <li>
                     <a href='#'>
-                      <i class='lni-envelope'></i> E: contact@uideck.com
+                      <i class='lni-envelope'></i> E: contact@sutygon.com
                     </a>
                   </li>
                 </ul>
@@ -877,7 +880,7 @@ export default function HomePage() {
                     <a
                       class='px-2'
                       rel='nofollow'
-                      href='https://www.sutygon.com/'
+                      href='https://www.sutygon.app/login'
                     >
                       SUTYGON-BOT
                     </a>{' '}
