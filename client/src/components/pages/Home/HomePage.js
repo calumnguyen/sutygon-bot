@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import AnchorLink from 'react-anchor-link-smooth-scroll';
 export default function HomePage() {
   const [loading,setLoading]=React.useState(true)
   React.useEffect(() => 
@@ -379,7 +380,7 @@ export default function HomePage() {
       <section id="pricing" class="section-padding">
         <div class="container">
           <div class="section-header text-center">
-            <h2 class="section-title wow fadeInDown" data-wow-delay="0.3s">
+            <h2 class="section-title wow fadeInDown" id="price" data-wow-delay="0.3s">
               Pricing
             </h2>
             <div class="shape wow fadeInDown" data-wow-delay="0.3s"></div>
@@ -403,13 +404,16 @@ export default function HomePage() {
                    with &#60; 70 orders/month, 2 admins account and 5 employee accounts. No coupon, no appoinments, no customizable logo.
                   </li>
                 </ul>
-                <button class="btn1 btn1-common">GET NOW</button>
+                <a href="https://www.sutygon.app/login">
+                  <button class="btn1 btn1-common">GET NOW</button>
+                </a>
               </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-xs-12 activeNav">
+            <div className="col-lg-1">  </div>
+            <div class="col-lg-4 col-md-6 col-xs-12">
               <div
                 class="table wow  px-2 text-center fadeInUp"
-                id="active-tb"
+                // id="active-tb"
                 data-wow-delay="1.2s"
               >
                 <div class="icon-box">
@@ -428,7 +432,9 @@ export default function HomePage() {
                   for &#60; 300 orders per month. 5 admin accounts and 10 employee accounts, Include everything + customizable logo
                   </li>
                 </ul>
-                <button class="btn1 btn1-common">GET NOW</button>
+                <a href="https://www.sutygon.app/login">
+                  <button class="btn1 btn1-common">GET NOW</button>
+                </a>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-xs-12">
@@ -449,27 +455,54 @@ export default function HomePage() {
                   for &#8804; 600 orders per month. 10 admin accounts and 20 employee accounts. Include everything + customizable logo + priority customer service respond within 24 hours
                   </li>
                 </ul>
-                <button class="btn1 btn1-common">GET NOW</button>
+                <a href="https://www.sutygon.app/login">
+                  <a href="https://www.sutygon.app/login">
+                  <button class="btn1 btn1-common">GET NOW</button>
+                </a>
+                </a>
               </div>
             </div>
-            <div class="col-md-6 col-xs-12">
+            <div className="col-lg-1">  </div>
+            <div class="col-lg-4 col-md-6 col-xs-12">
               <div class="table wow  px-2 text-center fadeInRight" data-wow-delay="1.2s">
+                <div class="icon-box">
+                  <i class="lni-star"></i>
+                </div>
                 <div class="pricing-header">
                   <p class="price-value">
-                    <span>Over 600 order/month please contact directly.</span>
+                    <span>Looking for Bulk </span> Orders?
                   </p>
                 </div>
                 {/* <div class="title">
                   <h3>Premium</h3>
                 </div> */}
-                <ul class="description px-0">
+                <ul class="description px-0 my-auto">
+                <li className="text-white p-0">
+                      Over 600 order/month please contact directly
+                  </li>
+                  <li className="text-white">
+                      Over 600 order/month please contact directly
+                  </li>
                   <li>
-                    (Additional account will be 10 000 VND/ an account)
+                      Over 600 order/month please contact directly
+                  </li>
+                  <li className="text-white">
+                      Over 600 order/month please contact directly
+                  </li>
+                  <li className="text-white p-0">
+                      Over 600 order/month please contact directly
                   </li>
                 </ul>
-                <button class="btn1 btn1-common">GET NOW</button>
+                <a href="https://www.sutygon.app/login">
+                  <button class="btn1 btn1-common px-3">CONTACT SALES</button>
+                </a>
               </div>
             </div>
+          <div className="pl-5 offset-lg-1 mr-auto col-lg-8 float-left w-100">
+          <li className="d-flex align-items-center text-left">
+                      <span className="pt-2 pr-1">* </span> <span>(Additional account will be  10 000  VND/ an account)</span>
+                  </li>
+          </div>
           </div>
         </div>
       </section>
@@ -791,28 +824,22 @@ export default function HomePage() {
                   <li>
                     <a href="#">Enterprise</a>
                   </li>
-                  <li>
-                    <a href="#">Employee Management</a>
-                  </li>
                 </ul>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
                 <h3 class="footer-titel">Resources</h3>
                 <ul class="footer-link">
                   <li>
-                    <a href="#">Payment Options</a>
+                  <AnchorLink href='#price'>Payment Options</AnchorLink>
                   </li>
                   <li>
-                    <a href="#">Fee Schedule</a>
+                    <a href="https://www.sutygon.app/login">Getting Started</a>
                   </li>
                   <li>
-                    <a href="#">Getting Started</a>
+                    <a href="https://www.sutygon.app/login">Identity Verification</a>
                   </li>
                   <li>
-                    <a href="#">Identity Verification</a>
-                  </li>
-                  <li>
-                    <a href="#">Card Verification</a>
+                    <a href="https://www.sutygon.app/login">Card Verification</a>
                   </li>
                 </ul>
               </div>
@@ -821,18 +848,18 @@ export default function HomePage() {
                 <ul class="address">
                   <li>
                     <a href="#">
-                      <i class="lni-map-marker"></i> 105 Madison Avenue - <br />{" "}
+                      <i class="lni-map-marker"></i> 105 Madison Avenue - {" "}
                       Third Floor New York, NY 10016
                     </a>
                   </li>
                   <li>
                     <a href="#">
-                      <i class="lni-phone-handset"></i> P: +84 846 250 592
+                      <i class="lni-phone-handset"></i>  P: +84 846 250 592
                     </a>
                   </li>
                   <li>
                     <a href="#">
-                      <i class="lni-envelope"></i> E: contact@uideck.com
+                      <i class="lni-envelope"></i> E: contact@sutygon.com
                     </a>
                   </li>
                 </ul>
@@ -850,7 +877,7 @@ export default function HomePage() {
                     <a
                       class="px-2"
                       rel="nofollow"
-                      href="https://www.sutygon.com/"
+                      href="https://www.sutygon.app/login"
                     >
                       SUTYGON-BOT
                     </a>{" "}
