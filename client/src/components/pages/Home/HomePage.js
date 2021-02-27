@@ -28,7 +28,7 @@ export default function HomePage() {
               onClick={() => window.scrollTo(0, 0)}
               class="navbar-brand"
             >
-              <img height="100px" src="website/sutygon-03.png" alt="" />
+              <img height="50px" src="website/sutygon-03.png" alt="" />
             </Link>
             <button
               class="navbar-toggler"
@@ -384,24 +384,23 @@ export default function HomePage() {
             </h2>
             <div class="shape wow fadeInDown" data-wow-delay="0.3s"></div>
           </div>
-          <div class="row">
+          <div class="row justify-content-center">
             <div class="col-lg-4 col-md-6 col-xs-12">
-              <div class="table wow fadeInLeft" data-wow-delay="1.2s">
+              <div class="table wow  px-2 text-center fadeInLeft" data-wow-delay="1.2s">
                 <div class="icon-box">
                   <i class="lni-package"></i>
                 </div>
                 <div class="pricing-header">
                   <p class="price-value">
-                    10000<span> VND</span>
+                    Free<span> </span>
                   </p>
                 </div>
                 <div class="title">
-                  <h3>Pro</h3>
+                  {/* <h3>Pro</h3> */}
                 </div>
-                <ul class="description">
+                <ul class="description px-3">
                   <li>
-                    per week, billed monthally or 350000 VND per week, billed
-                    weekly
+                   with &#60; 70 orders/month, 2 admins account and 5 employee accounts. No coupon, no appoinments, no customizable logo.
                   </li>
                 </ul>
                 <button class="btn1 btn1-common">GET NOW</button>
@@ -409,7 +408,7 @@ export default function HomePage() {
             </div>
             <div class="col-lg-4 col-md-6 col-xs-12 activeNav">
               <div
-                class="table wow fadeInUp"
+                class="table wow  px-2 text-center fadeInUp"
                 id="active-tb"
                 data-wow-delay="1.2s"
               >
@@ -418,38 +417,54 @@ export default function HomePage() {
                 </div>
                 <div class="pricing-header">
                   <p class="price-value">
-                    35000<span> VND</span>
+                  150 000<span> VND or 5% of total sale, whichever is lower/month </span>
                   </p>
                 </div>
-                <div class="title">
+                {/* <div class="title">
                   <h3>Plus</h3>
-                </div>
-                <ul class="description">
+                </div> */}
+                <ul class="description px-4">
                   <li>
-                    per week, billed monthally or 95000 VND per week, billed
-                    weekly
+                  for &#60; 300 orders per month. 5 admin accounts and 10 employee accounts, Include everything + customizable logo
                   </li>
                 </ul>
                 <button class="btn1 btn1-common">GET NOW</button>
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-xs-12">
-              <div class="table wow fadeInRight" data-wow-delay="1.2s">
+              <div class="table wow  px-2 text-center fadeInRight" data-wow-delay="1.2s">
                 <div class="icon-box">
                   <i class="lni-star"></i>
                 </div>
                 <div class="pricing-header">
                   <p class="price-value">
-                    150<span> VND</span>
+                  300 000 <span> VND or 4% of total sale, whichever is lower/month</span>
                   </p>
                 </div>
-                <div class="title">
+                {/* <div class="title">
                   <h3>Premium</h3>
-                </div>
-                <ul class="description">
+                </div> */}
+                <ul class="description px-0">
                   <li>
-                    per week, billed monthally or 299000 VND per week, billed
-                    weekly
+                  for &#8804; 600 orders per month. 10 admin accounts and 20 employee accounts. Include everything + customizable logo + priority customer service respond within 24 hours
+                  </li>
+                </ul>
+                <button class="btn1 btn1-common">GET NOW</button>
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-12">
+              <div class="table wow  px-2 text-center fadeInRight" data-wow-delay="1.2s">
+                <div class="pricing-header">
+                  <p class="price-value">
+                    <span>Over 600 order/month please contact directly.</span>
+                  </p>
+                </div>
+                {/* <div class="title">
+                  <h3>Premium</h3>
+                </div> */}
+                <ul class="description px-0">
+                  <li>
+                    (Additional account will be 10 000 VND/ an account)
                   </li>
                 </ul>
                 <button class="btn1 btn1-common">GET NOW</button>
@@ -458,6 +473,30 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      {/* <section id="cta" class="section-padding">
+        <div class="container">
+          <div class="row">
+            <div
+              class="col-lg-6 col-md-6 col-xs-12 wow fadeInLeft"
+              data-wow-delay="0.3s"
+            >
+              <div class="cta-text1">
+                <h4>Try SUTYGON-BOT</h4>
+                <p>* Over 600 order/month please contact directly.</p>
+              </div>
+            </div>
+            <div
+              class="col-lg-6 col-md-6 col-xs-12 text-right wow fadeInRight"
+              data-wow-delay="0.3s"
+            >
+              <br />
+              <a href="#" class="btn1 btn1-common">
+                Get Started
+              </a>
+            </div>
+          </div>
+        </div>
+      </section> */}
       {/* testimonal */}
       <section id="testimonial" class="testimonial section-padding">
         <div class="container">
@@ -630,30 +669,7 @@ export default function HomePage() {
         </div>
       </section>
       {/* call to action */}
-      <section id="cta" class="section-padding">
-        <div class="container">
-          <div class="row">
-            <div
-              class="col-lg-6 col-md-6 col-xs-12 wow fadeInLeft"
-              data-wow-delay="0.3s"
-            >
-              <div class="cta-text1">
-                <h4>Try SUTYGON-BOT</h4>
-                <p>Everything you need to manage rentals</p>
-              </div>
-            </div>
-            <div
-              class="col-lg-6 col-md-6 col-xs-12 text-right wow fadeInRight"
-              data-wow-delay="0.3s"
-            >
-              <br />
-              <a href="#" class="btn1 btn1-common">
-                Get Started
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+   
       {/* contact form */}
 
       <section id="contact" class="section-padding bg-gray">
