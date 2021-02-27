@@ -32,10 +32,8 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
-  --font-family-sans-serif: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
+  --font-family-sans-serif: 'Montserrat';
+  --font-family-monospace: 'Montserrat';
 }
 
 *,
@@ -45,7 +43,7 @@
 }
 
 html {
-  font-family: sans-serif;
+  font-family: 'Montserrat';
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -66,8 +64,7 @@ section {
 
 body {
   margin: 0;
-  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+  font-family: 'Montserrat';
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -94,9 +91,12 @@ h5,
 h6 {
   margin-top: 0;
   margin-bottom: 0.75rem;
+  font-family: 'Montserrat';
 }
 
 p {
+  font-family: 'Montserrat',
+    sans-serif;
   margin-top: 0;
   margin-bottom: 1rem;
 }
@@ -169,6 +169,7 @@ sup {
 }
 
 a {
+  font-family: 'Montserrat';
   color: #009da0;
   text-decoration: none;
   background-color: transparent;
@@ -195,8 +196,7 @@ pre,
 code,
 kbd,
 samp {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-    'Courier New', monospace;
+  font-family: 'Montserrat';;
   font-size: 1em;
 }
 
@@ -1445,21 +1445,25 @@ pre code {
 }
 
 .table {
+  font-family: 'Montserrat';
   width: 100%;
   margin-bottom: 1.5rem;
   color: #212529;
 }
 .table th,
 .table td {
+  font-family: 'Montserrat';
   padding: 0.75rem;
   vertical-align: top;
   border-top: 1px solid #dee2e6;
 }
 .table thead th {
+  font-family: 'Montserrat';
   vertical-align: bottom;
   border-bottom: 2px solid #dee2e6;
 }
 .table tbody + tbody {
+  font-family: 'Montserrat';
   border-top: 2px solid #dee2e6;
 }
 
@@ -4433,6 +4437,7 @@ input[type='button'].btn-block {
 }
 
 .card-title {
+  font-family: 'Montserrat';
   margin-bottom: 1.5rem;
 }
 
@@ -5665,8 +5670,7 @@ a.close.disabled {
   z-index: 1070;
   display: block;
   margin: 0;
-  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+  font-family: 'Montserrat';
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
@@ -5780,8 +5784,7 @@ a.close.disabled {
   z-index: 1060;
   display: block;
   max-width: 276px;
-  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+  font-family: 'Montserrat';
   font-style: normal;
   font-weight: 400;
   line-height: 1.5;
@@ -9233,8 +9236,7 @@ button.bg-dark:focus {
 }
 
 .text-monospace {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-    'Courier New', monospace !important;
+  font-family: 'Montserrat' !important;
 }
 
 .text-justify {
@@ -39237,7 +39239,7 @@ html {
 }
 
 body {
-  font-family: 'Rubik', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Montserrat';
   font-weight: 300;
   line-height: 1.5em;
   color: rgba(0, 0, 0, 0.87);
@@ -39281,15 +39283,13 @@ h6,
 .h4,
 .h5,
 .h6 {
-  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+  font-family: 'Montserrat';
   font-weight: 300;
   line-height: 1.15em;
 }
 
 .serif-font {
-  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+  font-family: 'Montserrat';
 }
 
 .page-header {
@@ -39336,7 +39336,7 @@ p {
   top: 40%;
   right: 20px;
   margin-top: -4px;
-  font-family: 'feather';
+  font-family: 'Montserrat';
   content: '\e982';
   transition: all 300ms linear 0s;
 }
@@ -39346,7 +39346,7 @@ p {
   top: 40%;
   right: 20px;
   margin-top: -4px;
-  font-family: 'feather';
+  font-family: 'Montserrat';
   content: '\e99d';
   transition: all 300ms linear 0s;
 }
@@ -39710,7 +39710,7 @@ button:hover {
 }
 .dropdown-menu .dropdown-submenu > a:after,
 .dropdown-menu .dropdown-submenu > button:after {
-  font-family: 'FontAwesome';
+  font-family: 'Montserrat';
   content: '\f105' !important;
   right: 8px;
   top: -15px;
@@ -42045,7 +42045,7 @@ figure.effect-zoe p.icon-links a {
 figure.effect-zoe p.icon-links a span::before {
   display: inline-block;
   padding: 8px 10px;
-  font-family: 'feathericons';
+  font-family: 'Montserrat';
   speak: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -45166,8 +45166,7 @@ datetime .form-group {
 
 .app-sidebar,
 .off-canvas-sidebar {
-  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+  font-family: 'Montserrat';
   position: fixed;
   top: 0;
   bottom: 0;
@@ -45231,7 +45230,7 @@ datetime .form-group {
 .app-sidebar .navigation li.has-sub > a:after,
 .off-canvas-sidebar .navigation li.has-sub > a:after {
   content: '\e929';
-  font-family: 'feather';
+  font-family: 'Montserrat';
   font-size: 1rem;
   display: inline-block;
   position: absolute;
@@ -45381,7 +45380,7 @@ datetime .form-group {
   margin: 10px 10px;
   color: #fff;
   line-height: 20px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat';
 }
 .app-sidebar .logo .logo-text,
 .off-canvas-sidebar .logo .logo-text {
@@ -48112,7 +48111,7 @@ body.layout-transparent .customizer .tl-bg-img {
 
 .wi {
   display: inline-block;
-  font-family: 'weathericons';
+  font-family: 'Montserrat';
   font-style: normal;
   font-weight: normal;
   line-height: 1;
@@ -51753,7 +51752,7 @@ bootstrap table theme
 }
 .dropzone .dz-message:before {
   content: '\e94b';
-  font-family: 'feather';
+  font-family: 'Montserrat';
   font-size: 80px;
   position: absolute;
   top: 48px;
@@ -51778,7 +51777,7 @@ bootstrap table theme
 }
 .dropzone .dz-preview .dz-remove:before {
   content: '\e9e6';
-  font-family: 'feather';
+  font-family: 'Montserrat';
   display: inline-block;
   line-height: 1;
   z-index: 2;
@@ -52354,7 +52353,7 @@ bootstrap table theme
 
 .picker__nav--prev:before,
 .picker__nav--next:before {
-  font-family: 'FontAwesome' !important;
+  font-family: 'Montserrat' !important;
 }
 
 .picker__nav--next:before {
