@@ -53,7 +53,7 @@ class MatchBarcodes extends Component {
     openModal: false,
     modal_type: '',
     allCategoryList: [],
-    sum_of_all_items:''
+    sum_of_all_items: '',
   };
   async componentDidMount() {
     await this.props.getAllProductsAll();
@@ -346,7 +346,7 @@ class MatchBarcodes extends Component {
       customer: order[0].customer,
       barcodesArray: this.state.barcodesArray,
       product_Array: this.state.product_Array,
-      sum_of_all_items:this.state.sum_of_all_items
+      sum_of_all_items: this.state.sum_of_all_items,
     });
 
     //
@@ -635,7 +635,6 @@ class MatchBarcodes extends Component {
                             <form onSubmit={(e) => this.onSubmit(e)}>
                               <div className='text-left ml-5'>
                                 <p>
-                                  {' '}
                                   Khách hàng đang hoàn trả{' '}
                                   <span style={{ color: 'red' }}>
                                     {order && order.length > 0
@@ -654,7 +653,9 @@ class MatchBarcodes extends Component {
                                   <br />
                                   {barcodesArray.length !==
                                   order[0].barcodes.length ? (
-                                    <h3>Missing Products</h3>
+                                    <h3 className='ml-4'>
+                                      Khách Hàng Trả Thiếu
+                                    </h3>
                                   ) : (
                                     ''
                                   )}
@@ -687,10 +688,10 @@ class MatchBarcodes extends Component {
                                           <thead>
                                             <tr>
                                               <th scope='col'>#</th>
-                                              <th scope='col'>Charge</th>
-                                              <th scope='col'>Category</th>
-                                              <th scope='col'>Amount</th>
-                                              <th scope='col'>Action</th>
+                                              <th scope='col'>Tên Phí</th>
+                                              <th scope='col'>Loại</th>
+                                              <th scope='col'>Phí VNĐ</th>
+                                              <th scope='col'>Hành Động</th>
                                             </tr>
                                           </thead>
                                           <tbody>
@@ -740,10 +741,10 @@ class MatchBarcodes extends Component {
                                           <thead>
                                             <tr>
                                               <th scope='col'>#</th>
-                                              <th scope='col'>Discount</th>
-                                              <th scope='col'>Category</th>
-                                              <th scope='col'>Amount</th>
-                                              <th scope='col'>Action</th>
+                                              <th scope='col'>Tên Phí</th>
+                                              <th scope='col'>Loại</th>
+                                              <th scope='col'>Giảm VNĐ</th>
+                                              <th scope='col'>Hành Động</th>
                                             </tr>
                                           </thead>
                                           <tbody>

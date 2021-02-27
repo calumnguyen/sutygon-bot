@@ -94,9 +94,13 @@ h5,
 h6 {
   margin-top: 0;
   margin-bottom: 0.75rem;
+  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
 }
 
 p {
+  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   margin-top: 0;
   margin-bottom: 1rem;
 }
@@ -169,6 +173,8 @@ sup {
 }
 
 a {
+  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   color: #009da0;
   text-decoration: none;
   background-color: transparent;
@@ -1445,21 +1451,29 @@ pre code {
 }
 
 .table {
+  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   width: 100%;
   margin-bottom: 1.5rem;
   color: #212529;
 }
 .table th,
 .table td {
+  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   padding: 0.75rem;
   vertical-align: top;
   border-top: 1px solid #dee2e6;
 }
 .table thead th {
+  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   vertical-align: bottom;
   border-bottom: 2px solid #dee2e6;
 }
 .table tbody + tbody {
+  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   border-top: 2px solid #dee2e6;
 }
 
@@ -4433,6 +4447,8 @@ input[type='button'].btn-block {
 }
 
 .card-title {
+  font-family: 'Montserrat', 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   margin-bottom: 1.5rem;
 }
 
