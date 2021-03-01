@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function ShowPricesOrder({
   insuranceAmt,
@@ -6,62 +6,62 @@ export default function ShowPricesOrder({
   onChangePay,
   pay_amount,
   already_pay_amount,
-  customerName
+  customerName,
 }) {
   return (
     <>
-      <div className="col-md-12">
-        <div className="row">
-          <div className="col-md-4 ">
-            <label className="text-center ml-2" id="setName">
-              Total without insurance :
+      <div className='col-md-12'>
+        <div className='row'>
+          <div className='col-md-4 '>
+            <label className='text-center ml-2' id='setName'>
+              Tổng Tiền (không cọc thêm)
             </label>
             <div>
               <input
-                style={{ width: "65%", color: "gray" }}
-                type="text"
+                style={{ width: '65%', color: 'gray' }}
+                type='text'
                 value={Number(total) - Number(insuranceAmt)}
-                className="form-control mm-input s-input text-center"
-                placeholder="Total"
-                name="total_without_insurance"
-                id="setSizeFloat"
+                className='form-control mm-input s-input text-center'
+                placeholder='Total'
+                name='total_without_insurance'
+                id='setSizeFloat'
                 required
                 readOnly
               />
             </div>
           </div>
 
-          <div className="col-md-4 ">
-            <label className="text-center ml-2" id="setName">
-              insurance :
+          <div className='col-md-4 '>
+            <label className='text-center ml-2' id='setName'>
+              Cọc Thêm
             </label>
             <div>
               <input
-                style={{ width: "65%", color: "gray" }}
-                type="text"
+                style={{ width: '65%', color: 'gray' }}
+                type='text'
                 value={Number(insuranceAmt)}
-                className="form-control mm-input s-input text-center"
-                placeholder="Total"
-                name="insurance"
-                id="setSizeFloat"
+                className='form-control mm-input s-input text-center'
+                placeholder='Total'
+                name='insurance'
+                id='setSizeFloat'
                 required
                 readOnly
               />
             </div>
           </div>
-          <div className="col-md-4 ">
-            <label className="text-center ml-2" id="setName">
-              Total with insurance :
+          <div className='col-md-4 '>
+            <label className='text-center ml-2' id='setName'>
+              Tổng Tiền + Cọc Thêm
             </label>
             <div>
               <input
-                style={{ width: "65%", color: "gray" }}
+                style={{ width: '65%', color: 'gray' }}
                 value={Number(total)}
-                type="text"
-                className="form-control mm-input s-input text-center"
-                placeholder="Total"
-                name="total_without_insurance"
-                id="setSizeFloat"
+                type='text'
+                className='form-control mm-input s-input text-center'
+                placeholder='Total'
+                name='total_without_insurance'
+                id='setSizeFloat'
                 required
                 readOnly
               />
@@ -70,38 +70,38 @@ export default function ShowPricesOrder({
         </div>
       </div>
       <br />
-      <div className="col-md-12">
-        <div className="row">
-          <div className="col-md-4 ">
-            <label className="text-center ml-2" id="setName">
-              Amount owe:
+      <div className='col-md-12'>
+        <div className='row'>
+          <div className='col-md-4 '>
+            <label className='text-center ml-2' id='setName'>
+              Nợ
             </label>
             <div>
               <input
-                style={{ width: "65%", color: "gray" }}
-                type="text"
-                value={Number(total)-Number(already_pay_amount)}
-                className="form-control mm-input s-input text-center"
-                placeholder="Total"
-                name="total_owe"
-                id="setSizeFloat"
+                style={{ width: '65%', color: 'gray' }}
+                type='text'
+                value={Number(total) - Number(already_pay_amount)}
+                className='form-control mm-input s-input text-center'
+                placeholder='Total'
+                name='total_owe'
+                id='setSizeFloat'
                 required
                 readOnly
               />
             </div>
           </div>
 
-          <div className="col-md-4 ">
-            <label className="text-center ml-2" id="setName">
-              Paid:
+          <div className='col-md-4 '>
+            <label className='text-center ml-2' id='setName'>
+              Đã Trả
             </label>
             <div>
               <input
-                style={{ width: "65%", color: "gray" }}
-                type="text"
+                style={{ width: '65%', color: 'gray' }}
+                type='text'
                 value={already_pay_amount}
-                className="form-control mm-input s-input text-center"
-                placeholder="Paid"
+                className='form-control mm-input s-input text-center'
+                placeholder='Paid'
                 required
                 readOnly
               />
@@ -111,20 +111,21 @@ export default function ShowPricesOrder({
       </div>
 
       <br />
-      <div className="col-md-12">
-        <div className="row ">
-          <div className="mx-auto col-4 text-center">
-            How much would {customerName} want to pay for this order today?
-            <div className="input-group">
+      <div className='col-md-12'>
+        <div className='row '>
+          <div className='mx-auto col-4 text-center'>
+            <strong>{customerName}</strong> muốn thanh toán bao nhiêu tiền cho
+            giao dịch ngày hôm nay?
+            <div className='input-group'>
               <input
-                type="number"
+                type='number'
                 min={0}
-                name={"pay"}
+                name={'pay'}
                 value={pay_amount}
                 onChange={onChangePay}
-                className="form-control border-primary"
+                className='form-control border-primary'
               />
-              <span className="input-group-addon p-1 px-2">VNĐ</span>
+              <span className='input-group-addon p-1 px-2'>VNĐ</span>
             </div>
           </div>
         </div>

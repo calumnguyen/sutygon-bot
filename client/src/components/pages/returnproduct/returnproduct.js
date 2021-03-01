@@ -1,41 +1,41 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
 import {
   getOrderbyCustomerNumber,
   getOrderbyOrderNumber,
   getOrderbyID,
   emptyReturnOrder,
-} from "../../../actions/returnproduct";
-import { getAllProducts } from "../../../actions/product";
-import { getCustomer } from "../../../actions/customer";
-import Loader from "../../layout/Loader";
-import { Link } from "react-router-dom";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import moment from "moment";
-import "moment-timezone";
-import "../../../custom.css";
-import BootstrapTable from "react-bootstrap-table-next";
-import ToolkitProvider from "react-bootstrap-table2-toolkit";
-import OrderStatus from "../orders/small/Status";
+} from '../../../actions/returnproduct';
+import { getAllProducts,getAllProductsAll } from '../../../actions/product';
+import { getCustomer } from '../../../actions/customer';
+import Loader from '../../layout/Loader';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import 'moment-timezone';
+import '../../../custom.css';
+import BootstrapTable from 'react-bootstrap-table-next';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import OrderStatus from '../orders/small/Status';
 class ReturnProduct extends Component {
   state = {
-    customer: "",
-    orderNumber: "",
-    customer_id: "",
+    customer: '',
+    orderNumber: '',
+    customer_id: '',
     selectedOrder: false,
-    orderId: "",
-    seletedOrder: "",
-    product_Array: "",
+    orderId: '',
+    seletedOrder: '',
+    product_Array: '',
     tryAgain: false,
     isSearched: false,
-    returningOrder: "",
+    returningOrder: '',
   };
 
   async componentDidMount() {
-    await this.props.getAllProducts();
+    await this.props.getAllProductsAll();
     await this.props.emptyReturnOrder();
   }
 
@@ -44,16 +44,16 @@ class ReturnProduct extends Component {
     this.setState({
       tryAgain: true,
     });
-    var orderNumber = document.getElementById("orderNumber");
-    var contactNumber = document.getElementById("contactnumber");
-    var statusBox = document.getElementById("statusBox");
-    contactNumber.value = "";
+    var orderNumber = document.getElementById('orderNumber');
+    var contactNumber = document.getElementById('contactnumber');
+    var statusBox = document.getElementById('statusBox');
+    contactNumber.value = '';
     contactNumber.focus();
-    orderNumber.value = "";
+    orderNumber.value = '';
   };
 
   //handle change for input fields
-  handleChange = (e, id = "") => {
+  handleChange = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
   };
   //search by Customer Number
@@ -65,7 +65,7 @@ class ReturnProduct extends Component {
     const { orders } = this.props;
     if (!!orders.length) {
       await this.props.getCustomer(orders[0].customer._id);
-      var returningOrder = orders.filter((f) => f.status === "active");
+      var returningOrder = orders.filter((f) => f.status === 'active');
     }
     this.setState({
       saving: false,
@@ -84,7 +84,7 @@ class ReturnProduct extends Component {
     const { orders } = this.props;
     if (!!orders.length) {
       await this.props.getCustomer(orders[0].customer._id);
-      var returningOrder = orders.filter((f) => f.status === "active");
+      var returningOrder = orders.filter((f) => f.status === 'active');
     }
     this.setState({
       saving: false,
@@ -129,7 +129,7 @@ class ReturnProduct extends Component {
                   color_id: color_id,
                   size_id: size_id,
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
-                  title: product_name + " | " + color_name + " | " + size_name,
+                  title: product_name + ' | ' + color_name + ' | ' + size_name,
                   barcode: size.barcodes[i].barcode,
                   price: price,
                 };
@@ -157,24 +157,24 @@ class ReturnProduct extends Component {
             sortedAray.filter((f) => f.barcode.toString() === element)
           );
         });
-
+console.log("productarray",productarray)
         this.state.product_Array = productarray;
         return productarray.map((p, p_index) => {
           return (
             <>
-              {" "}
-              <div className="form-group" key={p_index}>
-                <div className="row text-center" key={p_index}>
+              {' '}
+              <div className='form-group' key={p_index}>
+                <div className='row text-center' key={p_index}>
                   <h6
                     style={{
-                      color: "black !important",
-                      margin: "4px 2px",
-                      width: "-webkit-fill-available",
-                      fontSize: "larger",
+                      color: 'black !important',
+                      margin: '4px 2px',
+                      width: '-webkit-fill-available',
+                      fontSize: 'larger',
                     }}
                   >
-                    {`${p[0] ? p[0].title : ""} ${"|"} ${
-                      p[0] ? p[0].barcode : ""
+                    {`${p[0] ? p[0].title : ''} ${'|'} ${
+                      p[0] ? p[0].barcode : ''
                     }`}
                   </h6>
                 </div>
@@ -190,28 +190,28 @@ class ReturnProduct extends Component {
     const { orders } = this.props;
     const { customeR } = this.props;
 
-    let returningOrders = orders.filter((f) => f.status === "active");
+    let returningOrders = orders.filter((f) => f.status === 'active');
     return returningOrders.map((o, o_index) => (
       <>
-        <div className="col-md-12" key={o_index}>
+        <div className='col-md-12' key={o_index}>
           <div
-            className="row form-group hovered"
+            className='row form-group hovered'
             onClick={(e) => this.selectedOrder(e, o._id)}
           >
-            <div className="col-md-12 text-center p-1">
+            <div className='col-md-12 text-center p-1'>
               <h6
                 style={{
-                  color: "black !important",
-                  margin: "4px 2px",
-                  width: "-webkit-fill-available",
-                  fontSize: "larger",
+                  color: 'black !important',
+                  margin: '4px 2px',
+                  width: '-webkit-fill-available',
+                  fontSize: 'larger',
                 }}
               >
                 {o &&
                   customeR &&
-                  `${"Order#"}${o.orderNumber}${"             "}${
+                  `${'Order#'}${o.orderNumber}${'             '}${
                     customeR.name
-                  }${"             "}${"OrderStatus-"}${o.status}`}
+                  }${'             '}${'OrderStatus-'}${o.status}`}
               </h6>
             </div>
           </div>
@@ -237,14 +237,14 @@ class ReturnProduct extends Component {
     const { orders } = this.props;
     const { customeR } = this.props;
     // zohaib
-    let returningOrders = orders.filter((f) => f.status === "active");
+    let returningOrders = orders.filter((f) => f.status === 'active');
     if (returningOrders) {
       let returningOrdersDataArray = [];
       returningOrders.forEach((order, idx) => {
         returningOrdersDataArray.push({
           orderNumber: order.orderNumber,
-          name: order.customer ? order.customer.name : "",
-          phone: order.customer ? order.customer.contactnumber : "",
+          name: order.customer ? order.customer.name : '',
+          phone: order.customer ? order.customer.contactnumber : '',
           status: (
             <OrderStatus
               title={order.status}
@@ -263,14 +263,10 @@ class ReturnProduct extends Component {
           actions: (
             <>
               <button
-             
                 onClick={(e) => this.selectedOrder(e, order._id)}
-                className="btn btn-sm btn-primary"
+                className='btn btn-sm btn-primary'
               >
-                <i
-                  className="ft-eye font-medium-3"
-                  title="View Order"
-                ></i>
+                <i className='ft-eye font-medium-3' title='View Order'></i>
               </button>
             </>
           ),
@@ -278,35 +274,35 @@ class ReturnProduct extends Component {
       });
       const columns = [
         {
-          dataField: "orderNumber",
-          text: "Order Id",
+          dataField: 'orderNumber',
+          text: 'Mã Đơn Hàng',
           sort: true,
         },
         {
-          dataField: "name",
-          text: "Customer name",
+          dataField: 'name',
+          text: 'Họ & Tên',
           sort: true,
         },
         {
-          dataField: "phone",
-          text: "Phone number",
+          dataField: 'phone',
+          text: 'SĐT',
           sort: true,
         },
         {
-          dataField: "status",
-          text: "Status",
+          dataField: 'status',
+          text: 'Trạng Thái',
           sort: true,
         },
         {
-          dataField: "actions",
-          text: "View Order",
+          dataField: 'actions',
+          text: 'Chọn',
           sort: true,
         },
       ];
 
       return (
         <ToolkitProvider
-          keyField="id"
+          keyField='id'
           data={
             returningOrdersDataArray.length === 0
               ? []
@@ -332,7 +328,7 @@ class ReturnProduct extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to='/login' />;
     }
 
     const { orders } = this.state;
@@ -341,40 +337,40 @@ class ReturnProduct extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="form-action-layouts">
-                  <div className="form-body">
-                    <div className="card">
-                      <div className="card-header">
-                        <h4 className="form-section">Return Product</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='form-action-layouts'>
+                  <div className='form-body'>
+                    <div className='card'>
+                      <div className='card-header'>
+                        <h4 className='form-section'>Trả Đồ</h4>
                       </div>
 
-                      <div className="card-body table-responsive">
-                        <div className="card-body table-responsive">
+                      <div className='card-body table-responsive'>
+                        <div className='card-body table-responsive'>
                           <form onSubmit={(e) => this.onSubmitCustomer(e)}>
-                            <div className="form-group">
-                              <h3>Enter Customer 10-digit phone number</h3>
-                              <div className="position-relative has-icon-right">
+                            <div className='form-group'>
+                              <h3>Nhập số điện thoại khách hàng</h3>
+                              <div className='position-relative has-icon-right'>
                                 <input
-                                  name="customer"
-                                  type="text"
-                                  placeholder="Search"
-                                  className="form-control round"
-                                  id="contactnumber"
-                                  min="0"
-                                  ref="contactnumber"
+                                  name='customer'
+                                  type='text'
+                                  placeholder='Số Điện Thoại'
+                                  className='form-control round'
+                                  id='contactnumber'
+                                  min='0'
+                                  ref='contactnumber'
                                   onChange={(e) => this.handleChange(e)}
                                 />
-                                <div className="form-control-position">
+                                <div className='form-control-position'>
                                   <button
-                                    type="submit"
-                                    className="mb-2 mr-2 btn ft-search"
+                                    type='submit'
+                                    className='mb-2 mr-2 btn ft-search'
                                   ></button>
                                 </div>
                               </div>
@@ -382,23 +378,23 @@ class ReturnProduct extends Component {
                           </form>
 
                           <form onSubmit={(e) => this.onSubmitOrderNumber(e)}>
-                            <div className="form-group">
-                              <h3>Or Scan/Enter Order Number</h3>
-                              <div className="position-relative has-icon-right">
+                            <div className='form-group'>
+                              <h3>Hoặc quét/nhập Mã Số Hóa Đơn</h3>
+                              <div className='position-relative has-icon-right'>
                                 <input
-                                  name="orderNumber"
-                                  type="text"
-                                  placeholder="Search"
-                                  className="form-control round"
-                                  id="orderNumber"
-                                  min="0"
-                                  ref="orderNumber"
+                                  name='orderNumber'
+                                  type='text'
+                                  placeholder='Mã Số Hóa Đơn'
+                                  className='form-control round'
+                                  id='orderNumber'
+                                  min='0'
+                                  ref='orderNumber'
                                   onChange={(e) => this.handleChange(e)}
                                 />
-                                <div className="form-control-position">
+                                <div className='form-control-position'>
                                   <button
-                                    type="submit"
-                                    className="mb-2 mr-2 btn ft-search"
+                                    type='submit'
+                                    className='mb-2 mr-2 btn ft-search'
                                   ></button>
                                 </div>
                               </div>
@@ -408,11 +404,11 @@ class ReturnProduct extends Component {
                           {this.props.orders &&
                           this.state.tryAgain === false ? (
                             <>
-                              <div id="colors_box">
-                                <div className="row color-row">
-                                  <div className="row">
-                                    <div className="col-md-12">
-                                      <h3>Is this the One</h3>
+                              <div id='colors_box'>
+                                <div className='row color-row'>
+                                  <div className='row'>
+                                    <div className='col-md-12'>
+                                      <h3>Khách hàng muốn trả đơn hàng này?</h3>
                                     </div>
                                   </div>
                                   {this.props.orders &&
@@ -421,54 +417,55 @@ class ReturnProduct extends Component {
                                     <>
                                       {this.state.returningOrder &&
                                       this.state.returningOrder.length > 0 ? (
-                                        <div className="col-md-12">
+                                        <div className='col-md-12'>
                                           {this.orderTable()}
                                         </div>
                                       ) : (
                                         // this.CutomerBox()
-                                        <div className="col-md-12">
-                                          <div className="form-group text-center p-1">
+                                        <div className='col-md-12'>
+                                          <div className='form-group text-center p-1'>
                                             <h6
                                               style={{
-                                                color: "black !important",
-                                                margin: "4px 2px",
-                                                width: "-webkit-fill-available",
-                                                fontSize: "larger",
+                                                color: 'black !important',
+                                                margin: '4px 2px',
+                                                width: '-webkit-fill-available',
+                                                fontSize: 'larger',
                                               }}
                                             >
-                                              {"No Active order found"}
+                                              {
+                                                'Khách hàng hiện không có đồ nào để trả'
+                                              }
                                             </h6>
                                           </div>
                                         </div>
                                       )}
                                     </>
                                   ) : (
-                                    <div className="col-md-12">
-                                      <div className="form-group text-center p-1">
+                                    <div className='col-md-12'>
+                                      <div className='form-group text-center p-1'>
                                         <h6
                                           style={{
-                                            color: "black !important",
-                                            margin: "4px 2px",
-                                            width: "-webkit-fill-available",
-                                            fontSize: "larger",
+                                            color: 'black !important',
+                                            margin: '4px 2px',
+                                            width: '-webkit-fill-available',
+                                            fontSize: 'larger',
                                           }}
                                         >
-                                          {"No order found"}
+                                          {'Không tìm thấy đơn hàng'}
                                         </h6>
                                       </div>
                                     </div>
                                   )}
 
-                                  <div className="col-md-12">
-                                    <div className="text-center">
+                                  <div className='col-md-12'>
+                                    <div className='text-center'>
                                       <button
-                                        type="button"
-                                        className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1 text-center"
+                                        type='button'
+                                        className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1 text-center'
                                         onClick={(e) => this.tryAgain(e)}
-                                        id="btnSize"
+                                        id='btnSize'
                                       >
-                                        <i className="ft-rotate-cw"></i> Try
-                                        Again
+                                        <i className='ft-rotate-cw'></i> Thử Lại
                                       </button>
                                     </div>
                                   </div>
@@ -476,66 +473,67 @@ class ReturnProduct extends Component {
                               </div>
                             </>
                           ) : (
-                            ""
+                            ''
                           )}
-                          <div id="colors_box">
+                          <div id='colors_box'>
                             {this.state.selectedOrder === true &&
                             this.state.tryAgain === false ? (
-                              <div className="row color-row" id="statusBox1">
-                                <div className="col-md-12">
-                                  <div className="form-group">
-                                    <div style={{ float: "left" }}>
+                              <div className='row color-row' id='statusBox1'>
+                                <div className='col-md-12'>
+                                  <div className='form-group'>
+                                    <div style={{ float: 'left' }}>
                                       <h3>
                                         {customeR
-                                          ? `${customeR.name}${"#"}${
+                                          ? `${customeR.name}${'#'}${
                                               customeR.contactnumber
                                             }`
-                                          : ""}
+                                          : ''}
                                       </h3>
                                     </div>
-                                    <div style={{ float: "right" }}>
+                                    <div style={{ float: 'right' }}>
                                       <h3>
                                         {orders &&
                                         this.state.selectedOrder === true
-                                          ? `${"Order"}${"#"} ${
+                                          ? `${'Order'}${'#'} ${
                                               this.state.seletedOrder[0]
                                                 .orderNumber
                                             }`
-                                          : ""}
+                                          : ''}
                                       </h3>
                                     </div>
                                   </div>
                                 </div>
-                                <div className="col-md-12">
+                                <div className='col-md-12'>
                                   {this.state.seletedOrder.length > 0 ? (
-                                    <div id="colors_box">
+                                    <div id='colors_box'>
                                       {this.productBox()}
-                                      <div className="btn-cont text-center">
-                                        <div className="form-group">
+                                      <div className='btn-cont text-center'>
+                                        <div className='form-group'>
                                           <Link
                                             to={{
-                                              pathname: "/scanBarcode",
+                                              pathname: '/scanBarcode',
                                               state: {
                                                 customer: this.props.customeR,
                                                 order: this.state.seletedOrder,
                                               },
                                             }}
-                                            type="submit"
-                                            className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1 text-center"
-                                            id="btnSize2"
+                                            type='submit'
+                                            className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1 text-center'
+                                            id='btnSize2'
                                           >
-                                            <i className="ft-check"></i> Next
+                                            <i className='ft-check'></i> Quét Mã
+                                            Sản Phẩm
                                           </Link>
                                         </div>
                                       </div>
                                     </div>
                                   ) : (
-                                    ""
+                                    ''
                                   )}
                                 </div>
                               </div>
                             ) : (
-                              ""
+                              ''
                             )}
                           </div>
                         </div>
@@ -545,20 +543,20 @@ class ReturnProduct extends Component {
                 </section>
               </div>
             </div>
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    rel="noopener noreferrer"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    rel='noopener noreferrer'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>
@@ -574,7 +572,7 @@ ReturnProduct.propTypes = {
   getOrderbyOrderNumber: PropTypes.func.isRequired,
   emptyReturnOrder: PropTypes.func.isRequired,
   getCustomer: PropTypes.func.isRequired,
-  getAllProducts: PropTypes.func.isRequired,
+  getAllProductsAll: PropTypes.func.isRequired,
   getOrderbyID: PropTypes.func.isRequired,
   orders: PropTypes.array,
   customeR: PropTypes.object,
@@ -591,7 +589,8 @@ export default connect(mapStateToProps, {
   getOrderbyCustomerNumber,
   getOrderbyOrderNumber,
   getCustomer,
-  getAllProducts,
+  // getAllProducts,
   getOrderbyID,
   emptyReturnOrder,
+  getAllProductsAll,
 })(ReturnProduct);

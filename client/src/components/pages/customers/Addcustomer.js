@@ -102,7 +102,9 @@ class AddCustomer extends Component {
     if (re.test(e.target.value)) {
       this.setState({ email: e.target.value });
     } else {
-      OCAlert.alertError('Email is not valid', { timeOut: 3000 });
+      OCAlert.alertError('Email không chính xác. Vui lòng thử lại.', {
+        timeOut: 3000,
+      });
       this.setState({ email: '' });
       return;
     }
@@ -118,7 +120,9 @@ class AddCustomer extends Component {
       this.setState({
         visible: false,
       });
-      OCAlert.alertError('Enter Required Fields', { timeOut: 3000 });
+      OCAlert.alertError('Còn thiếu một số thông tin cần thiết.', {
+        timeOut: 3000,
+      });
       return;
     } else {
       this.setState({
@@ -242,8 +246,8 @@ class AddCustomer extends Component {
       online_account: m_oc,
       block_account: state.block_account === '' ? false : state.block_account,
     };
-      await this.props.updateCustomer(customerData, state.id);
-    
+    await this.props.updateCustomer(customerData, state.id);
+
     this.setState({ saving: false });
   };
 
@@ -265,14 +269,14 @@ class AddCustomer extends Component {
         });
       }
       if (this.props.insightFound === false) {
-        OCAlert.alertError('Something Went Wrong', { timeOut: 3000 });
+        OCAlert.alertError('Lỗi hệ thống!', { timeOut: 3000 });
       }
     }
   };
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/' />;
+      return <Redirect to='/login' />;
     }
     const { user } = auth;
     if (user && user.systemRole === 'Employee') {
@@ -306,7 +310,7 @@ class AddCustomer extends Component {
                           <i className='ft-user'></i>
                           {this.state.id === ''
                             ? 'Đăng Ký Khách Hàng Mới'
-                            : 'Update Customer'}
+                            : 'Cập Nhật Thông Tin Khách Hàng'}
                         </h4>
                       </div>
                       <div>
@@ -321,7 +325,7 @@ class AddCustomer extends Component {
                           method='POST'
                         >
                           <h4 className='form-section '>
-                            <i className='ft-info'></i> Personal information
+                            <i className='ft-info'></i> Thông Tin Cá Nhân
                           </h4>
                           <div className='row'>
                             <div className='col-md-6'>
@@ -330,7 +334,7 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput1'
                                 >
-                                  Name
+                                  Họ và Tên *
                                 </label>
 
                                 <div className='col-md-9'>
@@ -339,7 +343,7 @@ class AddCustomer extends Component {
                                       type='text'
                                       id='projectinput1'
                                       className='form-control border-primary'
-                                      placeholder='Name'
+                                      placeholder='Họ và Tên'
                                       name='name'
                                       required
                                       value={this.state.name}
@@ -350,7 +354,7 @@ class AddCustomer extends Component {
                                       type='text'
                                       id='projectinput1'
                                       className='form-control border-primary'
-                                      placeholder='Name'
+                                      placeholder='Họ và Tên'
                                       name='name'
                                       required
                                       value={this.state.name}
@@ -365,7 +369,7 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput4'
                                 >
-                                  Contact Number
+                                  Điện Thoại *
                                 </label>
 
                                 <div className='col-md-9'>
@@ -373,7 +377,7 @@ class AddCustomer extends Component {
                                     type='text'
                                     id='projectinput4'
                                     className='form-control border-primary'
-                                    placeholder='Contact Number'
+                                    placeholder='Số Điện Thoại'
                                     name='contactnumber'
                                     value={this.state.contactnumber}
                                     onChange={(e) => this.handleChangeNumber(e)}
@@ -388,14 +392,14 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput3'
                                 >
-                                  E-mail
+                                  Email
                                 </label>
                                 <div className='col-md-9'>
                                   <input
                                     type='email'
                                     id='projectinput3'
                                     className='form-control border-primary'
-                                    placeholder='E-mail'
+                                    placeholder='Email'
                                     name='email'
                                     value={this.state.email}
                                     onChange={(e) => this.handleChange(e)}
@@ -408,14 +412,14 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput3'
                                 >
-                                  Company
+                                  Công Ty Đại Diện
                                 </label>
                                 <div className='col-md-9'>
                                   <input
                                     type='text'
                                     id='projectinput3'
                                     className='form-control border-primary'
-                                    placeholder='Company'
+                                    placeholder='Công Ty'
                                     name='company'
                                     value={this.state.company}
                                     onChange={(e) => this.handleChange(e)}
@@ -429,7 +433,7 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput1'
                                 >
-                                  Address
+                                  Địa Chỉ Nhà *
                                 </label>
                                 <div className='col-md-9'>
                                   <textarea
@@ -437,7 +441,7 @@ class AddCustomer extends Component {
                                     id='projectinput1'
                                     rows='4'
                                     className='form-control col-md-12 border-primary'
-                                    placeholder='Address'
+                                    placeholder='Địa Chỉ'
                                     name='address'
                                     value={this.state.address}
                                     onChange={(e) => this.handleChange(e)}
@@ -450,7 +454,7 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput3'
                                 >
-                                  Birthday
+                                  Ngày Sinh *
                                 </label>
                                 <div className='col-md-9'>
                                   {this.state.isEdit === false ? (
@@ -480,14 +484,14 @@ class AddCustomer extends Component {
                                   className='col-md-3 label-control'
                                   htmlFor='projectinput3'
                                 >
-                                  Company Address
+                                  Địa Chỉ Công Ty
                                 </label>
                                 <div className='col-md-9'>
                                   <input
                                     type='text'
                                     id='projectinput3'
                                     className='form-control border-primary'
-                                    placeholder='Company Address'
+                                    placeholder='Địa Chỉ'
                                     name='company_address'
                                     value={this.state.company_address}
                                     onChange={(e) => this.handleChange(e)}
@@ -499,7 +503,7 @@ class AddCustomer extends Component {
                           {this.state.isEdit === true ? (
                             <>
                               <h4 className='form-section mt-4'>
-                                <i className='ft-info'></i> Block Customer
+                                <i className='ft-info'></i> Chặn Khách Hàng
                               </h4>
                               <div className='row'>
                                 <div className='col-md-6'>
@@ -508,7 +512,7 @@ class AddCustomer extends Component {
                                       className='col-md-3  label-control'
                                       htmlFor='userinput1'
                                     >
-                                      Status
+                                      Trạng Thái
                                     </label>
                                     <div className='col-md-8'>
                                       <Switch
@@ -530,8 +534,7 @@ class AddCustomer extends Component {
                           {this.state.isEdit === true ? (
                             <>
                               <h4 className='form-section mt-4'>
-                                <i className='ft-info'></i> Online Account
-                                Information
+                                <i className='ft-info'></i> Tài Khoản Online
                               </h4>
                               {this.state.online_account &&
                               this.state.online_account.exist === 'no' ? (
@@ -540,7 +543,8 @@ class AddCustomer extends Component {
                                     <div className='form-group row'>
                                       <h4 className='ml-4 alert alert-secondary'>
                                         {' '}
-                                        No online account found.
+                                        Không tìm thấy tài khoản online nào cho
+                                        khách hàng này.
                                       </h4>
                                     </div>
                                   </div>
@@ -554,7 +558,7 @@ class AddCustomer extends Component {
                                           className='col-md-3 label-control'
                                           htmlFor='projectinput1'
                                         >
-                                          Username
+                                          Tên Đăng Nhập
                                         </label>
 
                                         <div className='col-md-9'>
@@ -578,7 +582,7 @@ class AddCustomer extends Component {
                                           className='col-md-3 label-control'
                                           htmlFor='projectinput4'
                                         >
-                                          Account Created
+                                          Tạo Lúc
                                         </label>
 
                                         <div className='col-md-9'>
@@ -607,7 +611,7 @@ class AddCustomer extends Component {
                                             className='font-medium-3'
                                           >
                                             <i className='ft-external-link'></i>{' '}
-                                            De-Activate online account
+                                            Chặn Tài Khoản Online
                                           </Link>
                                         </div>
                                       </div>
@@ -618,7 +622,7 @@ class AddCustomer extends Component {
                                           className='col-md-3 label-control'
                                           htmlFor='projectinput3'
                                         >
-                                          Membership
+                                          Hạng Thành Viên
                                         </label>
                                         <div className='col-md-9'>
                                           {/* <input
@@ -636,7 +640,7 @@ class AddCustomer extends Component {
                                           <select
                                             id='projectinput3'
                                             name='membership'
-                                            placeholder='Membership'
+                                            placeholder='Hạng Thành Viên'
                                             required
                                             defaultValue={'-----'}
                                             className='form-control border-primary'
@@ -645,14 +649,14 @@ class AddCustomer extends Component {
                                             }
                                           >
                                             <option name='membership' value=''>
-                                              ---select---{' '}
+                                              ---Hạng---{' '}
                                             </option>
                                             <option
                                               name='membership'
                                               value='Gold'
                                             >
                                               {' '}
-                                              Gold{' '}
+                                              Vàng{' '}
                                             </option>
 
                                             <option
@@ -660,7 +664,7 @@ class AddCustomer extends Component {
                                               value='Diamond'
                                             >
                                               {' '}
-                                              Diamond{' '}
+                                              Kim Cương{' '}
                                             </option>
                                           </select>
                                         </div>
@@ -682,8 +686,8 @@ class AddCustomer extends Component {
                                             value={
                                               this.state.online_account
                                                 .email === 'unverified'
-                                                ? 'Un-Verified'
-                                                : 'Verified'
+                                                ? 'Chưa xác thực'
+                                                : 'Xác thực'
                                             }
                                             onChange={(e) =>
                                               this.handleChange(e)
@@ -709,7 +713,7 @@ class AddCustomer extends Component {
                                               className='font-medium-3'
                                             >
                                               <i className='ft-external-link'></i>
-                                              Resend Verification Link?
+                                              Gửi email xác thực?
                                             </Link>
                                           </div>
                                         </div>
@@ -736,7 +740,7 @@ class AddCustomer extends Component {
                                     className='mb-2 mr-2 btn btn-raised btn-primary disabled'
                                     onClick={(e) => this.openModal(e)}
                                   >
-                                    <i className='ft-chevron-right' /> Next
+                                    <i className='ft-chevron-right' /> Tiếp theo
                                   </button>
                                 ) : (
                                   <button
@@ -744,58 +748,62 @@ class AddCustomer extends Component {
                                     className='mb-2 mr-2 btn btn-raised btn-primary'
                                     onClick={(e) => this.openModal(e)}
                                   >
-                                    <i className='ft-chevron-right' /> Next
+                                    <i className='ft-chevron-right' /> Tiếp theo
                                   </button>
                                 )}{' '}
                               </>
                             ) : (
                               <>
-                              {this.state.id ?
-                              <>
-                              {this.state.saving ? (
-                                  <button
-                                    type='button'
-                                    className='mb-2 mr-2 btn btn-raised btn-primary'
-                                  >
-                                    <div
-                                      className='spinner-grow spinner-grow-sm '
-                                      role='status'
-                                    ></div>{' '}
-                                    &nbsp; Updating...{' '}
-                                  </button>
+                                {this.state.id ? (
+                                  <>
+                                    {this.state.saving ? (
+                                      <button
+                                        type='button'
+                                        className='mb-2 mr-2 btn btn-raised btn-primary'
+                                      >
+                                        <div
+                                          className='spinner-grow spinner-grow-sm '
+                                          role='status'
+                                        ></div>{' '}
+                                        &nbsp; Xin đợi một chút...{' '}
+                                      </button>
+                                    ) : (
+                                      <button
+                                        type='submit'
+                                        className='mb-2 mr-2 btn btn-raised btn-primary'
+                                        onClick={(e) => this.onUpdate(e)}
+                                      >
+                                        <i className='ft-check' /> Cập Nhật Thay
+                                        Đổi
+                                      </button>
+                                    )}
+                                  </>
                                 ) : (
-                                  <button
-                                    type='submit'
-                                    className='mb-2 mr-2 btn btn-raised btn-primary'
-                                    onClick={(e) => this.onUpdate(e)}
-                                  >
-                                    <i className='ft-check' /> Update Changes
-                                  </button>
+                                  <>
+                                    {this.state.saving ? (
+                                      <button
+                                        type='button'
+                                        className='mb-2 mr-2 btn btn-raised btn-primary'
+                                      >
+                                        <div
+                                          className='spinner-grow spinner-grow-sm '
+                                          role='status'
+                                        ></div>{' '}
+                                        &nbsp; Xin chờ một chút...{' '}
+                                      </button>
+                                    ) : (
+                                      <button
+                                        type='submit'
+                                        onClick={(e) => this.onSubmit(e)}
+                                        className='mb-2 mr-2 btn btn-raised btn-primary'
+                                      >
+                                        <i className='ft-check' /> Cập Nhật Thay
+                                        Đổi
+                                      </button>
+                                    )}
+                                  </>
                                 )}
-                               </>
-                              :
-                              <>
-                                {this.state.saving ? (
-                                  <button
-                                    type='button'
-                                    className='mb-2 mr-2 btn btn-raised btn-primary'
-                                  >
-                                    <div
-                                      className='spinner-grow spinner-grow-sm '
-                                      role='status'
-                                    ></div>{' '}
-                                    &nbsp; Saving...{' '}
-                                  </button>
-                                ) : (
-                                  <button
-                                    type='submit'
-                                    onClick={(e) => this.onSubmit(e)}
-                                    className='mb-2 mr-2 btn btn-raised btn-primary'
-                                  >
-                                    <i className='ft-check' /> Save Changes
-                                  </button>
-                                )}
-                         </>   }
+                         
                               </>
                             )}
                           </div>
@@ -803,7 +811,7 @@ class AddCustomer extends Component {
                           {this.state.isEdit === true ? (
                             <>
                               <h4 className='form-section mt-4'>
-                                <i className='ft-info'></i> Insight
+                                <i className='ft-info'></i>
                               </h4>
                               <div className='row'>
                                 <div className='col-md-6'>

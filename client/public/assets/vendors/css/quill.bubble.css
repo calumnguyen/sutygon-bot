@@ -6,7 +6,7 @@
  */
 .ql-container {
   box-sizing: border-box;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat';
   font-size: 13px;
   height: 100%;
   margin: 0px;
@@ -345,10 +345,10 @@
   color: #93f;
 }
 .ql-editor .ql-font-serif {
-  font-family: Georgia, Times New Roman, serif;
+  font-family: 'Montserrat';
 }
 .ql-editor .ql-font-monospace {
-  font-family: Monaco, Courier New, monospace;
+  font-family: 'Montserrat';
 }
 .ql-editor .ql-size-small {
   font-size: 0.75em;

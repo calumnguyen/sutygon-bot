@@ -1,50 +1,50 @@
-import React, { Component } from 'react'
-import Sidebar from '../../layout/Sidebar'
-import Header from '../../layout/Header'
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
 import {
   deleteCustomer,
   getAllCustomers,
   findCustomers,
-} from '../../../actions/customer'
-import { Link } from 'react-router-dom'
-import { Redirect } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import Alert from '../../layout/Alert'
-import Loader from '../../layout/Loader'
-import { confirmAlert } from 'react-confirm-alert'
-import 'react-confirm-alert/src/react-confirm-alert.css'
-import BootstrapTable from 'react-bootstrap-table-next'
-import ToolkitProvider from 'react-bootstrap-table2-toolkit'
+} from '../../../actions/customer';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Alert from '../../layout/Alert';
+import Loader from '../../layout/Loader';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import BootstrapTable from 'react-bootstrap-table-next';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 
 class ViewCustomer extends Component {
   state = {
     filter: '',
     search: '',
-  }
+  };
   async componentDidMount() {
-    await this.props.getAllCustomers()
+    await this.props.getAllCustomers();
   }
 
   handleChange = (e, id = '') => {
-    this.setState({ [e.target.name]: e.target.value })
-  }
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   async searchTable() {
     // e.preventDefault();
-    const searchVal = this.state.search
+    const searchVal = this.state.search;
     if (searchVal) {
-      await this.props.findCustomers(searchVal)
+      await this.props.findCustomers(searchVal);
     } else {
-      await this.props.getAllCustomers()
+      await this.props.getAllCustomers();
     }
   }
 
   getTAble = () => {
-    const { customers } = this.props
+    const { customers } = this.props;
 
     if (customers) {
-      var m_cust = []
+      var m_cust = [];
       customers.forEach((customer, c_index) => {
         m_cust.push({
           contactnumber: customer.contactnumber,
@@ -60,7 +60,7 @@ class ViewCustomer extends Component {
               >
                 <i
                   className='ft-edit-3 font-medium-3 mr-2 '
-                  title='Edit User'
+                  title='Thông Tin Khách Hàng'
                 ></i>
               </Link>
               <Link
@@ -68,54 +68,55 @@ class ViewCustomer extends Component {
                 onClick={() => this.onDelete(customer._id)}
                 className='danger p-0'
               >
-                <i className='ft-x font-medium-3 mr-2' title='Delete'></i>
+                <i
+                  className='ft-x font-medium-3 mr-2'
+                  title='Xoá Khách Hàng'
+                ></i>
               </Link>
             </>
           ),
-        })
-      })
-
-      
+        });
+      });
     }
     if (customers) {
       const columns = [
         {
           dataField: 'contactnumber',
-          text: 'Contact Number',
+          text: 'Số Điện Thoại',
           sort: true,
         },
         {
           dataField: 'name',
-          text: 'Customer Name',
+          text: 'Họ và Tên',
           sort: true,
         },
         {
           dataField: 'online_acc',
-          text: 'Online Account',
+          text: 'Tài Khoản Online',
           sort: true,
         },
         {
           dataField: 'membership',
-          text: 'Membership',
+          text: 'Hạng Thành Viên',
           sort: true,
         },
         {
           dataField: 'actions',
-          text: 'Actions',
+          text: 'Hành Động',
           sort: true,
         },
-      ]
+      ];
       const defaultSorted = [
         {
           dataField: 'contactnumber',
           order: 'asc',
         },
-      ]
+      ];
       const MySearch = (props) => {
-        let input
+        let input;
         const handleClick = () => {
-          props.onSearch(input.value)
-        }
+          props.onSearch(input.value);
+        };
         return (
           <>
             <div className='row'>
@@ -129,7 +130,7 @@ class ViewCustomer extends Component {
               </div>
               <div className='col-md-4'>
                 <button className='btn btn-success' onClick={handleClick}>
-                  <i className='fa fa-search'></i> Search{' '}
+                  <i className='fa fa-search'></i> Tìm khách{' '}
                 </button>
               </div>
               <div className='col-md-4'>
@@ -138,13 +139,13 @@ class ViewCustomer extends Component {
                   className='btn btn-primary pull-right'
                 >
                   {' '}
-                  <i className='fa fa-plus'></i> New Customer
+                  <i className='fa fa-plus'></i> Thêm Khách Hàng Mới
                 </Link>
               </div>{' '}
             </div>
           </>
-        )
-      }
+        );
+      };
 
       return (
         <ToolkitProvider
@@ -163,39 +164,38 @@ class ViewCustomer extends Component {
             </div>
           )}
         </ToolkitProvider>
-      )
+      );
     }
-  }
+  };
 
   onDelete = (id) => {
     confirmAlert({
-      title: 'Delete Customer',
-      message: 'Are you sure you want to delete this record?',
+      title: 'Xóa Khách Hàng',
+      message: 'Bạn có chắc chắn muốn xóa khách hàng này không?',
       buttons: [
         {
-          label: 'Yes',
+          label: 'Có, xóa khách',
           onClick: () => {
-            this.props.deleteCustomer(id)
+            this.props.deleteCustomer(id);
           },
         },
         {
-          label: 'No',
+          label: 'Không, hủy',
           onClick: () => {},
         },
       ],
-    })
-  }
+    });
+  };
 
   render() {
-    const { auth } = this.props
+    const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/' />
+      return <Redirect to='/login' />;
     }
-    const {user} = auth;
-    if(user && user.systemRole ==="Employee"){
-      if(user && !user.sections.includes("Customers")){
-        return <Redirect to="/Error"/>
-
+    const { user } = auth;
+    if (user && user.systemRole === 'Employee') {
+      if (user && !user.sections.includes('Customers')) {
+        return <Redirect to='/Error' />;
       }
     }
     return (
@@ -249,7 +249,7 @@ class ViewCustomer extends Component {
           </div>
         </div>
       </React.Fragment>
-    )
+    );
   }
 }
 
@@ -259,14 +259,14 @@ ViewCustomer.propTypes = {
   deleteCustomer: PropTypes.func.isRequired,
   findCustomers: PropTypes.func.isRequired,
   customers: PropTypes.array,
-}
+};
 const mapStateToProps = (state) => ({
   customers: state.customer.customers,
   searchedCustomer: state.customer.searchedCustomer,
   auth: state.auth,
-})
+});
 export default connect(mapStateToProps, {
   getAllCustomers,
   deleteCustomer,
   findCustomers,
-})(ViewCustomer)
+})(ViewCustomer);

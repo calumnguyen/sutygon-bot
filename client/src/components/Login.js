@@ -187,6 +187,9 @@ class Login extends Component {
                                       />
                                     </div>
                                   </div>
+                                    {/* <Link class="nav-link" to={"/signup"}>
+                    Sign Up
+                  </Link> */}
                                 </form>
                               </div>
                             </div>

@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import Sidebar from "../layout/Sidebar";
-import Header from "../layout/Header";
-import Alert from "../layout/Alert";
-import shortid from "shortid";
+import React, { Component } from 'react';
+import Sidebar from '../layout/Sidebar';
+import Header from '../layout/Header';
+import Alert from '../layout/Alert';
+import shortid from 'shortid';
 import {
   getAllProducts,
   updateProduct,
@@ -13,35 +13,35 @@ import {
   changeItemStatus,
   changeItemQuality,
   updateImages,
-} from "../../actions/product";
-import { searchByBarcode } from "../../actions/rentproduct";
-import Loader from "../layout/Loader";
-import { Redirect, Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { OCAlert } from "@opuscapita/react-alerts";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import moment from "moment";
-import BootstrapTable from "react-bootstrap-table-next";
-import "../../custom.css";
-import Switch from "react-switch";
-import Pagination from "./Page";
+} from '../../actions/product';
+import { searchByBarcode } from '../../actions/rentproduct';
+import Loader from '../layout/Loader';
+import { Redirect, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { OCAlert } from '@opuscapita/react-alerts';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import moment from 'moment';
+import BootstrapTable from 'react-bootstrap-table-next';
+import '../../custom.css';
+import Switch from 'react-switch';
+import Pagination from './Page';
 
 class IndividualBarcode extends Component {
   state = {
-    individual_barcode: "",
-    barcoderec: "",
-    activeOrders: "",
-    quality: "",
-    status: "acive",
+    individual_barcode: '',
+    barcoderec: '',
+    activeOrders: '',
+    quality: '',
+    status: 'acive',
     statusBoolean: false,
-    authLog: "",
+    authLog: '',
     saving: false,
     updating: false,
     imgupdating: false,
-    images_Arr: "",
+    images_Arr: '',
     modal_product: null,
-    image: "",
+    image: '',
     images: [],
     m_imgperpage: [],
     m_logsperpage: [],
@@ -67,7 +67,7 @@ class IndividualBarcode extends Component {
       await this.props.searchByBarcode(barcode_id);
       const { barcoderec } = this.props;
       const activeOrders =
-        barcoderec && barcoderec.filter((rec) => rec.status == "active");
+        barcoderec && barcoderec.filter((rec) => rec.status == 'active');
 
       this.setState({
         individual_barcode: individual_barcode,
@@ -101,11 +101,11 @@ class IndividualBarcode extends Component {
 
     this.setState({
       ...images,
-      image: "",
+      image: '',
     });
   };
 
-  _onChange = (e, id = "") => {
+  _onChange = (e, id = '') => {
     this.setState({
       [e.target.name]: e.target.files[0],
       // src: URL.createObjectURL(e.target.files[0]),
@@ -124,7 +124,7 @@ class IndividualBarcode extends Component {
         m_logsperpage.forEach((log, idx) => {
           authLogArr.push({
             sno: idx + 1,
-            date: moment(log.date).format("ddd, MMM Do YYYY"),
+            date: moment(log.date).format('ddd, MMM Do YYYY'),
             // date: log.date,
             employee_name: log.employee_name,
             message: log.message,
@@ -133,30 +133,30 @@ class IndividualBarcode extends Component {
       }
       const columns = [
         {
-          dataField: "sno",
-          text: "#",
+          dataField: 'sno',
+          text: 'STT',
           sort: true,
         },
         {
-          dataField: "date",
-          text: "Date",
+          dataField: 'date',
+          text: 'Ngày',
           sort: true,
         },
         {
-          dataField: "employee_name",
-          text: "Employee",
+          dataField: 'employee_name',
+          text: 'Nhân Viên',
           sort: true,
         },
         {
-          dataField: "message",
-          text: "Log",
+          dataField: 'message',
+          text: 'Ghi Chú',
           sort: true,
         },
       ];
 
       return (
         <BootstrapTable // bootstrap4
-          keyField="id"
+          keyField='id'
           data={authLogArr.length === 0 ? [] : authLogArr}
           columns={columns}
           search
@@ -188,32 +188,32 @@ class IndividualBarcode extends Component {
     if (product) {
       return (
         <div>
-          <p>Colors, Sizes & Barcodes</p>
-          <div className="tree ">
+          <p>Màu, Size, Màu</p>
+          <div className='tree '>
             <ul>
               {product.color &&
                 product.color.map((color, color_i) => (
                   <li key={color_i}>
                     <span>
                       <div
-                        className="s1"
-                        data-toggle="collapse"
-                        aria-expanded="true"
-                        aria-controls="Web"
+                        className='s1'
+                        data-toggle='collapse'
+                        aria-expanded='true'
+                        aria-controls='Web'
                       >
-                        <i className="expanded">
-                          <i className="fa fa-arrow-right"></i>
-                        </i>{" "}
+                        <i className='expanded'>
+                          <i className='fa fa-arrow-right'></i>
+                        </i>{' '}
                         {color.colorname} : {color.total}
                       </div>
                     </span>
-                    <div id="Web" className="collapse show">
+                    <div id='Web' className='collapse show'>
                       <ul>
                         {color.sizes &&
                           color.sizes.map((size, size_i) => (
                             <li key={size_i}>
                               <span>
-                                <i className="fa fa-arrow-right"></i>
+                                <i className='fa fa-arrow-right'></i>
                                 {size.size} : {size.qty}
                               </span>
                               <ul>
@@ -221,8 +221,8 @@ class IndividualBarcode extends Component {
                                   size.barcodes.map((barcode, barcode_i) => (
                                     <li key={barcode_i}>
                                       <span>
-                                        <i className="fa fa-arrow-right"></i>
-                                        BARCODE ID # {barcode.barcode}
+                                        <i className='fa fa-arrow-right'></i>
+                                        Mã sản phẩm # {barcode.barcode}
                                       </span>
                                     </li>
                                   ))}
@@ -262,8 +262,8 @@ class IndividualBarcode extends Component {
       product.total = product_total;
     }
     // break tags by comma
-    if (product.tags && typeof product.tags === "string") {
-      let tags_arr = product.tags.split(",");
+    if (product.tags && typeof product.tags === 'string') {
+      let tags_arr = product.tags.split(',');
       product.tags = tags_arr;
     }
     rows.push(product);
@@ -293,7 +293,7 @@ class IndividualBarcode extends Component {
 
     const formData = new FormData();
     if (this.state.images.length == 0) {
-      OCAlert.alertError("Please Upload Image", { timeOut: 3000 });
+      OCAlert.alertError('Bạn cần phải thêm hình ảnh', { timeOut: 3000 });
       this.setState({ imgupdating: false });
       return;
     } else if (this.state.images.length > 0) {
@@ -303,7 +303,7 @@ class IndividualBarcode extends Component {
       });
 
       m_image.forEach((imag) => {
-        formData.append("image", imag);
+        formData.append('image', imag);
       });
       await this.props.updateImages(formData, barcode);
     }
@@ -318,8 +318,8 @@ class IndividualBarcode extends Component {
     this.setState({
       authLog: individual_barcode && individual_barcode.authorization_logs,
       imgupdating: false,
-      images: "",
-      image: "",
+      images: '',
+      image: '',
       images_Arr: individual_barcode && individual_barcode.images,
     });
   };
@@ -331,7 +331,7 @@ class IndividualBarcode extends Component {
     let productStatus =
       this.state.individual_barcode.product_status &&
       this.state.individual_barcode.product_status;
-    if (productStatus == "false") {
+    if (productStatus == 'false') {
       await this.props.changeItemStatus(status, barcode);
       const { singleProduct } = this.props.product;
 
@@ -347,7 +347,7 @@ class IndividualBarcode extends Component {
       });
     } else {
       // error message
-      OCAlert.alertError("The Product is disabled", {
+      OCAlert.alertError('Sản phẩm này hiện tại không thể sử dụng', {
         timeOut: 3000,
       });
       this.setState({
@@ -444,39 +444,39 @@ class IndividualBarcode extends Component {
           customerName: rec.customer.name,
           customerContact: rec.customer.contactnumber,
           status:
-            rec.status == "lost" ? (
+            rec.status == 'lost' ? (
               <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#163A5F", color: "#fff" }}
+                className='badge custom_badge'
+                style={{ backgroundColor: '#163A5F', color: '#fff' }}
               >
-                {rec.status}
+                Mất
               </span>
-            ) : rec.status == "active" ? (
+            ) : rec.status == 'active' ? (
               <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#8C52FF", color: "#fff" }}
+                className='badge custom_badge'
+                style={{ backgroundColor: '#8C52FF', color: '#fff' }}
               >
-                {rec.status}
+                Đang Sử Dụng
               </span>
-            ) : rec.status == "ready" ? (
+            ) : rec.status == 'ready' ? (
               <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#45EBA5", color: "#fff" }}
+                className='badge custom_badge'
+                style={{ backgroundColor: '#45EBA5', color: '#fff' }}
               >
-                {rec.status}
+                Sẵn Sàng Để Nhận
               </span>
-            ) : rec.status == "alteration" ? (
-              <span className="badge custom_badge badge-warning">
+            ) : rec.status == 'alteration' ? (
+              <span className='badge custom_badge badge-warning'>
                 {'cancelled'}
               </span>
-            ) : rec.status == "pending" ? (
-              <span className="badge custom_badge badge-secondary">
+            ) : rec.status == 'pending' ? (
+              <span className='badge custom_badge badge-secondary'>
                 {rec.status}
               </span>
             ) : (
               <span
-                className="badge custom_badge"
-                style={{ backgroundColor: "#ffdc1f" }}
+                className='badge custom_badge'
+                style={{ backgroundColor: '#ffdc1f' }}
               >
                 {rec.status}
               </span>
@@ -485,9 +485,9 @@ class IndividualBarcode extends Component {
             <>
               <Link
                 to={{ pathname: `/orders/vieworder/${rec._id}` }}
-                className="success p-0"
+                className='success p-0'
               >
-                <i className="ft-edit-3 font-medium-3 mr-2 " title="Edit"></i>
+                <i className='ft-edit-3 font-medium-3 mr-2 ' title='Edit'></i>
               </Link>
             </>
           ),
@@ -496,28 +496,28 @@ class IndividualBarcode extends Component {
     }
     const columns = [
       {
-        dataField: "orderNumber",
-        text: "Order ID",
+        dataField: 'orderNumber',
+        text: 'Hello',
         sort: true,
       },
       {
-        dataField: "customerName",
-        text: "Customer Name",
+        dataField: 'customerName',
+        text: 'Customer Name',
         sort: true,
       },
       {
-        dataField: "customerContact",
-        text: "Phone",
+        dataField: 'customerContact',
+        text: 'Phone',
         sort: true,
       },
       {
-        dataField: "status",
-        text: "Status",
+        dataField: 'status',
+        text: 'Status',
         sort: true,
       },
       {
-        dataField: "actions",
-        text: "Actions",
+        dataField: 'actions',
+        text: 'Actions',
         sort: true,
       },
     ];
@@ -525,48 +525,48 @@ class IndividualBarcode extends Component {
       <>
         {m_rec == null || (m_rec && !(m_rec.length > 0)) ? (
           <BootstrapTable
-            keyField="id"
+            keyField='id'
             data={[]}
             columns={columns}
-            noDataIndication="No order found"
+            noDataIndication='Không có đơn hàng nào hợp với tiêu chí'
           />
         ) : (
           <>
-            <div className="row">
-              <div className="col-md-12">
+            <div className='row'>
+              <div className='col-md-12'>
                 {activeOrders && activeOrders.length > 0 ? (
                   <h4
-                    className="alert alert-success"
-                    style={{ textAlign: "center" }}
+                    className='alert alert-success'
+                    style={{ textAlign: 'center' }}
                   >
                     <Link
                       to={`/orders/vieworder/${activeOrders[0]._id}`}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      style={{ color: "black" }}
+                      rel='noopener noreferrer'
+                      target='_blank'
+                      style={{ color: 'black' }}
                     >
-                      This iten is being used in an <b>ACTIVE</b> order{" "}
+                      This iten is being used in an <b>ACTIVE</b> order{' '}
                       <b>{`${activeOrders[0].orderNumber}`}</b>. Expected return
-                      on{" "}
+                      on{' '}
                       <b>{`${moment(activeOrders[0].returnDate).format(
-                        "DD-MM-YYYY"
+                        'DD-MM-YYYY'
                       )}`}</b>
                       .
-                    </Link>{" "}
+                    </Link>{' '}
                   </h4>
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
             </div>
             <br />
             <BootstrapTable
               // bootstrap4
-              keyField="id"
+              keyField='id'
               data={m_rec}
               columns={columns}
-              defaultSortDirection="asc"
-              headerClasses="hoveredheader"
+              defaultSortDirection='asc'
+              headerClasses='hoveredheader'
             />
           </>
         )}
@@ -576,9 +576,9 @@ class IndividualBarcode extends Component {
 
   togglehandleChange = (status) => {
     if (status === true) {
-      this.setState({ status: "Active" });
+      this.setState({ status: 'Active' });
     } else if (status === false) {
-      this.setState({ status: "Disable" });
+      this.setState({ status: 'Disable' });
     }
   };
   onChangePage_Auth = (paggedArr) => {
@@ -590,58 +590,58 @@ class IndividualBarcode extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to='/login' />;
     }
     const { user } = auth;
-    if (user && user.systemRole === "Employee") {
-      if (user && !user.sections.includes("Barcode")) {
-        return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      if (user && !user.sections.includes('Barcode')) {
+        return <Redirect to='/Error' />;
       }
     }
     const { individual_barcode } = this.state;
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <div className="form-body">
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <div className='form-body'>
                   <Alert />
-                  <div className="card">
-                    <div className="card-header">
-                      <h3 className="form-section ml-3">
+                  <div className='card'>
+                    <div className='card-header'>
+                      <h3 className='form-section ml-3'>
                         {individual_barcode && individual_barcode.title}
                       </h3>
                       <hr />
                     </div>
 
-                    <div className="card-body">
+                    <div className='card-body'>
                       <table
-                        className="table table-borderless table_indBcode"
-                        style={{ width: "100%" }}
+                        className='table table-borderless table_indBcode'
+                        style={{ width: '100%' }}
                       >
                         <tr>
                           <th>Barcode ID :</th>
-                          <td colspan="2" style={{ textAlign: "left" }}>
-                            {" "}
+                          <td colspan='2' style={{ textAlign: 'left' }}>
+                            {' '}
                             {individual_barcode && individual_barcode.barcode}
                           </td>
                         </tr>
                         <tr>
                           <th>Product ID :</th>
-                          <td style={{ textAlign: "left" }}>
-                            {" "}
+                          <td style={{ textAlign: 'left' }}>
+                            {' '}
                             <a
                               style={{
-                                backgroundColor: "white",
-                                borderStyle: "none",
+                                backgroundColor: 'white',
+                                borderStyle: 'none',
                               }}
-                              data-toggle="modal"
-                              data-target="#viewModal"
+                              data-toggle='modal'
+                              data-target='#viewModal'
                               onClick={(e) =>
                                 this.setModalProduct(
                                   individual_barcode.product_id
@@ -656,8 +656,8 @@ class IndividualBarcode extends Component {
 
                         <tr>
                           <th>Color :</th>
-                          <td style={{ textAlign: "left" }}>
-                            {" "}
+                          <td style={{ textAlign: 'left' }}>
+                            {' '}
                             {individual_barcode &&
                               individual_barcode.color_name}
                           </td>
@@ -665,67 +665,67 @@ class IndividualBarcode extends Component {
 
                         <tr>
                           <th>Quality :</th>
-                          <td style={{ textAlign: "left" }}>
-                            {" "}
-                            <label className="radio-inline _radio mr-4">
+                          <td style={{ textAlign: 'left' }}>
+                            {' '}
+                            <label className='radio-inline _radio mr-4'>
                               <input
-                                type="radio"
-                                name="quality"
-                                checked={this.state.quality == "good-condition"}
+                                type='radio'
+                                name='quality'
+                                checked={this.state.quality == 'good-condition'}
                                 onChange={(e) =>
-                                  this.handleChange(e, "good-condition")
+                                  this.handleChange(e, 'good-condition')
                                 }
                               />
-                              <span className="mx-1">
-                                <i className="fa fa-check"></i>
-                              </span>{" "}
+                              <span className='mx-1'>
+                                <i className='fa fa-check'></i>
+                              </span>{' '}
                               Good Condition
                             </label>
-                            <label className="radio-inline _radio">
+                            <label className='radio-inline _radio'>
                               <input
-                                type="radio"
-                                name="quality"
-                                checked={this.state.quality == "minor-damage"}
+                                type='radio'
+                                name='quality'
+                                checked={this.state.quality == 'minor-damage'}
                                 onChange={(e) =>
-                                  this.handleChange(e, "minor-damage")
+                                  this.handleChange(e, 'minor-damage')
                                 }
-                              />{" "}
-                              <span className="mx-1">
-                                <i className="fa ft-alert-triangle"> </i>
-                              </span>{" "}
-                              Minor Damage{" "}
+                              />{' '}
+                              <span className='mx-1'>
+                                <i className='fa ft-alert-triangle'> </i>
+                              </span>{' '}
+                              Minor Damage{' '}
                             </label>
-                            <label className="radio-inline _radio ml-4">
+                            <label className='radio-inline _radio ml-4'>
                               <input
-                                type="radio"
-                                name="quality"
-                                checked={this.state.quality == "major-damage"}
+                                type='radio'
+                                name='quality'
+                                checked={this.state.quality == 'major-damage'}
                                 onChange={(e) =>
-                                  this.handleChange(e, "major-damage")
+                                  this.handleChange(e, 'major-damage')
                                 }
-                              />{" "}
-                              <span className="mx-1">
-                                <i className="fa fa-close"> </i>
-                              </span>{" "}
+                              />{' '}
+                              <span className='mx-1'>
+                                <i className='fa fa-close'> </i>
+                              </span>{' '}
                               Major Damage
                             </label>
                           </td>
                           <td>
                             {this.state.updating ? (
                               <button
-                                type="submit"
-                                className="badge badge-success"
+                                type='submit'
+                                className='badge badge-success'
                               >
                                 <div
-                                  className="mr-2 spinner-grow spinner-grow-sm "
-                                  role="status"
-                                ></div>{" "}
-                                &nbsp; Updating{" "}
+                                  className='mr-2 spinner-grow spinner-grow-sm '
+                                  role='status'
+                                ></div>{' '}
+                                &nbsp; Updating{' '}
                               </button>
                             ) : (
                               <button
-                                type="submit"
-                                className="badge badge-success"
+                                type='submit'
+                                className='badge badge-success'
                                 onClick={(e) =>
                                   this.onSubmitQuality(
                                     e,
@@ -733,48 +733,48 @@ class IndividualBarcode extends Component {
                                   )
                                 }
                               >
-                                <i className="ft-chevron-down" /> Update Quality
+                                <i className='ft-chevron-down' /> Update Quality
                               </button>
                             )}
                           </td>
                         </tr>
                         <tr>
                           <th>Status :</th>
-                          <td style={{ textAlign: "left" }}>
-                            {" "}
+                          <td style={{ textAlign: 'left' }}>
+                            {' '}
                             <Switch
-                              name="status"
-                              className="react-switch"
+                              name='status'
+                              className='react-switch'
                               uncheckedIcon={false}
                               checkedIcon={false}
-                              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                              boxShadow='0px 1px 5px rgba(0, 0, 0, 0.6)'
+                              activeBoxShadow='0px 0px 1px 10px rgba(0, 0, 0, 0.2)'
                               height={20}
                               width={48}
                               handleDiameter={30}
                               onChange={(e) =>
-                                this.togglehandleChange(e, "status")
+                                this.togglehandleChange(e, 'status')
                               }
-                              checked={this.state.status == "Active"}
+                              checked={this.state.status == 'Active'}
                             />
                           </td>
                           <td>
-                            {" "}
+                            {' '}
                             {this.state.saving ? (
                               <button
-                                type="submit"
-                                className="badge badge-success"
+                                type='submit'
+                                className='badge badge-success'
                               >
                                 <div
-                                  className="mr-2 spinner-grow spinner-grow-sm "
-                                  role="status"
-                                ></div>{" "}
-                                &nbsp; Updating{" "}
+                                  className='mr-2 spinner-grow spinner-grow-sm '
+                                  role='status'
+                                ></div>{' '}
+                                &nbsp; Updating{' '}
                               </button>
                             ) : (
                               <button
-                                type="submit"
-                                className="badge badge-success"
+                                type='submit'
+                                className='badge badge-success'
                                 onClick={(e) =>
                                   this.onSubmitStatus(
                                     e,
@@ -782,7 +782,7 @@ class IndividualBarcode extends Component {
                                   )
                                 }
                               >
-                                <i className="ft-chevron-down" /> Update Status
+                                <i className='ft-chevron-down' /> Update Status
                               </button>
                             )}
                           </td>
@@ -791,32 +791,32 @@ class IndividualBarcode extends Component {
                         <tr>
                           <th>Upload Image :</th>
                           <td>
-                            {" "}
+                            {' '}
                             <input
-                              name="image"
-                              type="file"
-                              className="form-control-file file btn btn-raised shadow-z-1-hover"
-                              id="projectinput8"
-                              accept="image/jpeg,image/gif,image/jpg,image/png,image/x-eps"
+                              name='image'
+                              type='file'
+                              className='form-control-file file btn btn-raised shadow-z-1-hover'
+                              id='projectinput8'
+                              accept='image/jpeg,image/gif,image/jpg,image/png,image/x-eps'
                               onChange={(e) => this._onChange(e)}
                             />
                           </td>
                           <td>
                             {this.state.imgupdating ? (
                               <button
-                                type="submit"
-                                className="badge badge-success"
+                                type='submit'
+                                className='badge badge-success'
                               >
                                 <div
-                                  className="mr-2 spinner-grow spinner-grow-sm"
-                                  role="status"
-                                ></div>{" "}
-                                &nbsp; Updating{" "}
+                                  className='mr-2 spinner-grow spinner-grow-sm'
+                                  role='status'
+                                ></div>{' '}
+                                &nbsp; Updating{' '}
                               </button>
                             ) : (
                               <button
-                                type="submit"
-                                className="badge badge-success"
+                                type='submit'
+                                className='badge badge-success'
                                 onClick={(e) =>
                                   this.onSubmitImages(
                                     e,
@@ -824,31 +824,31 @@ class IndividualBarcode extends Component {
                                   )
                                 }
                               >
-                                <i className="ft-chevron-down" /> Update Image
+                                <i className='ft-chevron-down' /> Update Image
                               </button>
                             )}
                           </td>
                         </tr>
 
                         <tr>
-                          <td colspan="1"></td>
+                          <td colspan='1'></td>
                           <td>
-                            <div className="mt-n3">
+                            <div className='mt-n3'>
                               {this.state.images.length > 0 &&
                                 this.state.images.map((image) => {
                                   return (
-                                    <div className="hovereffect w-25">
+                                    <div className='hovereffect w-25'>
                                       <img
-                                        className="img-responsive"
+                                        className='img-responsive'
                                         src={URL.createObjectURL(image.img)}
-                                        width="140"
-                                        height="100"
-                                        alt=""
+                                        width='140'
+                                        height='100'
+                                        alt=''
                                       />
-                                      <div className="overlay">
-                                        <h2 className="">
+                                      <div className='overlay'>
+                                        <h2 className=''>
                                           <i
-                                            className="fa fa-trash mt-3"
+                                            className='fa fa-trash mt-3'
                                             onClick={(e) =>
                                               this.deleteImage(e, image.id)
                                             }
@@ -865,29 +865,29 @@ class IndividualBarcode extends Component {
                     </div>
                   </div>
                   {(user &&
-                    user.systemRole === "Employee" &&
-                    user.sections.includes("Orders")) ||
-                  (user && user.systemRole === "Admin") ? (
+                    user.systemRole === 'Employee' &&
+                    user.sections.includes('Orders')) ||
+                  (user && user.systemRole === 'Admin') ? (
                     <>
-                      <div className="card">
-                        <div className="card-header">
-                          <h3 className="form-section">
-                            <i className="ft-info"></i> Orders with this item
+                      <div className='card'>
+                        <div className='card-header'>
+                          <h3 className='form-section'>
+                            <i className='ft-info'></i> Orders with this item
                             <hr />
                           </h3>
                         </div>
-                        <div className="card-body mx-2 mt-n3">
+                        <div className='card-body mx-2 mt-n3'>
                           {this.getOrderTable()}
                         </div>
                       </div>
-                      <div className="card">
-                        <div className="card-header">
-                          <h3 className="form-section">
-                            <i className="ft-info"></i> Authorization Logs
+                      <div className='card'>
+                        <div className='card-header'>
+                          <h3 className='form-section'>
+                            <i className='ft-info'></i> Authorization Logs
                             <hr />
                           </h3>
                         </div>
-                        <div className="card-body mx-2 mt-n4">
+                        <div className='card-body mx-2 mt-n4'>
                           <Pagination
                             items={this.state.authLog}
                             onChangePage={(e) => this.onChangePage_Auth(e)}
@@ -898,28 +898,28 @@ class IndividualBarcode extends Component {
                       </div>
                     </>
                   ) : (
-                    ""
+                    ''
                   )}
 
-                  <div className="card">
-                    <div className="card-header">
-                      <h3 className="form-section">
-                        <i className="fa fa-th"></i> Images
+                  <div className='card'>
+                    <div className='card-header'>
+                      <h3 className='form-section'>
+                        <i className='fa fa-th'></i> Images
                         <hr />
                       </h3>
                     </div>
-                    <div className="card-body mx-2">
-                      <div className="row mx-1 mt-n4">
+                    <div className='card-body mx-2'>
+                      <div className='row mx-1 mt-n4'>
                         <Pagination
                           items={this.state.images_Arr}
                           onChangePage={(e) => this.onChangePage(e)}
                         />
-                        <div className="product-container image-gallery w-100">
+                        <div className='product-container image-gallery w-100'>
                           {this.state.m_imgperpage.map((image) => (
-                            <div className="products">
+                            <div className='products'>
                               <img
                                 src={image.img}
-                                alt="Item"
+                                alt='Item'
                                 width={180}
                                 height={180}
                               />
@@ -932,50 +932,50 @@ class IndividualBarcode extends Component {
                 </div>
               </div>
             </div>
-            <div style={{ clear: "both" }}></div>
+            <div style={{ clear: 'both' }}></div>
 
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    rel="noopener noreferrer"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    rel='noopener noreferrer'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>
           </div>
           <div
-            className="modal fade"
-            id="viewModal"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="viewModalLabel"
-            aria-hidden="true"
+            className='modal fade'
+            id='viewModal'
+            tabIndex='-1'
+            role='dialog'
+            aria-labelledby='viewModalLabel'
+            aria-hidden='true'
           >
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="viewModalLabel">
+            <div className='modal-dialog' role='document'>
+              <div className='modal-content'>
+                <div className='modal-header'>
+                  <h5 className='modal-title' id='viewModalLabel'>
                     Product Details
                   </h5>
                   <button
-                    type="button"
-                    className="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
+                    type='button'
+                    className='close'
+                    data-dismiss='modal'
+                    aria-label='Close'
                   >
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden='true'>&times;</span>
                   </button>
                 </div>
-                <div className="modal-body">
+                <div className='modal-body'>
                   {this.getViewModal()}
                   <br />
                   <br />

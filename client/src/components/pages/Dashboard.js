@@ -283,6 +283,7 @@ class Dashboard extends Component {
       return_today,
       pickup_today,
       overdue_today,
+      alterations
     } = this.props.count_orders;
     return (
       <React.Fragment>
@@ -296,8 +297,8 @@ class Dashboard extends Component {
               <div className='content-wrapper'>
                 <div className='row'>
                   <h4 className='ml-4 mb-4 text-bold-400 greeting_text'>
-                    Hello {user && user.fullname && `${user.fullname}`}, hope
-                    you have a great day!
+                    Xin chào {user && user.fullname && `${user.fullname}`}, chúc
+                    bạn một ngày thật vui vẻ!
                   </h4>
                 </div>
                 <div className='row'>
@@ -340,7 +341,7 @@ class Dashboard extends Component {
                         {/* card4 */}
                         <div className='flex items-center bg-white shadow-xs card-dashboard'>
                           <div className='text-orange-500 gradient-crystal-clear rounded-full card-dashboard-span'>
-                            <div className='text'>0</div>
+                            <div className='text'>{alterations?alterations:0}</div>
                           </div>
                           <div className='text-card-repair'>
                             <span> Đơn Hàng Cần Sửa Đồ</span> {' '}

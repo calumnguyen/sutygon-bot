@@ -1,61 +1,62 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
 import {
-  getAllProducts,
+  getAllProductsAll,
   getProductById,
   updateProductIndex,
-} from "../../../actions/product";
-import { getCustomer } from "../../../actions/customer";
-import { addNewInvoice } from "../../../actions/invoices";
-import { updateRentedProduct } from "../../../actions/rentproduct";
-import Loader from "../../layout/Loader";
-import * as moment from "moment";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import "../../../custom.css";
-import ChargeModal from "./ChargeModal";
-import axios from "axios";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
-var JsBarcode = require("jsbarcode");
+} from '../../../actions/product';
+import { getCustomer } from '../../../actions/customer';
+import { addNewInvoice } from '../../../actions/invoices';
+import { updateRentedProduct } from '../../../actions/rentproduct';
+import Loader from '../../layout/Loader';
+import * as moment from 'moment';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import '../../../custom.css';
+import ChargeModal from './ChargeModal';
+import axios from 'axios';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
+var JsBarcode = require('jsbarcode');
 
 class MatchBarcodes extends Component {
   state = {
-    customer: "",
-    barcodesArray: "",
-    taxAmt: "",
-    customer: "",
-    order: "",
-    missingItmCharges: "",
-    customerOwe: "",
-    insuranceAmt: "",
-    orderNumber: "",
-    leaveID: "",
-    returnAmt: "",
-    totalPaid: "",
-    orderBarcode: "",
-    product_Array: "",
-    m_product: "",
-    m_productarray: "",
-    m_total: "",
+    customer: '',
+    barcodesArray: '',
+    taxAmt: '',
+    customer: '',
+    order: '',
+    missingItmCharges: '',
+    customerOwe: '',
+    insuranceAmt: '',
+    orderNumber: '',
+    leaveID: '',
+    returnAmt: '',
+    totalPaid: '',
+    orderBarcode: '',
+    product_Array: '',
+    m_product: '',
+    m_productarray: '',
+    m_total: '',
 
     generateInvoice: true,
     discount_data: [],
     charge_data: [],
-    name: "",
-    category: "",
-    amount: "",
-    d_name: "",
-    d_category: "",
-    d_amount: "",
+    name: '',
+    category: '',
+    amount: '',
+    d_name: '',
+    d_category: '',
+    d_amount: '',
     openModal: false,
-    modal_type: "",
+    modal_type: '',
     allCategoryList: [],
+    sum_of_all_items: '',
   };
   async componentDidMount() {
-    await this.props.getAllProducts();
+    await this.props.getAllProductsAll();
     const { state } = this.props.location;
     if (state) {
       this.setState({
@@ -70,7 +71,7 @@ class MatchBarcodes extends Component {
     }
   }
 
-  handleChange = (e, id = "") => {
+  handleChange = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
     this.customerOwe();
     this.returnAmt();
@@ -112,7 +113,7 @@ class MatchBarcodes extends Component {
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
                   title: product_name,
                   barcode: size.barcodes[i].barcode,
-                  color: color_name + " | " + size_name,
+                  color: color_name + ' | ' + size_name,
                   price: price,
                 };
                 rows.push(row);
@@ -125,7 +126,7 @@ class MatchBarcodes extends Component {
     return rows;
   };
   getMissingItemTotal = () => {
-    let m_total = "";
+    let m_total = '';
     const { m_productarray } = this.state;
     m_productarray.forEach((element, element_i) => {
       m_total = Number(m_total) + Number(element[0].price);
@@ -177,37 +178,43 @@ class MatchBarcodes extends Component {
         });
       }
     }
+    if (productarray.length) {
+      let sum_of_all_items = productarray
+        .map((p) => Number(p[0].price))
+        .reduce((a2, b2) => a2 + b2);
+      this.state.sum_of_all_items = sum_of_all_items;
+    }
     this.state.product_Array = productarray;
     return productarray.map((b, b_index) => (
       <>
-        <div id="sizes_box" key={b_index}>
-          <div className="row">
-            <div style={{ float: "left", width: "90%" }}>
+        <div id='sizes_box' key={b_index}>
+          <div className='row'>
+            <div style={{ float: 'left', width: '90%' }}>
               <table
-                className="table table-bordered table-light"
+                className='table table-bordered table-light'
                 style={{
-                  borderWidth: "1px",
-                  borderColor: "#aaaaaa",
-                  borderStyle: "solid",
+                  borderWidth: '1px',
+                  borderColor: '#aaaaaa',
+                  borderStyle: 'solid',
                 }}
               >
                 <thead></thead>
                 <tbody>
-                  <tr key={b_index} style={{ margin: "3px" }}>
-                    <td className="text-center">{b[0].barcode}</td>
-                    <td className="text-center">{b[0].title}</td>
-                    <td className="text-center">{b[0].color}</td>
-                    <td className="text-center">{b[0].price}</td>
+                  <tr key={b_index} style={{ margin: '3px' }}>
+                    <td className='text-center'>{b[0].barcode}</td>
+                    <td className='text-center'>{b[0].title}</td>
+                    <td className='text-center'>{b[0].color}</td>
+                    <td className='text-center'>{b[0].price}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div className="right ml-2">
+            <div className='right ml-2'>
               <button
-                type="button"
-                className="btn btn-raised btn-sm btn-icon mt-1"
+                type='button'
+                className='btn btn-raised btn-sm btn-icon mt-1'
               >
-                <i className="fa fa-check fa-2x text-success"></i>
+                <i className='fa fa-check fa-2x text-success'></i>
               </button>
             </div>
           </div>
@@ -242,36 +249,36 @@ class MatchBarcodes extends Component {
     this.state.m_productarray = m_productarray;
     return this.state.m_productarray.map((m_product, m_product_index) => (
       <>
-        <div id="sizes_box" key={m_product_index}>
-          <div className="row">
-            <div style={{ float: "left", width: "90%" }}>
+        <div id='sizes_box' key={m_product_index}>
+          <div className='row'>
+            <div style={{ float: 'left', width: '90%' }}>
               <table
-                className="table table-bordered table-light"
+                className='table table-bordered table-light'
                 style={{
-                  borderWidth: "1px",
-                  borderColor: "#aaaaaa",
-                  borderStyle: "solid",
+                  borderWidth: '1px',
+                  borderColor: '#aaaaaa',
+                  borderStyle: 'solid',
                 }}
               >
                 <thead></thead>
                 <tbody>
-                  <tr key={m_product_index} style={{ margin: "3px" }}>
-                    <td className="text-center">{m_product[0].barcode}</td>
-                    <td className="text-center">{m_product[0].title}</td>
-                    <td className="text-center">{m_product[0].color}</td>
-                    <td className="text-center">{m_product[0].price}</td>
+                  <tr key={m_product_index} style={{ margin: '3px' }}>
+                    <td className='text-center'>{m_product[0].barcode}</td>
+                    <td className='text-center'>{m_product[0].title}</td>
+                    <td className='text-center'>{m_product[0].color}</td>
+                    <td className='text-center'>{m_product[0].price}</td>
                   </tr>
                 </tbody>
               </table>
               <br />
             </div>
 
-            <div className="right ml-3">
+            <div className='right ml-3'>
               <button
-                type="button"
-                className="btn btn-raised btn-sm btn-icon btn-danger mt-2"
+                type='button'
+                className='btn btn-raised btn-sm btn-icon btn-danger mt-2'
               >
-                <i className="fa fa-minus text-white"></i>
+                <i className='fa fa-minus text-white'></i>
               </button>
             </div>
             <br />
@@ -286,10 +293,10 @@ class MatchBarcodes extends Component {
     return product_Array.map((b, b_index) => (
       <>
         <tr key={b_index}>
-          <td className="text-center">{b[0].barcode} </td>
-          <td className="text-center">{b[0].title}</td>
-          <td className="text-center">{b[0].color} </td>
-          <td className="text-center">{b[0].price} </td>
+          <td className='text-center'>{b[0].barcode} </td>
+          <td className='text-center'>{b[0].title}</td>
+          <td className='text-center'>{b[0].color} </td>
+          <td className='text-center'>{b[0].price} </td>
         </tr>
       </>
     ));
@@ -300,10 +307,10 @@ class MatchBarcodes extends Component {
     return m_productarray.map((b, b_index) => (
       <>
         <tr key={b_index}>
-          <td className="text-center">{b[0].barcode} </td>
-          <td className="text-center">{b[0].title}</td>
-          <td className="text-center">{b[0].color} </td>
-          <td className="text-center">{b[0].price} </td>
+          <td className='text-center'>{b[0].barcode} </td>
+          <td className='text-center'>{b[0].title}</td>
+          <td className='text-center'>{b[0].color} </td>
+          <td className='text-center'>{b[0].price} </td>
         </tr>
       </>
     ));
@@ -328,7 +335,7 @@ class MatchBarcodes extends Component {
     }
     const { order } = this.props.location.state;
     const { user } = this.props.auth;
-    this.props.history.push("returnSummary", {
+    this.props.history.push('returnSummary', {
       sum_discount,
       sum_charges,
       charge_data: state.charge_data,
@@ -339,6 +346,7 @@ class MatchBarcodes extends Component {
       customer: order[0].customer,
       barcodesArray: this.state.barcodesArray,
       product_Array: this.state.product_Array,
+      sum_of_all_items: this.state.sum_of_all_items,
     });
 
     //
@@ -434,19 +442,19 @@ class MatchBarcodes extends Component {
     if (charge_data) {
       return charge_data.map((charge, b_index) => (
         <tr key={b_index}>
-          <th scope="row">{b_index + 1}</th>
-          <td>{charge.name ? charge.name : ""}</td>
-          <td>{charge.category ? charge.category : ""}</td>
-          <td>{charge.amount ? charge.amount : ""}</td>
+          <th scope='row'>{b_index + 1}</th>
+          <td>{charge.name ? charge.name : ''}</td>
+          <td>{charge.category ? charge.category : ''}</td>
+          <td>{charge.amount ? charge.amount : ''}</td>
           <td>
             <button
-              onClick={() => this.onRemoveRow(b_index, "charge")}
-              type="button"
-              className="btn btn-raised btn-sm btn-icon btn-default mt-1"
+              onClick={() => this.onRemoveRow(b_index, 'charge')}
+              type='button'
+              className='btn btn-raised btn-sm btn-icon btn-default mt-1'
             >
               <i
-                style={{ fontSize: "20px" }}
-                className="fa fa-times  text-danger"
+                style={{ fontSize: '20px' }}
+                className='fa fa-times  text-danger'
               ></i>
             </button>
           </td>
@@ -460,19 +468,19 @@ class MatchBarcodes extends Component {
     if (discount_data) {
       return discount_data.map((discount, b_index) => (
         <tr key={b_index}>
-          <th scope="row">{b_index + 1}</th>
-          <td>{discount.name ? discount.name : ""}</td>
-          <td>{discount.category ? discount.category : ""}</td>
-          <td>{discount.amount ? discount.amount : ""}</td>
+          <th scope='row'>{b_index + 1}</th>
+          <td>{discount.name ? discount.name : ''}</td>
+          <td>{discount.category ? discount.category : ''}</td>
+          <td>{discount.amount ? discount.amount : ''}</td>
           <td>
             <button
-              onClick={() => this.onRemoveRow(b_index, "discount")}
-              type="button"
-              className="btn btn-raised btn-sm btn-icon btn-default mt-1"
+              onClick={() => this.onRemoveRow(b_index, 'discount')}
+              type='button'
+              className='btn btn-raised btn-sm btn-icon btn-default mt-1'
             >
               <i
-                style={{ fontSize: "20px" }}
-                className="fa fa-times text-danger"
+                style={{ fontSize: '20px' }}
+                className='fa fa-times text-danger'
               ></i>
             </button>
           </td>
@@ -482,12 +490,12 @@ class MatchBarcodes extends Component {
   };
   onRemoveRow = (valueIndex, type) => {
     let { discount_data, charge_data } = this.state;
-    if (type == "discount") {
+    if (type == 'discount') {
       this.setState({
         discount_data: discount_data.filter((_, index) => index !== valueIndex),
       });
     }
-    if (type == "charge") {
+    if (type == 'charge') {
       this.setState({
         charge_data: charge_data.filter((_, index) => index !== valueIndex),
       });
@@ -498,49 +506,40 @@ class MatchBarcodes extends Component {
     let { name, category, amount } = this.state;
     var title = this.state.category;
 
-    if (name == "") {
-      OCAlert.alertError(
-        `Title is required`,
-        { timeOut: 3000 }
-      );
-      return
+    if (name == '') {
+      OCAlert.alertError(`Cần điền tên`, { timeOut: 3000 });
+      return;
     }
-     if (category == "") {
-      OCAlert.alertError(
-        `Category is required`,
-        { timeOut: 3000 }
-       );
-       return
+    if (category == '') {
+      OCAlert.alertError(`Cần điền loại`, { timeOut: 3000 });
+      return;
     }
-     if (amount == "") {
-      OCAlert.alertError(
-        `Amount is required`,
-        { timeOut: 3000 }
-      );
-      return
+    if (amount == '') {
+      OCAlert.alertError(`Cần điền số tiền`, { timeOut: 3000 });
+      return;
     }
-    if (type == "charge") {
+    if (type == 'charge') {
       this.setState({
         charge_data: [...this.state.charge_data, { name, category, amount }],
-        name: "",
-        category: "",
-        amount: "",
+        name: '',
+        category: '',
+        amount: '',
 
-        modal_type: "",
+        modal_type: '',
         openModal: false,
       });
     }
-    if (type == "discount") {
+    if (type == 'discount') {
       this.setState({
         discount_data: [
           ...this.state.discount_data,
           { name, category, amount },
         ],
-        name: "",
-        category: "",
-        amount: "",
+        name: '',
+        category: '',
+        amount: '',
         openModal: false,
-        modal_type: "",
+        modal_type: '',
       });
     }
     await axios.post(`/api/categories/add`, {
@@ -551,10 +550,10 @@ class MatchBarcodes extends Component {
   handleClose = () => {
     this.setState({
       openModal: false,
-      name: "",
-      category: "",
-      amount: "",
-      modal_type: "",
+      name: '',
+      category: '',
+      amount: '',
+      modal_type: '',
     });
   };
 
@@ -573,14 +572,14 @@ class MatchBarcodes extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to='/login' />;
     }
 
     const { customer } = this.props;
     const { state } = this.props.location;
     const { user } = this.props.auth;
     if (this.props.saved === true) {
-      return <Redirect to="/returnproduct" />;
+      return <Redirect to='/returnproduct' />;
     }
 
     const { order } = state;
@@ -591,110 +590,108 @@ class MatchBarcodes extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="form-action-layouts">
-                  <div className="form-body">
-                    <div className="card">
-                      <div className="card-header">
-                        <h4 className="form-section">Return Product</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='form-action-layouts'>
+                  <div className='form-body'>
+                    <div className='card'>
+                      <div className='card-header'>
+                        <h4 className='form-section'>Trả Đồ</h4>
                       </div>
 
-                      <div className="card-body table-responsive">
-                        <div id="colors_box">
-                          <div className="row color-row">
-                            <div className="col-md-12">
-                              <div className="text-center">
-                                <h2>
-                                  {" "}
-                                  Scan and match barcodes with all items{" "}
-                                </h2>
+                      <div className='card-body table-responsive'>
+                        <div id='colors_box'>
+                          <div className='row color-row'>
+                            <div className='col-md-12'>
+                              <div className='text-center'>
+                                <h2>Danh Sách Sản Phẩm Hoàn Trả</h2>
                                 <br />
                               </div>
-                              <div className="form-group">
-                                <div style={{ float: "left" }}>
+                              <div className='form-group'>
+                                <div style={{ float: 'left' }}>
                                   <h3>
                                     {customer
-                                      ? `${customer.name}${"#"}${
+                                      ? `${customer.name}${'#'}${
                                           customer.contactnumber
                                         }`
-                                      : ""}
+                                      : ''}
                                   </h3>
                                   <br />
                                 </div>
-                                <div style={{ float: "right" }}>
+                                <div className='text-center mb-4'>
                                   <h3>
                                     {state
-                                      ? `${"Order"}${"#"} ${
-                                          order[0].orderNumber
-                                        }`
-                                      : ""}
+                                      ? `${'Đơn Hàng '} ${order[0].orderNumber}`
+                                      : ''}
                                   </h3>
                                 </div>
                               </div>
                             </div>
 
                             <form onSubmit={(e) => this.onSubmit(e)}>
-                              <div className="text-center">
-                                <h3>
-                                  {" "}
-                                  You are returning{" "}
-                                  {order && order.length > 0
-                                    ? `${barcodesArray.length}${"/"}${
-                                        order[0].barcodes.length
-                                      }`
-                                    : `0`}{" "}
-                                  products in this order{" "}
-                                </h3>
+                              <div className='text-left ml-5'>
+                                <p>
+                                  Khách hàng đang hoàn trả{' '}
+                                  <span style={{ color: 'red' }}>
+                                    {order && order.length > 0
+                                      ? `${barcodesArray.length}${'/'}${
+                                          order[0].barcodes.length
+                                        }`
+                                      : `0`}{' '}
+                                  </span>
+                                  sản phẩm trong đơn hàng này.{' '}
+                                </p>
                                 <br />
                               </div>
-                              <div className="col-md-12">
-                                <div id="sizes_box">
+                              <div className='col-md-12'>
+                                <div id='sizes_box'>
                                   {this.productBox()}
                                   <br />
                                   {barcodesArray.length !==
                                   order[0].barcodes.length ? (
-                                    <h3>Missing Products</h3>
+                                    <h3 className='ml-4'>
+                                      Khách Hàng Trả Thiếu
+                                    </h3>
                                   ) : (
-                                    ""
+                                    ''
                                   )}
                                   {barcodesArray.length !==
                                   order[0].barcodes.length
                                     ? this.missingProducts()
-                                    : ""}
+                                    : ''}
 
-                                  <div className="row">
-                                    <div className="col-md-11 ">
+                                  <div className='row'>
+                                    <div className='col-md-11 '>
                                       <button
-                                        type={"button"}
-                                        className={"btn btn-info"}
+                                        type={'button'}
+                                        className={'btn btn-info'}
                                         onClick={() =>
-                                          this.handleOpen("charge")
+                                          this.handleOpen('charge')
                                         }
                                       >
-                                        Add Charge
+                                        Thêm Kinh Phí
                                       </button>
                                     </div>
                                   </div>
                                   {this.state.charge_data.length > 0 && (
-                                    <div className="row">
-                                      <div className="col-md-11 ">
+                                    <div className='row'>
+                                      <div className='col-md-11 '>
                                         <h4>
-                                          <strong>Charge</strong>
+                                          <strong>Thêm Kinh Phí</strong>
                                         </h4>
                                         {/* zohaib */}
-                                        <table className="table table-sm table-bordered table-striped">
+                                        <table className='table table-sm table-bordered table-striped'>
                                           <thead>
                                             <tr>
-                                              <th scope="col">#</th>
-                                              <th scope="col">Charge</th>
-                                              <th scope="col">Category</th>
-                                              <th scope="col">Amount</th>
-                                              <th scope="col">Action</th>
+                                              <th scope='col'>#</th>
+                                              <th scope='col'>Tên Phí</th>
+                                              <th scope='col'>Loại</th>
+                                              <th scope='col'>Phí VNĐ</th>
+                                              <th scope='col'>Hành Động</th>
                                             </tr>
                                           </thead>
                                           <tbody>
@@ -705,16 +702,16 @@ class MatchBarcodes extends Component {
                                     </div>
                                   )}
                                   <br />
-                                  <div className="row">
-                                    <div className="col-md-11 ">
+                                  <div className='row'>
+                                    <div className='col-md-11 '>
                                       <button
-                                        type={"button"}
-                                        className={"btn btn-info"}
+                                        type={'button'}
+                                        className={'btn btn-info'}
                                         onClick={() =>
-                                          this.handleOpen("discount")
+                                          this.handleOpen('discount')
                                         }
                                       >
-                                        Add Additional Discount
+                                        Thêm Giảm Giá
                                       </button>
                                     </div>
                                   </div>
@@ -734,20 +731,20 @@ class MatchBarcodes extends Component {
                                   />
 
                                   {this.state.discount_data.length > 0 && (
-                                    <div className="row">
-                                      <div className="col-md-11 ">
+                                    <div className='row'>
+                                      <div className='col-md-11 '>
                                         <h4>
                                           <strong>Additional Discount</strong>
                                         </h4>
                                         {/* zohaib */}
-                                        <table className="table table-sm table-bordered table-striped">
+                                        <table className='table table-sm table-bordered table-striped'>
                                           <thead>
                                             <tr>
-                                              <th scope="col">#</th>
-                                              <th scope="col">Discount</th>
-                                              <th scope="col">Category</th>
-                                              <th scope="col">Amount</th>
-                                              <th scope="col">Action</th>
+                                              <th scope='col'>#</th>
+                                              <th scope='col'>Tên Phí</th>
+                                              <th scope='col'>Loại</th>
+                                              <th scope='col'>Giảm VNĐ</th>
+                                              <th scope='col'>Hành Động</th>
                                             </tr>
                                           </thead>
                                           <tbody>
@@ -758,16 +755,16 @@ class MatchBarcodes extends Component {
                                     </div>
                                   )}
                                   <br />
-                                  <div className="row">
-                                    <div className="col-md-12">
-                                      <div className="form-group">
-                                        <div style={{ float: "left" }}>
+                                  <div className='row'>
+                                    <div className='col-md-12'>
+                                      <div className='form-group'>
+                                        {/* <div style={{ float: "left" }}>
                                           <h4 id="padLeft">
                                             Insurance return to customer
                                           </h4>
-                                        </div>
-                                        <div style={{ paddingLeft: "700px" }}>
-                                          <input
+                                        </div> */}
+                                        <div style={{ paddingLeft: '900px' }}>
+                                          {/* <input
                                             name="insuranceAmt"
                                             style={{
                                               width: "85%",
@@ -787,14 +784,14 @@ class MatchBarcodes extends Component {
                                             onChange={(e) =>
                                               this.handleChange(e)
                                             }
-                                          />
+                                          /> */}
                                         </div>
                                       </div>
                                     </div>
                                   </div>
                                   <br />
 
-                                  <div className="row">
+                                  {/* <div className="row">
                                     <div className="col-md-12">
                                       <div className="form-group">
                                         <div style={{ float: "left" }}>
@@ -825,8 +822,8 @@ class MatchBarcodes extends Component {
                                       </div>
                                     </div>
                                   </div>
-                                  <br />
-
+                                  <br /> */}
+                                  {/* 
                                   <div className="row">
                                     <div className="col-md-12">
                                       <div className="form-group">
@@ -856,7 +853,7 @@ class MatchBarcodes extends Component {
                                         </div>
                                       </div>
                                     </div>
-                                  </div>
+                                  </div> */}
                                   <br />
 
                                   {/* <div className="row">
@@ -881,18 +878,19 @@ class MatchBarcodes extends Component {
                                       </div>
                                     </div>
                                   </div> */}
-                                  <br />
-                                  <div className="col-md-12">
-                                    <div id="sizes_box">
-                                      <div className="row text-center">
-                                        <div className="col-md-12 btn-cont">
-                                          <div className="form-group">
+                                  {/* <br /> */}
+                                  <div className='col-md-12'>
+                                    <div id='sizes_box'>
+                                      <div className='row text-center'>
+                                        <div className='col-md-12 btn-cont'>
+                                          <div className='form-group'>
                                             <button
-                                              type="submit"
-                                              className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                                              id="btnSize2"
+                                              type='submit'
+                                              className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
+                                              id='btnSize2'
                                             >
-                                              <i className="ft-check"></i> Next
+                                              <i className='ft-check'></i>Thanh
+                                              Toán Tiền
                                             </button>
                                           </div>
                                         </div>
@@ -911,70 +909,70 @@ class MatchBarcodes extends Component {
               </div>
             </div>
 
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    rel="noopener noreferrer"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    rel='noopener noreferrer'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>
           </div>
           {/* Invoice Modal */}
           <div
-            className="modal fade text-left"
-            id="primary"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="myModalLabel8"
-            aria-hidden="true"
+            className='modal fade text-left'
+            id='primary'
+            tabIndex='-1'
+            role='dialog'
+            aria-labelledby='myModalLabel8'
+            aria-hidden='true'
           >
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header bg-primary white">
-                  <h4 className="modal-title text-center" id="myModalLabel8">
+            <div className='modal-dialog' role='document'>
+              <div className='modal-content'>
+                <div className='modal-header bg-primary white'>
+                  <h4 className='modal-title text-center' id='myModalLabel8'>
                     Invoice
                   </h4>
                   <button
-                    type="button"
-                    className="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
+                    type='button'
+                    className='close'
+                    data-dismiss='modal'
+                    aria-label='Close'
                   >
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden='true'>&times;</span>
                   </button>
                 </div>
-                <div className="modal-body">
-                  <div id="colors_box">
-                    <div className="row color-row">
-                      <div className="col-md-12">
-                        <div className="text-center">
+                <div className='modal-body'>
+                  <div id='colors_box'>
+                    <div className='row color-row'>
+                      <div className='col-md-12'>
+                        <div className='text-center'>
                           <h4>
                             {customer
-                              ? `${customer.name}${"#"}${
+                              ? `${customer.name}${'#'}${
                                   customer.contactnumber
                                 }`
-                              : ""}
+                              : ''}
                           </h4>
                         </div>
-                        <div className="text-center">
+                        <div className='text-center'>
                           <h4>
                             {state
-                              ? `${"Order"}${"#"} ${order[0].orderNumber}`
-                              : ""}
+                              ? `${'Order'}${'#'} ${order[0].orderNumber}`
+                              : ''}
                           </h4>
                         </div>
                       </div>
-                      <div className="col-md-12">
+                      <div className='col-md-12'>
                         <div>
                           <table>
                             <thead></thead>
@@ -983,7 +981,7 @@ class MatchBarcodes extends Component {
                           {!!this.state.m_productarray.length ? (
                             <h5>Missing Products</h5>
                           ) : (
-                            ""
+                            ''
                           )}
                           {!!this.state.m_productarray.length ? (
                             <table>
@@ -991,55 +989,55 @@ class MatchBarcodes extends Component {
                               <tbody>{this.m_invoiceproductBox()}</tbody>
                             </table>
                           ) : (
-                            ""
+                            ''
                           )}
 
-                          <div className="row">
+                          <div className='row'>
                             <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'left', color: 'black' }}
                             >
-                              <h6 id="padLeft">Insurance amount</h6>
+                              <h6 id='padLeft'>Insurance amount</h6>
                             </div>
                             <div
-                              className="col-md-6"
-                              style={{ float: "right", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'right', color: 'black' }}
                             >
                               <h6>{this.state.insuranceAmt}</h6>
                             </div>
                           </div>
 
-                          <div className="row justify-content-center">
-                            <div className="form-group">
+                          <div className='row justify-content-center'>
+                            <div className='form-group'>
                               <div
-                                className="text-center"
-                                style={{ width: "300%" }}
+                                className='text-center'
+                                style={{ width: '300%' }}
                               >
                                 <input
-                                  type="text"
-                                  className="form-control mm-input s-input text-center"
-                                  placeholder="Total"
-                                  style={{ color: "black" }}
-                                  id="setSizeFloat"
+                                  type='text'
+                                  className='form-control mm-input s-input text-center'
+                                  placeholder='Total'
+                                  style={{ color: 'black' }}
+                                  id='setSizeFloat'
                                   readOnly
-                                  value={`${"PAID TOTAL: $"}${
+                                  value={`${'PAID TOTAL: $'}${
                                     this.state.totalPaid
                                   }`}
                                 />
                               </div>
                             </div>
                           </div>
-                          <div className="row">
+                          <div className='row'>
                             <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'left', color: 'black' }}
                             >
                               <h6>Lost Items Charge</h6>
                             </div>
 
                             <div
-                              className="col-md-6"
-                              style={{ float: "right", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'right', color: 'black' }}
                             >
                               <h6>
                                 {this.state.missingItmCharges &&
@@ -1048,102 +1046,102 @@ class MatchBarcodes extends Component {
                             </div>
                           </div>
 
-                          <div className="row">
+                          <div className='row'>
                             <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'left', color: 'black' }}
                             >
-                              <h6 id="padLeft">Amount Return to customer</h6>
+                              <h6 id='padLeft'>Amount Return to customer</h6>
                             </div>
                             <div
-                              className="col-md-6"
-                              style={{ float: "right", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'right', color: 'black' }}
                             >
                               <h6>
                                 {customerOwe && insuranceAmt && m_total
                                   ? `${this.returnAmt()}`
-                                  : "0"}
+                                  : '0'}
                               </h6>
                             </div>
                           </div>
 
                           <br />
 
-                          <div className="row">
+                          <div className='row'>
                             <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'left', color: 'black' }}
                             >
-                              <h6 id="padLeft">Leave ID</h6>
+                              <h6 id='padLeft'>Leave ID</h6>
                             </div>
                             <div
-                              className="col-md-6"
-                              style={{ float: "right", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'right', color: 'black' }}
                             >
                               <h6>
-                                {this.state.leaveID === "true"
-                                  ? `${"Yes"}`
-                                  : `${"No"}`}
+                                {this.state.leaveID === 'true'
+                                  ? `${'Yes'}`
+                                  : `${'No'}`}
                               </h6>
                             </div>
                           </div>
 
-                          <div className="row">
+                          <div className='row'>
                             <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'left', color: 'black' }}
                             >
-                              <h6 id="padLeft">Rent From</h6>
+                              <h6 id='padLeft'>Rent From</h6>
                             </div>
                             <div
                               style={{
-                                float: "right",
-                                color: "black",
-                                marginLeft: "25px",
+                                float: 'right',
+                                color: 'black',
+                                marginLeft: '25px',
                               }}
                             >
                               <h6>
                                 {moment(this.state.rentDate).format(
-                                  "DD-MM-YYYY"
+                                  'DD-MM-YYYY'
                                 )}
                               </h6>
                             </div>
                           </div>
 
-                          <div className="row">
+                          <div className='row'>
                             <div
-                              className="col-md-6"
-                              style={{ float: "left", color: "black" }}
+                              className='col-md-6'
+                              style={{ float: 'left', color: 'black' }}
                             >
                               <h6>Return Date</h6>
                             </div>
 
                             <div
                               style={{
-                                float: "right",
-                                color: "black",
-                                marginLeft: "25px",
+                                float: 'right',
+                                color: 'black',
+                                marginLeft: '25px',
                               }}
                             >
                               <h6>
                                 {moment(this.state.returnDate).format(
-                                  "DD-MM-YYYY"
+                                  'DD-MM-YYYY'
                                 )}
                               </h6>
                             </div>
                           </div>
                           <br />
 
-                          <div className="container">
-                            <div className="row justify-content-md-center">
-                              <div className="col-md-12">
+                          <div className='container'>
+                            <div className='row justify-content-md-center'>
+                              <div className='col-md-12'>
                                 <input
-                                  style={{ color: "black", width: "90%" }}
-                                  type="text"
-                                  className="form-control mm-input s-input text-center"
-                                  placeholder="Total"
-                                  id="setSizeFloat"
-                                  value={`${"FINAL INVOICE TOTAL: $"}${this.finalInVoiceTotal()}`}
+                                  style={{ color: 'black', width: '90%' }}
+                                  type='text'
+                                  className='form-control mm-input s-input text-center'
+                                  placeholder='Total'
+                                  id='setSizeFloat'
+                                  value={`${'FINAL INVOICE TOTAL: $'}${this.finalInVoiceTotal()}`}
                                   readOnly
                                 />
                               </div>
@@ -1151,29 +1149,29 @@ class MatchBarcodes extends Component {
                           </div>
                           <br />
 
-                          <div className="col-md-12">
+                          <div className='col-md-12'>
                             <table>
                               <thead></thead>
                               <tbody>
                                 <tr>
                                   <td
                                     style={{
-                                      backgroundColor: "white",
-                                      textAlign: "center",
-                                      padding: "8px",
-                                      width: "50%",
+                                      backgroundColor: 'white',
+                                      textAlign: 'center',
+                                      padding: '8px',
+                                      width: '50%',
                                     }}
                                   >
-                                    <svg id="barcode"></svg>
+                                    <svg id='barcode'></svg>
                                   </td>
                                   <td
                                     style={{
-                                      textAlign: "center",
-                                      padding: "8px",
-                                      width: "50%",
+                                      textAlign: 'center',
+                                      padding: '8px',
+                                      width: '50%',
                                     }}
                                   >
-                                    {" "}
+                                    {' '}
                                     Authorized by <br />
                                     {user && user.username}
                                   </td>
@@ -1182,35 +1180,35 @@ class MatchBarcodes extends Component {
                             </table>
                           </div>
                           <br />
-                          <div className="container">
-                            <div className="row justify-content-md-center">
-                              <div className="col-lg-auto">
+                          <div className='container'>
+                            <div className='row justify-content-md-center'>
+                              <div className='col-lg-auto'>
                                 <input
                                   style={{
-                                    color: "black",
-                                    width: "-webkit-fill-available",
+                                    color: 'black',
+                                    width: '-webkit-fill-available',
                                   }}
-                                  type="text"
-                                  className="form-control mm-input s-input text-center"
-                                  placeholder="Total"
-                                  id="setSizeFloat"
+                                  type='text'
+                                  className='form-control mm-input s-input text-center'
+                                  placeholder='Total'
+                                  id='setSizeFloat'
                                   readOnly
-                                  value={`${"Order Completed"}`}
+                                  value={`${'Order Completed'}`}
                                 />
                               </div>
                             </div>
                           </div>
                           <br />
-                          <div className="row">
+                          <div className='row'>
                             <p>
                               For questions and contact information please check
                               out
                               <a
-                                href="https://www.sutygon.com"
-                                rel="noopener noreferrer"
-                                id="pixinventLink"
-                                target="_blank"
-                                className="text-bold-800 primary darken-2"
+                                href='https://www.sutygon.com'
+                                rel='noopener noreferrer'
+                                id='pixinventLink'
+                                target='_blank'
+                                className='text-bold-800 primary darken-2'
                               >
                                 www.sutygon-bot.com
                               </a>
@@ -1227,44 +1225,44 @@ class MatchBarcodes extends Component {
 
           {/* pdf invoice  */}
 
-          <div id="invoiceDiv" style={{ width: "100%", display: "none" }}>
-            <h1 style={{ textAlign: "center" }}>
+          <div id='invoiceDiv' style={{ width: '100%', display: 'none' }}>
+            <h1 style={{ textAlign: 'center' }}>
               {customer
-                ? `${customer.name}${"#"}${customer.contactnumber}`
-                : ""}{" "}
+                ? `${customer.name}${'#'}${customer.contactnumber}`
+                : ''}{' '}
             </h1>
-            <h1 style={{ textAlign: "center" }}>
-              {state ? `${"Order"}${"#"} ${order[0].orderNumber}` : ""}{" "}
+            <h1 style={{ textAlign: 'center' }}>
+              {state ? `${'Order'}${'#'} ${order[0].orderNumber}` : ''}{' '}
             </h1>
 
-            <table style={{ width: "100%" }} cellPadding="10">
+            <table style={{ width: '100%' }} cellPadding='10'>
               <thead></thead>
               <tbody>{this.invoiceproductBox()}</tbody>
             </table>
-            <table style={{ width: "100%" }} cellPadding="10">
+            <table style={{ width: '100%' }} cellPadding='10'>
               <thead></thead>
               <tbody>
                 {!!this.state.m_productarray.length ? (
                   <h5>Missing Products</h5>
                 ) : (
-                  ""
+                  ''
                 )}
                 {!!this.state.m_productarray.length
                   ? this.m_invoiceproductBox()
-                  : ""}
+                  : ''}
               </tbody>
             </table>
             <hr />
-            <table style={{ width: "100%" }} cellPadding="10">
+            <table style={{ width: '100%' }} cellPadding='10'>
               <thead></thead>
               <tbody>
                 <tr>
-                  <td style={{ width: "90%" }}>Insurance Amount</td>
+                  <td style={{ width: '90%' }}>Insurance Amount</td>
                   <td>{this.state.insuranceAmt}</td>
                 </tr>
-                <tr style={{ textAlign: "center" }}>
+                <tr style={{ textAlign: 'center' }}>
                   <td>
-                    <h4 style={{ textAlign: "center" }}>{`${"PAID TOTAL: "}${
+                    <h4 style={{ textAlign: 'center' }}>{`${'PAID TOTAL: '}${
                       this.state.totalPaid
                     }`}</h4>
                   </td>
@@ -1272,68 +1270,68 @@ class MatchBarcodes extends Component {
                 <tr>
                   <td>Lost Items Charge</td>
                   <td>
-                    {this.state.m_total === ""
+                    {this.state.m_total === ''
                       ? this.state.missingItmCharges
-                      : this.state.m_total}{" "}
+                      : this.state.m_total}{' '}
                   </td>
                 </tr>
                 <tr>
                   <td>Amount Return to customer</td>
-                  <td>{insuranceAmt ? this.returnAmt() : "0"}</td>
+                  <td>{insuranceAmt ? this.returnAmt() : '0'}</td>
                 </tr>
               </tbody>
             </table>
             <br />
 
-            <table style={{ width: "100%" }} cellPadding="10">
+            <table style={{ width: '100%' }} cellPadding='10'>
               <thead></thead>
               <tbody>
-                <tr style={{ textAlign: "center" }}>
-                  <td style={{ textAlign: "center" }}>
+                <tr style={{ textAlign: 'center' }}>
+                  <td style={{ textAlign: 'center' }}>
                     {this.state.leaveID === true
-                      ? `${"Customer left ID. Please return ID to customer"}`
-                      : `${"No ID"}`}
+                      ? `${'Customer left ID. Please return ID to customer'}`
+                      : `${'No ID'}`}
                   </td>
                 </tr>
                 <tr>
                   <td>Rent From</td>
-                  <td>{moment(this.state.rentDate).format("DD/MMM/YYYY")}</td>
+                  <td>{moment(this.state.rentDate).format('DD/MMM/YYYY')}</td>
                 </tr>
                 <tr>
                   <td>Return Date</td>
-                  <td>{moment(this.state.returnDate).format("DD/MMM/YYYY")}</td>
+                  <td>{moment(this.state.returnDate).format('DD/MMM/YYYY')}</td>
                 </tr>
-                <tr style={{ textAlign: "center" }}>
+                <tr style={{ textAlign: 'center' }}>
                   <td>
                     <h4
-                      style={{ textAlign: "center" }}
-                    >{`${"FINAL INVOICE TOTAL: "}${this.finalInVoiceTotal()}`}</h4>
-                  </td>{" "}
+                      style={{ textAlign: 'center' }}
+                    >{`${'FINAL INVOICE TOTAL: '}${this.finalInVoiceTotal()}`}</h4>
+                  </td>{' '}
                 </tr>
               </tbody>
             </table>
 
-            <table style={{ width: "100%" }}>
+            <table style={{ width: '100%' }}>
               <thead></thead>
               <tbody>
                 <tr>
                   <td
-                    className="col-md-6"
+                    className='col-md-6'
                     style={{
-                      backgroundColor: "white",
-                      textAlign: "center",
-                      padding: "8px",
-                      width: "50%",
+                      backgroundColor: 'white',
+                      textAlign: 'center',
+                      padding: '8px',
+                      width: '50%',
                     }}
                   >
-                    <svg id="barcode"></svg>
+                    <svg id='barcode'></svg>
                   </td>
                   <td
-                    className="col-md-6"
+                    className='col-md-6'
                     style={{
-                      textAlign: "center",
-                      padding: "8px",
-                      width: "50%",
+                      textAlign: 'center',
+                      padding: '8px',
+                      width: '50%',
                     }}
                   >
                     Authorized by <br />
@@ -1343,8 +1341,8 @@ class MatchBarcodes extends Component {
                 <tr>
                   <td>
                     <h4
-                      style={{ textAlign: "center" }}
-                    >{`${"ORDER COMPLETED"}`}</h4>
+                      style={{ textAlign: 'center' }}
+                    >{`${'ORDER COMPLETED'}`}</h4>
                   </td>
                 </tr>
               </tbody>
@@ -1354,11 +1352,11 @@ class MatchBarcodes extends Component {
             <br />
             <br />
 
-            <table style={{ width: "100%" }}>
+            <table style={{ width: '100%' }}>
               <thead></thead>
               <tbody>
                 <tr>
-                  <td style={{ textAlign: "center" }}>
+                  <td style={{ textAlign: 'center' }}>
                     For questions and information please contact out
                     www.sutygon-bot.com
                   </td>
@@ -1369,7 +1367,7 @@ class MatchBarcodes extends Component {
             <br />
           </div>
         </div>
-               <OCAlertsProvider />
+        <OCAlertsProvider />
       </React.Fragment>
     );
   }
@@ -1377,7 +1375,7 @@ class MatchBarcodes extends Component {
 
 MatchBarcodes.propTypes = {
   getCustomer: PropTypes.func.isRequired,
-  getAllProducts: PropTypes.func.isRequired,
+  getAllProductsAll: PropTypes.func.isRequired,
   getProductById: PropTypes.func.isRequired,
   updateProductIndex: PropTypes.func.isRequired,
   updateRentedProduct: PropTypes.func.isRequired,
@@ -1399,7 +1397,7 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   getCustomer,
-  getAllProducts,
+  getAllProductsAll,
   getProductById,
   updateProductIndex,
   updateRentedProduct,

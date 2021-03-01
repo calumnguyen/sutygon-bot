@@ -1,18 +1,18 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
+    border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
@@ -33,8 +33,8 @@ export default function TransitionsModal({
   return (
     <div>
       <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
+        aria-labelledby='transition-modal-title'
+        aria-describedby='transition-modal-description'
         className={classes.modal}
         open={openModal}
         // onClose={handleClose}
@@ -46,77 +46,77 @@ export default function TransitionsModal({
       >
         <Fade in={openModal}>
           <div className={classes.paper}>
-            <h2 id="transition-modal-title">
-              {showForm ? "Note" : "Condition"}
-              {condition == "Minor damage" ? (
+            <h2 id='transition-modal-title'>
+              {showForm ? 'Ghi chú' : 'Tình trạng đồ'}
+              {condition == 'Minor damage' ? (
                 <span
-                  style={{ fontSize: "25px" }}
-                  className="fa fa-exclamation-triangle fa-5 text-warning"
+                  style={{ fontSize: '25px' }}
+                  className='fa fa-exclamation-triangle fa-5 text-warning'
                 ></span>
-              ) : condition == "Major damage" ? (
+              ) : condition == 'Major damage' ? (
                 <span
-                  style={{ fontSize: "25px" }}
-                  className="fa fa-times fa-5 text-danger"
+                  style={{ fontSize: '25px' }}
+                  className='fa fa-times fa-5 text-danger'
                 ></span>
               ) : (
-                ""
+                ''
               )}
             </h2>
 
-            <div id="transition-modal-description">
+            <div id='transition-modal-description'>
               {showForm ? (
-                <div className={"row"}>
+                <div className={'row'}>
                   <textarea
-                    className="form-control"
+                    className='form-control'
                     rows={3}
                     onChange={(e) => onChangeNote(e.target.value)}
                   >
                     {note}
                   </textarea>
                   <button
-                    className="btn btn-primary mt-2"
+                    className='btn btn-primary mt-2'
                     onClick={() => onSubmitOtherCondition(condition)}
                   >
-                    Save
+                    Lưu
                   </button>
                 </div>
               ) : (
-                <div className="row">
+                <div className='row'>
                   <div
-                    style={{ cursor: "pointer" }}
-                    className="col-md-4 text-center"
-                    onClick={() => onChangeCondition("good")}
+                    style={{ cursor: 'pointer' }}
+                    className='col-md-4 text-center'
+                    onClick={() => onChangeCondition('good')}
                   >
                     <i
-                      style={{ fontSize: "50px" }}
-                      className="fa fa-check  text-success"
+                      style={{ fontSize: '50px' }}
+                      className='fa fa-check  text-success'
                     ></i>
 
-                    <p>Good condition</p>
+                    <p>Tốt</p>
                   </div>
                   <div
-                    style={{ cursor: "pointer" }}
-                    className="col-md-4 text-center"
-                    onClick={() => onChangeCondition("Minor damage")}
+                    style={{ cursor: 'pointer' }}
+                    className='col-md-4 text-center'
+                    onClick={() => onChangeCondition('Minor damage')}
                   >
                     <i
-                      style={{ fontSize: "50px" }}
-                      className="fa fa-exclamation-triangle fa-5 text-warning"
+                      style={{ fontSize: '50px' }}
+                      className='fa fa-exclamation-triangle fa-5 text-warning'
                     ></i>
 
-                    <p>Minor damage</p>
+                    <p>Hơi hư hỏng</p>
                   </div>
                   <div
-                    style={{ cursor: "pointer" }}
-                    className="col-md-4 text-center"
-                    onClick={() => onChangeCondition("Major damage")}
+                    style={{ cursor: 'pointer' }}
+                    className='col-md-4 text-center'
+                    onClick={() => onChangeCondition('Major damage')}
                   >
                     <i
-                      style={{ fontSize: "50px" }}
-                      className="fa fa-times fa-5 text-danger"
+                      style={{ fontSize: '50px' }}
+                      className='fa fa-times fa-5 text-danger'
                     ></i>
 
-                    <p>Major damage</p>
+                    <p>Hư hỏng nặng</p>
                   </div>
                 </div>
               )}

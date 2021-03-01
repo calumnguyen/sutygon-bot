@@ -1,6 +1,6 @@
 .pending {
-  background: #ffdc1f;
-  border-radius: 0 !important;
+  background-image: linear-gradient(to bottom right, #4ca1af, #c4e0e5);
+  border-radius: 20px !important;
 }
 .btn-custom {
   width: -webkit-fill-available;
@@ -19,51 +19,52 @@
   line-height: normal;
 }
 .lost {
-  background: #163a5f;
-  border-radius: 0 !important;
+  background-image: linear-gradient(to bottom right, #603813, #b29f94);
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .active {
-  background: #8c52ff;
-  border-radius: 0 !important;
+  background-image: linear-gradient(to bottom right, #3a7bd5, #3a6073);
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .ready {
-  background: #45eba5;
-  color: "#fff";
+  background-image: linear-gradient(to bottom right, #136a8a, #267871);
+  border-radius: 20px !important;
+  color: '#fff';
 }
 .past {
-  background: #ff66c4;
-  border-radius: 0 !important;
+  background-image: linear-gradient(to bottom right, red, yellow);
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .alteration {
-  background: #ff914d;
+  background-image: linear-gradient(to bottom right, red, yellow);
   border-radius: 0 !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .overdue {
-  background: #ff914d;
-  border-radius: 0 !important;
+  background-image: linear-gradient(to bottom right, #ff5f6d, #ffc371);
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 
 .Completed {
-  background: #ff66c4;
-  border-radius: 0 !important;
+  background-image: linear-gradient(to bottom right, #b24592, #f15f79);
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .cancelled {
-  background: #ff914d;
-  border-radius: 0 !important;
+  background-image: linear-gradient(to bottom right, #e96443, #904e95);
+  border-radius: 20px !important;
 
-  color: "#fff";
+  color: '#fff';
 }
 .font-weight-600 {
   /* font-weight: 600; */

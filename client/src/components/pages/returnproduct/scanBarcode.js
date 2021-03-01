@@ -1,28 +1,28 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import shortid from "shortid";
-import Loader from "../../layout/Loader";
-import { getCustomer } from "../../../actions/customer";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
-import Modal1 from "./Modal1";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import shortid from 'shortid';
+import Loader from '../../layout/Loader';
+import { getCustomer } from '../../../actions/customer';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
+import Modal1 from './Modal1';
 
 class ScanBarcode extends Component {
   state = {
     barcode: [],
-    customer: "",
-    order: "",
-    barcodeFromInput: "",
+    customer: '',
+    order: '',
+    barcodeFromInput: '',
     matchedBarcodes: [],
     openModal: false,
-    condition: "",
-    note: "",
-    selectedBarCode: "",
+    condition: '',
+    note: '',
+    selectedBarCode: '',
     showForm: false,
   };
 
@@ -41,17 +41,17 @@ class ScanBarcode extends Component {
     let { barcode } = this.state; // get all barcode
     barcode.push({
       id: shortid.generate(),
-      barcode: "",
+      barcode: '',
     });
     this.setState({ barcode });
   };
-  handleChangeInput = (e, id = "") => {
+  handleChangeInput = (e, id = '') => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   onScanBarcode = (e) => {
     e.preventDefault();
-    e.target[0].value = "";
+    e.target[0].value = '';
     const { barcode } = this.state;
     let { barcodeFromInput } = this.state;
     const { matchedBarcodes } = this.state;
@@ -62,10 +62,10 @@ class ScanBarcode extends Component {
     });
     const isInclude = m_barcode.includes(barcodeFromInput);
     if (isInclude === true) {
-      OCAlert.alertError("This barcode already scanned! Try again", {
+      OCAlert.alertError('Bạn đã quét mã sản phẩm này rồi, vui lòng thử lại.', {
         timeOut: 3000,
       });
-      this.setState({ barcodeFromInput: "" });
+      this.setState({ barcodeFromInput: '' });
       return;
     }
 
@@ -74,11 +74,10 @@ class ScanBarcode extends Component {
       matchedBarcodes.push({
         barcode: barcodeFromInput,
       });
-      this.setState({ matchedBarcodes, barcodeFromInput: "" });
+      this.setState({ matchedBarcodes, barcodeFromInput: '' });
     } else {
       OCAlert.alertError(
-        `The barcode you enter does not match with any item
-        in this order. Please try again!`,
+        `Mã sản phẩm vừa quét không khớp với sản phẩm trong đơn hàng. Vui lòng kiểm tra lại.`,
         { timeOut: 3000 }
       );
     }
@@ -95,35 +94,37 @@ class ScanBarcode extends Component {
     if (matchedBarcodes) {
       return matchedBarcodes.map((barcode, b_index) => (
         <tr key={b_index}>
-          <th scope="row">{b_index + 1}</th>
+          <th scope='row'>{b_index + 1}</th>
           <td>{barcode.barcode}</td>
-          <td>{barcode.condition ? barcode.condition : ""}</td>
-          <td>{(barcode.note && barcode.condition  !="good") ? barcode.note : ""}</td>
+          <td>{barcode.condition ? barcode.condition : ''}</td>
+          <td>
+            {barcode.note && barcode.condition != 'good' ? barcode.note : ''}
+          </td>
           <td>
             <button
               onClick={() => this.handleOpen(barcode.barcode)}
-              type="button"
-              className="btn btn-raised btn-sm btn-icon btn-default mt-1"
+              type='button'
+              className='btn btn-raised btn-sm btn-icon btn-default mt-1'
             >
-              {barcode.condition == "good" ? (
+              {barcode.condition == 'good' ? (
                 <i
-                  style={{ fontSize: "30px" }}
-                  className="fa fa-check fa-2x text-success"
+                  style={{ fontSize: '30px' }}
+                  className='fa fa-check fa-2x text-success'
                 ></i>
-              ) : barcode.condition == "Minor damage" ? (
+              ) : barcode.condition == 'Minor damage' ? (
                 <i
-                  style={{ fontSize: "30px" }}
-                  className="fa fa-exclamation-triangle fa-5 text-warning"
+                  style={{ fontSize: '30px' }}
+                  className='fa fa-exclamation-triangle fa-5 text-warning'
                 ></i>
-              ) : barcode.condition == "Major damage" ? (
+              ) : barcode.condition == 'Major damage' ? (
                 <i
-                  style={{ fontSize: "30px" }}
-                  className="fa fa-times fa-5 text-danger"
+                  style={{ fontSize: '30px' }}
+                  className='fa fa-times fa-5 text-danger'
                 ></i>
               ) : (
                 <i
-                  style={{ fontSize: "30px" }}
-                  className="fa fa-check fa-2x text-success"
+                  style={{ fontSize: '30px' }}
+                  className='fa fa-check fa-2x text-success'
                 ></i>
               )}
             </button>
@@ -178,7 +179,7 @@ class ScanBarcode extends Component {
   };
 
   onChangeCondition = (value) => {
-    if (value == "good") {
+    if (value == 'good') {
       const { selectedBarCode, matchedBarcodes } = this.state;
       let array1 = matchedBarcodes;
       let indexOf = array1.findIndex((obj) => obj.barcode == selectedBarCode);
@@ -187,8 +188,8 @@ class ScanBarcode extends Component {
         this.setState({
           condition: value,
           openModal: false,
-          note: "",
-          condition: "",
+          note: '',
+          condition: '',
           matchedBarcodes: array1,
           showForm: false,
         });
@@ -210,8 +211,8 @@ class ScanBarcode extends Component {
       this.setState({
         condition: value,
         openModal: false,
-        note: "",
-        condition: "",
+        note: '',
+        condition: '',
         matchedBarcodes: array1,
         showForm: false,
       });
@@ -223,18 +224,18 @@ class ScanBarcode extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to='/login' />;
     }
 
     if (this.props.location.state === undefined) {
-      return <Redirect to="/returnproduct" />;
+      return <Redirect to='/returnproduct' />;
     }
 
     const { customer } = this.state;
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
           <Modal1
@@ -248,44 +249,48 @@ class ScanBarcode extends Component {
             onChangeNote={this.onChangeNote}
             onSubmitOtherCondition={this.onSubmitOtherCondition}
           />
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="form-action-layouts">
-                  <div className="form-body">
-                    <div className="card">
-                      <div className="card-header">
-                        <h4 className="card-title">Return a Product</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='form-action-layouts'>
+                  <div className='form-body'>
+                    <div className='card'>
+                      <div className='card-header'>
+                        <h4 className='card-title'>Trả Đồ</h4>
                       </div>
-                      <div className="card-content">
-                        <div className="card-body table-responsive">
-                          <div id="colors_box">
-                            <div className="row color-row">
-                              <div className="col-md-12">
-                                <div className="form-group">
-                                  <h2>Scan Barcode And Match Items</h2>
+                      <div className='card-content'>
+                        <div className='card-body table-responsive'>
+                          <div id='colors_box'>
+                            <div className='row color-row'>
+                              <div className='col-md-12'>
+                                <div className='form-group my-3'>
+                                  <h2>
+                                    Quét/Nhập Mã Sản Phẩm Khách Hàng Đang Hoàn
+                                    Trả
+                                  </h2>
                                 </div>
                               </div>
 
-                              <div className="col-md-12">
-                                <div className="form-group">
-                                  <h3>
-                                    {customer && customer.name}{" "}
-                                    {`${"#"}${
+                              <div className='col-md-12'>
+                                <div className='form-group'>
+                                  <h4>{customer && customer.name} </h4>
+                                  <h4>
+                                    {' '}
+                                    {`${'Điện Thoại: '}${
                                       customer && customer.contactnumber
                                     }`}
-                                  </h3>
+                                  </h4>
                                 </div>
                               </div>
 
-                              <div className="col-md-12">
-                                <div className="form-group">
+                              <div className='col-md-12'>
+                                <div className='form-group'>
                                   <form onSubmit={(e) => this.onScanBarcode(e)}>
                                     <input
-                                      name="barcodeFromInput"
-                                      className="form-control mm-input col-md-12"
-                                      style={{ color: "black" }}
-                                      type="text"
+                                      name='barcodeFromInput'
+                                      className='form-control mm-input col-md-12'
+                                      style={{ color: 'black' }}
+                                      type='text'
                                       value={this.state.barcodeFromInput}
                                       onChange={(e) =>
                                         this.handleChangeInput(e)
@@ -295,27 +300,27 @@ class ScanBarcode extends Component {
                                 </div>
                               </div>
 
-                              <div className="col-md-12">
-                                <table className="table table-sm table-bordered table-striped">
+                              <div className='col-md-12'>
+                                <table className='table table-sm table-bordered table-striped'>
                                   <thead>
                                     <tr>
-                                      <th scope="col">#</th>
-                                      <th scope="col">Barcode</th>
-                                      <th scope="col">Condition</th>
-                                      <th scope="col">Note</th>
-                                      <th scope="col">Action</th>
+                                      <th scope='col'>STT</th>
+                                      <th scope='col'>Mã Sản Phẩm</th>
+                                      <th scope='col'>Tình Trạng</th>
+                                      <th scope='col'>Ghi Chú</th>
+                                      <th scope='col'>Hư Đồ?</th>
                                     </tr>
                                   </thead>
                                   <tbody>{this.getBarcodeRow()}</tbody>
                                 </table>
 
-                                <div className="row text-center ">
-                                  <div className="col-md-12 btn-cont">
-                                    <div className="form-group">
+                                <div className='row text-center '>
+                                  <div className='col-md-12 btn-cont'>
+                                    <div className='form-group'>
                                       {!!this.state.matchedBarcodes.length ? (
                                         <Link
                                           to={{
-                                            pathname: "/matchbarcodes",
+                                            pathname: '/matchbarcodes',
                                             state: {
                                               // customer: this.props.customer[0]._id,
                                               barcodesArray: this.state
@@ -325,19 +330,19 @@ class ScanBarcode extends Component {
                                                 .barcode,
                                             },
                                           }}
-                                          type="submit"
-                                          className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
-                                          id="btnSize2"
+                                          type='submit'
+                                          className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
+                                          id='btnSize2'
                                         >
-                                          <i className="ft-check"></i> Next
+                                          <i className='ft-check'></i> Tiếp
                                         </Link>
                                       ) : (
                                         <button
-                                          type="submit"
-                                          className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1 disabled"
-                                          id="btnSize2"
+                                          type='submit'
+                                          className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1 disabled'
+                                          id='btnSize2'
                                         >
-                                          <i className="ft-check"></i> Next
+                                          <i className='ft-check'></i> Tiếp
                                         </button>
                                       )}
                                     </div>
@@ -353,20 +358,20 @@ class ScanBarcode extends Component {
                 </section>
               </div>
             </div>
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    rel="noopener noreferrer"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    rel='noopener noreferrer'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>

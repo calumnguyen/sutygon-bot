@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import Sidebar from "../../layout/Sidebar";
 import Header from "../../layout/Header";
 import {
-  getAllProducts,
+  // getAllProducts,
   getProductById,
   updateProductIndex,
+  getAllProductsAll,
 } from "../../../actions/product";
 import { getCustomer } from "../../../actions/customer";
 import { addNewInvoice } from "../../../actions/invoices";
@@ -49,7 +50,6 @@ class ReturnSummary extends Component {
     sum_of_all_items: "",
   };
   async componentDidMount() {
-    await this.props.getAllProducts();
     const { state } = this.props.location;
     if (state) {
       this.setState({
@@ -65,8 +65,10 @@ class ReturnSummary extends Component {
         //   totalPaid: state.order[0].total,
         //   leaveID: state.order[0].leaveID,
         product_Array: state.product_Array,
+        sum_of_all_items: state.sum_of_all_items,
       });
     }
+    await this.props.getAllProductsAll();
   }
 
   handleChange = (e, id = "") => {
@@ -89,12 +91,15 @@ class ReturnSummary extends Component {
       orderNumber: order.orderNumber,
     });
     let owe_from_customer = false;
-    if (this.remaining_final() >= order.pay_amount) {
+
+ 
+    if (this.final_sale_total() >= order.pay_amount) {
       owe_from_customer = true;
     }
-    if (this.remaining_final() < order.pay_amount) {
+    if (this.final_sale_total() < order.pay_amount) {
       owe_from_customer = false;
     }
+
     this.props.history.push("returnPrepaid", {
       orderNumber: order.orderNumber,
       user_id: user._id,
@@ -104,8 +109,9 @@ class ReturnSummary extends Component {
       owe_from_customer: owe_from_customer,
       amount_remaing: Math.abs(this.remaining_final()),
       barcodesArray: this.state.barcodesArray,
-      charge_data:  this.state.charge_data,
-      discount_data:this.state.discount_data,
+      charge_data: this.state.charge_data,
+      discount_data: this.state.discount_data,
+
     });
   };
 
@@ -357,13 +363,13 @@ class ReturnSummary extends Component {
   remaining_final = () => {
     let { state } = this.props.location;
     let { order } = state;
-
+console.log("this.final_sale_total()",this.final_sale_total())
     return this.final_sale_total() - order.pay_amount;
   };
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/" />;
+      return <Redirect to="/login" />;
     }
 
     const { customer } = this.props;
@@ -383,7 +389,6 @@ class ReturnSummary extends Component {
       charge_data,
       discount_data,
     } = this.state;
-
     return (
       <React.Fragment>
         <Loader />
@@ -397,7 +402,7 @@ class ReturnSummary extends Component {
                   <div className="form-body">
                     <div className="card">
                       <div className="card-header">
-                        <h4 className="form-section">Return Product</h4>
+                        <h4 className="form-section">Trả Đồ</h4>
                       </div>
 
                       <div className="card-body table-responsive">
@@ -405,7 +410,7 @@ class ReturnSummary extends Component {
                           <div className="row color-row">
                             <div className="col-md-12">
                               <div className="">
-                                <h2>List of all the items </h2>
+                                <h2>Danh Sách Sản Phẩm Hoàn Trả </h2>
                                 {this.productBox()}
                                 <br />
                                 {/* {barcodesArray.length !==
@@ -421,7 +426,8 @@ class ReturnSummary extends Component {
                                 <div className="row">
                                   <div className="col-md-11 ">
                                     <h3 className="float-right mr-3">
-                                      Total : {this.state.sum_of_all_items} VND{" "}
+                                      Thành tiền: {this.state.sum_of_all_items}{" "}
+                                      VNĐ{" "}
                                     </h3>
                                   </div>
                                 </div>
@@ -429,13 +435,13 @@ class ReturnSummary extends Component {
 
                                 <div className="row">
                                   <div className="col-md-12 ">
-                                    <h3>Charges</h3>
+                                    <h3>Kinh Phí</h3>
                                     <table class="table table-borderless">
                                       <tbody>
                                         <tr>
-                                          <th className="float-left">Tax</th>
+                                          <th className="float-left">Thuế</th>
                                           <td>
-                                            {order ? order.tax : 0} VND (
+                                            {order ? order.tax : 0} VNĐ (
                                             {order ? order.taxper : 0}%)
                                           </td>
                                         </tr>
@@ -445,24 +451,24 @@ class ReturnSummary extends Component {
                                               <th className="float-left">
                                                 {i.category}
                                               </th>
-                                              <td> {i.amount} VND</td>
+                                              <td> {i.amount} VNĐ</td>
                                             </tr>
                                           ))}
 
                                         <tr>
                                           <th className="float-left">
-                                            Extended rental at order
+                                            Phí Gia Hạn Ngày Thuê
                                           </th>
                                           <td>
                                             {order.extraDaysAmount
                                               ? order.extraDaysAmount
                                               : 0}{" "}
-                                            VND
+                                            VNĐ
                                           </td>
                                         </tr>
                                         <tr>
                                           <th className="float-left"></th>
-                                          <th>{this.chargesSum()} VND</th>
+                                          <th>{this.chargesSum()} VNĐ</th>
                                         </tr>
                                       </tbody>
                                     </table>
@@ -472,14 +478,16 @@ class ReturnSummary extends Component {
 
                                 <div className="row">
                                   <div className="col-md-12 ">
-                                    <h3>Discount</h3>
+                                    <h3>Giảm Giá</h3>
                                     <table class="table table-borderless">
                                       <tbody>
                                         <tr>
-                                          <th className="float-left mr-3">Coupon</th>
-                                          <td >
+                                          <th className="float-left mr-3">
+                                            Coupon/Voucher
+                                          </th>
+                                          <td>
                                             {order ? order.discount_amount : 0}{" "}
-                                            VND
+                                            VNĐ
                                           </td>
                                         </tr>
                                         {discount_data &&
@@ -488,12 +496,12 @@ class ReturnSummary extends Component {
                                               <th className="float-left">
                                                 {d.category}
                                               </th>
-                                              <td> {d.amount} VND</td>
+                                              <td> {d.amount} VNĐ</td>
                                             </tr>
                                           ))}
                                         <tr>
                                           <th className="float-left"></th>
-                                          <th>{this.discountSum()} VND</th>
+                                          <th>{this.discountSum()} VNĐ</th>
                                         </tr>
                                       </tbody>
                                     </table>
@@ -524,7 +532,7 @@ class ReturnSummary extends Component {
                                 <div className="row">
                                   <div className="col-md-11 ">
                                     <h3 className="float-right mr-3">
-                                      Final Sale : {this.final_sale_total()} VND{" "}
+                                      Tổng tiền: {this.final_sale_total()} VNĐ{" "}
                                     </h3>
                                   </div>
                                 </div>
@@ -532,9 +540,9 @@ class ReturnSummary extends Component {
                               <br />
                               <div className="row">
                                 <div className="col-md-11 ">
-                                  <h3 className="float-left ml-1">Prepaid</h3>
+                                  <h3 className="float-left ml-1">Đã Trả</h3>
                                   <h3 className="float-right mr-3">
-                                    {order && order.pay_amount} VND
+                                    {order && order.pay_amount} VNĐ
                                   </h3>
                                 </div>
                               </div>
@@ -548,13 +556,20 @@ class ReturnSummary extends Component {
                                       padding: "10px",
                                     }}
                                   >
-                                    {this.remaining_final() >= order.pay_amount
-                                      ? "Customer owe "
-                                      : this.remaining_final() <
+                                    {this.remaining_final() == 0
+                                      ? "Order Settled"
+                                      : this.final_sale_total() >=
                                         order.pay_amount
-                                      ? "Refund to customer "
+                                      ? "Khách hàng nợ "
+                                      : this.final_sale_total() <
+                                        order.pay_amount
+                                      ? "Hoàn tiền cho khách "
                                       : ""}
-                                    {Math.abs(this.remaining_final())} VND
+                                    {Math.abs(this.remaining_final()) > 0
+                                      ? `${Math.abs(
+                                          this.remaining_final()
+                                        )} VND`
+                                      : ""}
                                   </h3>
                                 </div>
                               </div>
@@ -585,7 +600,8 @@ class ReturnSummary extends Component {
                                               className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
                                               id="btnSize2"
                                             >
-                                              <i className="ft-check"></i> Next
+                                              <i className="ft-check"></i> Thanh
+                                              Toán Hoá Đơn
                                               {/* Submit &amp; Generate Invoice{" "} */}
                                             </button>
                                           </div>
@@ -631,7 +647,7 @@ class ReturnSummary extends Component {
 
 ReturnSummary.propTypes = {
   getCustomer: PropTypes.func.isRequired,
-  getAllProducts: PropTypes.func.isRequired,
+  getAllProductsAll: PropTypes.func.isRequired,
   getProductById: PropTypes.func.isRequired,
   updateProductIndex: PropTypes.func.isRequired,
   updateRentedProduct: PropTypes.func.isRequired,
@@ -653,7 +669,7 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   getCustomer,
-  getAllProducts,
+  getAllProductsAll,
   getProductById,
   updateProductIndex,
   updateRentedProduct,

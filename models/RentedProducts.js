@@ -37,6 +37,10 @@ const RentedProductSchema = new mongoose.Schema(
     returnedOn: {
       type: Date,
     },
+    // The actual date of pickup..It may be on-time or late.
+    pickUpOn: {
+      type: Date,
+    },
     status: {
       type: String,
       default: "pending",
@@ -109,10 +113,11 @@ const RentedProductSchema = new mongoose.Schema(
     total_without_tax: {
       type: Float,
     },
-    ammount_steps: [
+    amount_steps: [
       {
         _id: false,
         status: String,
+        pay: Float,
         date: { type: Date, default: Date.now },
       },
     ],
