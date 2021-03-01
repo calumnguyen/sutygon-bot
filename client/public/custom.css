@@ -145,10 +145,10 @@
 }
 .text-card {
   color: #0093e9;
-  font-size: medium;
+  font-size: 98%;
   font-weight: bold;
-  margin-left: 2rem;
-  text-align: right;
+  margin: 1rem;
+  text-align: center;
   font-family: "Open Sans", sans-serif;
   text-transform: uppercase;
 }

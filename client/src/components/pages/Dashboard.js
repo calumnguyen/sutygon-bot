@@ -17,7 +17,6 @@ import * as moment from 'moment';
 import '../../login.css';
 import '../../dashbaord.css';
 import { Redirect } from 'react-router-dom';
-import { cssNumber } from 'jquery';
 
 class Dashboard extends Component {
   state = {
@@ -50,7 +49,7 @@ class Dashboard extends Component {
     }
     if (prevProps.r_events != this.props.r_events) {
       const { r_events } = this.props;
-      // await this.getEvents();
+      await this.getEvents();
 
       this.setState({ removedevents: r_events });
     }
@@ -130,15 +129,15 @@ class Dashboard extends Component {
         if (
           event.user.accountStatus == 'active'
             ? m_bevents.push({
-                date: new_Date,
-                timeStart: event.timeStart,
-                timeEnd: event.timeEnd,
-                name:
-                  event.name && `${event.name}'s ${age} Birthday Aniversary`,
-                note: event.note,
-                location: event.location,
-                _id: event._id,
-              })
+              date: new_Date,
+              timeStart: event.timeStart,
+              timeEnd: event.timeEnd,
+              name:
+                event.name && `${event.name}'s ${age} Birthday Aniversary`,
+              note: event.note,
+              location: event.location,
+              _id: event._id,
+            })
             : ''
         );
       });
@@ -296,15 +295,15 @@ class Dashboard extends Component {
             <div className='main-content'>
               <div className='content-wrapper'>
                 <div className='row'>
-                  <h4 className='ml-4 mb-4 text-bold-400'>
+                  <h4 className='ml-4 mb-4 text-bold-400 greeting_text'>
                     Hello {user && user.fullname && `${user.fullname}`}, hope
                     you have a great day!
                   </h4>
                 </div>
                 <div className='row'>
                   <div className='col-md-7'>
-                    <div className='container px-6 mx-auto grid'>
-                      <div className='grid gap-6 mb-8 md:grid-cols-4 xl:grid-cols-4'>
+                    <div className='container px-6 mx-auto'>
+                      <div className='grid gap-6 mb-8 md:grid-cols-4 grid-cols-4 xl:grid-cols-4 '>
                         {/* card1 */}
                         <div className='flex items-center bg-white shadow-xs card-dashboard'>
                           <div className='text-orange-500 gradient-blueberry rounded-full card-dashboard-span'>
@@ -324,19 +323,18 @@ class Dashboard extends Component {
                             </div>
                           </div>
                           <div className='text-card'>
-                            <span>Trả Đồ Hôm Nay</span>
+                            <span className="ml-2"> Trả Đồ Hôm Nay</span>
                           </div>
                         </div>
                         {/* card3 */}
                         <div className='flex items-center bg-white shadow-xs card-dashboard'>
-                          <div className='gradient-light-blue-indigo rounded-full card-dashboard-span-op'>
+                          <div className='gradient-light-blue-indigo rounded-full card-dashboard-span'>
                             <div className='text'>
                               {this.getTodaysAppointment()}
                             </div>
                           </div>
-                          <div className='text-card-app'>
-                            <span> Hẹn Thử Đồ</span> <br />{' '}
-                            <span className='text-card-1'> Hôm Nay</span>
+                          <div className='text-card'>
+                            <span> Hẹn Thử Đồ Hôm Nay</span> <br />{' '}
                           </div>
                         </div>
                         {/* card4 */}
@@ -344,9 +342,8 @@ class Dashboard extends Component {
                           <div className='text-orange-500 gradient-crystal-clear rounded-full card-dashboard-span'>
                             <div className='text'>0</div>
                           </div>
-                          <div className='text-card-order'>
-                            <span> Đơn Hàng </span> <br />{' '}
-                            <span> Cần Sửa Đồ</span>
+                          <div className='text-card-repair'>
+                            <span> Đơn Hàng Cần Sửa Đồ</span> {' '}
                           </div>
                         </div>{' '}
                         {/* card5 */}
@@ -357,7 +354,7 @@ class Dashboard extends Component {
                               {overdue_today ? overdue_today : 0}
                             </div>
                           </div>
-                          <div className='text-card-overdue'>
+                          <div className='text-card'>
                             <span> Đơn Hàng Quá Hạn</span>
                           </div>
                         </div>{' '}
@@ -369,16 +366,15 @@ class Dashboard extends Component {
                               {today_order ? today_order : 0}
                             </div>{' '}
                           </div>
-                          <div className='text-card-noorder'>
-                            <span> Đơn Hàng Mới </span> <br />{' '}
-                            <span> Hôm Nay</span>
+                          <div className='text-card-repair'>
+                            <span> Đơn Hàng Mới Hôm Nay</span> <br />{' '}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className='col-md-5'>
+                  <div className='col-md-5 alert_box col-sm-3'>
                     <div className='card card-alert gradient-light-blue-indigo'>
                       {this.state.currenWeekEvents &&
                         this.state.currenWeekEvents.length > 0 &&
@@ -421,8 +417,8 @@ class Dashboard extends Component {
                                     </small>
                                   </p>
                                 ) : (
-                                  ''
-                                )}
+                                    ''
+                                  )}
 
                                 {a.note ? (
                                   <p className='my-n1'>
@@ -431,8 +427,8 @@ class Dashboard extends Component {
                                     </small>
                                   </p>
                                 ) : (
-                                  ''
-                                )}
+                                    ''
+                                  )}
                               </div>
                             );
                           })}
@@ -443,18 +439,18 @@ class Dashboard extends Component {
                 {user && user.systemRole === 'Admin' ? (
                   <>
                     {' '}
-                    <div className='row mt-5'>
+                    <div className='row mt-5 custom_row' >
                       <div className='container-fluid px-6 mx-auto grid'>
                         <div className='grid gap-6 mb-8 md:grid-cols-4 xl:grid-cols-ab'>
                           {/* card1 */}
-                          <div className='flex items-center bg-white shadow-xs card-store'>
+                          <div className='flex items-center bg-white shadow-xs card-store shop_button'>
                             <div className='gradient-light-blue-indigo rounded-full card-dashboard-store'>
                               {this.props.shop[0] &&
                                 (this.props.shop[0].status === 'on' ? (
                                   <i className='fa fa-unlock-alt'></i>
                                 ) : (
-                                  <i className='fa fa-lock'></i>
-                                ))}{' '}
+                                    <i className='fa fa-lock'></i>
+                                  ))}{' '}
                             </div>
 
                             <div className='store-text'>
@@ -496,16 +492,16 @@ class Dashboard extends Component {
                                     <i className='fa fa-lock ml-2 fa-1x'></i>
                                   </button>
                                 ) : (
-                                  <button
-                                    type='button'
-                                    onClick={() => this.changeShopStatus('on')}
-                                    className='btn text-white m-1'
-                                    styles={{ float: 'right' }}
-                                  >
-                                    Mở cửa{' '}
-                                    <i className='fa fa-unlock-alt ml-2 fa-1x'></i>
-                                  </button>
-                                ))}
+                                    <button
+                                      type='button'
+                                      onClick={() => this.changeShopStatus('on')}
+                                      className='btn text-white m-1'
+                                      styles={{ float: 'right' }}
+                                    >
+                                      Mở cửa{' '}
+                                      <i className='fa fa-unlock-alt ml-2 fa-1x'></i>
+                                    </button>
+                                  ))}
                             </div>
                           </div>
                         </div>
@@ -513,8 +509,8 @@ class Dashboard extends Component {
                     </div>
                   </>
                 ) : (
-                  ' '
-                )}
+                    ' '
+                  )}
               </div>
             </div>
 
