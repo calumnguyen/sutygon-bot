@@ -41,6 +41,7 @@
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.18",
     "nodemon": "^2.0.4",
+    "react-anchor-link-smooth-scroll": "^1.0.12",
     "redux": "^4.0.5",
     "shortid": "^2.2.15",
     "twilio": "^3.56.0",

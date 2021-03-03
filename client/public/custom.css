@@ -141,14 +141,14 @@
   font-size: xx-large;
   margin-left: 14px;
   text-justify: inter-word;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
 }
 .text-card {
   color: #0093e9;
-  font-size: medium;
+  font-size: 98%;
   font-weight: bold;
-  margin-left: 2rem;
-  text-align: right;
+  margin: 1rem;
+  text-align: center;
   font-family: "Open Sans", sans-serif;
   text-transform: uppercase;
 }
@@ -159,7 +159,7 @@
   font-weight: bold;
   margin-left: 2rem;
   text-align: center;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
   text-transform: uppercase;
 }
 .text-card-overdue {
@@ -168,7 +168,7 @@
   font-weight: bold;
   margin-left: 1.5rem;
   text-align: center;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
   text-transform: uppercase;
 }
 
@@ -178,7 +178,7 @@
   font-weight: bold;
   margin-left: .9rem;
   text-align: center;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
   text-transform: uppercase;
 }
 .text-card-req {
@@ -187,7 +187,7 @@
   font-weight: bold;
   margin-left: .9rem;
   text-align: center;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
   text-transform: uppercase;
 }
 
@@ -197,7 +197,7 @@
   font-weight: bold;
   margin-left: 2.5rem;
   text-align: center;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
   text-transform: uppercase;
 }
 .text-card-order-1 {
@@ -206,7 +206,7 @@
   font-size: medium;
   font-weight: bold;
   text-align: center;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
   text-transform: uppercase;
 }
 .btn-store {
@@ -217,7 +217,7 @@
   margin-right: 2px;
 }
 .btn-store > .btn {
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
   border-radius: 25px;
   font-size: 22px;
   font-weight: bold;

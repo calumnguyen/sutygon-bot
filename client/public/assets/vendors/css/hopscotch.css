@@ -320,7 +320,7 @@ div.hopscotch-bubble {
   border: 2px solid rgba(28, 188, 216, 0.5);
   /* transparent, if supported */
   color: #fff;
-  font-family: Helvetica, Arial;
+  font-family: 'Montserrat';
   font-size: 13px;
   position: absolute;
   z-index: 999999;
@@ -366,7 +366,7 @@ div.hopscotch-bubble .hide-all {
 }
 div.hopscotch-bubble h3 {
   color: #fff;
-  font-family: Helvetica, Arial;
+  font-family: 'Montserrat';
   font-size: 16px;
   font-weight: bold;
   line-height: 19px;
@@ -381,7 +381,7 @@ div.hopscotch-bubble .hopscotch-bubble-container {
   /* to fix text flickering */
 }
 div.hopscotch-bubble .hopscotch-content {
-  font-family: Helvetica, Arial;
+  font-family: 'Montserrat';
   font-weight: normal;
   line-height: 17px;
   margin: -5px 0 11px;

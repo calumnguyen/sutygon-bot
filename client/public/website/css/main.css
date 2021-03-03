@@ -7,7 +7,7 @@ body {
   background: #fff !important;
   font-size: 14px;
   font-weight: 400;
-  font-family: "Open Sans", sans-serif;
+  font-family:  'Montserrat';
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -26,7 +26,7 @@ h4 {
   font-size: 38px;
   color: #222222;
   font-weight: 700;
-  font-family: "Arvo", serif;
+  font-family: 'Montserrat'
 }
 
 a {
@@ -46,7 +46,7 @@ a a:focus {
 
 p {
   font-weight: 400;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Montserrat';
   margin: 0px;
   font-size: 14px;
 }
@@ -994,6 +994,9 @@ hr {
 }
 
 #pricing .table .description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* height: 8vw; */
   text-align: center;
   padding: 0px 50px;
   margin-bottom: 20px;

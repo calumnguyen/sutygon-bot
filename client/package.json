@@ -15,6 +15,7 @@
     "loadjs": "^4.2.0",
     "moment-timezone": "^0.5.32",
     "react": "^16.13.1",
+    "react-anchor-link-smooth-scroll": "^1.0.12",
     "react-awesome-modal": "^2.0.5",
     "react-barcode": "^1.4.0",
     "react-beautiful-dnd": "^13.0.0",
