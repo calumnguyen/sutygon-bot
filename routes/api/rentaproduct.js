@@ -8,6 +8,7 @@ const { check, validationResult } = require("express-validator");
 const shortid = require("shortid");
 const moment = require("moment");
 const Coupon = require("../../models/Coupons");
+var mongoose = require('mongoose');
 
 // @route   POST api/rentedproducts/add
 // @desc    Add New Rented Product
@@ -56,6 +57,7 @@ router.post(
             pay: req.body.pay_amount,
           },
         ],
+         createdBy:req.user.id,
       });
       await rentedProduct.save();
       const { coupon_code } = req.body;
@@ -87,6 +89,7 @@ router.get("/countOrders", auth, async (req, res) => {
   try {
     const today = moment().startOf("day");
     const today_order = await RentedProduct.count({
+       createdBy:req.user.id,
       status: "pending",
       createdAt: {
         $gte: today.toDate(),
@@ -94,6 +97,7 @@ router.get("/countOrders", auth, async (req, res) => {
       },
     });
     const return_today = await RentedProduct.count({
+       createdBy:req.user.id,
       status: "active",
       returnDate: {
         $gte: today.toDate(),
@@ -102,6 +106,7 @@ router.get("/countOrders", auth, async (req, res) => {
     });
 
     const pickup_today = await RentedProduct.count({
+       createdBy:req.user.id,
       $or: [{ status: "pending" }, { status: "ready" }],
       rentDate: {
         $gte: today.toDate(),
@@ -110,12 +115,14 @@ router.get("/countOrders", auth, async (req, res) => {
     });
 
     const overdue_today = await RentedProduct.count({
+       createdBy:req.user.id,
       status: "active",
       returnDate: {
         $lte: today.toDate(),
       },
     });
     const alterations = await RentedProduct.count({
+       createdBy:req.user.id,
       status: "alteration",
     });
 
@@ -168,8 +175,9 @@ router.post(
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
+      var userId = mongoose.Types.ObjectId(req.user.id);
     let rentedProducts = await RentedProduct.aggregate([
-      { $match: {} },
+
       {
         $lookup: {
           from: "customers",
@@ -191,6 +199,8 @@ router.get("/", auth, async (req, res) => {
       },
       {
         $project: {
+           user:'$user',
+          createdBy:'$createdBy',
           orderNumber: "$orderNumber",
           status: "$status",
           reservedStatus: "$reservedStatus",
@@ -207,9 +217,15 @@ router.get("/", auth, async (req, res) => {
           },
         },
       },
+        { $match: {createdBy:userId} },
       { $sort: { createdAt: -1 } },
     ]);
-    res.status(200).json(rentedProducts);
+
+//  let rentedProducts = await RentedProduct.aggregate(
+//     [ { $match : { createdBy:userId} } ]
+// );
+
+    return res.status(200).json(rentedProducts);
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error!");
@@ -247,6 +263,7 @@ router.delete("/:id", auth, async (req, res) => {
 router.get("/search", auth, async (req, res) => {
   try {
     const result = await Customer.find({
+      createdBy:req.user.id,
       contactnumber: { $eq: req.query.number },
     });
     if (!result) {
@@ -759,10 +776,4 @@ router.get("/checkBarcode/:barcode", auth, async (req, res) => {
     res.status(500).send("Server Error!");
   }
 });
-
-// const moment = require("moment");
-
-// const today = moment().startOf("day");
-// console.log("today------", today.toDate());
-// console.log(moment(today).endOf("day").toDate());
 module.exports = router;

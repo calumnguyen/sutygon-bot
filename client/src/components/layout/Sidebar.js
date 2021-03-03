@@ -71,11 +71,10 @@ class Sidebar extends Component {
                 icon={"ft-home"}
                 handleClick={() => this.handleClick("dashboard")}
               />
-            
+
               <DragDropContext
                 onDragEnd={(param) => {
-              
-               
+
                   const srcI = param.source.index;
                   const desI = param.destination?.index;
                   if (desI || desI==0) {

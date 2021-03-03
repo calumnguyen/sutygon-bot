@@ -118,8 +118,11 @@ class Login extends Component {
           return <Redirect to="/dashboard" />;
         }
       }
+    } else if (user && user.systemRole === "superadmin") {
+      if (this.props.AuthLoading === false && this.props.isAuthenticated) {
+        return <Redirect to="/dashboard" />;
+      }
     }
-
     return (
       <div className="wrapper menu-collapsed">
         <div className="main-panel">
@@ -187,9 +190,9 @@ class Login extends Component {
                                       />
                                     </div>
                                   </div>
-                                    {/* <Link class="nav-link" to={"/signup"}>
-                    Sign Up
-                  </Link> */}
+                                  <Link class="nav-link" to={"/signup"}>
+                                    Don't have an account ?Sign Up here
+                                  </Link>
                                 </form>
                               </div>
                             </div>

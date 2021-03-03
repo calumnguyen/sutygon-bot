@@ -38,6 +38,7 @@ app.use('/api/coupons', require('./routes/api/coupons'))
 app.use('/api/events', require('./routes/api/events'))
 app.use('/api/verify', require('./routes/api/verifyCode'))
 app.use("/api/categories", require("./routes/api/category"));
+app.use("/api/admins", require("./routes/api/admin"));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'))

@@ -55,6 +55,7 @@ router.post("/add", auth, upload.any("image"), async (req, res) => {
           birthdate: req.body.birthday == undefined ? "" : req.body.birthday,
           user: req.body.user == undefined ? "" : req.body.user,
           images: file_Arr,
+          createdBy:req.user.id,
         });
         await event.save();
       }, 3000);
@@ -139,6 +140,7 @@ router.post(
             birthdate: req.body.birthday,
             user: req.body.user,
             images: file_Arr,
+            createdBy:req.user.id,
           });
           await event.save();
         }, 3000);
@@ -158,6 +160,7 @@ router.post(
             birthdate: req.body.birthday,
             user: req.body.user,
             file: "",
+            createdBy:req.user.id,
           });
           await event.save();
         }, 3000);
@@ -226,7 +229,7 @@ router.post("/:id", auth, upload.any("image"), async (req, res) => {
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    const events = await Events.find();
+    const events = await Events.find({createdBy:req.user.id});
     res.json(events);
   } catch (err) {
     console.log(err);
@@ -252,7 +255,7 @@ router.get("/dashboard/:id/events", auth, async (req, res) => {
 // @access  Private
 router.get("/bdayEvent", auth, async (req, res) => {
   try {
-    const b_events = await BirthdayEvents.find().populate(
+    const b_events = await BirthdayEvents.find({createdBy:req.user.id}).populate(
       "user",
       "accountStatus"
     );
@@ -270,6 +273,27 @@ router.get("/:id", auth, async (req, res) => {
   try {
     const event = await Events.findById(req.params.id);
 
+    if (!event) {
+      return res.status(404).json({ msg: "No Event found" });
+    }
+
+    res.json(event);
+  } catch (err) {
+    console.error(err.message);
+    // Check if id is not valid
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ msg: "No Event found" });
+    }
+    res
+      .status(500)
+      .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
+  }
+});
+
+// hide events
+router.post("/hideevent/:id", auth, async (req, res) => {
+  try {
+    const event = await Events.findByIdAndUpdate(req.params.id,{removed:true})
     if (!event) {
       return res.status(404).json({ msg: "No Event found" });
     }

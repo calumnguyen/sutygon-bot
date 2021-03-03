@@ -1,14 +1,17 @@
 import React, { useEffect } from "react";
 import Dashboard from "./components/pages/Dashboard";
 import Login from "./components/Login";
-import SignUp from './components/signup/SignUp'
+import SignUp from "./components/signup/SignUp";
+import Verification from "./components/signup/Verification";
+import PersonalInfo from "./components/signup/PersonalInfo";
+import ViewAdmins from './components/admin/ViewAdminList'
 import {
   Route,
   BrowserRouter as Router,
   Switch,
   withRouter,
 } from "react-router-dom";
-import HomePage from './components/pages/Home/HomePage'
+import HomePage from "./components/pages/Home/HomePage";
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./routing/PrivateRoute";
@@ -78,7 +81,9 @@ const Main = () => {
           {/* <Route exact path="/home" component={HomePage} /> */}
           <Route exact path="/" component={HomePage} />
           <Route exact path="/Login" component={Login} />
-           <Route exact path="/signup" component={SignUp} />
+          <Route exact path="/signup" component={SignUp} />
+          <Route exact path="/Verification" component={Verification} />
+          <Route exact path="/PersonalInfo" component={PersonalInfo} />
 
           {/* Dashboard */}
           <PrivateRoute exact path="/dashboard" component={Dashboard} />
@@ -209,9 +214,8 @@ const Main = () => {
             path="/coupons/view/:couponId"
             component={CouponDetail}
           />
-
+          <PrivateRoute exact path="/adminsview" component={ViewAdmins} />
           <PrivateRoute exact path="/Error" component={Error} />
-            
         </Switch>
       </Router>
     </Provider>

@@ -171,3 +171,16 @@ export const GET_COUPON = 'GET_COUPON'
 export const COUPON_DELETED = 'COUPON_DELETED'
 export const COUPON_SAVED = 'COUPON_SAVED'
 export const COUPON_UPDATED = 'COUPON_UPDATED'
+
+
+
+
+//Admins
+
+export const admin_Update = 'admin_Update'
+export const Admin_LOADING = 'Admin_LOADING'
+export const Admin_SAVED = 'Admin_SAVED'
+export const Admin_ERROR = 'Admin_ERROR'
+export const GET_Admins = 'GET_Admins'
+export const GET_Admin = 'GET_Admin'
+export const Admins_LOADING = 'Admins_LOADING'

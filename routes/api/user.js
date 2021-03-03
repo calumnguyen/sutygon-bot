@@ -98,7 +98,7 @@ router.post(
       const password = await bcrypt.hash(body.password, salt);
 
       if (req.file == undefined) {
-        userBody = { ...body, avatar, sections, password };
+        userBody = { ...body, avatar, sections, password,createdBy:req.user.id };
         let user = new User(userBody);
         await user.save();
 
@@ -112,6 +112,7 @@ router.post(
             password,
             avatar: result.secure_url,
             sections,
+            createdBy:req.user.id
           };
 
           let user = new User(userBody);
@@ -126,13 +127,12 @@ router.post(
   }
 );
 
-
 // @route   GET api/users
 // @desc    Get all users
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({createdBy:req.user.id});
     res.status(200).json(users);
   } catch (err) {
     console.log(err);
@@ -399,11 +399,11 @@ router.post(auth, async (req, res) => {
 // @route  POST api/users/changestatus/:id
 // @desc   Change Account status (blocked/active)
 // @access Private
-router.post("/:id/:eventid/remove",auth, async (req, res) => {
+router.post("/:id/:eventid/remove", auth, async (req, res) => {
   try {
-    
     const user = await User.findById(req.params.id);
-    const newEventArr = [...user.removedevents,req.params.eventid]
+    const newEventArr = [...user.removedevents, req.params.eventid];
+    console.log(newEventArr)
     await User.updateOne(
       { _id: user._id },
       {
@@ -423,12 +423,11 @@ router.post("/:id/:eventid/remove",auth, async (req, res) => {
 // @route  POST api/users/changestatus/:id
 // @desc   get removeevents list
 // @access Private
-router.get("/:id/getEvents",auth, async (req, res) => {
+router.get("/:id/getEvents", auth, async (req, res) => {
   try {
-    
     const user = await User.findById(req.params.id);
     const remove_arr = user && user.removedevents;
-    res.status(200).json({remove_arr});
+   return res.status(200).json({ remove_arr });
   } catch (err) {
     console.error(err.message);
     res

@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { login } from "../../actions/auth";
 import { updatePassword, getUser } from "../../actions/user";
-
+import axios from "axios";
 import Alert from "../layout/Alert";
 import { getShop } from "../../actions/dashboard";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
-class Signup extends Component {
+class SignUp extends Component {
   state = {
     username: "",
     email: "",
@@ -19,107 +19,58 @@ class Signup extends Component {
     id: "",
     tempPass: "",
     userID: "",
+    mesg: "",
+    verify: false,
+    code: "",
+    userDetail: "",
+    errors: "",
   };
 
-  async componentDidMount() {
-    this.props.getShop();
-
-    // await this.props.getUser(userID)
-  }
-  async componentDidUpdate(prevProps, prevState) {
-    if (this.props.auth.error !== prevProps.auth.error) {
-      const { auth } = this.props;
-      const { userInfo } = auth.error;
-      if (userInfo) {
-        this.setState({
-          tempPass: userInfo.tempPass,
-          userID: userInfo.userID,
-        });
-      }
-    }
-  }
   onChange = (e) => {
-    // let { formData } = this.state;
-
     this.setState({ [e.target.name]: e.target.value });
   };
 
   onSubmit = async (e) => {
     e.preventDefault();
-    const { login } = this.props;
-
-    const { username, password } = this.state;
-    login(username, password);
-  };
-
-  onUpdatePassword = async (e) => {
-    e.preventDefault();
-    const state = { ...this.state };
-    const user = {
-      currentpassword: state.password,
-      newpassword: state.newpassword,
-      confirmpassword: state.confirmpassword,
-    };
-    await this.props.updatePassword(user, state.userID);
-  };
-
-  valideTemppass = (password, e) => {
-    e.preventDefault();
-    const { tempPass } = this.state;
-    if (tempPass !== password) {
-      OCAlert.alertError("Wrong Password", { timeOut: 3000 });
-      return;
+    try {
+      this.setState({ mesg: "", errors: "", isLoading: true, code: "" });
+      const { email, password } = this.state;
+      const res = await axios.post("/api/auth/send_email", {
+        email: email,
+        password: password,
+      });
+      this.setState({ mesg: res.data.message, verify: true, isLoading: false });
+    } catch (err) {
+      if (err.response !== undefined && err.response.data) {
+        this.setState({ errors: err.response.data.errors, isLoading: false });
+      }
     }
   };
-  valideConfrmpass = (password, e) => {
+  onSubmitVerify = async (e) => {
     e.preventDefault();
-    const { confirmpassword, newpassword } = this.state;
-    if (password !== newpassword) {
-      OCAlert.alertError(`Confirm password is wrong`, { timeOut: 3000 });
-      return;
+    try {
+            this.setState({ isLoading: true,verify: true, mesg: "", errors: "", });
+      const { code } = this.state;
+      const res = await axios.post("/api/auth/check_verification_code", {
+        code: code,
+      });
+      this.setState({ userDetail: res.data.userExist, mesg: res.data.mesg , isLoading: false,errors: "", });
+      setTimeout(() => {
+        this.props.history.push("/PersonalInfo", {
+          userExist: res.data.userExist,
+        });
+      }, 1000);
+    } catch (err) {
+      if (err.response !== undefined && err.response.data) {
+        this.setState({ errors: err.response.data.errors, isLoading: false });
+      }
     }
   };
 
   render() {
-    const { shop } = this.props;
-    const { user } = this.props.auth;
-
-    if (user && user.systemRole === "Employee") {
-      if (shop) {
-        let openShop = shop[0];
-        if (openShop) {
-          if (this.props.AuthLoading === false && this.props.isAuthenticated) {
-            if (openShop.status === "on" && user.isPasswordChanged === true) {
-              return <Redirect to="/dashboard" />;
-            } else if (
-              openShop.status === "on" &&
-              user.isPasswordChanged === false
-            ) {
-              return <Redirect to="/ActivateAccount" />;
-            } else if (openShop.status === "off") {
-              return (
-                <Redirect
-                  push
-                  to={{
-                    pathname: "/storeclosed",
-                    shop: shop[0],
-                  }}
-                />
-              );
-            }
-          }
-        }
-      }
-    } else if (user && user.systemRole === "Admin") {
-      if (this.props.AuthLoading === false && this.props.isAuthenticated) {
-        if (user.isPasswordChanged === false) {
-          return <Redirect to="/ActivateAccount" />;
-        } else {
-          return <Redirect to="/dashboard" />;
-        }
-      }
-    }
-
+    // if (this.state.userDetail) {
+    //     return <Redirect to="/PersonalInfo" />;
+    // }
     return (
       <div className="wrapper menu-collapsed">
         <div className="main-panel">
@@ -133,15 +84,7 @@ class Signup extends Component {
                         <div className="card-content">
                           <div className="card-body login-img">
                             <div className="row m-0">
-                              <div className="col-lg-6 d-lg-block d-none py-2 text-center align-middle mt-5 mb-n5 img-block">
-                                <img
-                                  alt=""
-                                  className="img-fluid imglogin"
-                                  width="400"
-                                  height="230"
-                                ></img>
-                              </div>
-                              <div className="col-lg-6 col-md-12 bg-white px-4 pt-3">
+                              <div className="col-lg-12 col-md-12 bg-white px-4 pt-3">
                                 <div className="logo-img text-center align-middle">
                                   <img
                                     alt={"Sutygon-bot"}
@@ -154,43 +97,111 @@ class Signup extends Component {
                                   className="mb-2 card-title text-center align-middle"
                                   style={{}}
                                 >
-                                  Sign Up
+                                  {this.state.verify
+                                    ? "Verify Your Email Address"
+                                    : "Register"}
                                 </h4>
-                                <p className="card-text mb-3 text-center align-middle">
-                                  Sign Up With A Smile
+                                <p
+                                  className="card-text mb-3 text-center align-middle"
+                                  style={{ width: "400px" }}
+                                >
+                                  {this.state.verify
+                                    ? "To ensure your privacy, we have sent you a code to the email you registered with. Please provide the code below."
+                                    : "Register your account"}
                                 </p>
-                                <form onSubmit={(e) => this.onSubmit(e)}>
-                                  <Alert />
-
-                                  <input
-                                    type="text"
-                                    className="form-control mb-3"
-                                    placeholder="Username"
-                                    required
-                                    onChange={(e) => this.onChange(e)}
-                                    name="username"
-                                  />
-                                  <input
-                                    type="password"
-                                    className="form-control mb-1"
-                                    placeholder="Password"
-                                    required
-                                    onChange={(e) => this.onChange(e)}
-                                    name="password"
-                                  />
-                                  <div className="fg-actions justify-content-between">
-                                    <div className="recover-pass">
-                                      <input
-                                        className="btn btn-primary btn-lg btn-block"
-                                        type="submit"
-                                        value="Create You Account"
-                                      />
-                                    </div>
+                                {this.state.mesg && (
+                                  <div
+                                    className="alert alert-success"
+                                    role="alert"
+                                  >
+                                    {this.state.mesg}
                                   </div>
-                                  <Link class="nav-link" to={"/Login"}>
-                                    Login
-                                  </Link>
-                                </form>
+                                )}
+                                {this.state.errors && (
+                                  <div
+                                    className="alert alert-danger"
+                                    role="alert"
+                                  >
+                                    {this.state.errors}
+                                  </div>
+                                )}
+
+                                {this.state.verify ? (
+                                  <form
+                                    onSubmit={(e) => this.onSubmitVerify(e)}
+                                  >
+                                    <Alert />
+
+                                    <input
+                                      type="text"
+                                      className="form-control mb-3"
+                                      placeholder="Enter Your 4 Digit PIN Code"
+                                      required
+                                      value={this.state.code}
+                                      maxLength={4}
+                                      minLength={4}
+                                      autoComplete="off"
+                                      onChange={(e) => this.onChange(e)}
+                                      name="code"
+                                    />
+                                    <div className="fg-actions justify-content-between">
+                                      <div className="recover-pass">
+                                       <button
+                                          disabled={this.state.isLoading}
+                                          type="submit"
+                                          className="btn btn-primary btn-lg btn-block"
+                                        >
+                                          {this.state.isLoading && (
+                                            <i className="fa fa-refresh fa-spin mr-1"></i>
+                                          )}
+                                          Verify
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <Link className="nav-link" to={"/Login"}>
+                                      Have an account? Sign in here!
+                                    </Link>
+                                  </form>
+                                ) : (
+                                  <form onSubmit={(e) => this.onSubmit(e)}>
+                                    <Alert />
+
+                                    <input
+                                      type="email"
+                                      className="form-control mb-3"
+                                      placeholder="Enter Your Email"
+                                      required
+                                      onChange={(e) => this.onChange(e)}
+                                      name="email"
+                                    />
+                                    <input
+                                      type="password"
+                                      className="form-control mb-3"
+                                      placeholder="Enter a secured password"
+                                      required
+                                      onChange={(e) => this.onChange(e)}
+                                      name="password"
+                                    />
+
+                                    <div className="fg-actions justify-content-between">
+                                      <div className="recover-pass">
+                                        <button
+                                          disabled={this.state.isLoading}
+                                          type="submit"
+                                          className="btn btn-primary btn-lg btn-block"
+                                        >
+                                          {this.state.isLoading && (
+                                            <i className="fa fa-refresh fa-spin mr-1"></i>
+                                          )}
+                                          Register
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <Link className="nav-link" to={"/Login"}>
+                                      Have an account? Sign in here!
+                                    </Link>
+                                  </form>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -203,124 +214,12 @@ class Signup extends Component {
             </div>
           </div>
         </div>
-        <div
-          className="modal fade text-center"
-          id="default"
-          tabIndex="-1"
-          role="dialog"
-          aria-labelledby="myModalLabel1"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog" role="document">
-            <div className="modal-content" style={{ marginTop: "170px" }}>
-              <div className="modal-header  text-center">
-                <h4 className="modal-title" id="myModalLabel1">
-                  Update Password
-                </h4>
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={(e) => this.onUpdatePassword(e)}>
-                  <div className="row">
-                    <div className="col-md-12">
-                      {/* <div className="form-group row">
-                        <label className="col-md-3 label-control">Username</label>
-                        <div className="col-md-9">
-                          <input
-                            type="text"
-                            className="form-control border-primary"
-                            placeholder="Enter your username"
-                            name="username"
-                            value={this.state.username}
-                            onChange={(e) => this.onChange(e) }
-                          /></div>
-                      </div> */}
-                      <div className="form-group row">
-                        <label className="col-md-3 label-control">
-                          Current
-                        </label>
-                        <div className="col-md-9">
-                          <input
-                            className="form-control border-primary"
-                            placeholder="Current password"
-                            name="password"
-                            value={this.state.password}
-                            onChange={(e) => this.onChange(e)}
-                            onBlur={(e) =>
-                              this.valideTemppass(this.state.password, e)
-                            }
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-md-3 label-control">New</label>
-                        <div className="col-md-9">
-                          <input
-                            className="form-control border-primary"
-                            placeholder="New password"
-                            name="newpassword"
-                            value={this.state.newpassword}
-                            onChange={(e) => this.onChange(e)}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-md-3 label-control">
-                          Re-type New
-                        </label>
-                        <div className="col-md-9">
-                          <input
-                            className="form-control border-primary"
-                            placeholder="Re-type password"
-                            name="confirmpassword"
-                            value={this.state.confirmpassword}
-                            onChange={(e) => this.onChange(e)}
-                            onBlur={(e) =>
-                              this.valideConfrmpass(
-                                this.state.confirmpassword,
-                                e
-                              )
-                            }
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="modal-footer">
-                    <button
-                      type="submit"
-                      className="btn grey btn-lg btn-outline-success"
-                    >
-                      Save Changes
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-outline-danger btn-lg"
-                      data-dismiss="modal"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <OCAlertsProvider />
-            </div>
-          </div>
-        </div>
       </div>
     );
   }
 }
 
-Signup.propTypes = {
+SignUp.propTypes = {
   auth: PropTypes.object,
   passwordUpdated: PropTypes.bool,
   userID: PropTypes.object,
@@ -347,4 +246,4 @@ export default connect(mapStateToProps, {
   updatePassword,
   getUser,
   getShop,
-})(Signup);
+})(SignUp);

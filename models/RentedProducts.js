@@ -135,6 +135,10 @@ const RentedProductSchema = new mongoose.Schema(
         message: String, // eg : authorized for Pickup. Status is now "Active".
       },
     ],
+     createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
   },
   { timestamps: true }
 );

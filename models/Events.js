@@ -37,7 +37,7 @@ const EventSchema = new mongoose.Schema(
       image:{type:String},
       date: { type: Date, default: Date.now },
     }],
-    // pdfFile:[{ 
+    // pdfFile:[{
     //   _id: false,
     //   file:{type:String},
     //   date: { type: Date, default: Date.now },
@@ -45,7 +45,15 @@ const EventSchema = new mongoose.Schema(
     user:
       {
         type: String,
-      }
+    },
+     createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
+    removed: {
+      type: Boolean,
+      default:false,
+     }
   },
 
   { timestamps: true }

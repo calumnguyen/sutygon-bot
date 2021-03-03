@@ -82,7 +82,7 @@ class Header extends Component {
               </DropdownItem>
               <DropdownItem>
                 <Link
-                  to='/'
+                  to='/login'
                   onClick={() => this.props.logout()}
                   className='dropdown-item'
                 >

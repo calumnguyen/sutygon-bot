@@ -13,52 +13,48 @@ var moment = require("moment");
 // @route   POST api/customer
 // @desc    Authenticate Customer and get Token
 // @access  Public
-router.post(
-  '/login',
-  async (req, res) => {
-    const { fullname, password } = req.body
+router.post("/login", async (req, res) => {
+  const { fullname, password } = req.body;
 
-    try {
-      // check for existing user
-      let customer = await Customer.findOne({ fullname })
+  try {
+    // check for existing user
+    let customer = await Customer.findOne({ fullname });
 
-      if (!customer) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Customer does not exists' }] })
-      }
-      const salt = await bcrypt.genSalt(10)
-      const passwordEntered = await bcrypt.hash(password, salt)
-
-      const isMatch = await bcrypt.compare(password, customer.password)
-
-      if (!isMatch) {
-        return res.status(400).json({ errors: [{ msg: 'Invalid Password' }] })
-      }
-      const payload = {
-        customer: {
-          id: customer._id,
-          name: customer.fullname,
-        },
-      }
-
-      jwt.sign(
-        payload,
-        config.get("jwtSecret_Customer"),
-        { expiresIn: '1d' },
-
-        (err, token) => {
-          if (err) throw err
-          res.json({ token })
-        }
-      )
-    } catch (err) {
-      console.log(err)
-      res.status(500).json({ errors: [{ msg: 'Server error' }] })
+    if (!customer) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Customer does not exists" }] });
     }
-  }
-)
+    const salt = await bcrypt.genSalt(10);
+    const passwordEntered = await bcrypt.hash(password, salt);
 
+    const isMatch = await bcrypt.compare(password, customer.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ errors: [{ msg: "Invalid Password" }] });
+    }
+    const payload = {
+      customer: {
+        id: customer._id,
+        name: customer.fullname,
+      },
+    };
+
+    jwt.sign(
+      payload,
+      config.get("jwtSecret_Customer"),
+      { expiresIn: "1d" },
+
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token });
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ errors: [{ msg: "Server error" }] });
+  }
+});
 
 // @route   POST api/customers/add
 // @desc    Add New Customer
@@ -70,6 +66,7 @@ router.post(
     check("address", "Address Required").not().isEmpty(),
     check("birthday", "Enter birth date.").not().isEmpty(),
   ],
+  auth,
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -77,17 +74,18 @@ router.post(
     }
 
     try {
-      let body =req.body;
+      let body = req.body;
       // Check if email already exist.
-      var password = ""
-      if(body.password){
-      const salt = await bcrypt.genSalt(10);
-      password = await bcrypt.hash(body.password, salt);
+      var password = "";
+      if (body.password) {
+        const salt = await bcrypt.genSalt(10);
+        password = await bcrypt.hash(body.password, salt);
       }
-      console.log("password",password)
+      console.log("password", password);
       customerBody = {
+        createdBy:req.user.id,
         ...body,
-        password: password 
+        password: password,
       };
       let customer = new Customer(customerBody);
       await customer.save();
@@ -136,9 +134,9 @@ router.post("/:id", async (req, res) => {
 // @route   GET api/customers
 // @desc    Get all customers
 // @access  Private
-router.get("/",  async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
-    const customers = await Customer.find();
+    const customers = await Customer.find({ createdBy: req.user.id });
     res.json(customers);
   } catch (err) {
     console.log(err);
@@ -152,12 +150,11 @@ router.get("/",  async (req, res) => {
 router.get("/:id", auth, async (req, res) => {
   try {
     const customer = await Customer.findById(req.params.id);
-
     if (!customer) {
       return res.status(404).json({ msg: "No Customer found" });
     }
 
-    res.json(customer);
+    return res.json(customer);
   } catch (err) {
     console.error(err.message);
     // Check if id is not valid
@@ -173,10 +170,11 @@ router.get("/:id", auth, async (req, res) => {
 // @route  GET api/customer/:name
 // @desc   Get Customer (Search for customer)
 // @access Private
-router.get("/search/:contactnumber",  async (req, res) => {
+router.get("/search/:contactnumber",auth, async (req, res) => {
   try {
     const customer = await Customer.findOne({
-      contactnumber: { $eq: req.params.contactnumber }
+      createdBy: req.user.id,
+      contactnumber: { $eq: req.params.contactnumber },
     });
     if (customer == null) {
       return status(404).json({ msg: "No Customer found" });
@@ -188,7 +186,7 @@ router.get("/search/:contactnumber",  async (req, res) => {
     if (err.kind === "ObjectId") {
       return res.status(404).json({ msg: "No Customer found" });
     }
- return res
+    return res
       .status(500)
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
   }
@@ -200,6 +198,7 @@ router.get("/search/:contactnumber",  async (req, res) => {
 router.get("/search/number/:contactnumber", auth, async (req, res) => {
   try {
     const customer = await Customer.findOne({
+      createdBy: req.user.id,
       contactnumber: { $eq: req.params.contactnumber },
     });
 
@@ -342,6 +341,7 @@ router.post("/:id/insights", auth, async (req, res) => {
       { barcodes: 1, _id: 0 }
     );
 
+
     // .project({ barcodes: 1 })
     // .select('barcodes')
 
@@ -351,7 +351,7 @@ router.post("/:id/insights", auth, async (req, res) => {
         // console.log(prod.barcodes)
         for (bcode of prod.barcodes) {
           let singleProduct = await Product.findOne(
-            {
+            {createdBy:req.user.id,
               "color.sizes.barcodes": {
                 $elemMatch: { barcode: parseInt(bcode) },
               },

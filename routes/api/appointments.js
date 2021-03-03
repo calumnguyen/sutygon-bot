@@ -15,7 +15,7 @@ router.post("/add", auth, async (req, res) => {
   }
   try {
     let categories = [req.body.category]
-    let appointment = new Appointments({...req.body,categories});
+    let appointment = new Appointments({...req.body,categories,createdBy:req.user.id});
     await appointment.save();
     res.json({ appointment, msg: "AppointmentsAdded Successfully" });
   } catch (err) {
@@ -29,7 +29,7 @@ router.post("/add", auth, async (req, res) => {
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    const appointments = await Appointments.find().populate(
+    const appointments = await Appointments.find({createdBy:req.user.id}).populate(
       "customer",
       "name contactnumber"
     );
@@ -111,13 +111,13 @@ router.get(
 // @access Private
 router.get("/currentDateAppointment/:date", auth, async (req, res) => {
   try {
-   
+
         var start = new Date();
     start.setHours(-23, -59, -59, -999);
 
     var end = new Date();
     end.setHours(0, 0, 0, 0);
-   
+
         const result = await Appointments.find({date: { $gte: start, $lt: end }}).populate(
       "customer"
     );

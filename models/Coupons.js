@@ -92,6 +92,10 @@ const CouponsSchema = new mongoose.Schema(
       default: "active",
       enum: ["active", "inactive"],
     },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: "user",
+    }
   },
   { timestamps: true }
 );
