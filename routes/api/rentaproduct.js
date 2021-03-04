@@ -221,10 +221,6 @@ router.get("/", auth, async (req, res) => {
       { $sort: { createdAt: -1 } },
     ]);
 
-//  let rentedProducts = await RentedProduct.aggregate(
-//     [ { $match : { createdBy:userId} } ]
-// );
-
     return res.status(200).json(rentedProducts);
   } catch (err) {
     console.log(err);
@@ -310,11 +306,13 @@ router.get("/getLastRecord", auth, async (req, res) => {
 // @access Private
 router.put("/searchstatus", auth, async (req, res) => {
   try {
+    var userId = mongoose.Types.ObjectId(req.user.id);
     let result;
     if (req.body.status.includes("pickup")) {
       result = await RentedProduct.aggregate([
         {
           $match: {
+            createdBy:userId,
             $or: [
               { status: { $in: req.body.status } },
               { pickedUpStatus: false, readyForPickUp: true },
@@ -371,6 +369,7 @@ router.put("/searchstatus", auth, async (req, res) => {
       result = await RentedProduct.aggregate([
         {
           $match: {
+            createdBy:userId,
             $or: [
               { status: { $in: req.body.status } },
               {
@@ -426,6 +425,7 @@ router.put("/searchstatus", auth, async (req, res) => {
       result = await RentedProduct.aggregate([
         {
           $match: {
+            createdBy:userId,
             status: { $in: req.body.status },
           },
         },

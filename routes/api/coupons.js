@@ -141,7 +141,7 @@ router.post("/apply_coupon", auth, async (req, res) => {
   try {
     const { coupon_code, total, products, customerId } = req.body;
     // console.log(req.body);
-    const result = await Coupon.findOne({ code: coupon_code });
+    const result = await Coupon.findOne({ code: coupon_code,createdBy:req.user.id });
 
     if (result == null) {
       return res.status(404).json({ msg: "No Coupon found" });
