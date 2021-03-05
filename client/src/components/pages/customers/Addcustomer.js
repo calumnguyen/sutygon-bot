@@ -1139,7 +1139,7 @@ class AddCustomer extends Component {
           <Modal
             visible={this.state.visible}
             width='600'
-            height='290'
+            height='320'
             effect='fadeInUp'
             onClickAway={(e) => this.closeModal(e)}
           >

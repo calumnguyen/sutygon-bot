@@ -15,7 +15,7 @@ import { connect } from "react-redux";
 export class Index extends Component {
   state = {
     step: 1,
-    id:'',
+    id: "",
     firstname: "",
     lastname: "",
     phone: "",
@@ -26,10 +26,11 @@ export class Index extends Component {
     // extra
     errors: "",
     loader: false,
-    isLoading:false,
+    isLoading: false,
+    message: "",
   };
 
-    async componentDidMount() {
+  async componentDidMount() {
     const { state } = this.props.location;
     if (state) {
       this.setState({
@@ -62,7 +63,7 @@ export class Index extends Component {
   onSubmitData = async (e) => {
     e.preventDefault();
     try {
-       this.setState({isLoading: true });
+      this.setState({ isLoading: true });
       const {
         id,
         firstname,
@@ -72,6 +73,7 @@ export class Index extends Component {
         gender,
         company,
         companyaddress,
+        message,
       } = this.state;
       const data = {
         id,
@@ -82,15 +84,24 @@ export class Index extends Component {
         gender,
         company,
         companyaddress,
+        message,
       };
-      const res = axios.post("/api/auth/signup_update", data);
-      this.props.history.replace("/login");
-      this.setState({ msg: res.data.msg, id: "" });
+      const res =await axios.post("/api/auth/signup_update", data);
+      if (res.data) {
+        this.setState({
+          msg: res.data.msg,
+          id: "",
+          message: res.data.msg,
+        });
+        setTimeout(() => {
+          this.props.history.replace("/login");
+        }, 1000);
+      }
     } catch (e) {}
   };
 
   render() {
-        if (this.props.location.state === undefined) {
+    if (this.props.location.state === undefined) {
       return <Redirect to="/signup" />;
     }
     const { step } = this.state;
@@ -102,7 +113,8 @@ export class Index extends Component {
       gender,
       company,
       companyaddress,
-      isLoading
+      isLoading,
+      message,
     } = this.state;
     const values = {
       firstname,
@@ -112,7 +124,8 @@ export class Index extends Component {
       gender,
       company,
       companyaddress,
-      isLoading
+      isLoading,
+      message,
     };
     switch (step) {
       case 1:

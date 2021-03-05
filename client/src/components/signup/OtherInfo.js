@@ -60,8 +60,17 @@ class OtherInfo extends Component {
                                   Provide your personal information to complete
                                   the account registration process
                                 </p>
+                                
                                 <form onSubmit={(e) => this.onSubmit(e)}>
                                   <Alert />
+                                   {values.message && (
+                                  <div
+                                    className="alert alert-success"
+                                    role="alert"
+                                  >
+                                    {values.message}
+                                  </div>
+                                )}
                                   <div className="form-group">
                                     <label htmlFor="firstname">
                                       Enter You Phone Number
