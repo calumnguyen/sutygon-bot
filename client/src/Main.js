@@ -83,7 +83,7 @@ const Main = () => {
           <Route exact path="/Login" component={Login} />
           <Route exact path="/signup" component={SignUp} />
           <Route exact path="/Verification" component={Verification} />
-          <Route exact path="/PersonalInfo" component={PersonalInfo} />
+          <Route exact path="/personal-info" component={PersonalInfo} />
 
           {/* Dashboard */}
           <PrivateRoute exact path="/dashboard" component={Dashboard} />

@@ -9,6 +9,7 @@ import Alert from "../layout/Alert";
 import { getShop } from "../../actions/dashboard";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
+import Swal from "sweetalert2";
 class SignUp extends Component {
   state = {
     username: "",
@@ -49,17 +50,21 @@ class SignUp extends Component {
   onSubmitVerify = async (e) => {
     e.preventDefault();
     try {
-            this.setState({ isLoading: true,verify: true, mesg: "", errors: "", });
+      this.setState({ isLoading: true, verify: true, mesg: "", errors: "" });
       const { code } = this.state;
       const res = await axios.post("/api/auth/check_verification_code", {
         code: code,
       });
-      this.setState({ userDetail: res.data.userExist, mesg: res.data.mesg , isLoading: false,errors: "", });
-      setTimeout(() => {
-        this.props.history.push("/PersonalInfo", {
-          userExist: res.data.userExist,
-        });
-      }, 1000);
+      this.setState({
+        userDetail: res.data.userExist,
+        mesg: res.data.mesg,
+        isLoading: false,
+        errors: "",
+      });
+      await Swal.fire("Registration", res.data.mesg, "success");
+      this.props.history.push("/personal-info", {
+        userExist: res.data.userExist,
+      });
     } catch (err) {
       if (err.response !== undefined && err.response.data) {
         this.setState({ errors: err.response.data.errors, isLoading: false });
@@ -68,9 +73,9 @@ class SignUp extends Component {
   };
 
   render() {
-    // if (this.state.userDetail) {
-    //     return <Redirect to="/PersonalInfo" />;
-    // }
+    if (this.state.userDetail) {
+      return <Redirect to="/personal-info" />;
+    }
     return (
       <div className="wrapper menu-collapsed">
         <div className="main-panel">
@@ -146,7 +151,7 @@ class SignUp extends Component {
                                     />
                                     <div className="fg-actions justify-content-between">
                                       <div className="recover-pass">
-                                       <button
+                                        <button
                                           disabled={this.state.isLoading}
                                           type="submit"
                                           className="btn btn-primary btn-lg btn-block"

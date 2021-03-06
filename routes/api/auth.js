@@ -201,7 +201,10 @@ router.post(
       if (userExist) {
         return res
           .status(200)
-          .json({ userExist, mesg: "Your Email is verified" });
+          .json({
+            userExist,
+            mesg: "Your email is verified Please add personal info ",
+          });
       } else {
         return res
           .status(400)
@@ -244,7 +247,10 @@ router.post(
       });
       return res
         .status(200)
-        .json({ msg: "Thank You for sign up. Admin will approve your account. Let you know through email" });
+        .json({
+          msg:
+            "Thanks for signing up. We’ll let you know through email when Admin will approve your account.",
+        });
     } catch (err) {
       res.status(500).json({ msg: err });
     }
