@@ -11,7 +11,7 @@ import Alert from "../layout/Alert";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
 import { connect } from "react-redux";
-
+import Swal from "sweetalert2";
 export class Index extends Component {
   state = {
     step: 1,
@@ -89,13 +89,10 @@ export class Index extends Component {
       const res =await axios.post("/api/auth/signup_update", data);
       if (res.data) {
         this.setState({
-          msg: res.data.msg,
           id: "",
-          message: res.data.msg,
         });
-        setTimeout(() => {
-          this.props.history.replace("/login");
-        }, 1000);
+        await Swal.fire("Registration", res.data.msg, "success");
+         this.props.history.replace("/login");
       }
     } catch (e) {}
   };

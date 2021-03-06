@@ -9,7 +9,7 @@ const User = require('../models/User');
 			useUnifiedTopology: true,
 		});
     console.log('Database connected');
-    const data = await User.find({})
+    const data = await User.findOneAndDelete({email:'zohaibalishah1997@gmail.com'})
     console.log(data)
 		// await Product.deleteMany({ createdBy: '603fe94645175b0015d3ce1c' });
 

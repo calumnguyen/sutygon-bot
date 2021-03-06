@@ -244,7 +244,7 @@ router.post(
       });
       return res
         .status(200)
-        .json({ msg: "Your Account is Completed Successfully" });
+        .json({ msg: "Thank You for sign up. Admin will approve your account. Let you know through email" });
     } catch (err) {
       res.status(500).json({ msg: err });
     }
