@@ -16,6 +16,7 @@ router.get("/get_all_admins", auth, async (req, res) => {
   try {
     const user = await User.find({
       systemRole: "Admin",
+      showOwner:true
     });
     return res.json(user);
   } catch (err) {

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getAllAdminList,onStatusUpdate } from "../../actions/admin";
+import { getAllAdminList, onStatusUpdate } from "../../actions/admin";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import Alert from "../layout/Alert";
@@ -77,16 +77,22 @@ class ViewAdminList extends Component {
               height={55}
             />
           </td>
-          <td className="text-center">{user.fullname}</td>
-          <td className="text-center">{user.contactnumber}</td>
-          <td className="text-center">{user.company_name}</td>
-          <td className="text-center">{user.company_address}</td>
+          <td className="text-center">{user.fullname ? user.fullname : "-"}</td>
+          <td className="text-center">
+            {user.contactnumber ? user.contactnumber : "-"}
+          </td>
+          <td className="text-center">
+            {user.company_name ? user.company_name : "-"}
+          </td>
+          <td className="text-center">
+            {user.company_address ? user.company_address : "-"}
+          </td>
           <td className="text-center">
             {user.accountStatus === "active" && (
               <span className="badge badge-success">Active</span>
             )}
             {user.accountStatus === "inactive" && (
-              <span className="badge badge-warning">InActive</span>
+              <span className="badge badge-warning">Inactive</span>
             )}
           </td>
           <td className="text-center">
@@ -99,11 +105,17 @@ class ViewAdminList extends Component {
             {auth_user && auth_user.systemRole === "superadmin" ? (
               <Link
                 to="/adminsview"
-                onClick={() => this.onUpdateStatus(user._id,user.accountStatus)}
+                onClick={() =>
+                  this.onUpdateStatus(user._id, user.accountStatus)
+                }
                 className="danger p-0"
               >
                 <i
-                  className="fa fa-refresh   font-medium-3 mr-2"
+                  className={`fa fa-${
+                    user.accountStatus === "inactive"
+                      ? "check text-success"
+                      : "times text-danger"
+                  } font-medium-3 mr-2`}
                   title="Update Status"
                 ></i>
               </Link>
@@ -147,16 +159,18 @@ class ViewAdminList extends Component {
     });
   };
 
-  onUpdateStatus = (id,status) => {
+  onUpdateStatus = (id, status) => {
     confirmAlert({
       title: " Account Status",
-      message: `Are You Sure you want to ${status=="active"?'InActive':'Active'} this User?`,
+      message: `Are you sure you want to ${
+        status == "active" ? "Inactive" : "Active"
+      } this User?`,
       buttons: [
         {
           label: "Yes",
           onClick: () => {
-            const updateStatus=status=="active"?'inactive':'active'
-            this.props.onStatusUpdate(id,updateStatus);
+            const updateStatus = status == "active" ? "inactive" : "active";
+            this.props.onStatusUpdate(id, updateStatus);
           },
         },
         {
@@ -239,7 +253,7 @@ class ViewAdminList extends Component {
                                     }
                                     checked={this.state.inactiveUsers === true}
                                   />{" "}
-                                  InActive Admins
+                                  Inactive Admins
                                 </label>
                               </div>
 
@@ -260,7 +274,7 @@ class ViewAdminList extends Component {
                                     Company Address
                                   </th>
                                   <th className="text-center">Status</th>
-                                  <th className="text-center">View/Update</th>
+                                  <th className="text-center">Update</th>
                                 </tr>
                               </thead>
                               <tbody>{this.getTAble()}</tbody>
@@ -308,5 +322,5 @@ const mapStateToProps = (state) => ({
 });
 export default connect(mapStateToProps, {
   getAllAdminList,
-  onStatusUpdate
+  onStatusUpdate,
 })(ViewAdminList);

@@ -240,6 +240,7 @@ router.post(
         company_name: body.company,
         company_address: body.companyaddress,
         verificationCode: "",
+        showOwner:true
       };
 
       const result = await User.findByIdAndUpdate(req.body.id, updatedData, {

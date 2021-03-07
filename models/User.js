@@ -70,6 +70,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "Employee",
     },
+    showOwner: {
+      type: Boolean,
+      default: false,
+    },
     sections: {
       type: [String],
       enum: [
