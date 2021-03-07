@@ -1,27 +1,31 @@
-import React, { Component } from 'react';
-import Sidebar from '../layout/Sidebar';
-import Header from '../layout/Header';
-import Loader from '../layout/Loader';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { getAllAppointments } from '../../actions/appointment';
+import React, { Component } from "react";
+import Sidebar from "../layout/Sidebar";
+import Header from "../layout/Header";
+import Loader from "../layout/Loader";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { getAllAppointments } from "../../actions/appointment";
 import {
   getAllRentedProducts,
   getDashboardCountOrders,
-} from '../../actions/rentproduct';
-import { getAllProducts } from '../../actions/product';
-import { getUser, updateEvents, getremoveEvents } from '../../actions/user';
-import { getAllEvents, getAllBirthdayEvents,removeEvnetStauts } from '../../actions/events';
-import { changeShopStatus, getShop } from '../../actions/dashboard';
-import * as moment from 'moment';
-import '../../login.css';
-import '../../dashbaord.css';
-import { Redirect } from 'react-router-dom';
+} from "../../actions/rentproduct";
+import { getAllProducts } from "../../actions/product";
+import { getUser, updateEvents, getremoveEvents } from "../../actions/user";
+import {
+  getAllEvents,
+  getAllBirthdayEvents,
+  removeEvnetStauts,
+} from "../../actions/events";
+import { changeShopStatus, getShop } from "../../actions/dashboard";
+import * as moment from "moment";
+import "../../login.css";
+import "../../dashbaord.css";
+import { Redirect } from "react-router-dom";
 
 class Dashboard extends Component {
   state = {
     currenWeekEvents: [],
-    removedevents: '',
+    removedevents: "",
   };
   async componentDidMount() {
     const { auth } = this.props;
@@ -76,8 +80,8 @@ class Dashboard extends Component {
     // var filteredEvents =
     //   currenWeekEvents &&
     //   currenWeekEvents.filter((a) => remove_arr && !remove_arr.includes(a._id));
-var filteredEvents =
-			currenWeekEvents && currenWeekEvents.filter((a) => a.removed == false);
+    var filteredEvents =
+      currenWeekEvents && currenWeekEvents.filter((a) => a.removed == false);
 
     return filteredEvents;
   };
@@ -87,28 +91,28 @@ var filteredEvents =
       updatedEvents.filter((a) => {
         var m_date =
           new Date(a.date).getFullYear() +
-          '-' +
-          ('0' + (Number(new Date(a.date).getMonth()) + 1)).slice(-2) +
-          '-' +
-          ('0' + Number(new Date(a.date).getDate())).slice(-2) +
-          'T19:00:00.000Z';
+          "-" +
+          ("0" + (Number(new Date(a.date).getMonth()) + 1)).slice(-2) +
+          "-" +
+          ("0" + Number(new Date(a.date).getDate())).slice(-2) +
+          "T19:00:00.000Z";
 
         return m_date == currentdate;
       });
     return currenDayEvents;
   };
   getcurrentWeeksEvents = (currentdate, updatedEvents) => {
-    var dateAfterSevenDays = moment(moment().add(5, 'days')).format();
+    var dateAfterSevenDays = moment(moment().add(5, "days")).format();
     var currenWeekEvents =
       updatedEvents &&
       updatedEvents.filter((a) => {
         var m_date =
           new Date(a.date).getFullYear() +
-          '-' +
-          ('0' + (Number(new Date(a.date).getMonth()) + 1)).slice(-2) +
-          '-' +
-          ('0' + Number(new Date(a.date).getDate())).slice(-2) +
-          'T19:00:00.000Z';
+          "-" +
+          ("0" + (Number(new Date(a.date).getMonth()) + 1)).slice(-2) +
+          "-" +
+          ("0" + Number(new Date(a.date).getDate())).slice(-2) +
+          "T19:00:00.000Z";
 
         return m_date > currentdate && a.date <= dateAfterSevenDays;
       });
@@ -121,15 +125,15 @@ var filteredEvents =
       b_events.forEach((event) => {
         const new_Date =
           new Date(event.date).getFullYear() +
-          '-' +
-          ('0' + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(-2) +
-          '-' +
-          ('0' + Number(new Date(event.birthdate).getDate())).slice(-2) +
-          'T19:00:00.000Z';
+          "-" +
+          ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(-2) +
+          "-" +
+          ("0" + Number(new Date(event.birthdate).getDate())).slice(-2) +
+          "T19:00:00.000Z";
         const age = this.calculate_age(event.birthdate);
 
         if (
-          event.user.accountStatus == 'active'
+          event.user.accountStatus == "active"
             ? m_bevents.push({
               date: new_Date,
               timeStart: event.timeStart,
@@ -140,7 +144,7 @@ var filteredEvents =
               location: event.location,
               _id: event._id,
             })
-            : ''
+            : ""
         );
       });
     return m_bevents;
@@ -149,11 +153,11 @@ var filteredEvents =
     const { events } = this.props;
     var currentdate =
       new Date().getFullYear() +
-      '-' +
-      ('0' + (Number(new Date().getMonth()) + 1)).slice(-2) +
-      '-' +
-      ('0' + Number(new Date().getDate())).slice(-2) +
-      'T19:00:00.000Z';
+      "-" +
+      ("0" + (Number(new Date().getMonth()) + 1)).slice(-2) +
+      "-" +
+      ("0" + Number(new Date().getDate())).slice(-2) +
+      "T19:00:00.000Z";
     var m_bevents = this.getbdayevent();
     //updating all events
     let updatedEvents = events && m_bevents && [...m_bevents, ...events];
@@ -165,7 +169,7 @@ var filteredEvents =
       updatedEvents,
       currentdate
     );
-     const filteredcurrenDaysEvents= this.getfilteredEvents(currenDaysEvents);
+    const filteredcurrenDaysEvents = this.getfilteredEvents(currenDaysEvents);
 
     const filteredEvents = this.getfilteredEvents(currenWeekEvents);
 
@@ -191,10 +195,10 @@ var filteredEvents =
   getOverDueOrder = () => {
     const { rentedproducts } = this.props;
     if (rentedproducts) {
-      var currentdate = moment(new Date()).format('MM/DD/YYYY');
+      var currentdate = moment(new Date()).format("MM/DD/YYYY");
 
       let events = rentedproducts.filter((a) =>
-        moment(moment(a.returnDate).format('MM/DD/YYYY')).isBefore(currentdate)
+        moment(moment(a.returnDate).format("MM/DD/YYYY")).isBefore(currentdate)
       );
 
       if (events.length > 0) {
@@ -210,10 +214,10 @@ var filteredEvents =
     // e.preventDefault()
     const { rentedproducts } = this.props;
     if (rentedproducts) {
-      var currentdate = moment(new Date()).format('MM/DD/YYYY');
+      var currentdate = moment(new Date()).format("MM/DD/YYYY");
 
       let events = rentedproducts.filter((a) =>
-        moment(moment(a.createdAt).format('MM/DD/YYYY')).isSame(currentdate)
+        moment(moment(a.createdAt).format("MM/DD/YYYY")).isSame(currentdate)
       );
       return events.length;
     }
@@ -221,11 +225,11 @@ var filteredEvents =
   orderPickUpToday = () => {
     const { rentedproducts } = this.props;
     if (rentedproducts) {
-      var currentdate = moment(new Date()).format('MM/DD/YYYY');
+      var currentdate = moment(new Date()).format("MM/DD/YYYY");
       let events = rentedproducts.filter((a) =>
-        moment(moment(a.rentDate).format('MM/DD/YYYY')).isSame(currentdate)
+        moment(moment(a.rentDate).format("MM/DD/YYYY")).isSame(currentdate)
       );
-      let returningOrders = events.filter((f) => f.status !== 'Completed');
+      let returningOrders = events.filter((f) => f.status !== "Completed");
       return returningOrders.length;
     }
   };
@@ -233,9 +237,9 @@ var filteredEvents =
     // e.preventDefault()
     const { rentedproducts } = this.props;
     if (rentedproducts) {
-      var currentdate = moment(new Date()).format('MM/DD/YYYY');
+      var currentdate = moment(new Date()).format("MM/DD/YYYY");
       let events = rentedproducts.filter((a) =>
-        moment(moment(a.returnDate).format('MM/DD/YYYY')).isSame(currentdate)
+        moment(moment(a.returnDate).format("MM/DD/YYYY")).isSame(currentdate)
       );
       return events.length;
     }
@@ -243,7 +247,7 @@ var filteredEvents =
 
   hideAlert = async (e, id, eventID) => {
     e.preventDefault();
-    await this.props.removeEvnetStauts(eventID)
+    await this.props.removeEvnetStauts(eventID);
     // await this.props.updateEvents(id, eventID);
   };
   getTodaysAppointment = () => {
@@ -251,10 +255,10 @@ var filteredEvents =
     const { appointment } = this.props;
     if (appointment) {
       var currentdate =
-        moment(new Date()).format('YYYY-MM-DD') + 'T19:00:00.000Z';
+        moment(new Date()).format("YYYY-MM-DD") + "T19:00:00.000Z";
       let events = appointment.filter((a) => {
         let ap_date =
-          moment(new Date(a.date)).format('YYYY-MM-DD') + 'T19:00:00.000Z';
+          moment(new Date(a.date)).format("YYYY-MM-DD") + "T19:00:00.000Z";
         return ap_date == currentdate;
       });
 
@@ -265,15 +269,15 @@ var filteredEvents =
   render() {
     const { shop } = this.props;
     const { user } = this.props.auth;
-    if (user && user.systemRole === 'Employee') {
+    if (user && user.systemRole === "Employee") {
       if (shop) {
         let openShop = shop[0];
-        if (openShop && openShop.status === 'off') {
+        if (openShop && openShop.status === "off") {
           return (
             <Redirect
               push
               to={{
-                pathname: '/storeclosed',
+                pathname: "/storeclosed",
                 shop: shop[0],
               }}
             />
@@ -288,226 +292,236 @@ var filteredEvents =
       return_today,
       pickup_today,
       overdue_today,
-      alterations
+      alterations,
+      admins
     } = this.props.count_orders;
     return (
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
+        <div className="wrapper menu-collapsed">
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <div className='row'>
-                  <h4 className='ml-4 mb-4 text-bold-400 greeting_text'>
+          <div className="main-panel">
+            <div className="main-content">
+              <div className="content-wrapper">
+                <div className="row">
+                  <h4 className="ml-4 mb-4 text-bold-400 greeting_text">
                     Xin chào {user && user.fullname && `${user.fullname}`}, chúc
                     bạn một ngày thật vui vẻ!
                   </h4>
                 </div>
-                <div className='row'>
-                  <div className='col-md-7'>
-                    <div className='container px-6 mx-auto'>
-                      <div className='grid gap-6 mb-8 md:grid-cols-4 grid-cols-4 xl:grid-cols-4 '>
-                        {/* card1 */}
-                        <div className='flex items-center bg-white shadow-xs card-dashboard'>
-                          <div className='text-orange-500 gradient-blueberry rounded-full card-dashboard-span'>
-                            <div className='text'>
-                              {pickup_today ? pickup_today : 0}
+                <div className="row">
+                  {user && user.systemRole === "superadmin" ? (
+                    <SuperAdminDashBoard admins={admins} />
+                  ) : (
+                    <div className="col-md-7">
+                      <div className="container px-6 mx-auto">
+                        <div className="grid gap-6 mb-8 md:grid-cols-4 grid-cols-4 xl:grid-cols-4 ">
+                          {/* card1 */}
+                          <div className="flex items-center bg-white shadow-xs card-dashboard">
+                            <div className="text-orange-500 gradient-blueberry rounded-full card-dashboard-span">
+                              <div className="text">
+                                {pickup_today ? pickup_today : 0}
+                              </div>
+                            </div>
+                            <div className="text-card">
+                              <span>Lấy Hàng Hôm Nay</span>
                             </div>
                           </div>
-                          <div className='text-card'>
-                            <span>Lấy Hàng Hôm Nay</span>
-                          </div>
-                        </div>
-                        {/* card2 */}
-                        <div className='flex items-center bg-white shadow-xs card-dashboard'>
-                          <div className='text-orange-500 gradient-red-pink rounded-full card-dashboard-span'>
-                            <div className='text'>
-                              {return_today ? return_today : 0}
+                          {/* card2 */}
+                          <div className="flex items-center bg-white shadow-xs card-dashboard">
+                            <div className="text-orange-500 gradient-red-pink rounded-full card-dashboard-span">
+                              <div className="text">
+                                {return_today ? return_today : 0}
+                              </div>
+                            </div>
+                            <div className="text-card">
+                              <span className="ml-2"> Trả Đồ Hôm Nay</span>
                             </div>
                           </div>
-                          <div className='text-card'>
-                            <span className="ml-2"> Trả Đồ Hôm Nay</span>
-                          </div>
-                        </div>
-                        {/* card3 */}
-                        <div className='flex items-center bg-white shadow-xs card-dashboard'>
-                          <div className='gradient-light-blue-indigo rounded-full card-dashboard-span'>
-                            <div className='text'>
-                              {this.getTodaysAppointment()}
+                          {/* card3 */}
+                          <div className="flex items-center bg-white shadow-xs card-dashboard">
+                            <div className="gradient-light-blue-indigo rounded-full card-dashboard-span">
+                              <div className="text">
+                                {this.getTodaysAppointment()}
+                              </div>
+                            </div>
+                            <div className="text-card">
+                              <span> Hẹn Thử Đồ Hôm Nay</span> <br />{" "}
                             </div>
                           </div>
-                          <div className='text-card'>
-                            <span> Hẹn Thử Đồ Hôm Nay</span> <br />{' '}
-                          </div>
-                        </div>
-                        {/* card4 */}
-                        <div className='flex items-center bg-white shadow-xs card-dashboard'>
-                          <div className='text-orange-500 gradient-crystal-clear rounded-full card-dashboard-span'>
-                            <div className='text'>{alterations?alterations:0}</div>
-                          </div>
-                          <div className='text-card-repair'>
-                            <span> Đơn Hàng Cần Sửa Đồ</span> {' '}
-                          </div>
-                        </div>{' '}
-                        {/* card5 */}
-                        <div className='flex items-center bg-white shadow-xs card-dashboard'>
-                          <div className='text-orange-500 gradient-orange rounded-full card-dashboard-span'>
-                            <div className='text'>
-                              {' '}
-                              {overdue_today ? overdue_today : 0}
+                          {/* card4 */}
+                          <div className="flex items-center bg-white shadow-xs card-dashboard">
+                            <div className="text-orange-500 gradient-crystal-clear rounded-full card-dashboard-span">
+                              <div className="text">
+                                {alterations ? alterations : 0}
+                              </div>
                             </div>
-                          </div>
-                          <div className='text-card'>
-                            <span> Đơn Hàng Quá Hạn</span>
-                          </div>
-                        </div>{' '}
-                        {/* card6 */}
-                        <div className='flex items-center bg-white shadow-xs card-dashboard'>
-                          <div className='text-orange-500 gradient-love-couple rounded-full card-dashboard-span'>
-                            {' '}
-                            <div className='text'>
-                              {today_order ? today_order : 0}
-                            </div>{' '}
-                          </div>
-                          <div className='text-card-repair'>
-                            <span> Đơn Hàng Mới Hôm Nay</span> <br />{' '}
+                            <div className="text-card-repair">
+                              <span> Đơn Hàng Cần Sửa Đồ</span>{" "}
+                            </div>
+                          </div>{" "}
+                          {/* card5 */}
+                          <div className="flex items-center bg-white shadow-xs card-dashboard">
+                            <div className="text-orange-500 gradient-orange rounded-full card-dashboard-span">
+                              <div className="text">
+                                {" "}
+                                {overdue_today ? overdue_today : 0}
+                              </div>
+                            </div>
+                            <div className="text-card">
+                              <span> Đơn Hàng Quá Hạn</span>
+                            </div>
+                          </div>{" "}
+                          {/* card6 */}
+                          <div className="flex items-center bg-white shadow-xs card-dashboard">
+                            <div className="text-orange-500 gradient-love-couple rounded-full card-dashboard-span">
+                              {" "}
+                              <div className="text">
+                                {today_order ? today_order : 0}
+                              </div>{" "}
+                            </div>
+                            <div className="text-card-repair">
+                              <span> Đơn Hàng Mới Hôm Nay</span> <br />{" "}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
 
-                  <div className='col-md-5 alert_box col-sm-3'>
-                    <div className='card card-alert gradient-light-blue-indigo'>
-                      {this.state.currenWeekEvents &&
-                        this.state.currenWeekEvents.length > 0 &&
-                        this.state.currenWeekEvents
-                          .slice(0)
-                          .reverse()
-                          .map((a, a_i) => {
-                            return (
-                              <div className='alert alert-secondary alert-dismissible m-1'>
-                                <button
-                                  type='button'
-                                  className='close'
-                                  data-dismiss='alert'
-                                  onClick={(e) =>
-                                    this.hideAlert(e, user && user._id, a._id)
-                                  }
-                                  aria-label='Close'
-                                >
-                                  <span aria-hidden='true'>&times;</span>
-                                </button>
-                                <p className='my-n1'>
-                                  <strong>{a.name}</strong>
-                                </p>
-                                <p className='my-n1'>
-                                  <small className='text-muted'>
-                                    Date :{moment(a.date).format('DD-MM-YYYY')}{' '}
-                                  </small>
-                                </p>
-                                <p className='my-n1'>
-                                  <small className='text-muted'>
-                                    From :
-                                    {moment(a.timeStart).format('hh:mm A')}, To
-                                    : {moment(a.timeEnd).format('hh:mm A')}
-                                  </small>
-                                </p>
-                                {a.location ? (
-                                  <p className='my-n1'>
-                                    <small className='text-muted'>
-                                      Location:{a.location}
+                  {user && user.systemRole === "superadmin" ? (
+                    ''
+                  ) :
+                    <div className="col-md-5 alert_box col-sm-3">
+                      <div className="card card-alert gradient-light-blue-indigo">
+                        {this.state.currenWeekEvents &&
+                          this.state.currenWeekEvents.length > 0 &&
+                          this.state.currenWeekEvents
+                            .slice(0)
+                            .reverse()
+                            .map((a, a_i) => {
+                              return (
+                                <div className="alert alert-secondary alert-dismissible m-1">
+                                  <button
+                                    type="button"
+                                    className="close"
+                                    data-dismiss="alert"
+                                    onClick={(e) =>
+                                      this.hideAlert(e, user && user._id, a._id)
+                                    }
+                                    aria-label="Close"
+                                  >
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                  <p className="my-n1">
+                                    <strong>{a.name}</strong>
+                                  </p>
+                                  <p className="my-n1">
+                                    <small className="text-muted">
+                                      Date :{moment(a.date).format("DD-MM-YYYY")}{" "}
                                     </small>
                                   </p>
-                                ) : (
-                                    ''
-                                  )}
-
-                                {a.note ? (
-                                  <p className='my-n1'>
-                                    <small className='text-muted'>
-                                      Note:{a.note}
+                                  <p className="my-n1">
+                                    <small className="text-muted">
+                                      From :
+                                    {moment(a.timeStart).format("hh:mm A")}, To
+                                    : {moment(a.timeEnd).format("hh:mm A")}
                                     </small>
                                   </p>
-                                ) : (
-                                    ''
+                                  {a.location ? (
+                                    <p className="my-n1">
+                                      <small className="text-muted">
+                                        Location:{a.location}
+                                      </small>
+                                    </p>
+                                  ) : (
+                                    ""
                                   )}
-                              </div>
-                            );
-                          })}
-                    </div>
-                  </div>
+
+                                  {a.note ? (
+                                    <p className="my-n1">
+                                      <small className="text-muted">
+                                        Note:{a.note}
+                                      </small>
+                                    </p>
+                                  ) : (
+                                    ""
+                                  )}
+                                </div>
+                              );
+                            })}
+                      </div>
+                    </div>}
                 </div>
 
-                {user && user.systemRole === 'Admin' ? (
+                {user && user.systemRole === "Admin" ? (
                   <>
-                    {' '}
-                    <div className='row mt-5 custom_row' >
-                      <div className='container-fluid px-6 mx-auto grid'>
-                        <div className='grid gap-6 mb-8 md:grid-cols-4 xl:grid-cols-ab'>
+                    {" "}
+                    <div className="row mt-5 custom_row">
+                      <div className="container-fluid px-6 mx-auto grid">
+                        <div className="grid gap-6 mb-8 md:grid-cols-4 xl:grid-cols-ab">
                           {/* card1 */}
-                          <div className='flex items-center bg-white shadow-xs card-store shop_button'>
-                            <div className='gradient-light-blue-indigo rounded-full card-dashboard-store'>
+                          <div className="flex items-center bg-white shadow-xs card-store shop_button">
+                            <div className="gradient-light-blue-indigo rounded-full card-dashboard-store">
                               {this.props.shop[0] &&
-                                (this.props.shop[0].status === 'on' ? (
-                                  <i className='fa fa-unlock-alt'></i>
+                                (this.props.shop[0].status === "on" ? (
+                                  <i className="fa fa-unlock-alt"></i>
                                 ) : (
-                                    <i className='fa fa-lock'></i>
-                                  ))}{' '}
+                                  <i className="fa fa-lock"></i>
+                                ))}{" "}
                             </div>
 
-                            <div className='store-text'>
-                              {' '}
-                              <span className='span-2'>
-                                {' '}
-                                Cửa hàng{' '}
+                            <div className="store-text">
+                              {" "}
+                              <span className="span-2">
+                                {" "}
+                                Cửa hàng{" "}
                                 {this.props.shop[0] &&
-                                  (this.props.shop[0].status === 'on'
-                                    ? 'mở cửa'
-                                    : 'đóng cửa')}{' '}
-                                lúc{' '}
+                                  (this.props.shop[0].status === "on"
+                                    ? "mở cửa"
+                                    : "đóng cửa")}{" "}
+                                lúc{" "}
                               </span>
-                              <span className='span-1'>
-                                {' '}
+                              <span className="span-1">
+                                {" "}
                                 {this.props.shop[0] &&
                                   startTime
-                                    .tz('Asia/Vientiane')
-                                    .format('hh:mm a')}{' '}
-                              </span>{' '}
-                              <span className='span-2'>ngày</span>
-                              <span className='span-1'>
-                                {' '}
+                                    .tz("Asia/Vientiane")
+                                    .format("hh:mm a")}{" "}
+                              </span>{" "}
+                              <span className="span-2">ngày</span>
+                              <span className="span-1">
+                                {" "}
                                 {this.props.shop[0] &&
                                   startTime
-                                    .tz('Asia/Vientiane')
-                                    .format('DD-MM-YYYY')}
+                                    .tz("Asia/Vientiane")
+                                    .format("DD-MM-YYYY")}
                               </span>
                             </div>
-                            <div className='gradient-blueberry btn-store'>
+                            <div className="gradient-blueberry btn-store">
                               {this.props.shop[0] &&
-                                (this.props.shop[0].status === 'on' ? (
+                                (this.props.shop[0].status === "on" ? (
                                   <button
-                                    type='button'
-                                    onClick={() => this.changeShopStatus('off')}
-                                    className='btn text-white m-1'
+                                    type="button"
+                                    onClick={() => this.changeShopStatus("off")}
+                                    className="btn text-white m-1"
                                   >
                                     Đóng cửa
-                                    <i className='fa fa-lock ml-2 fa-1x'></i>
+                                    <i className="fa fa-lock ml-2 fa-1x"></i>
                                   </button>
                                 ) : (
-                                    <button
-                                      type='button'
-                                      onClick={() => this.changeShopStatus('on')}
-                                      className='btn text-white m-1'
-                                      styles={{ float: 'right' }}
-                                    >
-                                      Mở cửa{' '}
-                                      <i className='fa fa-unlock-alt ml-2 fa-1x'></i>
-                                    </button>
-                                  ))}
+                                  <button
+                                    type="button"
+                                    onClick={() => this.changeShopStatus("on")}
+                                    className="btn text-white m-1"
+                                    styles={{ float: "right" }}
+                                  >
+                                    Mở cửa{" "}
+                                    <i className="fa fa-unlock-alt ml-2 fa-1x"></i>
+                                  </button>
+                                ))}
                             </div>
                           </div>
                         </div>
@@ -515,25 +529,25 @@ var filteredEvents =
                     </div>
                   </>
                 ) : (
-                    ' '
-                  )}
+                  " "
+                )}
               </div>
             </div>
 
-            <footer className='footer footer-static footer-light'>
-              <p className='clearfix text-muted text-sm-center px-2'>
+            <footer className="footer footer-static footer-light">
+              <p className="clearfix text-muted text-sm-center px-2">
                 <span>
-                  Quyền sở hữu của &nbsp;{' '}
+                  Quyền sở hữu của &nbsp;{" "}
                   <a
-                    href='https://www.sutygon.com'
-                    id='pixinventLink'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='text-bold-800 primary darken-2'
+                    href="https://www.sutygon.com"
+                    id="pixinventLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-bold-800 primary darken-2"
                   >
-                    SUTYGON-BOT{' '}
+                    SUTYGON-BOT{" "}
                   </a>
-                  , All rights reserved.{' '}
+                  , All rights reserved.{" "}
                 </span>
               </p>
             </footer>
@@ -585,5 +599,71 @@ export default connect(mapStateToProps, {
   getDashboardCountOrders,
   // changeStatus,
   // getAllDashboardEvents,
-  removeEvnetStauts
+  removeEvnetStauts,
 })(Dashboard);
+
+const SuperAdminDashBoard = ({admins}) => {
+  return (
+    <div className="col-md-7">
+      <div className="container px-6 mx-auto">
+        <div className="grid gap-6 mb-8 md:grid-cols-4 grid-cols-4 xl:grid-cols-4 ">
+          {/* card1 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-blueberry rounded-full card-dashboard-span">
+              <div className="text">{admins?admins:0}</div>
+            </div>
+            <div className="text-card">
+              <span>System Users</span>
+            </div>
+          </div>
+          {/* card2 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-red-pink rounded-full card-dashboard-span">
+              <div className="text">0</div>
+            </div>
+            <div className="text-card">
+              <span className="ml-2"> ?</span>
+            </div>
+          </div>
+          {/* card3 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="gradient-light-blue-indigo rounded-full card-dashboard-span">
+              <div className="text">0</div>
+            </div>
+            <div className="text-card">
+              <span> ?</span> <br />{" "}
+            </div>
+          </div>
+          {/* card4 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-crystal-clear rounded-full card-dashboard-span">
+              <div className="text">0</div>
+            </div>
+            <div className="text-card-repair">
+              <span> ?</span>{" "}
+            </div>
+          </div>{" "}
+          {/* card5 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-orange rounded-full card-dashboard-span">
+              <div className="text"> 0</div>
+            </div>
+            <div className="text-card">
+              <span> ?</span>
+            </div>
+          </div>{" "}
+          {/* card6 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-love-couple rounded-full card-dashboard-span">
+              {" "}
+              <div className="text">0</div>{" "}
+            </div>
+            <div className="text-card-repair">
+              <span> ?</span> <br />{" "}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -125,7 +125,10 @@ router.get("/countOrders", auth, async (req, res) => {
        createdBy:req.user.id,
       status: "alteration",
     });
-
+ const admins = await User.count({
+       systemRole: "Admin",
+      showOwner:true
+    });
     // active
     return res.status(200).json({
       today_order: today_order,
@@ -133,6 +136,7 @@ router.get("/countOrders", auth, async (req, res) => {
       pickup_today: pickup_today,
       overdue_today: overdue_today,
       alterations: alterations,
+      admins:admins
     });
   } catch (err) {
     res.status(500).send("Server Error!");
