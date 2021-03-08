@@ -44,6 +44,7 @@
     "react-anchor-link-smooth-scroll": "^1.0.12",
     "redux": "^4.0.5",
     "shortid": "^2.2.15",
+    "sweetalert2": "^10.15.5",
     "twilio": "^3.56.0",
     "uuid": "^8.3.0"
   },
