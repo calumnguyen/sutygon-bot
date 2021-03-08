@@ -16,6 +16,8 @@ export default function HomePage() {
       </div>
     );
   }
+
+  const thisYear = new Date().getFullYear();
   return (
     <React.Fragment>
       {/*  */}
@@ -45,12 +47,12 @@ export default function HomePage() {
                 <ul class='navbar-nav ml-auto justify-content-end clearfix'>
                   <li class='nav-item activeNav'>
                     <a class='nav-link' href='#hero-area'>
-                      Home
+                      Trang Chủ
                     </a>
                   </li>
                   <li class='nav-item'>
                     <a class='nav-link' href='#services'>
-                      Services
+                      Dịch Vụ
                     </a>
                   </li>
                   {/* <li class="nav-item">
@@ -60,22 +62,22 @@ export default function HomePage() {
                 </li> */}
                   <li class='nav-item'>
                     <a class='nav-link' href='#pricing'>
-                      Pricing
+                      Bảng Giá
                     </a>
                   </li>
-                  <li class='nav-item'>
+                  {/* <li class='nav-item'>
                     <a class='nav-link' href='#testimonial'>
                       Testimonial
                     </a>
-                  </li>
+                  </li> */}
                   <li class='nav-item'>
                     <a class='nav-link' href='#contact'>
-                      Contact
+                      Liên Hệ
                     </a>
                   </li>
                   <li class='nav-item'>
                     <Link class='nav-link' to={'/login'}>
-                      Login
+                      Đăng Nhập
                     </Link>
                   </li>
                 </ul>
@@ -91,26 +93,34 @@ export default function HomePage() {
               <div class='contents'>
                 <h2 class='head-title'>
                   {' '}
-                  <span class='pink'>Digitalization</span> Plan of Action
+                  <span class='pink'>Hệ Thống Quản Lý Thuê Đồ</span> Hàng Đầu
+                  Việt Nam
                 </h2>
                 <span class='d-flex'>
-                  <span class='my-auto text-dark'>
-                    At Sutygon-Bot, our mission is to develop a fully customer
-                    centric company; to develop a junction where anyone can join
-                    to find and discover anything they want to take on rental.
-                    SutyGon-Bot is an online rental service whose primary aim is
-                    to support its customers as it makes surplus rental services
-                    easy on customers? pockets, which otherwise exceeds the
-                    affordability of a normal person.
+                  <span class='my-auto text-dark py-3'>
+                    <span className='pink'>
+                      <strong>Sutygon-Bot</strong>
+                    </span>{' '}
+                    ra đời để hiện đại hoá và tiện lợi hoá việc quản lý hàng
+                    hoá, nhân viên, khách hàng, và đơn hàng trong lĩnh vực thuê
+                    đồ. Với{' '}
+                    <span className='pink'>
+                      <strong>giá thành cực rẻ</strong>
+                    </span>{' '}
+                    kèm với nhiều tính năng hiện đại, hệ thống{' '}
+                    <span className='pink'>
+                      <strong>Sutygon-Bot</strong>
+                    </span>{' '}
+                    sẽ giúp công ty bạn vươn lên tầm cao mới.
                   </span>
                 </span>
                 <div class='header-button'>
                   <a
                     rel='nofollow'
-                    href='https://www.sutygon.app/'
+                    href='https://www.sutygon.app/login'
                     class='btn1 btn1-common'
                   >
-                    Get started
+                    Đăng Nhập
                   </a>
                 </div>
               </div>
@@ -132,7 +142,7 @@ export default function HomePage() {
         <div class='container'>
           <div class='section-header text-center'>
             <h2 class='section-title wow fadeInDown' data-wow-delay='0.3s'>
-              Our Services
+              Dịch Vụ
             </h2>
             <div class='shape wow fadeInDown' data-wow-delay='0.3s'></div>
           </div>
@@ -144,11 +154,11 @@ export default function HomePage() {
                 </div>
                 <div class='services-content'>
                   <h3>
-                    <a href='#'>Order management</a>
+                    <a href='#'>Quản Lý Cửa Hàng</a>
                   </h3>
                   <p>
-                    Let your team create and manage orders, and always be
-                    prepared for customer pickups and returns.
+                    Bạn có thể sử dụng phần mềm với nhiều cửa hàng khác nhau,
+                    vỡi hệ thống lưu trữ thông tin tách biệt.
                   </p>
                 </div>
               </div>
@@ -160,11 +170,11 @@ export default function HomePage() {
                 </div>
                 <div class='services-content'>
                   <h3>
-                    <a href='#'>Contracts</a>
+                    <a href='#'>Quản Lý Hàng Kho</a>
                   </h3>
                   <p>
-                    Create contracts and confirm your rental agreements by
-                    letting your customers sign digitally.{' '}
+                    Hệ thống hàng kho đa đụng, giúp bạn quản lý với tags, mã
+                    barcode, cùng nhiều phương thức khác.
                   </p>
                 </div>
               </div>
@@ -176,11 +186,11 @@ export default function HomePage() {
                 </div>
                 <div class='services-content'>
                   <h3>
-                    <a href='#'>Availability calendar</a>
+                    <a href='#'>Quản Lý Nhân Viên</a>
                   </h3>
                   <p>
-                    Zoom in on specific products, spot potential conflicts, and
-                    quickly check availability for any date range.
+                    Bạn có thể cài đặc quyền hạn cho nhân viên để nhân viên chỉ
+                    sử dụng các tính năng cần thiết, tiện lợi cho việc quản lý.
                   </p>
                 </div>
               </div>
@@ -192,11 +202,11 @@ export default function HomePage() {
                 </div>
                 <div class='services-content'>
                   <h3>
-                    <a href='#'>Document templates</a>
+                    <a href='#'>Quản Lý Hóa Đơn</a>
                   </h3>
                   <p>
-                    Enjoy customizable templates for quotes, contracts, and
-                    invoices. Easily add your own branding.
+                    Bạn có thể dễ dàng truy cập và quản lý hóa đơn khách hàng từ
+                    mọi nơi, tại mọi thời điểm.
                   </p>
                 </div>
               </div>
@@ -208,11 +218,12 @@ export default function HomePage() {
                 </div>
                 <div class='services-content'>
                   <h3>
-                    <a href='#'>Dashboard</a>
+                    <a href='#'>Tích Hợp API</a>
                   </h3>
                   <p>
-                    Get a single view of upcoming pickups and returns so you’re
-                    always ready for the next rental.{' '}
+                    Bạn có thể tạo phần mềm chuyên dụng cho công ty mình và tích
+                    hợp API Sutygon-Bot để tự lập trình các tính năng riêng
+                    biệt.
                   </p>
                 </div>
               </div>
@@ -224,11 +235,12 @@ export default function HomePage() {
                 </div>
                 <div class='services-content'>
                   <h3>
-                    <a href='#'>Invoicing</a>
+                    <a href='#'>Hỗ Trợ Ban Đầu</a>
                   </h3>
                   <p>
-                    Invoices are synced with your orders to reduce human error
-                    and put your invoicing on autopilot.
+                    Khi mới đăng ký sử dụng hệ thống Sutygon-Bot, chúng tôi sẽ
+                    tận tình giúp đỡ bạn với giai đoạn tập huấn để bạn có thể
+                    bắt đầu sử dụng hệ thống nhanh chóng.
                   </p>
                 </div>
               </div>
@@ -245,21 +257,21 @@ export default function HomePage() {
                 <div>
                   <div class='site-heading'>
                     <h2 class='section-title'>
-                      We are Always{' '}
-                      <span class='font-weight-bold pink'> be ready</span> for
-                      our customers
+                      Nâng xuất công ty bạn{' '}
+                      <span class='font-weight-bold pink'>
+                        lên tầm cao mới!
+                      </span>
                     </h2>
                   </div>
                   <div class='content'>
                     <p class='text-dark'>
-                      We are dedicated to ensure 100% genuine products for your
-                      renting done on rentone. in, enabling you to leverage an
-                      absolutely safe and secure online renting experience, easy
-                      and convenient payment options, and easy delivery and
-                      returns.
+                      Không còn phải lo lắng nhọc nhằn với giấy tờ bừa bộn, hóa
+                      đơn chồng chất nữa. Bởi vì bạn nên để công sức mà phát
+                      triển công ty, những công việc bên lề như quản lý hóa đơn
+                      và khách hàng cứ để Sutygon-Bot lo :-D
                     </p>
-                    <a href='#' class='btn1 btn1-common mt-3'>
-                      Read More
+                    <a href='/login' class='btn1 btn1-common mt-3'>
+                      Tạo Tài Khoản Miễn Phí
                     </a>
                   </div>
                 </div>
@@ -279,7 +291,7 @@ export default function HomePage() {
         <div class='container'>
           <div class='section-header text-center'>
             <h2 class='section-title wow fadeInDown' data-wow-delay='0.3s'>
-              Awesome Features
+              Tính Năng Hiện Đại
             </h2>
             <div class='shape wow fadeInDown' data-wow-delay='0.3s'></div>
           </div>
@@ -291,10 +303,11 @@ export default function HomePage() {
                     <i class='lni-rocket'></i>
                   </span>
                   <div class='text1'>
-                    <h4>Invoicing</h4>
+                    <h4>Công Nghệ MERN Stack</h4>
                     <p>
-                      Invoices are synced with your orders to reduce human error
-                      and put your invoicing on autopilot.
+                      Sử dụng công nghệ React hiện đại cũng như lưu trữ thông
+                      tin trên MongoDB để có thể cung cấp cho bạn dịch vụ nhanh,
+                      bảo mật, và hợp túi tiền.
                     </p>
                   </div>
                 </div>
@@ -303,10 +316,11 @@ export default function HomePage() {
                     <i class='lni-laptop-phone'></i>
                   </span>
                   <div class='text1'>
-                    <h4>Dashboard</h4>
+                    <h4>Hệ Thống Barcode</h4>
                     <p>
-                      Get a single view of upcoming pickups and returns so
-                      you’re always ready for the next rental.
+                      Quản lý hàng kho với hệ thống barcode để tiện lợi giám sát
+                      từng sản phẩm một cách chi tiết, cắt giảm thời gian ghi
+                      sổ, giảm thiểu sai sót từ con người.
                     </p>
                   </div>
                 </div>
@@ -315,10 +329,11 @@ export default function HomePage() {
                     <i class='lni-cog'></i>
                   </span>
                   <div class='text1'>
-                    <h4>ORDER MANAGEMENT</h4>
+                    <h4>Cá Nhân Hóa Quyền Hạn</h4>
                     <p>
-                      Let your team create and manage orders, and always be
-                      prepared for customer pickups and returns.
+                      Không phải chức vụ nào cũng cần quyền truy cập giống nhau.
+                      Bạn có thể cá nhân hoá quyền hạn cho các tài khoản nhân
+                      viên để tránh nhân viên truy cập thông tin không ủy quyền.
                     </p>
                   </div>
                 </div>
@@ -336,10 +351,12 @@ export default function HomePage() {
                     <i class='lni-map-marker'></i>
                   </span>
                   <div class='text1'>
-                    <h4>Trackable inventory</h4>
+                    <h4>Lịch Sử Giao Dịch</h4>
                     <p>
-                      Keep detailed track of stock by using unique identifiers
-                      such as serial numbers or barcodes.
+                      Giám sát lịch sử hoạt động của công ty từ lúc mở cửa cho
+                      đến lúc đống cửa. Hệ thống sẽ cho bạn biết số lượng giao
+                      dịch, các thành viên giao dịch cũng như nhiều thông tin bổ
+                      ích khác.
                     </p>
                   </div>
                 </div>
@@ -348,10 +365,11 @@ export default function HomePage() {
                     <i class='lni-layers'></i>
                   </span>
                   <div class='text1'>
-                    <h4>DOCUMENT TEMPLATES</h4>
+                    <h4>Chu Kỳ Đơn Hàng</h4>
                     <p>
-                      Enjoy customizable templates for quotes, contracts, and
-                      invoices. Easily add your own branding.
+                      Cấu trúc quản lý chu kỳ một chiều giúp giảm thiểu sai sót
+                      trong quá trình chuẩn bị, giao đơn, trả đơn và thanh toán
+                      phí cho mỗi đơn hàng.
                     </p>
                   </div>
                 </div>
@@ -360,10 +378,11 @@ export default function HomePage() {
                     <i class='lni-calendar'></i>
                   </span>
                   <div class='text1'>
-                    <h4>Availability calendar</h4>
+                    <h4>Luôn Nâng Cấp</h4>
                     <p>
-                      Zoom in on specific products, spot potential conflicts,
-                      and quickly check availability for any date range.
+                      Từ đặt hẹn online, tạo mã giảm giá, cho đến nhiều tính
+                      năng mới luôn được cập nhật thường xuyên. Bởi vì cuộc sống
+                      luôn đổi mới, và công nghệ thông tin cũng vậy :-D
                     </p>
                   </div>
                 </div>
@@ -383,7 +402,7 @@ export default function HomePage() {
               id='price'
               data-wow-delay='0.3s'
             >
-              Pricing
+              Bảng Giá
             </h2>
             <div class='shape wow fadeInDown' data-wow-delay='0.3s'></div>
           </div>
@@ -708,7 +727,7 @@ export default function HomePage() {
         <div class='container'>
           <div class='section-header text-center'>
             <h2 class='section-title wow fadeInDown' data-wow-delay='0.3s'>
-              Contact US
+              Liên Hệ
             </h2>
             <div class='shape wow fadeInDown' data-wow-delay='0.3s'></div>
           </div>
@@ -729,7 +748,7 @@ export default function HomePage() {
                             class='form-control'
                             id='exampleInputEmail1'
                             aria-describedby='emailHelp'
-                            placeholder='Your Name'
+                            placeholder='Họ Và Tên'
                           />
                         </div>
                         <div class='form-group'>
@@ -738,7 +757,7 @@ export default function HomePage() {
                             class='form-control'
                             id='exampleInputEmail1'
                             aria-describedby='emailHelp'
-                            placeholder='Your email'
+                            placeholder='Email của bạn là gì?'
                           />
                         </div>
                         <div class='form-group'>
@@ -747,18 +766,18 @@ export default function HomePage() {
                             class='form-control'
                             id='exampleInputEmail1'
                             aria-describedby='emailHelp'
-                            placeholder='Your Phone Number'
+                            placeholder='Số Điện Thoại của bạn?'
                           />
                         </div>
                         <textarea
                           class='contactfieldarea'
                           type='text1'
                           name='msg'
-                          placeholder='Your Message'
+                          placeholder='Tin nhắn cho chúng tôi. Thử "Sutygon-Bot thật là tuyệt vời!"'
                           required=''
                         ></textarea>
                         <button type='submit' class='btn1 btn1-common'>
-                          Submit
+                          Gửi Tin Nhắn
                         </button>
                       </form>
                     </div>
@@ -770,7 +789,7 @@ export default function HomePage() {
               <div class='map h-100'>
                 <object
                   style={{ border: '0', height: '100%', width: '100%' }}
-                  data='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d34015.943594576835!2d-106.43242624069771!3d31.677719472407432!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86e75d90e99d597b%3A0x6cd3eb9a9fcd23f1!2sCourtyard+by+Marriott+Ciudad+Juarez!5e0!3m2!1sen!2sbd!4v1533791187584'
+                  data='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d265.86971216709503!2d108.22082824627441!3d16.073603906033025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421830c46676cf%3A0xce6fa96861311b1f!2zNzZiIE5ndXnhu4VuIENow60gVGhhbmgsIEjhuqNpIENow6J1IDEsIEjhuqNpIENow6J1LCDEkMOgIE7hurVuZyA1NTAwMDAsIFZpZXRuYW0!5e0!3m2!1sen!2sus!4v1615185158496!5m2!1sen!2sus'
                 ></object>
               </div>
             </div>
@@ -789,7 +808,8 @@ export default function HomePage() {
                   </h3>
                   <div class='textwidget'>
                     <p>
-                      Approved by Calum Nguyen <br /> on 12-16-2020.
+                      Thiết Kế & Lập Trình <br />
+                      Calum Nguyen
                     </p>
                   </div>
                   <div class='social-icon'>
@@ -809,60 +829,59 @@ export default function HomePage() {
                 </div>
               </div>
               <div class='col-lg-3 col-md-6 col-sm-12 col-xs-12'>
-                <h3 class='footer-titel'>Products</h3>
+                <h3 class='footer-titel'>Khách Hàng</h3>
                 <ul class='footer-link'>
                   <li>
-                    <a href='#'>Tracking</a>
-                  </li>
-                  <li>
-                    <a href='#'>Application</a>
-                  </li>
-                  <li>
-                    <a href='#'>Resource Planning</a>
-                  </li>
-                  <li>
-                    <a href='#'>Enterprise</a>
-                  </li>
-                </ul>
-              </div>
-              <div class='col-lg-3 col-md-6 col-sm-12 col-xs-12'>
-                <h3 class='footer-titel'>Resources</h3>
-                <ul class='footer-link'>
-                  <li>
-                    <AnchorLink href='#price'>Payment Options</AnchorLink>
-                  </li>
-                  <li>
-                    <a href='https://www.sutygon.app/login'>Getting Started</a>
-                  </li>
-                  <li>
-                    <a href='https://www.sutygon.app/login'>
-                      Identity Verification
+                    <a href='https://www.dropscandies.com/' target='_blank'>
+                      Drops USA
                     </a>
                   </li>
                   <li>
-                    <a href='https://www.sutygon.app/login'>
-                      Card Verification
+                    <a href='https://www.the-interpreter.org/' target='_blank'>
+                      The-Intepretor
+                    </a>
+                  </li>
+                  <li>
+                    <a href='https://www.sutygon.com/' target='_blank'>
+                      Trang Phục Biểu Diễn Sutygôn
                     </a>
                   </li>
                 </ul>
               </div>
               <div class='col-lg-3 col-md-6 col-sm-12 col-xs-12'>
-                <h3 class='footer-titel'>Contact</h3>
+                <h3 class='footer-titel'>Thông Tin</h3>
+                <ul class='footer-link'>
+                  <li>
+                    <a href='#'>Câu Hỏi Thường Gặp</a>
+                  </li>
+                  <li>
+                    <a href='#'>Phương Thức Thanh Toán</a>
+                  </li>
+                  <li>
+                    <a href='#'>Trở Thành Nhà Đầu Tư</a>
+                  </li>
+                  {/* <li>
+                  <a href='#'>sds</a>
+                  </li> */}
+                </ul>
+              </div>
+              <div class='col-lg-3 col-md-6 col-sm-12 col-xs-12'>
+                <h3 class='footer-titel'>Liên Hệ</h3>
                 <ul class='address'>
                   <li>
                     <a href='#'>
-                      <i class='lni-map-marker'></i> 105 Madison Avenue - Third
-                      Floor New York, NY 10016
+                      <i class='lni-map-marker'></i> 76B Nguyễn Chí Thanh, Hải
+                      Châu, Đà Nẵng.
                     </a>
                   </li>
                   <li>
                     <a href='#'>
-                      <i class='lni-phone-handset'></i> P: +84 846 250 592
+                      <i class='lni-phone-handset'></i> P: +84 905 923 149
                     </a>
                   </li>
                   <li>
                     <a href='#'>
-                      <i class='lni-envelope'></i> E: contact@sutygon.com
+                      <i class='lni-envelope'></i> E: supervisor@sutygon.com
                     </a>
                   </li>
                 </ul>
@@ -876,15 +895,15 @@ export default function HomePage() {
               <div class='col-md-12'>
                 <div class='copyright-content'>
                   <p>
-                    Ownership of{' '}
+                    Bản Quyền
                     <a
                       class='px-2'
                       rel='nofollow'
                       href='https://www.sutygon.app/login'
                     >
-                      SUTYGON-BOT
-                    </a>{' '}
-                    All Right Reserved
+                      SUTYGON-BOT.
+                    </a>
+                    Cập Nhật {thisYear}.
                   </p>
                 </div>
               </div>
