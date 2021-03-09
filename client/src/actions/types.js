@@ -184,3 +184,6 @@ export const Admin_ERROR = 'Admin_ERROR'
 export const GET_Admins = 'GET_Admins'
 export const GET_Admin = 'GET_Admin'
 export const Admins_LOADING = 'Admins_LOADING'
+
+//Custom Actions
+export const UPDATE_TOGGLE_STATUS = 'UPDATE_TOGGLE_STATUS';

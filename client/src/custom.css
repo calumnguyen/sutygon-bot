@@ -1,3 +1,8 @@
+:root {
+  --sidebar-width: 200px;
+  --toggler-size: 30px;
+  --toggle-button-zindex: 100;
+}
 .input-div {
   position: relative;
   overflow: hidden;
@@ -186,4 +191,89 @@ margin-bottom: 0 !important;
 }
 .badge-category{
 border-radius: 3px; padding:5px; font-size:medium;cursor:pointer; box-shadow: 0px; border:black
+}
+
+/* CSS FOR MENU TOGGLE */
+.menu-toggler {
+  display: block;
+  width: var(--toggler-size);
+  height: var(--toggler-size);
+  position: absolute;
+  top: 23px;
+  left: 20px;
+  cursor: pointer;
+  z-index: var(--toggle-button-zindex);
+}
+
+.menu-toggler__line {
+  height: calc(var(--toggler-size) / 5);
+  background: #009da0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  transition-property: transform, opacity;
+  transition-duration: 0.5s, 0.25s;
+  transition-delay: 0s, 0.5s;
+  animation-name: slidein;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-out;
+}
+
+.input-toggler:checked ~ .menu-toggler .menu-toggler__line {
+  transition-delay: 0.25s, 0s;
+}
+
+.menu-toggler__line:nth-child(2) {
+  top: calc(var(--toggler-size) / 5 * 2);
+  animation-duration: 0.6s;
+}
+
+.menu-toggler__line:nth-child(3) {
+  top: calc(var(--toggler-size) / 5 * 4);
+  animation-duration: 0.7s;
+}
+
+.input-toggler {
+  display: none;
+}
+
+.input-toggler:checked ~ .menu-toggler .menu-toggler__line {
+  background: #ffffff;
+  transition: 0.3s ease-in-out;
+}
+
+.input-toggler:checked ~ .menu-toggler .menu-toggler__line:nth-child(1) {
+  transform: translateY(calc(var(--toggler-size) / 5 * 2)) rotate(45deg);
+}
+
+.input-toggler:checked ~ .menu-toggler .menu-toggler__line:nth-child(2) {
+  opacity: 0;
+}
+
+.input-toggler:checked ~ .menu-toggler .menu-toggler__line:nth-child(3) {
+  transform: translateY(calc(var(--toggler-size) / 5 * -2)) rotate(-45deg);
+}
+/* Toggle button  */
+.sidebar-desktop {
+  display: block;
+}
+.menuBarToggleButton {
+  display: none;
+}
+.sidebar-mobiles {
+  display: none;
+}
+
+/* Media query for toggle button */
+@media screen and (max-width: 991px) {
+  .menuBarToggleButton {
+    display: block;
+  }
+  .sidebar-desktop {
+    display: none;
+  }
+  .sidebar-mobiles {
+    display: block;
+  }
 }
