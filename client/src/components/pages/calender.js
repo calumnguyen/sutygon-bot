@@ -44,53 +44,53 @@ class Calender extends Component {
   };
 
   async componentDidMount() {
-    await this.props.getAllEvents();
-    await this.props.getAllBirthdayEvents();
+    //await this.props.getAllEvents();
+    //await this.props.getAllBirthdayEvents();
 
-    const { events } = this.props;
-    const { b_events } = this.props;
-    const m_bevents = [];
+    // const { events } = this.props;
+    // const { b_events } = this.props;
+    // const m_bevents = [];
 
-    b_events &&
-      b_events.forEach((event) => {
-        const new_Date =
-          new Date(event.date).getFullYear() +
-          "-" +
-          ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(-2) +
-          "-" +
-          ("0" + (Number(new Date(event.birthdate).getDate()) - 1)).slice(-2) +
-          "T22:20:52.000Z";
-        m_bevents.push({
-          date: new_Date,
-          timeStart: event.timeStart,
-          timeEnd: event.timeEnd,
-          name: `${event.name}'s ${this.calculate_age(
-            event.birthdate
-          )} Birthday Aniversary`,
-          note: event.note,
-          location: event.location,
-          _id: "",
-          type: "birthdayEvent",
-          timeStart: event.timeStart,
-          timeEnd: event.timeEnd,
-        });
-      });
-    let c_events = [];
-    let updatedEvents = [...m_bevents, ...events];
-    if (updatedEvents) {
-      c_events = updatedEvents.map((event) => ({
-        title: event.name,
-        start: new Date(event.date),
-        end: new Date(event.date),
-        id: event._id,
-      }));
-    }
+    // b_events &&
+    //   b_events.forEach((event) => {
+    //     const new_Date =
+    //       new Date(event.date).getFullYear() +
+    //       "-" +
+    //       ("0" + (Number(new Date(event.birthdate).getMonth()) + 1)).slice(-2) +
+    //       "-" +
+    //       ("0" + (Number(new Date(event.birthdate).getDate()) - 1)).slice(-2) +
+    //       "T22:20:52.000Z";
+    //     m_bevents.push({
+    //       date: new_Date,
+    //       timeStart: event.timeStart,
+    //       timeEnd: event.timeEnd,
+    //       name: `${event.name}'s ${this.calculate_age(
+    //         event.birthdate
+    //       )} Birthday Aniversary`,
+    //       note: event.note,
+    //       location: event.location,
+    //       _id: "",
+    //       type: "birthdayEvent",
+    //       timeStart: event.timeStart,
+    //       timeEnd: event.timeEnd,
+    //     });
+    //   });
+    // let c_events = [];
+    // let updatedEvents = [...m_bevents, ...events];
+    // if (updatedEvents) {
+    //   c_events = updatedEvents.map((event) => ({
+    //     title: event.name,
+    //     start: new Date(event.date),
+    //     end: new Date(event.date),
+    //     id: event._id,
+    //   }));
+    // }
 
-    if (events) {
-      this.setState({
-        events: c_events,
-      });
-    }
+    // if (events) {
+    //   this.setState({
+    //     events: c_events,
+    //   });
+    // }
   }
   calculate_age = (dob1) => {
     var today = new Date();
