@@ -299,7 +299,9 @@ border-radius: 3px; padding:5px; font-size:medium;cursor:pointer; box-shadow: 0p
   line-height: 1.2;
   margin: 14px;
 }
-
+.footer{
+  text-align:center;
+}
 @media only screen and (max-width:767px){
   .store-text{
     font-size: 15px;
