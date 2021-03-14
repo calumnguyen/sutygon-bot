@@ -302,6 +302,31 @@ border-radius: 3px; padding:5px; font-size:medium;cursor:pointer; box-shadow: 0p
 .footer{
   text-align:center;
 }
+.desktop{
+  display: block;
+}
+.mobile{
+  display: none;
+}
+.text-card-repair{
+  color: #0093e9;
+  font-size: 85% !important;
+  font-weight: bold;
+  margin-left: .2rem;
+  text-align: center;
+  font-family: "Open Sans", sans-serif;
+  text-transform: uppercase;
+}
+#colors_box .color-row-style{
+  width: 95%;
+  padding-left: 25px;
+  padding-right: 10px;
+}
+#colors_box .size-row-style{
+  width: 95%;
+  padding-left: 40px;
+  padding-right: 10px;
+}
 @media only screen and (max-width:767px){
   .store-text{
     font-size: 15px;
@@ -316,9 +341,10 @@ border-radius: 3px; padding:5px; font-size:medium;cursor:pointer; box-shadow: 0p
     height: 40%;
     position: fixed !important;
     width: 90%;
+    margin-left: 10px !important;
   }
   .custom_row{
-    margin-top: 17.5rem !important;
+    margin-top: 3rem !important;
   }
   .card-dashboard-store{
     width: 150px;
@@ -332,5 +358,26 @@ border-radius: 3px; padding:5px; font-size:medium;cursor:pointer; box-shadow: 0p
   .loginBox{
     width: 150%;
     margin-left: -45px;
+  }
+  .desktop{
+    display: none;
+  }
+  .mobile{
+    display: block;
+  }
+  .s-input{
+    width: 100%;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  #colors_box .color-row .left{
+    width: 85%;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  #colors_box .sizes_box .left{
+    width: 85%;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }

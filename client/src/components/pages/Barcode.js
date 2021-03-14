@@ -303,6 +303,9 @@ class Barcode extends Component {
           dataField: 'product',
           text: 'Tên Sản Phẩm',
           sort: true,
+          headerStyle: (colum, colIndex) => {
+              return { 'white-space' : 'nowrap' };
+          }
         },
         this.state.dataType === 'with_barcode'
           ? {

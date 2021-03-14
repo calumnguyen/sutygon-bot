@@ -69,13 +69,13 @@ const List = {
       icons: "ft-activity",
       name: "Returnproduct",
     },
-    {
-      id: 9,
-      title: "Lịch",
-      url: "calender",
-      icons: "ft-calendar",
-      name: "Calender",
-    },
+    // {
+    //   id: 9,
+    //   title: "Lịch",
+    //   url: "calender",
+    //   icons: "ft-calendar",
+    //   name: "Calender",
+    // },
     {
       id: 10,
       title: "Báo Cáo Thống Kê",

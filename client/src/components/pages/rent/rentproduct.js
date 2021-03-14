@@ -232,7 +232,7 @@ class RentProduct extends Component {
                       <div className='card-header'>
                         <h4 className='card-title'>Thuê Đồ</h4>
                       </div>
-                      <div className='card-content'>
+                      <div className='card-content desktop'>
                         <div className='card-body table-responsive'>
                           <form onSubmit={(e) => this.onSubmitCustomer(e)}>
                             <div className='form-group'>
@@ -266,6 +266,13 @@ class RentProduct extends Component {
                               ? this.NoCustomerBox()
                               : ''}
                           </form>
+                        </div>
+                      </div>
+                      <div className='card-content mobile'>
+                        <div className='card-body table-responsive'>
+                          <h3>
+                            Tính năng này vẫn chưa được hỗ trợ trên điện thoại.
+                          </h3>
                         </div>
                       </div>
                     </div>
