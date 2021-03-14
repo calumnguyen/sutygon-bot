@@ -779,10 +779,13 @@ class Barcode extends Component {
                             </tr>
                           </thead>
                           <tbody>*/}
-                        {this.getTable()}
+                        {/* {this.getTable()} */}
                         {/* </tbody>
                           <tbody></tbody>
                         </table>  */}
+                        <div className="overflow-x-scroll">
+                          {this.getTable()}
+                        </div>
                       </div>
                     </div>
                   </div>

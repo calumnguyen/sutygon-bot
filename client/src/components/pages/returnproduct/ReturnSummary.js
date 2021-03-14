@@ -191,7 +191,7 @@ class ReturnSummary extends Component {
       <>
         <div id="sizes_box" key={b_index}>
           <div className="row">
-            <div style={{ float: "left", width: "90%" }}>
+            <div style={{ float: "left", width: "90%" }} className="overflow-x-scroll">
               <table
                 className="table table-bordered table-light"
                 style={{

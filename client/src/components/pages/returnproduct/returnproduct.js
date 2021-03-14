@@ -418,7 +418,9 @@ console.log("productarray",productarray)
                                       {this.state.returningOrder &&
                                       this.state.returningOrder.length > 0 ? (
                                         <div className='col-md-12'>
-                                          {this.orderTable()}
+                                          <div className="overflow-x-scroll">
+                                            {this.orderTable()}
+                                          </div>
                                         </div>
                                       ) : (
                                         // this.CutomerBox()

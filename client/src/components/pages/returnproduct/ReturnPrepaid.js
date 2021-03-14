@@ -221,24 +221,26 @@ class ReturnPrepaid extends Component {
         <div id='sizes_box' key={b_index}>
           <div className='row'>
             <div style={{ float: 'left', width: '90%' }}>
-              <table
-                className='table table-bordered table-light'
-                style={{
-                  borderWidth: '1px',
-                  borderColor: '#aaaaaa',
-                  borderStyle: 'solid',
-                }}
-              >
-                <thead></thead>
-                <tbody>
-                  <tr key={b_index} style={{ margin: '3px' }}>
-                    <td className='text-center'>{b[0].barcode}</td>
-                    <td className='text-center'>{b[0].title}</td>
-                    <td className='text-center'>{b[0].color}</td>
-                    <td className='text-center'>{b[0].price}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="overflow-x-scroll">
+                <table
+                  className='table table-bordered table-light'
+                  style={{
+                    borderWidth: '1px',
+                    borderColor: '#aaaaaa',
+                    borderStyle: 'solid',
+                  }}
+                >
+                  <thead></thead>
+                  <tbody>
+                    <tr key={b_index} style={{ margin: '3px' }}>
+                      <td className='text-center'>{b[0].barcode}</td>
+                      <td className='text-center'>{b[0].title}</td>
+                      <td className='text-center'>{b[0].color}</td>
+                      <td className='text-center'>{b[0].price}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div className='right ml-2'>
               <button
@@ -282,7 +284,7 @@ class ReturnPrepaid extends Component {
       <>
         <div id='sizes_box' key={m_product_index}>
           <div className='row'>
-            <div style={{ float: 'left', width: '90%' }}>
+            <div style={{ float: 'left', width: '90%' }} className="overflow-x-scroll">
               <table
                 className='table table-bordered table-light'
                 style={{

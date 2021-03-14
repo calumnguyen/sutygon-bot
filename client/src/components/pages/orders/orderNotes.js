@@ -332,7 +332,7 @@ class OrderNotes extends Component {
                                 // <div>loading....</div>
                                 <Spinner />
                               ) : (
-                                this.alterNotesTable()
+                                <div className="overflow-x-scroll">{this.alterNotesTable()}</div>
                               )}
                             </div>
                           </div>

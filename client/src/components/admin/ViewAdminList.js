@@ -261,24 +261,26 @@ class ViewAdminList extends Component {
                             </div>
                             <Alert />
                             <OCAlertsProvider />
+                            <div className="overflow-x-scroll">
                             <table className="table">
-                              <thead>
-                                <tr>
-                                  <th className="text-center">Avatar</th>
-                                  <th className="text-center">Full Name</th>
-                                  <th className="text-center">
-                                    Contact Number
-                                  </th>
-                                  <th className="text-center">Company Name</th>
-                                  <th className="text-center">
-                                    Company Address
-                                  </th>
-                                  <th className="text-center">Status</th>
-                                  <th className="text-center">Update</th>
-                                </tr>
-                              </thead>
-                              <tbody>{this.getTAble()}</tbody>
-                            </table>
+                                <thead>
+                                  <tr>
+                                    <th className="text-center">Avatar</th>
+                                    <th className="text-center">Full Name</th>
+                                    <th className="text-center">
+                                      Contact Number
+                                    </th>
+                                    <th className="text-center">Company Name</th>
+                                    <th className="text-center">
+                                      Company Address
+                                    </th>
+                                    <th className="text-center">Status</th>
+                                    <th className="text-center">Update</th>
+                                  </tr>
+                                </thead>
+                                <tbody>{this.getTAble()}</tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>

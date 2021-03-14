@@ -320,7 +320,7 @@ class RentOrder extends Component {
     return this.state.product_Array.map((product, b_index) => (
       <div id='sizes_box'>
         <div className='row'>
-          <div className='left'>
+          <div className='left overflow-x-scroll'>
             <table
               className='table table-bordered table-light'
               style={{

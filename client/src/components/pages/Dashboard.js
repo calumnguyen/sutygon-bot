@@ -394,8 +394,8 @@ class Dashboard extends Component {
                   {user && user.systemRole === "superadmin" ? (
                     ''
                   ) :
-                    <div className="col-md-5 alert_box col-sm-3">
-                      <div className="card card-alert gradient-light-blue-indigo">
+                    <div className="col-md-5 alert_box">
+                      <div className="card card-alert gradient-light-blue-indigo hide-overflow-scrollbar">
                         {this.state.currenWeekEvents &&
                           this.state.currenWeekEvents.length > 0 &&
                           this.state.currenWeekEvents

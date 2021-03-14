@@ -569,7 +569,7 @@ class ViewOrder extends Component {
                           </h4>
                           <div className='row'>
                             <div className='col-md-12'>
-                              {this.orderItemsTable()}
+                              <div className="overflow-x-scroll">{this.orderItemsTable()}</div>
                             </div>
                           </div>
                         </form>
@@ -586,7 +586,9 @@ class ViewOrder extends Component {
                           </h4>
                           <div className='row'>
                             <div className='col-md-12'>
-                              {this.authorizationLogsTable()}
+                              <div className="overflow-x-scroll">
+                                {this.authorizationLogsTable()}
+                              </div>
                             </div>
                           </div>
                         </form>
@@ -601,7 +603,9 @@ class ViewOrder extends Component {
                           </h4>
                           <div className='row'>
                             <div className='col-md-12'>
-                              {this.payAmountStepLogs()}
+                              <div className="overflow-x-scroll">
+                                {this.payAmountStepLogs()}
+                              </div>
                             </div>
                           </div>
                         </form>

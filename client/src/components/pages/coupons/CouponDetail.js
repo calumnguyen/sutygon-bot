@@ -428,31 +428,33 @@ class CouponDetail extends Component {
                         </div>
                         <div className='card-content'>
                           <div className='card-body'>
-                            <table class='table'>
-                              <thead>
-                                <tr>
-                                  <th scope='col'>STT</th>
-                                  <th scope='col'>Đơn Hàng #</th>
-                                  <th scope='col'>Khách Hàng</th>
-                                  <th scope='col'>Trạng Thái</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {coupon &&
-                                  coupon.used_orders.map((i, index) => (
-                                    <tr>
-                                      <th key={index} scope='row'>
-                                        {index + 1}
-                                      </th>
-                                      <td>{i.orderNumber}</td>
-                                      <td>
-                                        {i.customer ? i.customer.name : ''}
-                                      </td>
-                                      <td>{i.status}</td>
-                                    </tr>
-                                  ))}
-                              </tbody>
-                            </table>
+                            <div className="overflow-x-scroll">
+                              <table class='table'>
+                                <thead>
+                                  <tr>
+                                    <th scope='col'>STT</th>
+                                    <th scope='col'>Đơn Hàng #</th>
+                                    <th scope='col'>Khách Hàng</th>
+                                    <th scope='col'>Trạng Thái</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {coupon &&
+                                    coupon.used_orders.map((i, index) => (
+                                      <tr>
+                                        <th key={index} scope='row'>
+                                          {index + 1}
+                                        </th>
+                                        <td>{i.orderNumber}</td>
+                                        <td>
+                                          {i.customer ? i.customer.name : ''}
+                                        </td>
+                                        <td>{i.status}</td>
+                                      </tr>
+                                    ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>
