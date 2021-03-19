@@ -20,7 +20,8 @@ router.get(
         .verifications
         .create({
             to: `+${req.query.phonenumber}`,
-            channel: 'sms'
+            channel: 'sms',
+            
         })
         .then(data => {
             res.status(200).send(data);
@@ -47,16 +48,12 @@ router.get(
         })
 
         .then(data => {
-            setTimeout(function(){
            res.status(200).send(data);
-        }, 500);
 
         })
         .catch((error) => {
-            setTimeout(function(){
             res.status(500).json({ errors: error});
           });
-        }, 510);
       
 })
 
