@@ -1004,7 +1004,7 @@ class AddCustomer extends Component {
                 </button>
               </div>
 
-              <div className='modal-body'>
+              <div className='modal-body overflow-x-scroll'>
                 <table className='table table-bordered table-striped'>
                   <thead> </thead>
                   <tbody>

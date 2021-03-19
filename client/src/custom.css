@@ -265,6 +265,24 @@ border-radius: 3px; padding:5px; font-size:medium;cursor:pointer; box-shadow: 0p
   display: none;
 }
 
+.react-bootstrap-table, .overflow-x-scroll{
+  overflow-x: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-overflow-scrollbar{
+  overflow: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.overflow-x-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.react-bootstrap-table::-webkit-scrollbar, .hide-overflow-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Media query for toggle button */
 @media screen and (max-width: 991px) {
   .menuBarToggleButton {
@@ -275,5 +293,91 @@ border-radius: 3px; padding:5px; font-size:medium;cursor:pointer; box-shadow: 0p
   }
   .sidebar-mobiles {
     display: block;
+  }
+}
+.store-text{
+  line-height: 1.2;
+  margin: 14px;
+}
+.footer{
+  text-align:center;
+}
+.desktop{
+  display: block;
+}
+.mobile{
+  display: none;
+}
+.text-card-repair{
+  color: #0093e9;
+  font-size: 85% !important;
+  font-weight: bold;
+  margin-left: .2rem;
+  text-align: center;
+  font-family: "Open Sans", sans-serif;
+  text-transform: uppercase;
+}
+#colors_box .color-row-style{
+  width: 95%;
+  padding-left: 25px;
+  padding-right: 10px;
+}
+#colors_box .size-row-style{
+  width: 95%;
+  padding-left: 40px;
+  padding-right: 10px;
+}
+@media only screen and (max-width:767px){
+  .store-text{
+    font-size: 15px;
+    margin: 0 10px;
+    line-height: 1.2;
+  }
+  .card-alert{
+    z-index: 2;
+    border-radius: 25px !important;
+    max-height: 40%;
+    overflow-y: scroll;
+    height: 40%;
+    position: fixed !important;
+    width: 90%;
+    margin-left: 10px !important;
+  }
+  .custom_row{
+    margin-top: 3rem !important;
+  }
+  .card-dashboard-store{
+    width: 150px;
+  }
+  .card-dashboard-store > .fa{
+    margin-left: 1rem;
+  }
+  .btn-store{
+    margin-right: 0px;
+  }
+  .loginBox{
+    width: 150%;
+    margin-left: -45px;
+  }
+  .desktop{
+    display: none;
+  }
+  .mobile{
+    display: block;
+  }
+  .s-input{
+    width: 100%;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  #colors_box .color-row .left{
+    width: 85%;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  #colors_box .sizes_box .left{
+    width: 85%;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }

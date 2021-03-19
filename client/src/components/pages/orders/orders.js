@@ -479,7 +479,9 @@ class Orders extends Component {
                             {this.state.loading ? (
                               <Spinner />
                             ) : (
-                              this.orderTable()
+                              <div className="overflow-x-scroll">
+                                {this.orderTable()}
+                              </div>
                             )}
                           </div>
                         </div>

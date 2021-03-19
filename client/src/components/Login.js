@@ -146,7 +146,7 @@ class Login extends Component {
                                   height="230"
                                 ></img>
                               </div>
-                              <div className="col-lg-6 col-md-12 bg-white px-4 pt-3">
+                              <div className="col-lg-6 col-md-12 bg-white px-4 pt-3 loginBox">
                                 <div className="logo-img text-center align-middle">
                                   <img
                                     alt={"Sutygon-bot"}

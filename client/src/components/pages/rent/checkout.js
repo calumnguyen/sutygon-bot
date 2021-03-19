@@ -446,35 +446,37 @@ class Checkout extends Component {
                 Ngày Thuê Của Khách :{' '}
                 {this.state.myRantDate ? this.state.myRantDate : ''}
               </h3>
-              <table
-                className='table table-bordered table-light'
-                style={{
-                  borderWidth: '1px',
-                  borderColor: '#aaaaaa',
-                  borderStyle: 'solid',
-                }}
-              >
-                <thead>
-                  <th className='text-center'>Đơn Hàng #</th>
-                  <th className='text-center'>Ngày Trả</th>
-                </thead>
-                <tbody>
-                  <tr style={{ margin: '3px' }}>
-                    <td className='text-center'>
-                      {this.state.getOrder
-                        ? this.state.getOrder.orderNumber
-                        : ''}
-                    </td>
-                    <td className='text-center'>
-                      {this.state.getOrder
-                        ? moment(this.state.getOrder.returnDate).format(
-                            'DD-MM-YYYY'
-                          )
-                        : ''}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="overflow-x-scroll">
+                <table
+                  className='table table-bordered table-light'
+                  style={{
+                    borderWidth: '1px',
+                    borderColor: '#aaaaaa',
+                    borderStyle: 'solid',
+                  }}
+                >
+                  <thead>
+                    <th className='text-center'>Đơn Hàng #</th>
+                    <th className='text-center'>Ngày Trả</th>
+                  </thead>
+                  <tbody>
+                    <tr style={{ margin: '3px' }}>
+                      <td className='text-center'>
+                        {this.state.getOrder
+                          ? this.state.getOrder.orderNumber
+                          : ''}
+                      </td>
+                      <td className='text-center'>
+                        {this.state.getOrder
+                          ? moment(this.state.getOrder.returnDate).format(
+                              'DD-MM-YYYY'
+                            )
+                          : ''}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               <h1 id='transition-modal-description' className='text-center'>
                 {this.state.errormsg}
               </h1>

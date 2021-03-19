@@ -204,20 +204,23 @@ class ViewCoupons extends Component {
                                 products_total={this.props.coupons_total}
                               />
                             )}
-                            <table className="table">
-                              <thead>
-                                <tr>
-                                  <th className="text-center">STT</th>
-                                  <th className="text-center">Giảm Giá</th>
-                                  <th className="text-center">Mã</th>
-                                  <th className="text-center">Tổng Lược Xài</th>
-                                  <th className="text-center">Trạng Thái</th>
-                                  <th className="text-center">Hành Động</th>
-                                </tr>
-                              </thead>
 
-                              <tbody>{this.getTAble()}</tbody>
-                            </table>
+                            <div className="overflow-x-scroll">
+                              <table className='table'>
+                                <thead>
+                                  <tr>
+                                    <th className='text-center'>STT</th>
+                                    <th className='text-center'>Giảm Giá</th>
+                                    <th className='text-center'>Mã</th>
+                                    <th className='text-center'>Tổng Lược Xài</th>
+                                    <th className='text-center'>Trạng Thái</th>
+                                    <th className='text-center'>Hành Động</th>
+                                  </tr>
+                                </thead>
+
+                                <tbody>{this.getTAble()}</tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>

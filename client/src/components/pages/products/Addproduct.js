@@ -140,8 +140,7 @@ class AddProduct extends Component {
       color.map((color) => (
         <div className='row color-row' key={color._id || color._id}>
           <div
-            className='left'
-            style={{ width: '95%', paddingLeft: '25px', paddingRight: '10px' }}
+            className='left color-row-style'
           >
             <div className='form-group'>
               <input
@@ -226,12 +225,7 @@ class AddProduct extends Component {
         <div className='sizes_box' key={size.id}>
           <div className='row'>
             <div
-              className='left'
-              style={{
-                width: '95%',
-                paddingLeft: '40px',
-                paddingRight: '10px',
-              }}
+              className='left size-row-style'
             >
               <input
                 type='text'

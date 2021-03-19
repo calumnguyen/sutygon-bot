@@ -38,12 +38,12 @@ class Dashboard extends Component {
     await this.props.getAllRentedProducts();
     await this.props.getAllProducts();
     await this.props.getShop();
-    await this.props.getAllEvents();
-    await this.props.getAllBirthdayEvents();
+    //await this.props.getAllEvents();
+    //await this.props.getAllBirthdayEvents();
 
-    const { r_events } = this.props;
-    this.setState({ removedevents: r_events });
-    await this.getEvents();
+    // const { r_events } = this.props;
+    // this.setState({ removedevents: r_events });
+    // await this.getEvents();
   }
   // async componentDidUpdate(prevProps, prevState) {
   //   const { auth } = this.props;
@@ -364,7 +364,7 @@ class Dashboard extends Component {
                                 {alterations ? alterations : 0}
                               </div>
                             </div>
-                            <div className="text-card-repair">
+                            <div className="text-card">
                               <span> Đơn Hàng Cần Sửa Đồ</span>{" "}
                             </div>
                           </div>{" "}
@@ -388,7 +388,7 @@ class Dashboard extends Component {
                                 {today_order ? today_order : 0}
                               </div>{" "}
                             </div>
-                            <div className="text-card-repair">
+                            <div className="text-card">
                               <span> Đơn Hàng Mới Hôm Nay</span> <br />{" "}
                             </div>
                           </div>
@@ -397,11 +397,13 @@ class Dashboard extends Component {
                     </div>
                   )}
 
-                  {user && user.systemRole === "superadmin" ? (
-                    ""
-                  ) : (
-                    <div className="col-md-5 alert_box col-sm-3">
-                      <div className="card card-alert gradient-light-blue-indigo">
+
+                  {/* {user && user.systemRole === "superadmin" ? (
+                    ''
+                  ) :
+                    <div className="col-md-5 alert_box">
+                      <div className="card card-alert gradient-light-blue-indigo hide-overflow-scrollbar">
+
                         {this.state.currenWeekEvents &&
                           this.state.currenWeekEvents.length > 0 &&
                           this.state.currenWeekEvents
@@ -460,8 +462,8 @@ class Dashboard extends Component {
                               );
                             })}
                       </div>
-                    </div>
-                  )}
+
+                    </div>} */}
                 </div>
 
                 {user && user.systemRole === "Admin" ? (

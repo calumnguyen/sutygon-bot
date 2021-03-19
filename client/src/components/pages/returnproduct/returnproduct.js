@@ -351,7 +351,7 @@ console.log("productarray",productarray)
                         <h4 className='form-section'>Trả Đồ</h4>
                       </div>
 
-                      <div className='card-body table-responsive'>
+                      <div className='card-body table-responsive desktop'>
                         <div className='card-body table-responsive'>
                           <form onSubmit={(e) => this.onSubmitCustomer(e)}>
                             <div className='form-group'>
@@ -418,7 +418,9 @@ console.log("productarray",productarray)
                                       {this.state.returningOrder &&
                                       this.state.returningOrder.length > 0 ? (
                                         <div className='col-md-12'>
-                                          {this.orderTable()}
+                                          <div className="overflow-x-scroll">
+                                            {this.orderTable()}
+                                          </div>
                                         </div>
                                       ) : (
                                         // this.CutomerBox()
@@ -538,6 +540,14 @@ console.log("productarray",productarray)
                           </div>
                         </div>
                       </div>
+                      <div className='card-content mobile'>
+                        <div className='card-body table-responsive'>
+                          <h3>
+                            Tính năng này vẫn chưa được hỗ trợ trên điện thoại.
+                          </h3>
+                        </div>
+                      </div>
+                    
                     </div>
                   </div>
                 </section>

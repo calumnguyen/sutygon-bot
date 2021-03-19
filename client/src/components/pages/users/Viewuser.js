@@ -304,20 +304,22 @@ class ViewUser extends Component {
                             </div>
                             <Alert />
                             <OCAlertsProvider />
-                            <table className='table'>
-                              <thead>
-                                <tr>
-                                  <th className='text-center'>Ảnh Đại Diện</th>
-                                  <th className='text-center'>Mã Nhân Viên</th>
-                                  <th className='text-center'>Họ & Tên</th>
-                                  <th className='text-center'>Chức Danh</th>
-                                  <th className='text-center'>Cài Đặt</th>
-                                  <th className='text-center'>Trạng Thái</th>
-                                  <th className='text-center'>Xem/Cập Nhật</th>
-                                </tr>
-                              </thead>
-                              <tbody>{this.getTAble()}</tbody>
-                            </table>
+                            <div className="overflow-x-scroll">
+                              <table className='table'>
+                                <thead>
+                                  <tr>
+                                    <th className='text-center'>Ảnh Đại Diện</th>
+                                    <th className='text-center'>Mã Nhân Viên</th>
+                                    <th className='text-center'>Họ & Tên</th>
+                                    <th className='text-center'>Chức Danh</th>
+                                    <th className='text-center'>Cài Đặt</th>
+                                    <th className='text-center'>Trạng Thái</th>
+                                    <th className='text-center'>Xem/Cập Nhật</th>
+                                  </tr>
+                                </thead>
+                                <tbody>{this.getTAble()}</tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
                       </div>

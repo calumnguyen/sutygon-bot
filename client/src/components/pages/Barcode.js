@@ -303,6 +303,9 @@ class Barcode extends Component {
           dataField: 'product',
           text: 'Tên Sản Phẩm',
           sort: true,
+          headerStyle: (colum, colIndex) => {
+              return { 'white-space' : 'nowrap' };
+          }
         },
         this.state.dataType === 'with_barcode'
           ? {
@@ -779,10 +782,13 @@ class Barcode extends Component {
                             </tr>
                           </thead>
                           <tbody>*/}
-                        {this.getTable()}
+                        {/* {this.getTable()} */}
                         {/* </tbody>
                           <tbody></tbody>
                         </table>  */}
+                        <div className="overflow-x-scroll">
+                          {this.getTable()}
+                        </div>
                       </div>
                     </div>
                   </div>
