@@ -33,7 +33,7 @@ router.post(
         tags: req.body.tags,
         eligibility: req.body.eligibility,
         number_of_use_per_customer: req.body.number_of_use_per_customer,
-        createdBy: req.user.id,
+        createdBy: req.user.storeId,
       };
       if (req.body.min_requirement) {
         CouponBody["min_requirement"] = req.body.min_requirement;
@@ -141,7 +141,7 @@ router.post("/apply_coupon", auth, async (req, res) => {
   try {
     const { coupon_code, total, products, customerId } = req.body;
     // console.log(req.body);
-    const result = await Coupon.findOne({ code: coupon_code,createdBy:req.user.id });
+    const result = await Coupon.findOne({ code: coupon_code,createdBy:req.user.storeId });
 
     if (result == null) {
       return res.status(404).json({ msg: "No Coupon found" });
@@ -220,14 +220,14 @@ router.post("/:id", auth, async (req, res) => {
 router.post("/", auth, async (req, res) => {
   try {
     const new_date = new Date();
-    let query = { createdBy: req.user.id };
+    let query = { createdBy: req.user.storeId };
     if (req.body.coupon_status == "active") {
       query["coupon_status"] = "active";
       query["end_date"] = { $gt: new_date };
     }
     if (req.body.coupon_status == "inactive") {
       query = {
-        createdBy: req.user.id,
+        createdBy: req.user.storeId,
         $or: [{ end_date: { $lt: new_date } }, { coupon_status: "inactive" }],
       };
     }

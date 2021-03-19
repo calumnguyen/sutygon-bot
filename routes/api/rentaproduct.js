@@ -8,7 +8,8 @@ const { check, validationResult } = require("express-validator");
 const shortid = require("shortid");
 const moment = require("moment");
 const Coupon = require("../../models/Coupons");
-var mongoose = require('mongoose');
+const Store = require("../../models/Store");
+var mongoose = require("mongoose");
 
 // @route   POST api/rentedproducts/add
 // @desc    Add New Rented Product
@@ -57,7 +58,7 @@ router.post(
             pay: req.body.pay_amount,
           },
         ],
-         createdBy:req.user.id,
+        createdBy: req.user.storeId,
       });
       await rentedProduct.save();
       const { coupon_code } = req.body;
@@ -89,7 +90,7 @@ router.get("/countOrders", auth, async (req, res) => {
   try {
     const today = moment().startOf("day");
     const today_order = await RentedProduct.count({
-       createdBy:req.user.id,
+      createdBy: req.user.storeId,
       status: "pending",
       createdAt: {
         $gte: today.toDate(),
@@ -97,7 +98,7 @@ router.get("/countOrders", auth, async (req, res) => {
       },
     });
     const return_today = await RentedProduct.count({
-       createdBy:req.user.id,
+      createdBy: req.user.storeId,
       status: "active",
       returnDate: {
         $gte: today.toDate(),
@@ -106,7 +107,7 @@ router.get("/countOrders", auth, async (req, res) => {
     });
 
     const pickup_today = await RentedProduct.count({
-       createdBy:req.user.id,
+      createdBy: req.user.storeId,
       $or: [{ status: "pending" }, { status: "ready" }],
       rentDate: {
         $gte: today.toDate(),
@@ -115,19 +116,22 @@ router.get("/countOrders", auth, async (req, res) => {
     });
 
     const overdue_today = await RentedProduct.count({
-       createdBy:req.user.id,
+      createdBy: req.user.storeId,
       status: "active",
       returnDate: {
         $lte: today.toDate(),
       },
     });
     const alterations = await RentedProduct.count({
-       createdBy:req.user.id,
+      createdBy: req.user.storeId,
       status: "alteration",
     });
- const admins = await User.count({
-       systemRole: "Admin",
-      showOwner:true
+    const admins = await User.count({
+      systemRole: "Admin",
+      showOwner: true,
+    });
+    const stores = await Store.count({
+      createdBy: req.user.id,
     });
     // active
     return res.status(200).json({
@@ -136,7 +140,8 @@ router.get("/countOrders", auth, async (req, res) => {
       pickup_today: pickup_today,
       overdue_today: overdue_today,
       alterations: alterations,
-      admins:admins
+      admins: admins,
+      stores: stores,
     });
   } catch (err) {
     res.status(500).send("Server Error!");
@@ -179,9 +184,8 @@ router.post(
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-      var userId = mongoose.Types.ObjectId(req.user.id);
+    var userId = mongoose.Types.ObjectId(req.user.storeId);
     let rentedProducts = await RentedProduct.aggregate([
-
       {
         $lookup: {
           from: "customers",
@@ -203,13 +207,14 @@ router.get("/", auth, async (req, res) => {
       },
       {
         $project: {
-           user:'$user',
-          createdBy:'$createdBy',
+          user: "$user",
+          createdBy: "$createdBy",
           orderNumber: "$orderNumber",
           status: "$status",
           reservedStatus: "$reservedStatus",
           readyForPickUp: "$readyForPickUp",
           pickedUpStatus: "$pickedUpStatus",
+          rentDate:'$rentDate',
           customer: {
             _id: "$customer._id",
             name: "$customer.name",
@@ -221,7 +226,7 @@ router.get("/", auth, async (req, res) => {
           },
         },
       },
-        { $match: {createdBy:userId} },
+      { $match: { createdBy: userId } },
       { $sort: { createdAt: -1 } },
     ]);
 
@@ -263,7 +268,7 @@ router.delete("/:id", auth, async (req, res) => {
 router.get("/search", auth, async (req, res) => {
   try {
     const result = await Customer.find({
-      createdBy:req.user.id,
+      createdBy: req.user.storeId,
       contactnumber: { $eq: req.query.number },
     });
     if (!result) {
@@ -310,13 +315,13 @@ router.get("/getLastRecord", auth, async (req, res) => {
 // @access Private
 router.put("/searchstatus", auth, async (req, res) => {
   try {
-    var userId = mongoose.Types.ObjectId(req.user.id);
+    var userId = mongoose.Types.ObjectId(req.user.storeId);
     let result;
     if (req.body.status.includes("pickup")) {
       result = await RentedProduct.aggregate([
         {
           $match: {
-            createdBy:userId,
+            createdBy: userId,
             $or: [
               { status: { $in: req.body.status } },
               { pickedUpStatus: false, readyForPickUp: true },
@@ -350,6 +355,7 @@ router.put("/searchstatus", auth, async (req, res) => {
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
             pickedUpStatus: "$pickedUpStatus",
+            rentDate:'$rentDate',
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -373,7 +379,7 @@ router.put("/searchstatus", auth, async (req, res) => {
       result = await RentedProduct.aggregate([
         {
           $match: {
-            createdBy:userId,
+            createdBy: userId,
             $or: [
               { status: { $in: req.body.status } },
               {
@@ -413,6 +419,7 @@ router.put("/searchstatus", auth, async (req, res) => {
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
             pickedUpStatus: "$pickedUpStatus",
+            rentDate:'$rentDate',
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -429,7 +436,7 @@ router.put("/searchstatus", auth, async (req, res) => {
       result = await RentedProduct.aggregate([
         {
           $match: {
-            createdBy:userId,
+            createdBy: userId,
             status: { $in: req.body.status },
           },
         },
@@ -460,6 +467,7 @@ router.put("/searchstatus", auth, async (req, res) => {
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
             pickedUpStatus: "$pickedUpStatus",
+            rentDate:'$rentDate',
             customer: {
               _id: "$customer._id",
               name: "$customer.name",

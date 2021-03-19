@@ -249,6 +249,7 @@ class AddCoupons extends Component {
   };
   render() {
     const { coupon_type } = this.state;
+    
     return (
       <React.Fragment>
         <Loader />

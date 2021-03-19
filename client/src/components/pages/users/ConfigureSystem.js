@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
-import Sidebar from '../../layout/Sidebar';
-import Header from '../../layout/Header';
-import { addNewUser, updateUser, getUser } from '../../../actions/user';
-import Alert from '../../layout/Alert';
-import Loader from '../../layout/Loader';
-import { Redirect } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import shortid from 'shortid';
+import React, { Component } from "react";
+import Sidebar from "../../layout/Sidebar";
+import Header from "../../layout/Header";
+import { addNewUser, updateUser, getUser } from "../../../actions/user";
+import Alert from "../../layout/Alert";
+import Loader from "../../layout/Loader";
+import { Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import shortid from "shortid";
 
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
 
 class ConfigureSystem extends Component {
   state = {
-    id: '',
-    fullname: '',
-    username: '',
-    jobTitle: '',
-    contactnumber: '',
-    email: '',
+    id: "",
+    fullname: "",
+    username: "",
+    jobTitle: "",
+    contactnumber: "",
+    email: "",
     Inventory: false,
     Rentproduct: false,
     Barcode: false,
@@ -28,13 +28,14 @@ class ConfigureSystem extends Component {
     Appointments: false,
     Returnproduct: false,
     Calender: false,
+    Coupons: false,
     Report: false,
     sections: [],
-    gender: '',
-    avatar: '',
-    userID: '',
-    tempPwd: '',
-    systemRole: '',
+    gender: "",
+    avatar: "",
+    userID: "",
+    tempPwd: "",
+    systemRole: "",
     saved: false,
     saving: false,
   };
@@ -62,7 +63,7 @@ class ConfigureSystem extends Component {
     }
   }
 
-  _onChange = (e, id = '') => {
+  _onChange = (e, id = "") => {
     this.setState({
       [e.target.name]: e.target.files[0],
       imgUpd: true,
@@ -73,7 +74,7 @@ class ConfigureSystem extends Component {
   selected = async () => {
     const sections = [];
     let value;
-    const checkeds = document.getElementsByTagName('input');
+    const checkeds = document.getElementsByTagName("input");
     for (let i = 0; i < checkeds.length; i++) {
       if (checkeds[i].checked) {
         sections.push(checkeds[i].name);
@@ -95,7 +96,7 @@ class ConfigureSystem extends Component {
 
     this.setState({ saving: true });
     if (sessionsArr.length === 0) {
-      OCAlert.alertError('Cài đặt cấu hinhf và nhiệm vụ cho nhân viên.', {
+      OCAlert.alertError("Cài đặt cấu hinhf và nhiệm vụ cho nhân viên.", {
         timeOut: 5000,
       });
       this.setState({ saving: false });
@@ -103,19 +104,19 @@ class ConfigureSystem extends Component {
       return;
     }
     const formData = new FormData();
-    formData.append('avatar', this.state.avatar);
-    formData.append('username', this.state.username);
-    formData.append('fullname', this.state.fullname);
-    formData.append('contactnumber', this.state.contactnumber);
-    formData.append('email', this.state.email);
-    formData.append('password', this.state.tempPwd);
-    formData.append('systemRole', this.state.systemRole);
-    formData.append('gender', this.state.gender);
-    formData.append('sections', sessionsArr);
-    formData.append('jobTitle', this.state.jobTitle);
-    formData.append('userID', this.state.userID);
+    formData.append("avatar", this.state.avatar);
+    formData.append("username", this.state.username);
+    formData.append("fullname", this.state.fullname);
+    formData.append("contactnumber", this.state.contactnumber);
+    formData.append("email", this.state.email);
+    formData.append("password", this.state.tempPwd);
+    formData.append("systemRole", this.state.systemRole);
+    formData.append("gender", this.state.gender);
+    formData.append("sections", sessionsArr);
+    formData.append("jobTitle", this.state.jobTitle);
+    formData.append("userID", this.state.userID);
 
-    if (this.state.id === '') {
+    if (this.state.id === "") {
       await this.props.addNewUser(formData);
     } else {
       await this.props.updateUser(formData, this.state.id);
@@ -126,21 +127,21 @@ class ConfigureSystem extends Component {
   render() {
     const { auth } = this.props;
     if (this.props.location.state == undefined) {
-      return <Redirect to='/user/adduser' />;
+      return <Redirect to="/user/adduser" />;
     }
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/login' />;
+      return <Redirect to="/login" />;
     }
     const { user } = auth;
-    if (user && user.systemRole === 'Employee') {
-      return <Redirect to='/Error' />;
+    if (user && user.systemRole === "Employee") {
+      return <Redirect to="/Error" />;
     }
     if (this.props.saved == true) {
       return (
         <Redirect
           push
           to={{
-            pathname: '/user/configuresystemuser',
+            pathname: "/user/configuresystemuser",
             state: { state: this.state, user: this.props.user },
           }}
         />
@@ -150,205 +151,220 @@ class ConfigureSystem extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
+        <div className="wrapper menu-collapsed">
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <div className='form-body'>
-                  <div className='card'>
-                    <div className='card-header'>
-                      <h4 className='form-section'>
-                        {`${'Giới hạn quyền truy cập cho tài khoản nhân viên '} ${
+          <div className="main-panel">
+            <div className="main-content">
+              <div className="content-wrapper">
+                <div className="form-body">
+                  <div className="card">
+                    <div className="card-header">
+                      <h4 className="form-section">
+                        {`${"Giới hạn quyền truy cập cho tài khoản nhân viên "} ${
                           this.state.fullname
-                        } ${','} ${this.state.jobTitle}`}
+                        } ${","} ${this.state.jobTitle}`}
                       </h4>
                     </div>
 
-                    <div className='card-body'>
+                    <div className="card-body">
                       <Alert />
                       <OCAlertsProvider />
                       <form
-                        encType='multipart/form-data'
-                        action='/upload'
-                        method='POST'
+                        encType="multipart/form-data"
+                        action="/upload"
+                        method="POST"
                         onSubmit={(e) => this.onSubmit(e)}
                       >
-                        <div className='row ml-3'>
-                          <div className='form-group col-md-3 mb-2'>
+                        <div className="row ml-3">
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Inventory'
+                                type="checkbox"
+                                name="Inventory"
                                 onChange={(e) =>
-                                  this.handleChange(e, 'Inventory')
+                                  this.handleChange(e, "Inventory")
                                 }
                                 checked={this.state.Inventory === true}
                                 value={this.state.Inventory}
-                              />{' '}
+                              />{" "}
                               Hàng Kho
                             </label>
                           </div>
 
-                          <div className='form-group col-md-3 mb-2'>
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Returnproduct'
+                                type="checkbox"
+                                name="Returnproduct"
                                 onChange={(e) =>
-                                  this.handleChange(e, 'Returnproduct')
+                                  this.handleChange(e, "Returnproduct")
                                 }
                                 checked={this.state.Returnproduct === true}
                                 value={this.state.Returnproduct}
-                              />{' '}
+                              />{" "}
                               Trả Đồ
                             </label>
                           </div>
-                          <div className='form-group col-md-5 mb-2'></div>
+                          <div className="form-group col-md-5 mb-2"></div>
                         </div>
 
-                        <div className='row ml-3'>
-                          <div className='form-group col-md-3 mb-2'>
+                        <div className="row ml-3">
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Barcode'
+                                type="checkbox"
+                                name="Barcode"
                                 onChange={(e) =>
-                                  this.handleChange(e, 'Barcode')
+                                  this.handleChange(e, "Barcode")
                                 }
                                 checked={this.state.Barcode === true}
                                 value={this.state.Barcode}
-                              />{' '}
+                              />{" "}
                               Barcode
                             </label>
                           </div>
 
-                          <div className='form-group col-md-3 mb-2'>
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Orders'
-                                onChange={(e) => this.handleChange(e, 'Orders')}
+                                type="checkbox"
+                                name="Orders"
+                                onChange={(e) => this.handleChange(e, "Orders")}
                                 checked={this.state.Orders === true}
                                 value={this.state.Orders}
-                              />{' '}
+                              />{" "}
                               Đơn Hàng
                             </label>
                           </div>
-                          <div className='form-group col-md-5 mb-2'></div>
+                          <div className="form-group col-md-5 mb-2"></div>
                         </div>
 
-                        <div className='row ml-3'>
-                          <div className='form-group col-md-3 mb-2'>
+                        <div className="row ml-3">
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Customers'
+                                type="checkbox"
+                                name="Customers"
                                 onChange={(e) =>
-                                  this.handleChange(e, 'Customers')
+                                  this.handleChange(e, "Customers")
                                 }
                                 checked={this.state.Customers === true}
                                 value={this.state.Customers}
-                              />{' '}
+                              />{" "}
                               Khách Hàng
                             </label>
                           </div>
 
-                          <div className='form-group col-md-3 mb-2'>
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Appointments'
+                                type="checkbox"
+                                name="Appointments"
                                 onChange={(e) =>
-                                  this.handleChange(e, 'Appointments')
+                                  this.handleChange(e, "Appointments")
                                 }
                                 checked={this.state.Appointments === true}
                                 value={this.state.Appointments}
-                              />{' '}
+                              />{" "}
                               Hẹn Thử Đồ
                             </label>
                           </div>
-                          <div className='form-group col-md-5 mb-2'></div>
+                          <div className="form-group col-md-5 mb-2"></div>
                         </div>
 
-                        <div className='row ml-3'>
-                          <div className='form-group col-md-3 mb-2'>
+                        <div className="row ml-3">
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Rentproduct'
+                                type="checkbox"
+                                name="Rentproduct"
                                 onChange={(e) =>
-                                  this.handleChange(e, 'Rentproduct')
+                                  this.handleChange(e, "Rentproduct")
                                 }
                                 checked={this.state.Rentproduct === true}
                                 value={this.state.Rentproduct}
-                              />{' '}
+                              />{" "}
                               Thuê Đồ
                             </label>
                           </div>
 
-                          <div className='form-group col-md-3 mb-2'>
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Calender'
+                                type="checkbox"
+                                name="Calender"
                                 onChange={(e) =>
-                                  this.handleChange(e, 'Calender')
+                                  this.handleChange(e, "Calender")
                                 }
                                 checked={this.state.Calender === true}
                                 value={this.state.Calender}
-                              />{' '}
+                              />{" "}
                               Lịch
                             </label>
                           </div>
-                          <div className='form-group col-md-5 mb-2'></div>
+
+                          <div className="form-group col-md-5 mb-2"></div>
                         </div>
-                        <div className='row ml-3'>
-                          <div className='form-group col-md-3 mb-2'>
+                        <div className="row ml-3">
+                          <div className="form-group col-md-3 mb-2">
                             <br></br>
-                            <label className='radio-inline'>
+                            <label className="radio-inline">
                               <input
-                                type='checkbox'
-                                name='Report'
+                                type="checkbox"
+                                name="Report"
                                 onChange={(e) => this.handleChange(e)}
                                 checked={this.state.Report === true}
                                 value={this.state.Report}
-                              />{' '}
+                              />{" "}
                               Báo Cáo Thống Kê
                             </label>
                           </div>
-
-                          <div className='form-group col-md-5 mb-2'></div>
+                          <div className="form-group col-md-3 mb-2">
+                            <br></br>
+                            <label className="radio-inline">
+                              <input
+                                type="checkbox"
+                                name="Coupons"
+                                onChange={(e) =>
+                                  this.handleChange(e, "Coupons")
+                                }
+                                checked={this.state.Coupons === true}
+                                value={this.state.Coupons}
+                              />{" "}
+                              Mã giảm giá
+                            </label>
+                          </div>
+                          <div className="form-group col-md-5 mb-2"></div>
                         </div>
 
-                        <div className='form-actions top'>
+                        <div className="form-actions top">
                           {this.state.saving ? (
                             <button
-                              type='button'
-                              className='mb-2 mr-2 btn btn-raised btn-primary'
+                              type="button"
+                              className="mb-2 mr-2 btn btn-raised btn-primary"
                             >
                               <div
-                                className='spinner-grow spinner-grow-sm '
-                                role='status'
-                              ></div>{' '}
-                              &nbsp; Vui lòng chờ trong giây lát{' '}
+                                className="spinner-grow spinner-grow-sm "
+                                role="status"
+                              ></div>{" "}
+                              &nbsp; Vui lòng chờ trong giây lát{" "}
                             </button>
                           ) : (
                             <button
-                              type='submit'
-                              className='mb-2 mr-2 btn btn-raised btn-primary'
+                              type="submit"
+                              className="mb-2 mr-2 btn btn-raised btn-primary"
                             >
-                              <i className='ft-check' /> Thêm Nhân Viên{' '}
+                              <i className="ft-check" /> Thêm Nhân Viên{" "}
                             </button>
                           )}
                         </div>
@@ -358,19 +374,19 @@ class ConfigureSystem extends Component {
                 </div>
               </div>
             </div>
-            <footer className='footer footer-static footer-light'>
-              <p className='clearfix text-muted text-sm-center px-2'>
+            <footer className="footer footer-static footer-light">
+              <p className="clearfix text-muted text-sm-center px-2">
                 <span>
-                  Quyền sở hữu của &nbsp;{' '}
+                  Quyền sở hữu của &nbsp;{" "}
                   <a
-                    href='https://www.sutygon.com'
-                    id='pixinventLink'
-                    target='_blank'
-                    className='text-bold-800 primary darken-2'
+                    href="https://www.sutygon.com"
+                    id="pixinventLink"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
                   >
-                    SUTYGON-BOT{' '}
+                    SUTYGON-BOT{" "}
                   </a>
-                  , All rights reserved.{' '}
+                  , All rights reserved.{" "}
                 </span>
               </p>
             </footer>

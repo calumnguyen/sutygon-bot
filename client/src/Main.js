@@ -4,7 +4,7 @@ import Login from "./components/Login";
 import SignUp from "./components/signup/SignUp";
 import Verification from "./components/signup/Verification";
 import PersonalInfo from "./components/signup/PersonalInfo";
-import ViewAdmins from './components/admin/ViewAdminList'
+import ViewAdmins from "./components/admin/ViewAdminList";
 import {
   Route,
   BrowserRouter as Router,
@@ -12,7 +12,7 @@ import {
   withRouter,
 } from "react-router-dom";
 import HomePage from "./components/pages/Home/HomePage";
-import { loadUser } from "./actions/auth";
+import { loadUser,loadStore } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./routing/PrivateRoute";
 import AddUser from "./components/pages/users/Adduser";
@@ -66,12 +66,17 @@ import AddCoupons from "./components/pages/coupons/AddCoupons";
 import IndividualBarcode from "./components/pages/IndividualItem";
 import SelectType from "./components/pages/coupons/SelectType";
 
+// shop
+import AddShop from "./components/pages/shop/AddShop";
+import ViewShops from "./components/pages/shop/ViewShops";
+import ShopLogin from "./components/pages/shop/StoreLogin";
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
 const Main = () => {
   useEffect(() => {
     store.dispatch(loadUser());
+    store.dispatch(loadStore());
   }, []);
 
   return (
@@ -81,6 +86,7 @@ const Main = () => {
           {/* <Route exact path="/home" component={HomePage} /> */}
           <Route exact path="/" component={HomePage} />
           <Route exact path="/Login" component={Login} />
+          <Route exact path="/:slug/Login" component={ShopLogin} />
           <Route exact path="/signup" component={SignUp} />
           <Route exact path="/Verification" component={Verification} />
           <Route exact path="/personal-info" component={PersonalInfo} />
@@ -214,6 +220,11 @@ const Main = () => {
             path="/coupons/view/:couponId"
             component={CouponDetail}
           />
+
+          <PrivateRoute exact path="/stores" component={ViewShops} />
+          <PrivateRoute exact path="/stores/add" component={AddShop} />
+          <PrivateRoute exact path="/stores/edit/:id" component={AddShop} />
+
           <PrivateRoute exact path="/adminsview" component={ViewAdmins} />
           <PrivateRoute exact path="/Error" component={Error} />
         </Switch>

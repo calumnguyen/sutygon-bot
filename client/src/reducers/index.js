@@ -17,6 +17,7 @@ import coupons from './coupons'
 import events from './events'
 import admin from './admin'
 import custom from './custom';
+import shops from './shops'
 
 export default combineReducers({
   alert,
@@ -35,5 +36,6 @@ export default combineReducers({
   coupons,
   events,
   admin,
-  custom
+  custom,
+  shops
 })

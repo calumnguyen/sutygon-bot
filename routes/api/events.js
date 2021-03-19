@@ -55,7 +55,7 @@ router.post("/add", auth, upload.any("image"), async (req, res) => {
           birthdate: req.body.birthday == undefined ? "" : req.body.birthday,
           user: req.body.user == undefined ? "" : req.body.user,
           images: file_Arr,
-          createdBy:req.user.id,
+          createdBy:req.user.storeId,
         });
         await event.save();
       }, 3000);
@@ -140,7 +140,7 @@ router.post(
             birthdate: req.body.birthday,
             user: req.body.user,
             images: file_Arr,
-            createdBy:req.user.id,
+            createdBy:req.user.storeId,
           });
           await event.save();
         }, 3000);
@@ -160,7 +160,7 @@ router.post(
             birthdate: req.body.birthday,
             user: req.body.user,
             file: "",
-            createdBy:req.user.id,
+            createdBy:req.user.storeId,
           });
           await event.save();
         }, 3000);
@@ -229,7 +229,7 @@ router.post("/:id", auth, upload.any("image"), async (req, res) => {
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    const events = await Events.find({createdBy:req.user.id});
+    const events = await Events.find({createdBy:req.user.storeId});
     res.json(events);
   } catch (err) {
     console.log(err);
@@ -255,7 +255,7 @@ router.get("/dashboard/:id/events", auth, async (req, res) => {
 // @access  Private
 router.get("/bdayEvent", auth, async (req, res) => {
   try {
-    const b_events = await BirthdayEvents.find({createdBy:req.user.id}).populate(
+    const b_events = await BirthdayEvents.find({createdBy:req.user.storeId}).populate(
       "user",
       "accountStatus"
     );

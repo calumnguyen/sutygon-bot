@@ -109,7 +109,7 @@ class CouponDetail extends Component {
     }
     const { coupon } = this.props;
     const { coupon_notes } = this.state;
-    console.log('coupon', coupon && coupon.used_orders);
+
     return (
       <React.Fragment>
         <Loader />

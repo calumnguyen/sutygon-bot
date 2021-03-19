@@ -83,7 +83,7 @@ router.post(
       }
       console.log("password", password);
       customerBody = {
-        createdBy:req.user.id,
+        createdBy:req.user.storeId,
         ...body,
         password: password,
       };
@@ -136,7 +136,7 @@ router.post("/:id", async (req, res) => {
 // @access  Private
 router.get("/", auth, async (req, res) => {
   try {
-    const customers = await Customer.find({ createdBy: req.user.id });
+    const customers = await Customer.find({ createdBy: req.user.storeId });
     res.json(customers);
   } catch (err) {
     console.log(err);
@@ -173,7 +173,7 @@ router.get("/:id", auth, async (req, res) => {
 router.get("/search/:contactnumber",auth, async (req, res) => {
   try {
     const customer = await Customer.findOne({
-      createdBy: req.user.id,
+      createdBy: req.user.storeId,
       contactnumber: { $eq: req.params.contactnumber },
     });
     if (customer == null) {
@@ -198,7 +198,7 @@ router.get("/search/:contactnumber",auth, async (req, res) => {
 router.get("/search/number/:contactnumber", auth, async (req, res) => {
   try {
     const customer = await Customer.findOne({
-      createdBy: req.user.id,
+      createdBy: req.user.storeId,
       contactnumber: { $eq: req.params.contactnumber },
     });
 
@@ -351,7 +351,7 @@ router.post("/:id/insights", auth, async (req, res) => {
         // console.log(prod.barcodes)
         for (bcode of prod.barcodes) {
           let singleProduct = await Product.findOne(
-            {createdBy:req.user.id,
+            {createdBy:req.user.storeId,
               "color.sizes.barcodes": {
                 $elemMatch: { barcode: parseInt(bcode) },
               },

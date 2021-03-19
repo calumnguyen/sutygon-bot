@@ -1,35 +1,35 @@
-import React, { Component } from 'react';
-import Sidebar from '../../layout/Sidebar';
-import Header from '../../layout/Header';
+import React, { Component } from "react";
+import Sidebar from "../../layout/Sidebar";
+import Header from "../../layout/Header";
 import {
   updateUser,
   getUser,
   codeVerify,
   updatePassword,
-} from '../../../actions/user';
-import { addBirthdayEvent } from '../../../actions/events';
-import Loader from '../../layout/Loader';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import * as moment from 'moment';
-import { Redirect } from 'react-router-dom';
+} from "../../../actions/user";
+import { addBirthdayEvent } from "../../../actions/events";
+import Loader from "../../layout/Loader";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import * as moment from "moment";
+import { Redirect } from "react-router-dom";
 
-import { Link } from 'react-router-dom';
-import Switch from 'react-switch';
-import DatePicker from 'react-datepicker';
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
-import 'react-datepicker/dist/react-datepicker.css';
-import Alert from '../../layout/Alert';
+import { Link } from "react-router-dom";
+import Switch from "react-switch";
+import DatePicker from "react-datepicker";
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
+import "react-datepicker/dist/react-datepicker.css";
+import Alert from "../../layout/Alert";
 
-import Modal from 'react-awesome-modal';
-import { logout } from '../../../actions/auth';
-import { registerLocale, setDefaultLocale } from 'react-datepicker';
+import Modal from "react-awesome-modal";
+import { logout } from "../../../actions/auth";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
 
-import { vi } from 'date-fns/esm/locale';
+import { vi } from "date-fns/esm/locale";
 
-registerLocale('vi', vi);
-setDefaultLocale('vi');
+registerLocale("vi", vi);
+setDefaultLocale("vi");
 
 class EditUser extends Component {
   state = {
@@ -48,34 +48,35 @@ class EditUser extends Component {
     Returnproduct: false,
     Calender: false,
     Report: false,
+    Coupons: false,
     isbirthdaySelected: false,
-    sections: '',
-    id: '',
-    firstname: '',
-    userID: '',
-    jobTitle: '',
-    username: '',
-    systemRole: '',
+    sections: "",
+    id: "",
+    firstname: "",
+    userID: "",
+    jobTitle: "",
+    username: "",
+    systemRole: "",
     status: false,
-    joinDate: '',
-    base_rate: '',
-    period: '',
-    fullname: '',
-    email: '',
-    contactnumber: '',
-    gender: '',
-    birthday: '',
-    address: '',
-    avatar: '',
-    statusChecked: '',
+    joinDate: "",
+    base_rate: "",
+    period: "",
+    fullname: "",
+    email: "",
+    contactnumber: "",
+    gender: "",
+    birthday: "",
+    address: "",
+    avatar: "",
+    statusChecked: "",
     show: false,
-    code: '',
+    code: "",
     src: false,
     setIsOpen: false,
-    password: '',
-    newpassword: '',
-    confirmpassword: '',
-    age: '',
+    password: "",
+    newpassword: "",
+    confirmpassword: "",
+    age: "",
   };
 
   async componentDidMount() {
@@ -94,11 +95,11 @@ class EditUser extends Component {
           username: user.username,
           systemRole: user.systemRole,
           statusChecked: user.accountStatus,
-          status: user.accountStatus === 'active' ? true : false,
+          status: user.accountStatus === "active" ? true : false,
           joinDate: user.createdAt,
           base_rate:
-            user.salary && user.salary.base_rate ? user.salary.base_rate : '',
-          period: user.salary && user.salary.period ? user.salary.period : '',
+            user.salary && user.salary.base_rate ? user.salary.base_rate : "",
+          period: user.salary && user.salary.period ? user.salary.period : "",
           email: user.email,
           contactnumber: user.contactnumber,
           gender: user.gender,
@@ -106,29 +107,31 @@ class EditUser extends Component {
           birthday: user.birthday === undefined ? null : user.birthday,
           sections: user.sections,
           Inventory:
-            user.sections && user.sections.includes('Inventory') ? true : false,
+            user.sections && user.sections.includes("Inventory") ? true : false,
           Appointments:
-            user.sections && user.sections.includes('Appointments')
+            user.sections && user.sections.includes("Appointments")
               ? true
               : false,
           Barcode:
-            user.sections && user.sections.includes('Barcode') ? true : false,
+            user.sections && user.sections.includes("Barcode") ? true : false,
           Calender:
-            user.sections && user.sections.includes('Calender') ? true : false,
+            user.sections && user.sections.includes("Calender") ? true : false,
           Customers:
-            user.sections && user.sections.includes('Customers') ? true : false,
+            user.sections && user.sections.includes("Customers") ? true : false,
           Orders:
-            user.sections && user.sections.includes('Orders') ? true : false,
+            user.sections && user.sections.includes("Orders") ? true : false,
           Rentproduct:
-            user.sections && user.sections.includes('Rentproduct')
+            user.sections && user.sections.includes("Rentproduct")
               ? true
               : false,
           Report:
-            user.sections && user.sections.includes('Report') ? true : false,
+            user.sections && user.sections.includes("Report") ? true : false,
           Returnproduct:
-            user.sections && user.sections.includes('Returnproduct')
+            user.sections && user.sections.includes("Returnproduct")
               ? true
               : false,
+          Coupons:
+            user.sections && user.sections.includes("Coupons") ? true : false,
         });
       }
     }
@@ -148,18 +151,18 @@ class EditUser extends Component {
       newpassword: state.newpassword.trim(),
       confirmpassword: state.confirmpassword.trim(),
     };
-    if (state.id !== '') {
+    if (state.id !== "") {
       await this.props.updatePassword(user, state.id);
     }
     if (this.props.passwordUpdated === true) {
       this.setState({
-        password: '',
-        newpassword: '',
-        confirmpassword: '',
+        password: "",
+        newpassword: "",
+        confirmpassword: "",
         show: false,
       });
     } else if (this.props.passwordUpdated === false) {
-      OCAlert.alertError('Password Update Failed', { timeOut: 3000 });
+      OCAlert.alertError("Password Update Failed", { timeOut: 3000 });
       this.setState({
         show: true,
       });
@@ -193,10 +196,10 @@ class EditUser extends Component {
     this.setState({
       visible: false,
       show: false,
-      code: '',
-      password: '',
-      newpassword: '',
-      confirmpassword: '',
+      code: "",
+      password: "",
+      newpassword: "",
+      confirmpassword: "",
     });
   };
   authorize = async (e) => {
@@ -204,13 +207,13 @@ class EditUser extends Component {
     const { code } = this.state;
     await this.props.codeVerify(code);
     if (this.props.codeverified === false) {
-      OCAlert.alertError('Wrong Authorization Code', { timeOut: 3000 });
+      OCAlert.alertError("Wrong Authorization Code", { timeOut: 3000 });
       this.setState({
-        code: '',
+        code: "",
         visible: true,
       });
     } else if (this.props.codeverified === true) {
-      OCAlert.alertSuccess('Successfully Authorized');
+      OCAlert.alertSuccess("Successfully Authorized");
 
       this.setState({
         // code: "",
@@ -225,7 +228,7 @@ class EditUser extends Component {
 
   selected = async () => {
     const sections = [];
-    const checkeds = document.getElementsByClassName('input');
+    const checkeds = document.getElementsByClassName("input");
     for (let i = 0; i < checkeds.length; i++) {
       if (checkeds[i].checked) {
         sections.push(checkeds[i].name);
@@ -237,7 +240,7 @@ class EditUser extends Component {
   };
   handleSalary = (e) => {
     this.setState({
-      [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : '',
+      [e.target.name]: parseInt(e.target.value) ? parseInt(e.target.value) : "",
     });
   };
 
@@ -255,50 +258,50 @@ class EditUser extends Component {
     });
 
     const formData = new FormData();
-    if (state.avatar !== '') {
-      formData.append('avatar', state.avatar);
+    if (state.avatar !== "") {
+      formData.append("avatar", state.avatar);
     } else {
-      OCAlert.alertError('Please Upload Profile Image', { timeOut: 3000 });
+      OCAlert.alertError("Please Upload Profile Image", { timeOut: 3000 });
       this.setState({ saving: false });
       return;
     }
     if (state.birthday !== undefined) {
-      formData.append('birthday', new Date(state.birthday));
+      formData.append("birthday", new Date(state.birthday));
       this.setState({ isbirthdaySelected: false });
     } else {
       this.setState({ saving: false, isbirthdaySelected: true });
       return;
     }
-    formData.append('jobTitle', state.jobTitle);
-    formData.append('systemRole', state.systemRole);
-    formData.append('accountStatus', state.statusChecked);
-    formData.append('username', state.username);
-    formData.append('salary', JSON.stringify(salary));
-    formData.append('fullname', state.fullname);
-    formData.append('email', state.email);
-    formData.append('contactnumber', state.contactnumber);
-    formData.append('gender', state.gender);
-    formData.append('address', state.address);
-    formData.append('sections', sessionsArr);
-    formData.append('code', state.code);
-    formData.append('userID', state.userID);
+    formData.append("jobTitle", state.jobTitle);
+    formData.append("systemRole", state.systemRole);
+    formData.append("accountStatus", state.statusChecked);
+    formData.append("username", state.username);
+    formData.append("salary", JSON.stringify(salary));
+    formData.append("fullname", state.fullname);
+    formData.append("email", state.email);
+    formData.append("contactnumber", state.contactnumber);
+    formData.append("gender", state.gender);
+    formData.append("address", state.address);
+    formData.append("sections", sessionsArr);
+    formData.append("code", state.code);
+    formData.append("userID", state.userID);
     await this.props.updateUser(formData, state.id);
 
-    if (state.birthday != '' || state.birthday != null) {
+    if (state.birthday != "" || state.birthday != null) {
       var start = new Date(state.birthday);
       start.setHours(0, 0, 0, 0);
 
       var end = new Date(state.birthday);
       end.setHours(23, 59, 59, 999);
       const eventData = new FormData();
-      eventData.append('name', this.state.username);
-      eventData.append('note', this.state.username);
-      eventData.append('location', 'SUTYGON');
-      eventData.append('date', new Date());
-      eventData.append('timeStart', start);
-      eventData.append('timeEnd', end);
-      eventData.append('birthday', new Date(state.birthday));
-      eventData.append('user', state.id);
+      eventData.append("name", this.state.username);
+      eventData.append("note", this.state.username);
+      eventData.append("location", "SUTYGON");
+      eventData.append("date", new Date());
+      eventData.append("timeStart", start);
+      eventData.append("timeEnd", end);
+      eventData.append("birthday", new Date(state.birthday));
+      eventData.append("user", state.id);
 
       await this.props.addBirthdayEvent(eventData, state.id);
     }
@@ -306,17 +309,17 @@ class EditUser extends Component {
 
   formatDate(date) {
     let d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
       year = d.getFullYear();
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
 
-    return [day, month, year].join('/');
+    return [day, month, year].join("/");
   }
 
-  _onChange = (e, id = '') => {
+  _onChange = (e, id = "") => {
     this.setState({
       [e.target.name]: e.target.files[0],
       imgUpd: true,
@@ -325,16 +328,16 @@ class EditUser extends Component {
   };
   handleChangeNumber = (e) => {
     const re = /^[0-9\b]+$/;
-    if (e.target.value === '' || re.test(e.target.value)) {
+    if (e.target.value === "" || re.test(e.target.value)) {
       this.setState({ [e.target.name]: e.target.value });
     }
   };
 
   togglehandleChange = (status) => {
     if (status === true) {
-      this.setState({ statusChecked: 'active', status: true });
+      this.setState({ statusChecked: "active", status: true });
     } else if (status === false) {
-      this.setState({ statusChecked: 'inactive', status: false });
+      this.setState({ statusChecked: "inactive", status: false });
     }
   };
 
@@ -382,7 +385,7 @@ class EditUser extends Component {
     });
   };
 
-  _onChange = (e, id = '') => {
+  _onChange = (e, id = "") => {
     this.setState({
       [e.target.name]: e.target.files[0],
       imgUpd: true,
@@ -393,20 +396,20 @@ class EditUser extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/login' />;
+      return <Redirect to="/login" />;
     }
     if (this.props.passwordUpdated === true) {
       if (window.localstorage) {
         window.localstorage.clear();
-        return <Redirect to='/login' />;
+        return <Redirect to="/login" />;
       }
     }
     const { user } = auth;
     if (this.props.saved) {
-      if (user.systemRole === 'Employee') {
-        return <Redirect push to='/login' />;
-      } else if (user.systemRole == 'Admin') {
-        return <Redirect to='/user' />;
+      if (user.systemRole === "Employee") {
+        return <Redirect push to="/login" />;
+      } else if (user.systemRole == "Admin") {
+        return <Redirect to="/user" />;
       }
     }
     // else if(this.props.saved && auth.systemRole=="Admin") {
@@ -416,60 +419,60 @@ class EditUser extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
+        <div className="wrapper menu-collapsed">
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <div className='form-body'>
-                  <div className='card'>
-                    <div className='card-header'>
-                      <h4 className='form-section'>
-                        <i className='ft-user'></i>
-                        {this.state.id === '' ? '' : 'Cập Nhật Thông Tin'}
+          <div className="main-panel">
+            <div className="main-content">
+              <div className="content-wrapper">
+                <div className="form-body">
+                  <div className="card">
+                    <div className="card-header">
+                      <h4 className="form-section">
+                        <i className="ft-user"></i>
+                        {this.state.id === "" ? "" : "Cập Nhật Thông Tin"}
                       </h4>
                     </div>
 
-                    <div className='card-body'>
-                      <div className='px-3'>
+                    <div className="card-body">
+                      <div className="px-3">
                         <form
-                          className='form form-horizontal form-bordered'
-                          encType='multipart/form-data'
-                          action='/upload'
-                          method='POST'
+                          className="form form-horizontal form-bordered"
+                          encType="multipart/form-data"
+                          action="/upload"
+                          method="POST"
                           onSubmit={(e) => this.onSubmit(e)}
                         >
                           <Alert />
 
-                          <div className='form-body'>
-                            <h4 className='form-section'>
-                              <i className='ft-info'></i>Ảnh Đại Diện{' '}
+                          <div className="form-body">
+                            <h4 className="form-section">
+                              <i className="ft-info"></i>Ảnh Đại Diện{" "}
                             </h4>
-                            <div className='row'>
-                              <div className='col-md-6'>
-                                <div className='form-group row'>
+                            <div className="row">
+                              <div className="col-md-6">
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='inputGroupFile01'
+                                    className="col-md-4 label-control"
+                                    htmlFor="inputGroupFile01"
                                   >
                                     Ảnh Đại Diện
                                   </label>
-                                  <div className='col-md-8'>
-                                    <div className='custom-file'>
+                                  <div className="col-md-8">
+                                    <div className="custom-file">
                                       <input
-                                        name='avatar'
-                                        type='file'
-                                        className='custom-file-input border-primary'
-                                        id='inputGroupFile01'
-                                        aria-describedby='inputGroupFileAddon01'
-                                        accept='image/jpeg,image/gif,image/jpg,image/png,image/x-eps'
+                                        name="avatar"
+                                        type="file"
+                                        className="custom-file-input border-primary"
+                                        id="inputGroupFile01"
+                                        aria-describedby="inputGroupFileAddon01"
+                                        accept="image/jpeg,image/gif,image/jpg,image/png,image/x-eps"
                                         onChange={(e) => this._onChange(e)}
                                       />
                                       <label
-                                        className='custom-file-label'
-                                        htmlFor='inputGroupFile01'
+                                        className="custom-file-label"
+                                        htmlFor="inputGroupFile01"
                                       >
                                         Chọn Ảnh
                                       </label>
@@ -477,82 +480,82 @@ class EditUser extends Component {
                                   </div>
                                 </div>
                               </div>
-                              <div className='col-md-6 text-center'>
+                              <div className="col-md-6 text-center">
                                 {this.state.imgUpd === false &&
                                 this.state.src === false ? (
                                   <img
-                                    className='media-object round-media'
+                                    className="media-object round-media"
                                     src={this.state.avatar}
-                                    alt='User'
+                                    alt="User"
                                     height={80}
                                   />
                                 ) : (
                                   <img
-                                    className='media-object round-media'
+                                    className="media-object round-media"
                                     src={this.state.src}
-                                    alt='User'
+                                    alt="User"
                                     height={80}
                                   />
                                 )}
                               </div>
                             </div>
-                            <h4 className='form-section mt-4'>
-                              <i className='ft-info'></i> Thông Tin Hệ Thống{' '}
+                            <h4 className="form-section mt-4">
+                              <i className="ft-info"></i> Thông Tin Hệ Thống{" "}
                               <button
-                                className='btn btn-default mb-1 p-0'
+                                className="btn btn-default mb-1 p-0"
                                 onClick={(e) => this._onEdit(e)}
-                                style={{ marginLeft: '70%' }}
+                                style={{ marginLeft: "70%" }}
                               >
-                                <i className='ft-edit'></i>
+                                <i className="ft-edit"></i>
                               </button>
                             </h4>
 
-                            <div className='row'>
-                              <div className='col-md-6'>
-                                <div className='form-group row'>
+                            <div className="row">
+                              <div className="col-md-6">
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput1'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput1"
                                   >
                                     Họ và Tên
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     <input
-                                      type='text'
-                                      id='userinput1'
-                                      className='form-control border-primary'
-                                      placeholder='Họ và Tên'
-                                      name='firstname'
+                                      type="text"
+                                      id="userinput1"
+                                      className="form-control border-primary"
+                                      placeholder="Họ và Tên"
+                                      name="firstname"
                                       value={this.state.fullname}
                                       readOnly
                                     />
                                   </div>
                                 </div>
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput4'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput4"
                                   >
                                     Tên Đăng Nhập
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEdit === true ? (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Tên Đăng Nhập'
-                                        name='username'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Tên Đăng Nhập"
+                                        name="username"
                                         value={this.state.username}
                                         onChange={(e) => this._handleChange(e)}
                                       />
                                     ) : (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Tên Đăng Nhập'
-                                        name='username'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Tên Đăng Nhập"
+                                        name="username"
                                         value={this.state.username}
                                         readOnly
                                       />
@@ -560,99 +563,99 @@ class EditUser extends Component {
                                   </div>
                                 </div>
 
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput4'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput4"
                                   >
                                     Trạng Thái
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEdit === true ? (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Trạng Thái'
-                                        name='status'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Trạng Thái"
+                                        name="status"
                                         value={
                                           this.state.status === true
-                                            ? 'Hoạt động'
-                                            : 'Không hoạt động'
+                                            ? "Hoạt động"
+                                            : "Không hoạt động"
                                         }
                                         // onChange={e => this._handleChange(e)}
                                         readOnly
                                       />
                                     ) : (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Trạng Thái'
-                                        name='status'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Trạng Thái"
+                                        name="status"
                                         value={
                                           this.state.status === true
-                                            ? 'Hoạt động'
-                                            : 'Không hoạt động'
+                                            ? "Hoạt động"
+                                            : "Không hoạt động"
                                         }
                                         readOnly
                                       />
                                     )}
                                   </div>
                                 </div>
-                                <div className='form-group row last'>
-                                  <div className='col-md-4'></div>
-                                  <div className='col-md-8'>
+                                <div className="form-group row last">
+                                  <div className="col-md-4"></div>
+                                  <div className="col-md-8">
                                     <Link
-                                      to=''
+                                      to=""
                                       onClick={(e) =>
                                         this.openModalforPassword(e)
                                       }
-                                      type='button'
-                                      className='font-medium-3'
+                                      type="button"
+                                      className="font-medium-3"
                                     >
-                                      <i className='ft-external-link'></i> Đổi
+                                      <i className="ft-external-link"></i> Đổi
                                       Mật Khẩu
                                     </Link>
                                   </div>
                                 </div>
                               </div>
 
-                              <div className='col-md-6'>
-                                <div className='form-group row'>
+                              <div className="col-md-6">
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput2'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput2"
                                   >
                                     Mã Nhân Viên
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     <input
-                                      type='text'
-                                      id='userinput2'
-                                      className='form-control border-primary'
-                                      placeholder='Mã Nhân Viên'
-                                      name='userID'
+                                      type="text"
+                                      id="userinput2"
+                                      className="form-control border-primary"
+                                      placeholder="Mã Nhân Viên"
+                                      name="userID"
                                       value={this.state.userID}
                                       readOnly
                                     />
                                   </div>
                                 </div>
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput4'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput4"
                                   >
                                     Chức Vụ
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEdit === true ? (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Chức Vụ'
-                                        name='jobTitle'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Chức Vụ"
+                                        name="jobTitle"
                                         value={this.state.jobTitle}
                                         onChange={(e) => this._handleChange(e)}
                                       />
@@ -660,11 +663,11 @@ class EditUser extends Component {
                                       // <label className="label-control" htmlFor="userinput4">{this.state.jobTitle}</label>
 
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Chức Vụ'
-                                        name='jobTitle'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Chức Vụ"
+                                        name="jobTitle"
                                         value={this.state.jobTitle}
                                         readOnly
                                       />
@@ -672,49 +675,49 @@ class EditUser extends Component {
                                   </div>
                                 </div>
 
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput4'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput4"
                                   >
                                     Tài Khoản Cho
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEdit === true ? (
                                       <>
                                         <select
-                                          id='type'
-                                          name='systemRole'
+                                          id="type"
+                                          name="systemRole"
                                           required
                                           defaultValue={this.state.systemRole}
-                                          className='form-control border-primary'
+                                          className="form-control border-primary"
                                           onChange={(e) =>
                                             this._handleChange(e)
                                           }
                                         >
                                           <option
-                                            name='systemRole'
-                                            value='Admin'
+                                            name="systemRole"
+                                            value="Admin"
                                           >
-                                            {' '}
-                                            Quản Lý{' '}
+                                            {" "}
+                                            Quản Lý{" "}
                                           </option>
                                           <option
-                                            name='systemRole'
-                                            value='Employee'
+                                            name="systemRole"
+                                            value="Employee"
                                           >
-                                            {' '}
-                                            Nhân Viên{' '}
+                                            {" "}
+                                            Nhân Viên{" "}
                                           </option>
                                         </select>
                                       </>
                                     ) : (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='System Role'
-                                        name='systemRole'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="System Role"
+                                        name="systemRole"
                                         value={this.state.systemRole}
                                         readOnly
                                       />
@@ -724,56 +727,56 @@ class EditUser extends Component {
                               </div>
                             </div>
 
-                            <h4 className='form-section mt-5'>
-                              <i className='ft-info'></i> Thông Tin Công Ty{' '}
+                            <h4 className="form-section mt-5">
+                              <i className="ft-info"></i> Thông Tin Công Ty{" "}
                             </h4>
-                            <div className='row'>
-                              <div className='col-md-6'>
-                                <div className='form-group row'>
+                            <div className="row">
+                              <div className="col-md-6">
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput5'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput5"
                                   >
                                     Ngày Gia Nhập
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     <input
-                                      className='form-control border-primary'
-                                      type='text'
-                                      placeholder='Join Date'
-                                      id='userinput5'
-                                      name='joinDate'
+                                      className="form-control border-primary"
+                                      type="text"
+                                      placeholder="Join Date"
+                                      id="userinput5"
+                                      name="joinDate"
                                       readOnly
                                       value={moment(this.state.joinDate).format(
-                                        'DD-MM-YYYY'
+                                        "DD-MM-YYYY"
                                       )}
                                     />
                                   </div>
                                 </div>
 
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput6'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput6"
                                   >
                                     Tiền Lương
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEditO === true ? (
                                       <input
-                                        className='form-control border-primary'
-                                        type='text'
-                                        placeholder='VNĐ'
-                                        id='userinput6'
+                                        className="form-control border-primary"
+                                        type="text"
+                                        placeholder="VNĐ"
+                                        id="userinput6"
                                         value={this.state.salary}
                                         onChange={(e) => this.handleSalary(e)}
                                       />
                                     ) : (
                                       <input
-                                        className='form-control border-primary'
-                                        type='salary'
-                                        placeholder='VNĐ'
-                                        id='userinput6'
+                                        className="form-control border-primary"
+                                        type="salary"
+                                        placeholder="VNĐ"
+                                        id="userinput6"
                                         value={this.state.salary}
                                         // onChange={e => this._handleChange(e)}
                                         readOnly
@@ -781,97 +784,97 @@ class EditUser extends Component {
                                     )}
                                   </div>
                                 </div>
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput6'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput6"
                                   >
                                     % Tăng Lương
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     <input
-                                      className='form-control border-primary'
-                                      type='text'
-                                      placeholder='%'
-                                      id='userinput6'
-                                      value={'5%'}
+                                      className="form-control border-primary"
+                                      type="text"
+                                      placeholder="%"
+                                      id="userinput6"
+                                      value={"5%"}
                                       // onChange={e => this._handleChange(e)}
                                       readOnly
                                     />
                                   </div>
                                 </div>
                               </div>
-                              <div className='col-md-6'>
-                                <div className='form-group row'>
-                                  <label className='col-md-4 label-control'>
+                              <div className="col-md-6">
+                                <div className="form-group row">
+                                  <label className="col-md-4 label-control">
                                     Ngày Nhận Lương Tiếp Theo
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     <input
-                                      className='form-control border-primary'
-                                      type='number'
-                                      placeholder='Ngày Nhận Lương Tiếp Theo'
-                                      id='userinput7'
+                                      className="form-control border-primary"
+                                      type="number"
+                                      placeholder="Ngày Nhận Lương Tiếp Theo"
+                                      id="userinput7"
                                       readOnly
-                                      value={'5%'}
+                                      value={"5%"}
                                     />
                                   </div>
                                 </div>
 
-                                <div className='form-group row'>
-                                  <label className='col-md-4 label-control'>
+                                <div className="form-group row">
+                                  <label className="col-md-4 label-control">
                                     Đánh Giá Gần Đây
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     <input
-                                      className='form-control border-primary'
-                                      type='number'
-                                      placeholder='Đánh Giá'
-                                      id='userinput7'
+                                      className="form-control border-primary"
+                                      type="number"
+                                      placeholder="Đánh Giá"
+                                      id="userinput7"
                                       readOnly
-                                      value={'Chưa có đánh giá mới'}
+                                      value={"Chưa có đánh giá mới"}
                                     />
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <h4 className='form-section mt-5'>
-                              <i className='ft-info'></i> Thông Tin Cá Nhân
+                            <h4 className="form-section mt-5">
+                              <i className="ft-info"></i> Thông Tin Cá Nhân
                               <button
-                                className='btn btn-default mb-1 p-0'
+                                className="btn btn-default mb-1 p-0"
                                 onClick={(e) => this._onEditPersonalInfo(e)}
-                                style={{ marginLeft: '70%' }}
+                                style={{ marginLeft: "70%" }}
                               >
-                                <i className='ft-edit'></i>
+                                <i className="ft-edit"></i>
                               </button>
                             </h4>
-                            <div className='row h-25'>
-                              <div className='col-md-6'>
-                                <div className='form-group row'>
+                            <div className="row h-25">
+                              <div className="col-md-6">
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput1'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput1"
                                   >
                                     Họ và Tên
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEditP === true ? (
                                       <input
-                                        type='text'
-                                        id='userinput1'
-                                        className='form-control border-primary'
-                                        placeholder='Họ và Tên'
-                                        name='fullname'
+                                        type="text"
+                                        id="userinput1"
+                                        className="form-control border-primary"
+                                        placeholder="Họ và Tên"
+                                        name="fullname"
                                         value={this.state.fullname}
                                         onChange={(e) => this._handleChange(e)}
                                       />
                                     ) : (
                                       <input
-                                        type='text'
-                                        id='userinput1'
-                                        className='form-control border-primary'
-                                        placeholder='Họ và Tên'
-                                        name='fullname'
+                                        type="text"
+                                        id="userinput1"
+                                        className="form-control border-primary"
+                                        placeholder="Họ và Tên"
+                                        name="fullname"
                                         value={this.state.fullname}
                                         readOnly
                                       />
@@ -879,21 +882,21 @@ class EditUser extends Component {
                                   </div>
                                 </div>
 
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput4'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput4"
                                   >
                                     Số Điện Thoại
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEditP === true ? (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Số Điện Thoại'
-                                        name='contactnumber'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Số Điện Thoại"
+                                        name="contactnumber"
                                         value={this.state.contactnumber}
                                         onChange={(e) =>
                                           this.handleChangeNumber(e)
@@ -901,47 +904,47 @@ class EditUser extends Component {
                                       />
                                     ) : (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Số Điện Thoại'
-                                        name='contactnumber'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Số Điện Thoại"
+                                        name="contactnumber"
                                         value={this.state.contactnumber}
                                         readOnly
                                       />
                                     )}
                                   </div>
                                 </div>
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput3'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput3"
                                   >
                                     Địa Chỉ
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEditP === true ? (
                                       <textarea
-                                        type='text'
-                                        id='userinput3'
-                                        className='form-control border-primary'
-                                        placeholder='Địa Chỉ'
-                                        name='address'
-                                        rows='7'
+                                        type="text"
+                                        id="userinput3"
+                                        className="form-control border-primary"
+                                        placeholder="Địa Chỉ"
+                                        name="address"
+                                        rows="7"
                                         value={this.state.address}
                                         onChange={(e) => this._handleChange(e)}
                                       />
                                     ) : (
                                       <textarea
-                                        type='text'
-                                        id='userinput3'
-                                        className='form-control border-primary'
-                                        placeholder='Địa Chỉ'
-                                        name='address'
-                                        rows='7'
+                                        type="text"
+                                        id="userinput3"
+                                        className="form-control border-primary"
+                                        placeholder="Địa Chỉ"
+                                        name="address"
+                                        rows="7"
                                         value={
                                           this.state.address === undefined
-                                            ? ''
+                                            ? ""
                                             : this.state.address
                                         }
                                         readOnly
@@ -951,135 +954,135 @@ class EditUser extends Component {
                                 </div>
                               </div>
 
-                              <div className='col-md-6'>
-                                <div className='form-group row'>
+                              <div className="col-md-6">
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput4'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput4"
                                   >
                                     Sinh Nhật
                                   </label>
                                   <div
-                                    className='col-md-8'
-                                    data-date-format='dd/mm/yyyy'
+                                    className="col-md-8"
+                                    data-date-format="dd/mm/yyyy"
                                   >
                                     {this.state.isEditP === true ? (
                                       <DatePicker
-                                        dateFormat='dd/MM/yyyy'
-                                        locale='vi'
+                                        dateFormat="dd/MM/yyyy"
+                                        locale="vi"
                                         selected={new Date(this.state.birthday)}
-                                        className='form-control border-primary'
+                                        className="form-control border-primary"
                                         onChange={(e) =>
                                           this.handleChangeForDate(e)
                                         } //only when value has changed
-                                        popperPlacement='top-start'
+                                        popperPlacement="top-start"
                                         showMonthDropdown
                                         showYearDropdown
-                                        dropdownMode='select'
+                                        dropdownMode="select"
                                       />
                                     ) : (
                                       <DatePicker
-                                        dateFormat='dd/MM/yyyy'
+                                        dateFormat="dd/MM/yyyy"
                                         selected={Date.parse(
                                           this.state.birthday
                                         )}
-                                        className='form-control border-primary'
+                                        className="form-control border-primary"
                                         readOnly
                                       />
                                     )}
                                   </div>
                                 </div>
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput2'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput2"
                                   >
                                     Email
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEditP === true ? (
                                       <input
-                                        type='text'
-                                        id='userinput2'
-                                        className='form-control border-primary'
-                                        placeholder='Email'
-                                        name='email'
+                                        type="text"
+                                        id="userinput2"
+                                        className="form-control border-primary"
+                                        placeholder="Email"
+                                        name="email"
                                         value={this.state.email}
                                         onChange={(e) => this._handleChange(e)}
                                       />
                                     ) : (
                                       <input
-                                        type='text'
-                                        id='userinput2'
-                                        className='form-control border-primary'
-                                        placeholder='Email'
-                                        name='email'
+                                        type="text"
+                                        id="userinput2"
+                                        className="form-control border-primary"
+                                        placeholder="Email"
+                                        name="email"
                                         value={this.state.email}
                                         readOnly
                                       />
                                     )}
                                   </div>
                                 </div>
-                                <div className='form-group row'>
+                                <div className="form-group row">
                                   <label
-                                    className='col-md-4 label-control'
-                                    htmlFor='userinput4'
+                                    className="col-md-4 label-control"
+                                    htmlFor="userinput4"
                                   >
                                     Giới Tính
                                   </label>
-                                  <div className='col-md-8'>
+                                  <div className="col-md-8">
                                     {this.state.isEditP === true ? (
                                       <>
-                                        <label className='radio-inline'>
+                                        <label className="radio-inline">
                                           <input
-                                            type='radio'
-                                            name='gender'
+                                            type="radio"
+                                            name="gender"
                                             onChange={(e) =>
                                               this._handleChange(e)
                                             }
                                             checked={
-                                              this.state.gender === 'male'
+                                              this.state.gender === "male"
                                             }
-                                            value='male'
-                                          />{' '}
+                                            value="male"
+                                          />{" "}
                                           Nam
                                         </label>
-                                        <label className='radio-inline'>
+                                        <label className="radio-inline">
                                           <input
-                                            type='radio'
-                                            name='gender'
-                                            value='female'
+                                            type="radio"
+                                            name="gender"
+                                            value="female"
                                             onChange={(e) =>
                                               this._handleChange(e)
                                             }
                                             checked={
-                                              this.state.gender === 'female'
+                                              this.state.gender === "female"
                                             }
-                                          />{' '}
+                                          />{" "}
                                           Nữ
                                         </label>
-                                        <label className='radio-inline'>
+                                        <label className="radio-inline">
                                           <input
-                                            type='radio'
-                                            name='gender'
-                                            value='other'
+                                            type="radio"
+                                            name="gender"
+                                            value="other"
                                             onChange={(e) =>
                                               this._handleChange(e)
                                             }
                                             checked={
-                                              this.state.gender === 'other'
+                                              this.state.gender === "other"
                                             }
-                                          />{' '}
+                                          />{" "}
                                           Khác / Không Muốn Trả Lời
                                         </label>
                                       </>
                                     ) : (
                                       <input
-                                        type='text'
-                                        id='userinput4'
-                                        className='form-control border-primary'
-                                        placeholder='Giới Tính'
-                                        name='gender'
+                                        type="text"
+                                        id="userinput4"
+                                        className="form-control border-primary"
+                                        placeholder="Giới Tính"
+                                        name="gender"
                                         value={this.state.gender}
                                         readOnly
                                       />
@@ -1091,263 +1094,279 @@ class EditUser extends Component {
                           </div>
 
                           {user &&
-                          user.systemRole === 'Admin' &&
-                          this.state.systemRole === 'Employee' ? (
+                          user.systemRole === "Admin" &&
+                          this.state.systemRole === "Employee" ? (
                             <>
-                              <h4 className='form-section mt-5'>
-                                <i className='ft-info'></i> Quyền Truy Cập Hệ
+                              <h4 className="form-section mt-5">
+                                <i className="ft-info"></i> Quyền Truy Cập Hệ
                                 Thống
                                 {/* <button className="btn btn-default mb-1 p-0" onClick={(e) => this._onEditSystemConfig(e)} style={{ 'marginLeft': '70%' }}><i className="ft-edit"></i></button> */}
                               </h4>
 
-                              <h4 className=''>
-                                {`${'Giới hạn quyền truy cập cho'} ${
+                              <h4 className="">
+                                {`${"Giới hạn quyền truy cập cho"} ${
                                   this.state.fullname
                                 }`}
                               </h4>
-                              <div className='row ml-3'>
-                                <div className='form-group col-md-6'>
+                              <div className="row ml-3">
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      className='input'
-                                      type='checkbox'
-                                      name='Inventory'
+                                      className="input"
+                                      type="checkbox"
+                                      name="Inventory"
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Inventory')
+                                        this.handleChange(e, "Inventory")
                                       }
                                       checked={this.state.Inventory}
                                       value={this.state.Inventory}
-                                    />{' '}
+                                    />{" "}
                                     Hàng Kho
                                   </label>
                                 </div>
 
-                                <div className='form-group col-md-6'>
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      type='checkbox'
-                                      name='Returnproduct'
-                                      className='input'
+                                      type="checkbox"
+                                      name="Returnproduct"
+                                      className="input"
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Returnproduct')
+                                        this.handleChange(e, "Returnproduct")
                                       }
                                       checked={this.state.Returnproduct}
                                       value={this.state.Returnproduct}
-                                    />{' '}
+                                    />{" "}
                                     Trả Đồ
                                   </label>
                                 </div>
-                                <div className='form-group col-md-5 mb-2'></div>
+                                <div className="form-group col-md-5 mb-2"></div>
                               </div>
 
-                              <div className='row ml-3'>
-                                <div className='form-group col-md-6'>
+                              <div className="row ml-3">
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      type='checkbox'
-                                      name='Barcode'
-                                      className='input'
+                                      type="checkbox"
+                                      name="Barcode"
+                                      className="input"
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Barcode')
+                                        this.handleChange(e, "Barcode")
                                       }
                                       checked={this.state.Barcode}
                                       value={this.state.Barcode}
-                                    />{' '}
+                                    />{" "}
                                     Barcode
                                   </label>
                                 </div>
 
-                                <div className='form-group col-md-6'>
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      type='checkbox'
-                                      name='Orders'
-                                      className='input'
+                                      type="checkbox"
+                                      name="Orders"
+                                      className="input"
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Orders')
+                                        this.handleChange(e, "Orders")
                                       }
                                       checked={this.state.Orders}
                                       value={this.state.Orders}
-                                    />{' '}
+                                    />{" "}
                                     Đơn Hàng
                                   </label>
                                 </div>
-                                <div className='form-group col-md-5 mb-2'></div>
+                                <div className="form-group col-md-5 mb-2"></div>
                               </div>
 
-                              <div className='row ml-3'>
-                                <div className='form-group col-md-6'>
+                              <div className="row ml-3">
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      type='checkbox'
-                                      className='input'
-                                      name='Customers'
+                                      type="checkbox"
+                                      className="input"
+                                      name="Customers"
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Customers')
+                                        this.handleChange(e, "Customers")
                                       }
                                       checked={this.state.Customers}
                                       value={this.state.Customers}
-                                    />{' '}
+                                    />{" "}
                                     Khách Hàng
                                   </label>
                                 </div>
 
-                                <div className='form-group col-md-6'>
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      type='checkbox'
-                                      className='input'
-                                      name='Appointments'
+                                      type="checkbox"
+                                      className="input"
+                                      name="Appointments"
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Appointments')
+                                        this.handleChange(e, "Appointments")
                                       }
                                       checked={this.state.Appointments}
                                       value={this.state.Appointments}
-                                    />{' '}
+                                    />{" "}
                                     Hẹn Thử Đồ
                                   </label>
                                 </div>
-                                <div className='form-group col-md-5 mb-2'></div>
+                                <div className="form-group col-md-5 mb-2"></div>
                               </div>
 
-                              <div className='row ml-3'>
-                                <div className='form-group col-md-6'>
+                              <div className="row ml-3">
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      type='checkbox'
-                                      className='input'
-                                      name='Rentproduct'
+                                      type="checkbox"
+                                      className="input"
+                                      name="Rentproduct"
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Rentproduct')
+                                        this.handleChange(e, "Rentproduct")
                                       }
                                       checked={this.state.Rentproduct}
                                       value={this.state.Rentproduct}
-                                    />{' '}
+                                    />{" "}
                                     Thuê Đồ
                                   </label>
                                 </div>
 
-                                <div className='form-group col-md-6'>
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      type='checkbox'
-                                      className='input'
-                                      name='Calender'
+                                      type="checkbox"
+                                      className="input"
+                                      name="Calender"
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Calender')
+                                        this.handleChange(e, "Calender")
                                       }
                                       checked={this.state.Calender}
                                       value={this.state.Calender}
-                                    />{' '}
+                                    />{" "}
                                     Lịch
                                   </label>
                                 </div>
-                                <div className='form-group col-md-5 mb-2'></div>
+                                <div className="form-group col-md-5 mb-2"></div>
                               </div>
 
-                              <div className='row ml-3'>
-                                <div className='form-group col-md-6'>
+                              <div className="row ml-3">
+                                <div className="form-group col-md-6">
                                   <br></br>
-                                  <label className='radio-inline'>
+                                  <label className="radio-inline">
                                     <input
-                                      type='checkbox'
-                                      className='input'
-                                      name='Report'
+                                      type="checkbox"
+                                      className="input"
+                                        name="Report"
+                                        checked={this.state.Report === true}
                                       onChange={(e) =>
-                                        this.handleChange(e, 'Report')
+                                        this.handleChange(e, "Report")
                                       }
                                       // checked={this.state.isEditS === true ? this.state.Report === true : this.handleCheck('Report')}
                                       value={this.state.Report}
-                                    />{' '}
+                                    />{" "}
                                     Báo Cáo Thống Kê
                                   </label>
                                 </div>
-
-                                <div className='form-group col-md-5 mb-2'></div>
+                                <div className="form-group col-md-3 mb-2">
+                                  <br></br>
+                                  <label className="radio-inline">
+                                    <input
+                                      className="input"
+                                      type="checkbox"
+                                      name="Coupons"
+                                      onChange={(e) =>
+                                        this.handleChange(e, "Coupons")
+                                      }
+                                          checked={this.state.Coupons === true}
+                                      value={this.state.Coupons}
+                                    />{" "}
+                                    Mã giảm giá
+                                  </label>
+                                </div>
+                                <div className="form-group col-md-5 mb-2"></div>
                               </div>
                             </>
                           ) : (
-                            ''
+                            ""
                           )}
 
                           {user &&
-                          user.systemRole === 'Admin' &&
-                          this.state.systemRole === 'Employee' ? (
+                          user.systemRole === "Admin" &&
+                          this.state.systemRole === "Employee" ? (
                             <>
-                              <h4 className='form-section mt-5'>
-                                <i className='ft-info'></i> Khoá / Mở Khoá Tài
+                              <h4 className="form-section mt-5">
+                                <i className="ft-info"></i> Khoá / Mở Khoá Tài
                                 Khoản
                               </h4>
-                              <div className='form-group row'>
+                              <div className="form-group row">
                                 <label
-                                  className='col-md-4 label-control'
-                                  htmlFor='userinput1'
+                                  className="col-md-4 label-control"
+                                  htmlFor="userinput1"
                                 >
                                   Trạng Thái
                                 </label>
-                                <div className='col-md-8'>
+                                <div className="col-md-8">
                                   <Switch
-                                    name='status'
-                                    className='react-switch float-center'
+                                    name="status"
+                                    className="react-switch float-center"
                                     onChange={(e) =>
-                                      this.togglehandleChange(e, 'status')
+                                      this.togglehandleChange(e, "status")
                                     }
                                     checked={this.state.status}
                                   />
                                   {this.props.user &&
                                   this.props.user.accountStatus ===
-                                    'inactive' &&
+                                    "inactive" &&
                                   this.props.user.inactivated_date ? (
-                                    <p className='text-muted'>
-                                      Khoá tài khoản ngày{' '}
+                                    <p className="text-muted">
+                                      Khoá tài khoản ngày{" "}
                                       {`${
                                         this.props.user.inactivated_date &&
                                         moment(
                                           this.props.user.inactivated_date
-                                        ).format('DD-MMM-YYYY')
+                                        ).format("DD-MMM-YYYY")
                                       }`}
                                     </p>
                                   ) : (
-                                    ' '
+                                    " "
                                   )}
                                 </div>
                               </div>
                             </>
                           ) : (
-                            ''
+                            ""
                           )}
 
-                          {user && user.systemRole === 'Admin' ? (
+                          {user && user.systemRole === "Admin" ? (
                             <>
-                              <h4 className='form-section mt-3'>
-                                <i className='ft-info'></i> Tiền Lương{' '}
+                              <h4 className="form-section mt-3">
+                                <i className="ft-info"></i> Tiền Lương{" "}
                               </h4>
-                              <div className='row'>
-                                <div className='col-md-12'>
-                                  <div className='form-group row'>
+                              <div className="row">
+                                <div className="col-md-12">
+                                  <div className="form-group row">
                                     <label
-                                      className='col-md-2 label-control'
-                                      htmlFor='userinput1'
+                                      className="col-md-2 label-control"
+                                      htmlFor="userinput1"
                                     >
                                       Lương Cơ Bản
                                     </label>
-                                    <div className='col-md-10'>
-                                      <div className='position-relative has-icon-right'>
+                                    <div className="col-md-10">
+                                      <div className="position-relative has-icon-right">
                                         {this.state.isEdit === true ? (
                                           <input
-                                            type='text'
-                                            id='userinput1'
-                                            className='form-control border-primary'
-                                            placeholder='Lương Cơ Bản'
-                                            name='base_rate'
+                                            type="text"
+                                            id="userinput1"
+                                            className="form-control border-primary"
+                                            placeholder="Lương Cơ Bản"
+                                            name="base_rate"
                                             value={this.state.base_rate}
                                             onChange={(e) =>
                                               this.handleSalary(e)
@@ -1355,56 +1374,56 @@ class EditUser extends Component {
                                           />
                                         ) : (
                                           <input
-                                            type='text'
-                                            id='userinput1'
-                                            className='form-control border-primary'
-                                            placeholder='Lương Cơ Bản'
-                                            name='base_rate'
+                                            type="text"
+                                            id="userinput1"
+                                            className="form-control border-primary"
+                                            placeholder="Lương Cơ Bản"
+                                            name="base_rate"
                                             value={this.state.base_rate}
                                             readOnly
                                           />
                                         )}
-                                        <div className='form-control-position'>
+                                        <div className="form-control-position">
                                           <button
-                                            className='btn btn-default m-1 p-0'
+                                            className="btn btn-default m-1 p-0"
                                             onClick={(e) => this._onEdit(e)}
                                           >
-                                            <i className='ft-edit'></i>
+                                            <i className="ft-edit"></i>
                                           </button>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
 
-                                  <div className='form-group row'>
+                                  <div className="form-group row">
                                     <label
-                                      className='col-md-2 label-control'
-                                      htmlFor='projectinput6'
+                                      className="col-md-2 label-control"
+                                      htmlFor="projectinput6"
                                     >
                                       Chu Kỳ Trả Lương
                                     </label>
-                                    <div className='col-md-10'>
+                                    <div className="col-md-10">
                                       <select
-                                        id='projectinput6'
-                                        name='period'
-                                        className='form-control'
+                                        id="projectinput6"
+                                        name="period"
+                                        className="form-control"
                                         onChange={(e) => this._handleChange(e)}
                                         defaultValue={this.state.period}
                                       >
                                         <option
-                                          value='none'
+                                          value="none"
                                           defaultValue={
-                                            this.state.period !== '' &&
+                                            this.state.period !== "" &&
                                             this.state.period
                                           }
                                         >
                                           ---Chọn Thời Hạn---
                                         </option>
-                                        <option value='weekly'>Mỗi Tuần</option>
-                                        <option value='bi-weekly'>
+                                        <option value="weekly">Mỗi Tuần</option>
+                                        <option value="bi-weekly">
                                           Mỗi 2 Tuần
                                         </option>
-                                        <option value='monthly'>
+                                        <option value="monthly">
                                           Mỗi Tháng
                                         </option>
                                       </select>
@@ -1423,27 +1442,27 @@ class EditUser extends Component {
                                       />
                                     </div>
                                   </div> */}
-                                  <div className='form-actions text-center top'>
-                                    <p className='text-muted text-center'>
+                                  <div className="form-actions text-center top">
+                                    <p className="text-muted text-center">
                                       Để thay đổi thông tin tiền lương, bạn cần
                                       phải sử dụng mã bí mật để uỷ quyền hệ
                                       thống.
                                     </p>
                                     <button
-                                      type='button'
+                                      type="button"
                                       onClick={(e) => this.openModal(e)}
-                                      className='mb-2 mr-2 btn btn-raised btn-danger btn-openModal'
+                                      className="mb-2 mr-2 btn btn-raised btn-danger btn-openModal"
                                     >
-                                      <i className='fa fa-gear' /> Đổi Lương
+                                      <i className="fa fa-gear" /> Đổi Lương
                                     </button>
                                   </div>
                                 </div>
                               </div>
                             </>
                           ) : (
-                            ''
+                            ""
                           )}
-                          <h4 className='form-section mt-3'> </h4>
+                          <h4 className="form-section mt-3"> </h4>
                           {/* {this.state.birthday === undefined ? <div className='form-actions top'>   <button
                                   type='button'
                                   className='mb-2 mr-2 btn btn-raised btn-primary disabled'
@@ -1452,61 +1471,61 @@ class EditUser extends Component {
                                 </button> </div> : */}
                           {this.state.isbirthdaySelected === true && (
                             <div
-                              className='alert alert-warning alert-dismissible fade show'
-                              role='alert'
+                              className="alert alert-warning alert-dismissible fade show"
+                              role="alert"
                             >
                               <strong></strong> Bạn cần điền vào ngày sinh nhật!
                               <button
-                                type='button'
-                                className='close'
-                                data-dismiss='alert'
-                                aria-label='Close'
+                                type="button"
+                                className="close"
+                                data-dismiss="alert"
+                                aria-label="Close"
                               >
-                                <span aria-hidden='true'>&times;</span>
+                                <span aria-hidden="true">&times;</span>
                               </button>
                             </div>
                             // <div className='alert alert-danger'>Please select birthday</div>
                           )}
-                          {this.state.systemRole === 'Employee' &&
-                          this.state.sections === '' ? (
+                          {this.state.systemRole === "Employee" &&
+                          this.state.sections === "" ? (
                             <div
-                              className='alert alert-warning alert-dismissible fade show'
-                              role='alert'
+                              className="alert alert-warning alert-dismissible fade show"
+                              role="alert"
                             >
                               <strong></strong> Cần Điều Chỉnh Quyền Truy Cập
                               Nhân Viên
                               <button
-                                type='button'
-                                className='close'
-                                data-dismiss='alert'
-                                aria-label='Close'
+                                type="button"
+                                className="close"
+                                data-dismiss="alert"
+                                aria-label="Close"
                               >
-                                <span aria-hidden='true'>&times;</span>
+                                <span aria-hidden="true">&times;</span>
                               </button>
                             </div>
                           ) : (
                             // <div className='alert alert-danger'>Please select birthday</div>
-                            ''
+                            ""
                           )}
 
-                          <div className='form-actions top'>
+                          <div className="form-actions top">
                             {this.state.saving ? (
                               <button
-                                type='button'
-                                className='mb-2 mr-2 btn btn-raised btn-primary'
+                                type="button"
+                                className="mb-2 mr-2 btn btn-raised btn-primary"
                               >
                                 <div
-                                  className='spinner-grow spinner-grow-sm '
-                                  role='status'
-                                ></div>{' '}
+                                  className="spinner-grow spinner-grow-sm "
+                                  role="status"
+                                ></div>{" "}
                                 &nbsp; Xin vui lòng đợi trong giây lát
                               </button>
                             ) : (
                               <button
-                                type='submit'
-                                className='mb-2 mr-2 btn btn-raised btn-primary'
+                                type="submit"
+                                className="mb-2 mr-2 btn btn-raised btn-primary"
                               >
-                                <i className='ft-chevron-right' /> Cập Nhật
+                                <i className="ft-chevron-right" /> Cập Nhật
                                 Thông Tin
                               </button>
                             )}
@@ -1520,113 +1539,113 @@ class EditUser extends Component {
               </div>
             </div>
 
-            <footer className='footer footer-static footer-light'>
-              <p className='clearfix text-muted text-sm-center px-2'>
+            <footer className="footer footer-static footer-light">
+              <p className="clearfix text-muted text-sm-center px-2">
                 <span>
-                  Quyền sở hữu của &nbsp;{' '}
+                  Quyền sở hữu của &nbsp;{" "}
                   <a
-                    href='https://www.sutygon.com'
-                    id='pixinventLink'
-                    target='_blank'
-                    className='text-bold-800 primary darken-2'
+                    href="https://www.sutygon.com"
+                    id="pixinventLink"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
                   >
-                    SUTYGON-BOT{' '}
+                    SUTYGON-BOT{" "}
                   </a>
-                  , All rights reserved.{' '}
+                  , All rights reserved.{" "}
                 </span>
               </p>
             </footer>
           </div>
           <Modal
             visible={this.state.visible}
-            width='400'
-            height='250'
-            effect='fadeInUp'
+            width="400"
+            height="250"
+            effect="fadeInUp"
             onClickAway={(e) => this.closeModal(e)}
           >
             <div>
-              <div className='modal-header'>
-                <h4 className='text-center'>
+              <div className="modal-header">
+                <h4 className="text-center">
                   Please enter the authorization code to make this change
                 </h4>
               </div>
               <Alert />
-              <div className='modal-body'>
+              <div className="modal-body">
                 <input
-                  name='code'
+                  name="code"
                   value={this.state.code}
                   onChange={(e) => this._handleChange(e)}
-                  placeholder='Enter Code here'
-                  className='form-control border-primary'
+                  placeholder="Enter Code here"
+                  className="form-control border-primary"
                 />
               </div>
-              <div className='modal-footer'>
+              <div className="modal-footer">
                 <button
-                  type='button'
+                  type="button"
                   onClick={(e) => this.authorize(e)}
-                  className='btn grey btn-lg btn-outline-success'
+                  className="btn grey btn-lg btn-outline-success"
                 >
                   Authorize
                 </button>
                 <button
-                  type='button'
+                  type="button"
                   onClick={(e) => this.closeModal(e)}
-                  className='btn grey btn-lg btn-outline-danger'
+                  className="btn grey btn-lg btn-outline-danger"
                 >
                   Close
                 </button>
               </div>
               <div>
-                {' '}
+                {" "}
                 <OCAlertsProvider />
               </div>
             </div>
           </Modal>
           <Modal
             visible={this.state.show}
-            width='400'
-            height='400'
-            effect='fadeInUp'
+            width="400"
+            height="400"
+            effect="fadeInUp"
             onClickAway={(e) => this.closeModal(e)}
           >
             <div>
-              <div className='modal-header'>
+              <div className="modal-header">
                 <h3>Update Password</h3>
               </div>
               <Alert />
 
-              <div className='modal-body'>
-                <div className='form-group row'>
-                  <div className='col-md-12'>
+              <div className="modal-body">
+                <div className="form-group row">
+                  <div className="col-md-12">
                     <input
-                      type='password'
-                      className='form-control border-primary'
-                      placeholder='Enter Current password here'
-                      name='password'
+                      type="password"
+                      className="form-control border-primary"
+                      placeholder="Enter Current password here"
+                      name="password"
                       value={this.state.password}
                       onChange={(e) => this._handleChange(e)}
                     />
                   </div>
                 </div>
-                <div className='form-group row'>
-                  <div className='col-md-12'>
+                <div className="form-group row">
+                  <div className="col-md-12">
                     <input
-                      type='password'
-                      className='form-control border-primary'
-                      placeholder='Enter New password here'
-                      name='newpassword'
+                      type="password"
+                      className="form-control border-primary"
+                      placeholder="Enter New password here"
+                      name="newpassword"
                       value={this.state.newpassword}
                       onChange={(e) => this._handleChange(e)}
                     />
                   </div>
                 </div>
-                <div className='form-group row'>
-                  <div className='col-md-12'>
+                <div className="form-group row">
+                  <div className="col-md-12">
                     <input
-                      type='password'
-                      className='form-control border-primary'
-                      placeholder='Re type password'
-                      name='confirmpassword'
+                      type="password"
+                      className="form-control border-primary"
+                      placeholder="Re type password"
+                      name="confirmpassword"
                       value={this.state.confirmpassword}
                       onChange={(e) => this._handleChange(e)}
                     />
@@ -1634,18 +1653,18 @@ class EditUser extends Component {
                 </div>
               </div>
 
-              <div className='modal-footer'>
+              <div className="modal-footer">
                 <button
-                  type='button'
+                  type="button"
                   onClick={(e) => this.updatePassword(e)}
-                  className='btn grey btn-lg btn-outline-success'
+                  className="btn grey btn-lg btn-outline-success"
                 >
                   Update Password
                 </button>
                 <button
-                  type='button'
+                  type="button"
                   onClick={(e) => this.closeModal(e)}
-                  className='btn grey btn-lg btn-outline-danger'
+                  className="btn grey btn-lg btn-outline-danger"
                 >
                   Close
                 </button>

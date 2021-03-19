@@ -28,7 +28,7 @@ const AppointmentsSchema = new mongoose.Schema(
     },
      createdBy: {
         type: Schema.Types.ObjectId,
-        ref: "user",
+        ref: "store",
     }
 	},
 

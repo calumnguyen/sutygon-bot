@@ -11,7 +11,7 @@ const List = {
       title: "Mã giảm giá",
       url: "coupons",
       icons: "fa fa-gift",
-      name: "Admin",
+      name: "Coupons",
     },
     {
       id: 1,
@@ -20,6 +20,7 @@ const List = {
       icons: "ft-users",
       name: "Admin",
     },
+
     {
       id: 2,
       title: "Hàng Kho",
@@ -83,11 +84,10 @@ const List = {
       icons: "ft-clipboard",
       name: "Reports",
     },
-  
   ],
 
-   sAdminList : [
-      {
+  sAdminList: [
+    {
       id: 11,
       title: "System Users",
       url: "adminsview",
@@ -95,15 +95,34 @@ const List = {
       name: "AdminList",
     },
   ],
+
+  shopOwners: [
+    {
+      id: 1,
+      title: "Store",
+      url: "stores",
+      icons: "ft-home",
+      name: "Admin",
+    },
+  ],
   getList: function (user) {
-    if (user && user.systemRole === "Admin") {
+    if (user && user.systemRole === "Admin" && !localStorage.getItem("shopowner")) {
       if (user && (user.sections == null || user.sections.length == 0)) {
         let admin_list = this.list;
-        
+
         return (
           (localStorage.getItem(user._id) &&
             JSON.parse(localStorage.getItem(user._id))) ||
           admin_list
+        );
+      }
+    }
+    if (user && user.systemRole === "Admin" &&  localStorage.getItem("shopowner")) {
+      if (user && (user.sections == null || user.sections.length == 0)) {
+        return (
+          (localStorage.getItem(user._id) &&
+            JSON.parse(localStorage.getItem(user._id))) ||
+          this.shopOwners
         );
       }
     } else if (user && user.systemRole === "Employee") {

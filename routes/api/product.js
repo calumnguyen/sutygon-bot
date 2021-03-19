@@ -55,7 +55,7 @@ router.post(
 					tags: body.tags,
 					image: result.secure_url,
 					color: JSON.parse(req.body.color),
-					createdBy: req.user.id,
+					createdBy: req.user.storeId,
 				};
 				let product = new Product(productBody);
 				await product.save();
@@ -461,11 +461,11 @@ router.post(
 			var page = req.body.currentPage ? parseInt(req.body.currentPage) : 1;
 
 			var skip = (page - 1) * pagination_limit;
-			const products = await Product.find({ createdBy: req.user.id })
+			const products = await Product.find({ createdBy: req.user.storeId })
 				.sort({ date: -1 })
 				.skip(skip)
 				.limit(pagination_limit);
-			const total = await Product.count({ createdBy: req.user.id });
+			const total = await Product.count({ createdBy: req.user.storeId });
 			res.status(200).json({ products: products, total: total });
 		} catch (err) {
 			console.log(err);
@@ -483,7 +483,7 @@ router.get(
 
 	async (req, res) => {
 		try {
-			const products = await Product.find({ createdBy: req.user.id }).sort({
+			const products = await Product.find({ createdBy: req.user.storeId }).sort({
 				date: -1,
 			});
 			res.status(200).json({ products: products, total: products.length });
@@ -520,7 +520,7 @@ router.get(
 		try {
 			const search = req.params.val;
 			const products = await Product.find({
-				createdBy: req.user.id,
+				createdBy: req.user.storeId,
 				$or: [
 					{ name: search },
 					{ color: search },
@@ -567,7 +567,7 @@ router.get('/:id', auth, async (req, res) => {
 router.get('/:name', auth, async (req, res) => {
 	try {
 		const product = await Product.findOne({
-			createdBy: req.user.id,
+			createdBy: req.user.storeId,
 			name: { $eq: req.params.name },
 		});
 
@@ -653,7 +653,7 @@ router.get(
 		try {
 			const search = req.params.val;
 			const products = await Product.find({
-				createdBy: req.user.id,
+				createdBy: req.user.storeId,
 				$or: [{ 'color.sizes..barcodes..barcode': search }],
 			});
 
@@ -761,13 +761,13 @@ router.post('/filter/filter_products', auth, async (req, res) => {
 
 		const products = await Product.find({
 			$or: queryConditions,
-			createdBy: req.user.id,
+			createdBy: req.user.storeId,
 		})
 			.sort({ date: -1 })
 			.skip(skip)
 			.limit(pagination_limit);
 		const total = await Product.find({
-			createdBy: req.user.id,
+			createdBy: req.user.storeId,
 			$or: queryConditions,
 		}).countDocuments();
 		res.status(200).json({ products: products, total: total });

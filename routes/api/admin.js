@@ -25,37 +25,7 @@ router.get("/get_all_admins", auth, async (req, res) => {
   }
 });
 
-// // @route   GET api/admin/all_inactive_users
-// // @desc    Verify token and get User
-// // @access  Private
-// router.get("/all_inactive_users", auth, async (req, res) => {
-//   try {
-//     const user = await User.find({
-//       accountStatus: "inactive",
-//       systemRole: "Admin",
-//     });
-//     return res.json(user);
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send({ msg: "Server Error" });
-//   }
-// });
 
-// // @route   GET api/admin/all_active_users
-// // @desc    Verify token and get User
-// // @access  Private
-// router.get("/all_active_users", auth, async (req, res) => {
-//   try {
-//     const user = await User.find({
-//       accountStatus: "active",
-//       systemRole: "Admin",
-//     });
-//     return res.json(user);
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send({ msg: "Server Error" });
-//   }
-// });
 // @route   GET api/admin/activate_user
 // @desc    Verify token and get User
 // @access  Private

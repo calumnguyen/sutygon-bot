@@ -94,7 +94,7 @@ const CouponsSchema = new mongoose.Schema(
     },
     createdBy: {
         type: Schema.Types.ObjectId,
-        ref: "user",
+        ref: "store",
     }
   },
   { timestamps: true }

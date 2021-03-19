@@ -187,3 +187,17 @@ export const Admins_LOADING = 'Admins_LOADING'
 
 //Custom Actions
 export const UPDATE_TOGGLE_STATUS = 'UPDATE_TOGGLE_STATUS';
+
+
+// shops
+export const GET_STORES = 'GET_STORES'
+export const GET_SHOPS = 'GET_SHOPS'
+export const SHOPS_ERROR = 'SHOPS_ERROR'
+export const SHOPS_LOADING = 'SHOPS_LOADING'
+export const SHOPS_SAVED = 'SHOPS_SAVED'
+export const GET_SHOP = 'GET_SHOP'
+export const SHOPS_DELETED = 'SHOPS_DELETED'
+export const SHOPS_UPDATED = 'SHOPS_UPDATED'
+export const STORE_LOADED = 'STORE_LOADED'
+
+

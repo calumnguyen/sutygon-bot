@@ -86,7 +86,9 @@ const UserSchema = new mongoose.Schema(
         "Orders",
         "Appointments",
         "Calender",
+        "Calender",
         "AdminList",
+        "Coupons",
       ],
     },
     //Until the password is not changed, this value will be false on default.

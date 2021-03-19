@@ -5,86 +5,90 @@ import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getAllCoupons, deleteCoupon } from "../../../actions/coupons";
+import { getAllStores, deleteShop } from "../../../actions/shop";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import Alert from "../../layout/Alert";
 import Loader from "../../layout/Loader";
 import MPagination from "../../../components/pagination/MPagination";
-
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
 
-class ViewCoupons extends Component {
+class ViewShops extends Component {
   state = {
     couponsStatus: "active",
     page: 1,
+    copied: false,
+    currentIndex: "",
   };
 
-  async componentDidMount() {
-    const { page, couponsStatus } = this.state;
-    await this.props.getAllCoupons(this.state.page, couponsStatus);
-  }
-
-  async componentDidUpdate(prevProps, prevState) {
-    const { page, couponsStatus } = this.state;
-    if (prevState.page !== page) {
-      await this.props.getAllCoupons(this.state.page, couponsStatus);
-    }
-    if (prevState.couponsStatus !== couponsStatus) {
-      await this.props.getAllCoupons(this.state.page, couponsStatus);
-    }
-  }
+  componentDidMount = async () => {
+    this.props.getAllStores(this.state.page);
+  };
 
   getTAble = () => {
-    const { coupons } = this.props;
-    if (coupons) {
-      if (coupons.length === 0) {
+    const { shops } = this.props;
+    if (shops) {
+      if (shops.length === 0) {
         return (
           <tr>
             <td colSpan={9} className="text-center">
-              Không tìm thấy mã giảm giá nào. Kiết quá đi!
+              No Data Found
             </td>
           </tr>
         );
       }
-      return coupons.map((coupon, index) => (
-        <tr key={coupon._id}>
+      return shops.map((shop, index) => (
+        <tr key={shop._id}>
           <td className="text-center">{index + 1}</td>
 
+          <td className="text-center">{shop.name}</td>
           <td className="text-center">
-            {coupon.discount_amount}
-            {coupon.coupon_type == "percentage" ? " %" : " VND"}
+            <CopyToClipboard
+              text={`https://sutygon.app/${shop.slug}/Login`}
+              onCopy={() => {
+                this.setState({ copied: true, currentIndex: index });
+                setTimeout(() => {
+                  this.setState({ copied: false, currentIndex: "" });
+                }, 800);
+              }}
+            >
+                <span
+                  className="btn btn-sm btn-info"
+                  style={{ cursor: "pointer" }}
+                >
+                  Copy to clipboard
+                </span>
+               
+             
+            </CopyToClipboard>
+            {this.state.copied && this.state.currentIndex == index ? (
+                  <span className="text-danger ml-1" >Copied</span>
+                ) : (
+                  ""
+                )}
           </td>
-          <td className="text-center">{coupon.code}</td>
-          <td className="text-center">{coupon.usage}</td>
-          <td className="text-center">
-            {coupon.coupon_status === "active" && (
-              <span className="badge badge-success">ĐANG CHẠY</span>
-            )}
-            {coupon.coupon_status === "inactive" && (
-              <span className="badge badge-warning">Hết Hạn</span>
-            )}
-          </td>
-          <td className="text-center">
+          <td className="text-center">{shop.address}</td>
+
+         <td className="text-center">
             <Link
-              to={{ pathname: `/coupons/view/${coupon._id}` }}
+              to={{ pathname: `/stores/edit/${shop._id}` }}
               className="success p-0"
             >
               <i
-                className="fa fa-eye font-medium-3 mr-2 "
+                className="ft-edit-2 font-medium-3 mr-2 "
                 title="Xem Thông Tin"
               ></i>
             </Link>
 
-            <Link
-              to="/coupons"
-              onClick={() => this.onDelete(coupon._id)}
+             {/* <Link
+              to="/stores"
+              onClick={() => this.onDelete(shop._id)}
               className="danger p-0"
             >
               <i className="ft-x font-medium-3 mr-2" title="Xoá Mã"></i>
-            </Link>
-          </td>
+            </Link>*/}
+          </td> 
         </tr>
       ));
     }
@@ -98,7 +102,7 @@ class ViewCoupons extends Component {
         {
           label: "Có, xoá mã!",
           onClick: () => {
-            this.props.deleteCoupon(id);
+            this.props.deleteShop(id);
           },
         },
         {
@@ -120,7 +124,7 @@ class ViewCoupons extends Component {
     const { user } = auth;
 
     if (user && user.systemRole === "Employee") {
-      if (user && !user.sections.includes("Coupons")) {
+      if (user && !user.sections.includes("Shops")) {
         return <Redirect to="/Error" />;
       }
     }
@@ -138,80 +142,38 @@ class ViewCoupons extends Component {
                     <div className="col-sm-12">
                       <div className="card">
                         <div className="card-header">
-                          <h4 className="card-title">Mã Giảm Giá</h4>
+                          <h4 className="card-title">stores</h4>
                         </div>
                         <div className="card-content">
                           <div className="card-body">
                             <div className="row">
-                              <div className="col-md-8">
-                                <label
-                                  className="radio-inline"
-                                  style={{ marginLeft: "10px" }}
-                                >
-                                  <input
-                                    type="radio"
-                                    name="activeUser"
-                                    onChange={(e) =>
-                                      this.setState({
-                                        couponsStatus: "active",
-                                        page: 1,
-                                      })
-                                    }
-                                    checked={
-                                      this.state.couponsStatus === "active"
-                                    }
-                                  />{" "}
-                                  Đang Chạy
-                                </label>
-                                <label
-                                  className="radio-inline"
-                                  style={{ marginLeft: "10px" }}
-                                >
-                                  <input
-                                    type="radio"
-                                    name="InactiveUser"
-                                    onChange={(e) =>
-                                      this.setState({
-                                        couponsStatus: "inactive",
-                                        page: 1,
-                                      })
-                                    }
-                                    checked={
-                                      this.state.couponsStatus === "inactive"
-                                    }
-                                  />{" "}
-                                  Hết Hạn
-                                </label>
-                              </div>
-
-                              <div className="col-md-4">
+                              <div className="col-md-12">
                                 <Link
                                   to={{
-                                    pathname: "/coupons/add",
+                                    pathname: "/stores/add",
                                   }}
                                   className="btn btn-primary pull-right"
                                 >
-                                  <i className="fa fa-plus"></i> Thêm Mã Mới
+                                  <i className="fa fa-plus"></i> Add New Store
                                 </Link>
                               </div>
                             </div>
                             <Alert />
                             <OCAlertsProvider />
-                            {this.props.coupons_total > 10 && (
+                            {/* {this.props.coupons_total > 10 && (
                               <MPagination
                                 onChangePage={this.onChangePage}
                                 currentPage={this.state.page}
                                 products_total={this.props.coupons_total}
                               />
-                            )}
+                            )} */}
                             <table className="table">
                               <thead>
                                 <tr>
                                   <th className="text-center">STT</th>
-                                  <th className="text-center">Giảm Giá</th>
-                                  <th className="text-center">Mã</th>
-                                  <th className="text-center">Tổng Lược Xài</th>
-                                  <th className="text-center">Trạng Thái</th>
+                                  <th className="text-center">Store Name</th>
+                                  <th className="text-center">Slug</th>
+                                  <th className="text-center">Address</th>
                                   <th className="text-center">Hành Động</th>
                                 </tr>
                               </thead>
@@ -250,17 +212,17 @@ class ViewCoupons extends Component {
   }
 }
 
-ViewCoupons.propTypes = {
-  getAllCoupons: PropTypes.func.isRequired,
-  deleteCoupon: PropTypes.func.isRequired,
+ViewShops.propTypes = {
+  getAllStores: PropTypes.func.isRequired,
+  deleteShop: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  coupons: state.coupons.coupons,
-  coupons_total: state.coupons.coupons_total,
+  shops: state.shops.shops,
+  shops_total: state.shops.shops_total,
   auth: state.auth,
 });
 export default connect(mapStateToProps, {
-  getAllCoupons,
-  deleteCoupon,
-})(ViewCoupons);
+  getAllStores,
+  deleteShop,
+})(ViewShops);

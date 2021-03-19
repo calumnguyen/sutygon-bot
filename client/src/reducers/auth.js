@@ -14,7 +14,6 @@ const initialState = {
   user: null,
 };
 
-
 export default function (state = initialState, action) {
   const { type, payload } = action;
   switch (type) {
@@ -43,6 +42,8 @@ export default function (state = initialState, action) {
     case AUTH_ERROR:
     case LOGOUT:
       localStorage.removeItem("token");
+      localStorage.removeItem("shopowner");
+      localStorage.removeItem("storeId");
       return {
         ...state,
         token: null,

@@ -2,27 +2,34 @@ import React, { Component } from "react";
 import { Redirect, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { loginAdmin } from "../actions/auth";
-import { updatePassword, getUser } from "../actions/user";
+import { login } from "../../../actions/auth";
+import { updatePassword, getUser } from "../../../actions/user";
 
-import Alert from "./layout/Alert";
-import { getShop } from "../actions/dashboard";
+import Alert from "../../layout/Alert";
+import { getShop } from "../../../actions/dashboard";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
-class Login extends Component {
-  state = {
-    username: "",
-    email: "",
-    password: "",
-    newpassword: "",
-    confirmpassword: "",
-    id: "",
-    tempPass: "",
-    userID: "",
-  };
+class StoreLogin extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: "",
+      email: "",
+      password: "",
+      newpassword: "",
+      confirmpassword: "",
+      id: "",
+      tempPass: "",
+      userID: "",
+      slug: "",
+    };
+  }
 
   async componentDidMount() {
     this.props.getShop();
+    if (this.props.match.params.slug) {
+      this.setState({ slug: this.props.match.params.slug });
+    }
 
     // await this.props.getUser(userID)
   }
@@ -46,10 +53,10 @@ class Login extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-    const { loginAdmin } = this.props;
+    const { login } = this.props;
 
-    const { username, password } = this.state;
-    loginAdmin(username, password);
+    const { username, password, slug } = this.state;
+    login(username, password, slug);
   };
 
   onUpdatePassword = async (e) => {
@@ -110,9 +117,7 @@ class Login extends Component {
           }
         }
       }
-    } else if (
-      (user && user.systemRole === "Admin")
-    ) {
+    } else if (user && user.systemRole === "Admin") {
       if (this.props.AuthLoading === false && this.props.isAuthenticated) {
         if (user.isPasswordChanged === false) {
           return <Redirect to="/ActivateAccount" />;
@@ -150,7 +155,7 @@ class Login extends Component {
                                 <div className="logo-img text-center align-middle">
                                   <img
                                     alt={"Sutygon-bot"}
-                                    src="assets/img/logos/logo.png"
+                                    src="../../assets/img/logos/logo.png"
                                     height={100}
                                     width={100}
                                   />
@@ -192,9 +197,9 @@ class Login extends Component {
                                       />
                                     </div>
                                   </div>
-                                  <Link class="nav-link" to={"/signup"}>
+                                  {/* <Link class="nav-link" to={"/signup"}>
                                     Don't have an account? Signup here!
-                                  </Link>
+                                  </Link> */}
                                 </form>
                               </div>
                             </div>
@@ -325,7 +330,7 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+StoreLogin.propTypes = {
   auth: PropTypes.object,
   passwordUpdated: PropTypes.bool,
   userID: PropTypes.object,
@@ -348,8 +353,8 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
-  loginAdmin,
+  login,
   updatePassword,
   getUser,
   getShop,
-})(Login);
+})(StoreLogin);

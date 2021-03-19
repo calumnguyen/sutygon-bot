@@ -135,15 +135,15 @@ class Dashboard extends Component {
         if (
           event.user.accountStatus == "active"
             ? m_bevents.push({
-              date: new_Date,
-              timeStart: event.timeStart,
-              timeEnd: event.timeEnd,
-              name:
-                event.name && `${event.name}'s ${age} Birthday Aniversary`,
-              note: event.note,
-              location: event.location,
-              _id: event._id,
-            })
+                date: new_Date,
+                timeStart: event.timeStart,
+                timeEnd: event.timeEnd,
+                name:
+                  event.name && `${event.name}'s ${age} Birthday Aniversary`,
+                note: event.note,
+                location: event.location,
+                _id: event._id,
+              })
             : ""
         );
       });
@@ -293,7 +293,8 @@ class Dashboard extends Component {
       pickup_today,
       overdue_today,
       alterations,
-      admins
+      admins,
+      stores
     } = this.props.count_orders;
     return (
       <React.Fragment>
@@ -314,6 +315,11 @@ class Dashboard extends Component {
                 <div className="row">
                   {user && user.systemRole === "superadmin" ? (
                     <SuperAdminDashBoard admins={admins} />
+                  ) : user &&
+                    user.systemRole === "Admin" &&
+                    user.showOwner &&
+                    localStorage.getItem("shopowner") ? (
+                    <StoreAdminDashboard stores={stores} />
                   ) : (
                     <div className="col-md-7">
                       <div className="container px-6 mx-auto">
@@ -392,8 +398,8 @@ class Dashboard extends Component {
                   )}
 
                   {user && user.systemRole === "superadmin" ? (
-                    ''
-                  ) :
+                    ""
+                  ) : (
                     <div className="col-md-5 alert_box col-sm-3">
                       <div className="card card-alert gradient-light-blue-indigo">
                         {this.state.currenWeekEvents &&
@@ -420,14 +426,15 @@ class Dashboard extends Component {
                                   </p>
                                   <p className="my-n1">
                                     <small className="text-muted">
-                                      Date :{moment(a.date).format("DD-MM-YYYY")}{" "}
+                                      Date :
+                                      {moment(a.date).format("DD-MM-YYYY")}{" "}
                                     </small>
                                   </p>
                                   <p className="my-n1">
                                     <small className="text-muted">
                                       From :
-                                    {moment(a.timeStart).format("hh:mm A")}, To
-                                    : {moment(a.timeEnd).format("hh:mm A")}
+                                      {moment(a.timeStart).format("hh:mm A")},
+                                      To : {moment(a.timeEnd).format("hh:mm A")}
                                     </small>
                                   </p>
                                   {a.location ? (
@@ -453,7 +460,8 @@ class Dashboard extends Component {
                               );
                             })}
                       </div>
-                    </div>}
+                    </div>
+                  )}
                 </div>
 
                 {user && user.systemRole === "Admin" ? (
@@ -602,7 +610,7 @@ export default connect(mapStateToProps, {
   removeEvnetStauts,
 })(Dashboard);
 
-const SuperAdminDashBoard = ({admins}) => {
+const SuperAdminDashBoard = ({ admins }) => {
   return (
     <div className="col-md-7">
       <div className="container px-6 mx-auto">
@@ -610,10 +618,76 @@ const SuperAdminDashBoard = ({admins}) => {
           {/* card1 */}
           <div className="flex items-center bg-white shadow-xs card-dashboard">
             <div className="text-orange-500 gradient-blueberry rounded-full card-dashboard-span">
-              <div className="text">{admins?admins:0}</div>
+              <div className="text">{admins ? admins : 0}</div>
             </div>
             <div className="text-card">
               <span>System Users</span>
+            </div>
+          </div>
+          {/* card2 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-red-pink rounded-full card-dashboard-span">
+              <div className="text">0</div>
+            </div>
+            <div className="text-card">
+              <span className="ml-2"> ?</span>
+            </div>
+          </div>
+          {/* card3 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="gradient-light-blue-indigo rounded-full card-dashboard-span">
+              <div className="text">0</div>
+            </div>
+            <div className="text-card">
+              <span> ?</span> <br />{" "}
+            </div>
+          </div>
+          {/* card4 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-crystal-clear rounded-full card-dashboard-span">
+              <div className="text">0</div>
+            </div>
+            <div className="text-card-repair">
+              <span> ?</span>{" "}
+            </div>
+          </div>{" "}
+          {/* card5 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-orange rounded-full card-dashboard-span">
+              <div className="text"> 0</div>
+            </div>
+            <div className="text-card">
+              <span> ?</span>
+            </div>
+          </div>{" "}
+          {/* card6 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-love-couple rounded-full card-dashboard-span">
+              {" "}
+              <div className="text">0</div>{" "}
+            </div>
+            <div className="text-card-repair">
+              <span> ?</span> <br />{" "}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const StoreAdminDashboard = ({stores}) => {
+  return (
+    <div className="col-md-7">
+      <div className="container px-6 mx-auto">
+        <div className="grid gap-6 mb-8 md:grid-cols-4 grid-cols-4 xl:grid-cols-4 ">
+          {/* card1 */}
+          <div className="flex items-center bg-white shadow-xs card-dashboard">
+            <div className="text-orange-500 gradient-blueberry rounded-full card-dashboard-span">
+              <div className="text">{stores?stores:0}</div>
+            </div>
+            <div className="text-card">
+              <span>Stores </span>
             </div>
           </div>
           {/* card2 */}

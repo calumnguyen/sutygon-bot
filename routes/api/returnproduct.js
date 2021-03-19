@@ -13,7 +13,7 @@ const moment = require("moment");
 router.get("/searchbyContactNumber", auth, async (req, res) => {
   try {
     const result = await RentedProduct.find({
-      createdBy: req.user.id,
+      createdBy: req.user.storeId,
       customerContactNumber: { $eq: req.query.number },
     })
       .populate("customer", { name: 1, contactnumber: 1 })
@@ -84,7 +84,7 @@ router.post("/:contact/:date/pending", auth, async (req, res) => {
 router.get("/searchbyOrderNumber", auth, async (req, res) => {
   try {
     const result = await RentedProduct.find({
-      createdBy: req.user.id,
+      createdBy: req.user.storeId,
       orderNumber: { $eq: req.query.orderNumber },
     }).populate("customer", { name: 1, contactnumber: 1 });
     if (!result) {
