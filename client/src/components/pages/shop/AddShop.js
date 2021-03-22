@@ -22,19 +22,32 @@ class AddShop extends Component {
 
   async componentDidMount() {
     const id = this.props.match.params.id;
-    await this.props.getShopById(id);
-    const { shop } = this.props;
-    if (shop) {
-      this.setState({
-        shopId: shop._id,
-        shop_name: shop.name,
-        address: shop.address,
-        slug: shop.slug,
-        email: shop.officialEmail,
-        phone: shop.phone,
-      });
+    if (id) {
+      await this.props.getShopById(id);
+      const { shop } = this.props;
+      if (shop) {
+        this.setState({
+          shopId: shop._id,
+          shop_name: shop.name,
+          address: shop.address,
+          slug: shop.slug,
+          email: shop.officialEmail,
+          phone: shop.phone,
+        });
+      }
     }
   }
+
+  componentWillUnmount = async () => {
+    this.setState({
+      shopId: "",
+      shop_name: "",
+      address: "",
+      slug: "",
+      email: "",
+      phone: "",
+    });
+  };
 
   onSubmit = async () => {
     if (this.state.shop_name === "") {
@@ -67,8 +80,15 @@ class AddShop extends Component {
       });
       return;
     } else {
-      console.log(formData)
       await this.props.updateStore(formData, this.state.shopId);
+      this.setState({
+        shopId: "",
+        shop_name: "",
+        address: "",
+        slug: "",
+        email: "",
+        phone: "",
+      });
     }
     return;
   };
@@ -298,5 +318,5 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   addNewShop,
   getShopById,
-  updateStore
+  updateStore,
 })(AddShop);

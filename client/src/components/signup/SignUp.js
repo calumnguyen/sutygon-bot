@@ -35,10 +35,11 @@ class SignUp extends Component {
     e.preventDefault();
     try {
       this.setState({ mesg: "", errors: "", isLoading: true, code: "" });
-      const { email, password } = this.state;
+      const { email, password, username } = this.state;
       const res = await axios.post("/api/auth/send_email", {
         email: email,
         password: password,
+        username: username,
       });
       this.setState({ mesg: res.data.message, verify: true, isLoading: false });
     } catch (err) {
@@ -170,7 +171,14 @@ class SignUp extends Component {
                                 ) : (
                                   <form onSubmit={(e) => this.onSubmit(e)}>
                                     <Alert />
-
+                                    <input
+                                      type="text"
+                                      className="form-control mb-3"
+                                      placeholder="Enter Your username"
+                                      required
+                                      onChange={(e) => this.onChange(e)}
+                                      name="username"
+                                    />
                                     <input
                                       type="email"
                                       className="form-control mb-3"

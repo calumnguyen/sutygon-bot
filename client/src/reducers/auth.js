@@ -44,6 +44,7 @@ export default function (state = initialState, action) {
       localStorage.removeItem("token");
       localStorage.removeItem("shopowner");
       localStorage.removeItem("storeId");
+      localStorage.clear();
       return {
         ...state,
         token: null,
