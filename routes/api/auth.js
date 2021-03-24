@@ -275,7 +275,7 @@ router.post(
         const msg = {
           to: req.body.email,
           from: "supervisor@sutygon.com", // Use the email address or domain you verified above
-          subject: "Verify Email",
+          subject: "Email Verification Code for Sutygon-Bot",
           // text: 'and easy to do anywhere, even with Node.js',
           html: `        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
           <html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
