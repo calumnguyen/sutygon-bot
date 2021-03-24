@@ -114,6 +114,7 @@ export const login = (username, password, slug) => async (dispatch) => {
   try {
     const res = await axios.post("/api/auth", body, config);
     localStorage.setItem("storeId", res.data.slugres._id);
+    localStorage.setItem("slug", res.data.slugres.slug);
     dispatch({
       type: LOGIN_SUCCESS,
       payload: res.data,

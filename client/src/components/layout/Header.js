@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { logout } from '../../actions/auth';
+import { loadStore, logout } from '../../actions/auth';
 import loadjs from 'loadjs';
 import { Link } from 'react-router-dom';
 import { setToggleStatus } from "../../actions/custom";
@@ -61,7 +61,7 @@ class Header extends Component {
 
   render() {
     const { user } = this.props.auth;
-
+   const slug= localStorage.getItem("slug")
     return (
       <>
         <div className="menuBarToggleButton">
@@ -100,7 +100,7 @@ class Header extends Component {
               </DropdownItem>
               <DropdownItem>
                 <Link
-                  to='/login'
+                  to={`${slug?'/'+slug+'/login':'/login'}`}
                   onClick={() => this.props.logout()}
                   className='dropdown-item'
                 >
