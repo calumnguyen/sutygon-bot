@@ -1,25 +1,25 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
-import { Link } from "react-router-dom";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { getAllStores, deleteShop } from "../../../actions/shop";
-import { confirmAlert } from "react-confirm-alert";
-import "react-confirm-alert/src/react-confirm-alert.css";
-import Alert from "../../layout/Alert";
-import Loader from "../../layout/Loader";
-import MPagination from "../../../components/pagination/MPagination";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
+import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { getAllStores, deleteShop } from '../../../actions/shop';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import Alert from '../../layout/Alert';
+import Loader from '../../layout/Loader';
+import MPagination from '../../../components/pagination/MPagination';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
 
 class ViewShops extends Component {
   state = {
-    couponsStatus: "active",
+    couponsStatus: 'active',
     page: 1,
     copied: false,
-    currentIndex: "",
+    currentIndex: '',
   };
 
   componentDidMount = async () => {
@@ -32,63 +32,61 @@ class ViewShops extends Component {
       if (shops.length === 0) {
         return (
           <tr>
-            <td colSpan={9} className="text-center">
-              No Data Found
+            <td colSpan={9} className='text-center'>
+              Bạn chưa có cửa hàng nào.
             </td>
           </tr>
         );
       }
       return shops.map((shop, index) => (
         <tr key={shop._id}>
-          <td className="text-center">{index + 1}</td>
+          <td className='text-center'>{index + 1}</td>
 
-          <td className="text-center">{shop.name}</td>
-          <td className="text-center">
+          <td className='text-center'>{shop.name}</td>
+          <td className='text-center'>
             <CopyToClipboard
               text={`https://sutygon.app/${shop.slug}/Login`}
               onCopy={() => {
                 this.setState({ copied: true, currentIndex: index });
                 setTimeout(() => {
-                  this.setState({ copied: false, currentIndex: "" });
+                  this.setState({ copied: false, currentIndex: '' });
                 }, 800);
               }}
             >
-                <span
-                  className="btn btn-sm btn-info"
-                  style={{ cursor: "pointer" }}
-                >
-                  Copy to clipboard
-                </span>
-               
-             
+              <span
+                className='btn btn-sm btn-info'
+                style={{ cursor: 'pointer' }}
+              >
+                Truy cập cửa hàng
+              </span>
             </CopyToClipboard>
             {this.state.copied && this.state.currentIndex == index ? (
-                  <span className="text-danger ml-1" >Copied</span>
-                ) : (
-                  ""
-                )}
+              <span className='text-danger ml-1'>Đã copy</span>
+            ) : (
+              ''
+            )}
           </td>
-          <td className="text-center">{shop.address}</td>
+          <td className='text-center'>{shop.address}</td>
 
-         <td className="text-center">
+          <td className='text-center'>
             <Link
               to={{ pathname: `/stores/edit/${shop._id}` }}
-              className="success p-0"
+              className='success p-0'
             >
               <i
-                className="ft-edit-2 font-medium-3 mr-2 "
-                title="Xem Thông Tin"
+                className='ft-edit-2 font-medium-3 mr-2 '
+                title='Xem Thông Tin'
               ></i>
             </Link>
 
-             {/* <Link
+            {/* <Link
               to="/stores"
               onClick={() => this.onDelete(shop._id)}
               className="danger p-0"
             >
               <i className="ft-x font-medium-3 mr-2" title="Xoá Mã"></i>
             </Link>*/}
-          </td> 
+          </td>
         </tr>
       ));
     }
@@ -96,17 +94,17 @@ class ViewShops extends Component {
 
   onDelete = (id) => {
     confirmAlert({
-      title: "Xoá Mã Giảm Giá?",
-      message: "Bạn có chắc chắn muốn xoá mã giảm giá này không?",
+      title: 'Xoá Mã Giảm Giá?',
+      message: 'Bạn có chắc chắn muốn xoá mã giảm giá này không?',
       buttons: [
         {
-          label: "Có, xoá mã!",
+          label: 'Có, xoá mã!',
           onClick: () => {
             this.props.deleteShop(id);
           },
         },
         {
-          label: "Hủy",
+          label: 'Hủy',
           onClick: () => {},
         },
       ],
@@ -119,42 +117,43 @@ class ViewShops extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to="/login" />;
+      return <Redirect to='/login' />;
     }
     const { user } = auth;
 
-    if (user && user.systemRole === "Employee") {
-      if (user && !user.sections.includes("Shops")) {
-        return <Redirect to="/Error" />;
+    if (user && user.systemRole === 'Employee') {
+      if (user && !user.sections.includes('Shops')) {
+        return <Redirect to='/Error' />;
       }
     }
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <section id="simple-table">
-                  <div className="row">
-                    <div className="col-sm-12">
-                      <div className="card">
-                        <div className="card-header">
-                          <h4 className="card-title">stores</h4>
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <section id='simple-table'>
+                  <div className='row'>
+                    <div className='col-sm-12'>
+                      <div className='card'>
+                        <div className='card-header'>
+                          <h4 className='card-title'>Cửa Hàng</h4>
                         </div>
-                        <div className="card-content">
-                          <div className="card-body">
-                            <div className="row">
-                              <div className="col-md-12">
+                        <div className='card-content'>
+                          <div className='card-body'>
+                            <div className='row'>
+                              <div className='col-md-12'>
                                 <Link
                                   to={{
-                                    pathname: "/stores/add",
+                                    pathname: '/stores/add',
                                   }}
-                                  className="btn btn-primary pull-right"
+                                  className='btn btn-primary pull-right'
                                 >
-                                  <i className="fa fa-plus"></i> Add New Store
+                                  <i className='fa fa-plus'></i> Thêm Cửa Hàng
+                                  Mới
                                 </Link>
                               </div>
                             </div>
@@ -167,14 +166,14 @@ class ViewShops extends Component {
                                 products_total={this.props.coupons_total}
                               />
                             )} */}
-                            <table className="table">
+                            <table className='table'>
                               <thead>
                                 <tr>
-                                  <th className="text-center">STT</th>
-                                  <th className="text-center">Store Name</th>
-                                  <th className="text-center">Slug</th>
-                                  <th className="text-center">Address</th>
-                                  <th className="text-center">Hành Động</th>
+                                  <th className='text-center'>STT</th>
+                                  <th className='text-center'>Tên Cửa Hàng</th>
+                                  <th className='text-center'>Truy Cập</th>
+                                  <th className='text-center'>Địa Chỉ</th>
+                                  <th className='text-center'>Hành Động</th>
                                 </tr>
                               </thead>
 
@@ -189,20 +188,20 @@ class ViewShops extends Component {
               </div>
             </div>
           </div>
-          <footer className="footer footer-static footer-light">
-            <p className="clearfix text-muted text-sm-center px-2">
+          <footer className='footer footer-static footer-light'>
+            <p className='clearfix text-muted text-sm-center px-2'>
               <span>
-                Quyền sở hữu của &nbsp;{" "}
+                Quyền sở hữu của &nbsp;{' '}
                 <a
-                  href="https://www.sutygon.com"
-                  rel="noopener noreferrer"
-                  id="pixinventLink"
-                  target="_blank"
-                  className="text-bold-800 primary darken-2"
+                  href='https://www.sutygon.com'
+                  rel='noopener noreferrer'
+                  id='pixinventLink'
+                  target='_blank'
+                  className='text-bold-800 primary darken-2'
                 >
-                  SUTYGON-BOT{" "}
+                  SUTYGON-BOT{' '}
                 </a>
-                , All rights reserved.{" "}
+                , All rights reserved.{' '}
               </span>
             </p>
           </footer>
