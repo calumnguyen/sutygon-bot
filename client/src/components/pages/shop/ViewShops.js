@@ -53,24 +53,22 @@ class ViewShops extends Component {
                 }, 800);
               }}
             >
-                <span
-                  className="btn btn-sm btn-info"
-                  style={{ cursor: "pointer" }}
-                >
-                  Copy to clipboard
-                </span>
-               
-             
+              <span
+                className="btn btn-sm btn-info"
+                style={{ cursor: "pointer", marginBottom: "0px" }}
+              >
+                Copy to clipboard
+              </span>
             </CopyToClipboard>
             {this.state.copied && this.state.currentIndex == index ? (
-                  <span className="text-danger ml-1" >Copied</span>
-                ) : (
-                  ""
-                )}
+              <span className="text-danger ml-1">Copied</span>
+            ) : (
+              ""
+            )}
           </td>
           <td className="text-center">{shop.address}</td>
 
-         <td className="text-center">
+          <td className="text-center">
             <Link
               to={{ pathname: `/stores/edit/${shop._id}` }}
               className="success p-0"
@@ -81,14 +79,14 @@ class ViewShops extends Component {
               ></i>
             </Link>
 
-             {/* <Link
+            {/* <Link
               to="/stores"
               onClick={() => this.onDelete(shop._id)}
               className="danger p-0"
             >
               <i className="ft-x font-medium-3 mr-2" title="Xoá Mã"></i>
             </Link>*/}
-          </td> 
+          </td>
         </tr>
       ));
     }

@@ -5,7 +5,7 @@ const RentedProductSchema = new mongoose.Schema(
   {
     orderNumber: {
       type: String,
-      default: 001 - 00,
+      default: "001 - 00",
     },
     user: {
       type: Schema.Types.ObjectId,
@@ -19,6 +19,9 @@ const RentedProductSchema = new mongoose.Schema(
       ref: "customer",
     },
     barcodes: {
+      type: Array,
+    },
+    orderItems: {
       type: Array,
     },
     //pick-up date.
@@ -113,6 +116,7 @@ const RentedProductSchema = new mongoose.Schema(
     total_without_tax: {
       type: Float,
     },
+    orderBarcode: { type: String },
     amount_steps: [
       {
         _id: false,
@@ -135,7 +139,7 @@ const RentedProductSchema = new mongoose.Schema(
         message: String, // eg : authorized for Pickup. Status is now "Active".
       },
     ],
-     createdBy: {
+    createdBy: {
       type: Schema.Types.ObjectId,
       ref: "store",
     },

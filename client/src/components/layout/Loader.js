@@ -21,9 +21,14 @@ const Loader = ({
     returnproductLoading ||
     appointmentLoading ||
     reportLoading) && (
-    <div className="loaderContainer">
+    <div className="loaderContainer" style={{ display: "flex" }}>
       <div className="loader">
-      <img src="/assets/logo-icon.gif" alt ="Loader"className="loader-img" width="100"/>
+        <img
+          src="/assets/logo-icon.gif"
+          alt="Loader"
+          className="loader-img"
+          width="100"
+        />
         <div className="ball-grid-pulse">
           <div></div>
           <div></div>

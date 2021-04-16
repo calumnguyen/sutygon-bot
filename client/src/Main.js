@@ -12,7 +12,7 @@ import {
   withRouter,
 } from "react-router-dom";
 import HomePage from "./components/pages/Home/HomePage";
-import { loadUser,loadStore } from "./actions/auth";
+import { loadUser, loadStore } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
 import PrivateRoute from "./routing/PrivateRoute";
 import AddUser from "./components/pages/users/Adduser";
@@ -70,6 +70,7 @@ import SelectType from "./components/pages/coupons/SelectType";
 import AddShop from "./components/pages/shop/AddShop";
 import ViewShops from "./components/pages/shop/ViewShops";
 import ShopLogin from "./components/pages/shop/StoreLogin";
+import ReceiptUI from "./components/ReceiptUI";
 if (localStorage.token) {
   setAuthToken(localStorage.token);
 }
@@ -84,6 +85,7 @@ const Main = () => {
       <Router>
         <Switch>
           {/* <Route exact path="/home" component={HomePage} /> */}
+          {/* <Route exact path="/temp" component={ReceiptUI} /> */}
           <Route exact path="/" component={HomePage} />
           <Route exact path="/Login" component={Login} />
           <Route exact path="/:slug/Login" component={ShopLogin} />

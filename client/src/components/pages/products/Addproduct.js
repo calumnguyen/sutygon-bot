@@ -1,39 +1,40 @@
-import React, { Component } from 'react';
-import Sidebar from '../../layout/Sidebar';
-import Header from '../../layout/Header';
+import React, { Component } from "react";
+import Sidebar from "../../layout/Sidebar";
+import Header from "../../layout/Header";
 import {
   addNewProduct,
   getProductById,
   updateProduct,
   getSize,
-} from '../../../actions/product';
-import Alert from '../../layout/Alert';
-import Loader from '../../layout/Loader';
-import { Redirect, withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import shortid from 'shortid';
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
-import '../../../custom.css';
+} from "../../../actions/product";
+import Alert from "../../layout/Alert";
+import Loader from "../../layout/Loader";
+import { Redirect, withRouter } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import shortid from "shortid";
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
+import "../../../custom.css";
 
 class AddProduct extends Component {
   state = {
-    productId: '',
-    id: '',
-    image: '',
-    name: '',
-    tags: '',
+    productId: "",
+    id: "",
+    image: "",
+    name: "",
+    tags: "",
     color: [
       {
         _id: shortid.generate(),
-        colorname: '',
+        colorname: "",
         sizes: [
           {
             id: shortid.generate(),
-            price: '',
-            qty: '',
-            size: '',
+            price: "",
+            qty: "",
+            size: "",
+            sameBarcode: false,
           },
         ],
       },
@@ -41,10 +42,10 @@ class AddProduct extends Component {
     saving: false,
     imgUpd: false,
     isEdit: false,
-    src: '',
-    sizeQty: '',
-    individual_color_size_total: '',
-    enteredSizeQty: '',
+    src: "",
+    sizeQty: "",
+    individual_color_size_total: "",
+    enteredSizeQty: "",
   };
 
   async componentDidMount() {
@@ -67,27 +68,12 @@ class AddProduct extends Component {
       }
     }
   }
-  addSizeRow = (color_id) => {
-    let { color } = this.state; // get all colors
-    let color_obj = color.filter((color) => color._id === color_id); // get current color obj
-    // get index of color i all colors object
-    const index = color.findIndex((color_obj) => color_obj.id === color_id);
-
-    color_obj[0].sizes.push({
-      id: shortid.generate(),
-      size: '',
-      price: '',
-      qty: '',
-    });
-    color[index] = color_obj[0];
-    this.setState({ color: color });
-  };
 
   addColorBox = (id) => {
     let { color } = this.state; // get all colors
     color.push({
       _id: shortid.generate(),
-      colorname: '',
+      colorname: "",
       sizes: [],
     });
     this.setState({ color, isEdit: true });
@@ -102,9 +88,10 @@ class AddProduct extends Component {
 
     color_obj[0].sizes.push({
       id: shortid.generate(),
-      size: '',
-      price: '',
-      qty: '',
+      size: "",
+      price: "",
+      qty: "",
+      sameBarcode: false,
     });
 
     color[index] = color_obj[0];
@@ -115,7 +102,7 @@ class AddProduct extends Component {
   removeSizeRow = (color_id, size_id) => {
     let { color } = this.state;
     let color_obj = color.filter((color) => color._id === color_id); // get current color obj
-    if (size_id !== '') {
+    if (size_id !== "") {
       let { sizes } = color_obj[0];
       const sizeIndex = sizes.findIndex((size) => size.id === size_id);
       sizes.splice(sizeIndex, 1);
@@ -138,41 +125,39 @@ class AddProduct extends Component {
     return (
       color &&
       color.map((color) => (
-        <div className='row color-row' key={color._id || color._id}>
-          <div
-            className='left color-row-style'
-          >
-            <div className='form-group'>
+        <div className="row color-row" key={color._id || color._id}>
+          <div className="left color-row-style">
+            <div className="form-group">
               <input
-                type='text'
-                className='form-control mm-input '
-                placeholder='Color'
+                type="text"
+                className="form-control mm-input "
+                placeholder="Color"
                 value={color.colorname}
-                name='colorname'
+                name="colorname"
                 required
                 onChange={(e) => this.handleChange(e, color._id)}
               />
             </div>
           </div>
-          <div className='right text-center' style={{ paddingRight: '0px' }}>
+          <div className="right text-center" style={{ paddingRight: "0px" }}>
             <button
-              type='button'
+              type="button"
               onClick={() => this.removeColorBox(color._id)}
-              className='btn btn-raised btn-sm btn-icon btn-danger mt-1'
+              className="btn btn-raised btn-sm btn-icon btn-danger mt-1"
             >
-              <i className='fa fa-minus'></i>
+              <i className="fa fa-minus"></i>
             </button>
           </div>
-          <div className='col-md-12'> {this.getSizeboxes(color._id)}</div>
-          <div className='row'>
-            <div className='col-md-12 btn-cont'>
-              <div className='form-group mb-0'>
+          <div className="col-md-12"> {this.getSizeboxes(color._id)}</div>
+          <div className="row">
+            <div className="col-md-12 btn-cont">
+              <div className="form-group mb-0">
                 <button
-                  type='button'
+                  type="button"
                   onClick={() => this.addSizeRow(color._id)}
-                  className='btn '
+                  className="btn "
                 >
-                  <i className='fa fa-plus'></i> Thêm Size Khác
+                  <i className="fa fa-plus"></i> Thêm Size Khác
                 </button>
               </div>
             </div>
@@ -182,17 +167,17 @@ class AddProduct extends Component {
     );
   };
 
-  handleChange = (e, color_id = '', size_id = '') => {
+  handleChange = (e, color_id = "", size_id = "", checkbox = false) => {
     this.props.getSize(color_id, size_id);
     let name = e.target.name;
-    let value = e.target.value;
+    let value = checkbox ? e.target.checked : e.target.value;
     // get all colors
     let { color } = this.state;
     // get current color obj
     let color_obj = color.filter((color) => color._id === color_id)[0]; // get current color obj
     // get index of color obj in all colors
     const colorIndex = color.findIndex((color) => color._id === color_id);
-    if (size_id !== '') {
+    if (size_id !== "") {
       // get all sizes
       let { sizes } = color_obj;
 
@@ -218,64 +203,81 @@ class AddProduct extends Component {
   };
 
   getSizeboxes = (color_id) => {
-    let { color } = this.state; // get all colors
+    let { color, id } = this.state; // get all colors
     if (color_id) {
       let color_obj = color.filter((color) => color._id === color_id); // get current color obj
       return color_obj[0].sizes.map((size) => (
-        <div className='sizes_box' key={size.id}>
-          <div className='row'>
-            <div
-              className='left size-row-style'
+        <div className="sizes_box" key={size.id}>
+          <div
+            // className="size-row-style"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flex: 1,
+              marginLeft: "30px",
+            }}
+          >
+            <input
+              type="text"
+              name="size"
+              className="form-control mm-input"
+              placeholder="Size"
+              onChange={(e) => this.handleChange(e, color_id, size.id)}
+              value={size.size}
+              required
+              style={{ marginRight: "10px" }}
+            />
+            <input
+              type="text"
+              name="qty"
+              className="form-control mm-input"
+              placeholder="Số Lượng"
+              onKeyUp={(e) => this.props.getSize(color_id, size.id)}
+              onChange={(e) => this.handleChange(e, color_id, size.id)}
+              onBlur={(e) =>
+                this.calculateIndividualTotals(e, color_id, size.id)
+              }
+              value={size.qty}
+              required
+              style={{ marginRight: "10px" }}
+            />
+            <input
+              type="text"
+              name="price"
+              className="form-control mm-input"
+              placeholder="Giá Thuê"
+              onChange={(e) => this.handleChange(e, color_id, size.id)}
+              value={size.price}
+              required
+              style={{ marginRight: "10px" }}
+            />
+            <p style={{ marginRight: "10px" }}>Same barcode?</p>
+            <input
+              name="sameBarcode"
+              type="checkbox"
+              onChange={(e) => this.handleChange(e, color_id, size.id, true)}
+              checked={size.sameBarcode}
+              disabled={id}
+              style={{ marginRight: "10px" }}
+            />
+            <button
+              type="button"
+              onClick={() => this.removeSizeRow(color_id, size.id)}
+              className="btn btn-raised btn-sm btn-icon btn-danger mt-1"
             >
-              <input
-                type='text'
-                name='size'
-                className='form-control mm-input s-input'
-                placeholder='Size'
-                onChange={(e) => this.handleChange(e, color_id, size.id)}
-                value={size.size}
-                required
-              />
-
-              <input
-                type='text'
-                name='qty'
-                className='form-control mm-input s-input'
-                placeholder='Số Lượng'
-                onKeyUp={(e) => this.props.getSize(color_id, size.id)}
-                onChange={(e) => this.handleChange(e, color_id, size.id)}
-                onBlur={(e) =>
-                  this.calculateIndividualTotals(e, color_id, size.id)
-                }
-                value={size.qty}
-                required
-              />
-              <input
-                type='text'
-                name='price'
-                className='form-control mm-input s-input'
-                placeholder='Giá Thuê'
-                onChange={(e) => this.handleChange(e, color_id, size.id)}
-                value={size.price}
-                required
-              />
-            </div>
-            <div className='right'>
-              <button
-                type='button'
-                onClick={() => this.removeSizeRow(color_id, size.id)}
-                className='btn btn-raised btn-sm btn-icon btn-danger mt-1'
-              >
-                <i className='fa fa-minus'></i>
-              </button>
-            </div>
+              <i className="fa fa-minus"></i>
+            </button>
           </div>
+          {/* <div className="right">
+            </div> */}
         </div>
       ));
     }
   };
 
-  _onChange = (e, id = '') => {
+  _onChange = (e, id = "") => {
     this.setState({
       [e.target.name]: e.target.files[0],
       imgUpd: true,
@@ -346,7 +348,7 @@ class AddProduct extends Component {
         );
 
         // update value inside size object
-        size_obj['qty'] = _qty;
+        size_obj["qty"] = _qty;
         // update sizes arr
         sizes[sizeIndex] = size_obj;
         // update curernt color obj
@@ -355,7 +357,7 @@ class AddProduct extends Component {
         // update state
         this.setState({ color });
       } else {
-        size_obj['qty'] = enteredValue;
+        size_obj["qty"] = enteredValue;
         // update sizes arr
         sizes[sizeIndex] = size_obj;
         // update curernt color obj
@@ -376,7 +378,7 @@ class AddProduct extends Component {
     this.calculateTotals(state);
     if (state.totalFromProps > state.total) {
       OCAlert.alertError(
-        `${'Số lượng sản phẩm không thể ít hơn '} ${state.totalFromProps}`,
+        `${"Số lượng sản phẩm không thể ít hơn "} ${state.totalFromProps}`,
         { timeOut: 5000 }
       );
       this.setState({ saving: false });
@@ -393,19 +395,19 @@ class AddProduct extends Component {
     });
 
     const formData = new FormData();
-    formData.append('name', state.name);
-    formData.append('productId', productId);
-    if (state.image !== '') {
-      formData.append('image', state.image);
+    formData.append("name", state.name);
+    formData.append("productId", productId);
+    if (state.image !== "") {
+      formData.append("image", state.image);
     } else {
-      OCAlert.alertError('Cần đăng ảnh mẫu hàng', { timeOut: 3000 });
+      OCAlert.alertError("Cần đăng ảnh mẫu hàng", { timeOut: 3000 });
       this.setState({ saving: false });
       return;
     }
-    formData.append('tags', state.tags);
-    formData.append('color', JSON.stringify(m_color));
+    formData.append("tags", state.tags);
+    formData.append("color", JSON.stringify(m_color));
 
-    if (state.id === '') {
+    if (state.id === "") {
       await this.props.addNewProduct(formData);
     } else {
       await this.props.updateProduct(formData, state.id);
@@ -417,151 +419,151 @@ class AddProduct extends Component {
   render() {
     const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/login' />;
+      return <Redirect to="/login" />;
     }
     const { user } = auth;
-    if (user && user.systemRole === 'Employee') {
-      if (user && !user.sections.includes('Inventory')) {
-        return <Redirect to='/Error' />;
+    if (user && user.systemRole === "Employee") {
+      if (user && !user.sections.includes("Inventory")) {
+        return <Redirect to="/Error" />;
       }
     }
-    if (this.props.saved) {
-      return <Redirect to='/product' />;
-    }
+    // if (this.props.saved) {
+    //   return <Redirect to="/product" />;
+    // }
 
     return (
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
+        <div className="wrapper menu-collapsed">
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <section id='form-action-layouts'>
-                  <div className='form-body'>
-                    <div className='card'>
-                      <div className='card-header'>
-                        <h4 className='form-section'>
-                          {this.state.id === ''
-                            ? 'Thêm Hàng'
-                            : 'Cập Nhật Mẫu Hàng'}
+          <div className="main-panel">
+            <div className="main-content">
+              <div className="content-wrapper">
+                <section id="form-action-layouts">
+                  <div className="form-body">
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="form-section">
+                          {this.state.id === ""
+                            ? "Thêm Hàng"
+                            : "Cập Nhật Mẫu Hàng"}
                         </h4>
                       </div>
 
-                      <div className='card-body'>
+                      <div className="card-body">
                         <form
-                          encType='multipart/form-data'
-                          action='/upload'
-                          method='POST'
+                          encType="multipart/form-data"
+                          action="/upload"
+                          method="POST"
                           onSubmit={(e) => this.onSubmit(e)}
                         >
                           <Alert />
-                          <div className='form-group'>
+                          <div className="form-group">
                             <input
-                              name='image'
-                              type='file'
-                              className='form-control-file file btn btn-raised gradient-purple-bliss white input-div shadow-z-1-hover'
-                              id='projectinput8'
-                              accept='image/jpeg,image/gif,image/jpg,image/png,image/x-eps'
+                              name="image"
+                              type="file"
+                              className="form-control-file file btn btn-raised gradient-purple-bliss white input-div shadow-z-1-hover"
+                              id="projectinput8"
+                              accept="image/jpeg,image/gif,image/jpg,image/png,image/x-eps"
                               onChange={(e) => this._onChange(e)}
                             />
                             {this.state.isEdit === true &&
                             this.state.imgUpd === false ? (
                               <img
-                                className='media-object round-media'
+                                className="media-object round-media"
                                 src={`${this.state.image}`}
-                                alt={'Product'}
+                                alt={"Product"}
                                 height={100}
                               />
                             ) : (
-                              ''
+                              ""
                             )}
                             {this.state.imgUpd === true ? (
                               <img
-                                className='media-object round-media'
+                                className="media-object round-media"
                                 src={`${this.state.src}`}
-                                alt={'Product'}
+                                alt={"Product"}
                                 height={100}
                               />
                             ) : (
-                              ''
+                              ""
                             )}
                           </div>
 
-                          <div className='form-group'>
+                          <div className="form-group">
                             <input
-                              type='text'
-                              id='projectinput1'
-                              className='form-control mm-input'
-                              placeholder='Tên Sản Phẩm'
+                              type="text"
+                              id="projectinput1"
+                              className="form-control mm-input"
+                              placeholder="Tên Sản Phẩm"
                               value={this.state.name}
-                              name='name'
+                              name="name"
                               required
                               onChange={(e) => this.handleChangeName(e)}
                             />
                           </div>
-                          <div className='form-group'>
+                          <div className="form-group">
                             <input
-                              type='text'
-                              id='projectinput1'
-                              className='form-control mm-input'
-                              placeholder='Tags Phân Loại'
+                              type="text"
+                              id="projectinput1"
+                              className="form-control mm-input"
+                              placeholder="Tags Phân Loại"
                               value={this.state.tags}
-                              name='tags'
+                              name="tags"
                               required
                               onChange={(e) => this.handleChangeName(e)}
                             />
                           </div>
 
-                          <div className='row'>
-                            <div className='col-md-12'>
+                          <div className="row">
+                            <div className="col-md-12">
                               <h3>Màu</h3>
                             </div>
                           </div>
-                          <div id='colors_box'>{this.getColors()}</div>
+                          <div id="colors_box">{this.getColors()}</div>
 
                           <br />
                           <br />
 
-                          <div className='row'>
-                            <div className='col-md-12 btn-cont'>
-                              <div className='form-group mb-0'>
+                          <div className="row">
+                            <div className="col-md-12 btn-cont">
+                              <div className="form-group mb-0">
                                 <button
-                                  type='button'
+                                  type="button"
                                   onClick={() =>
                                     this.addColorBox(this.state.id)
                                   }
-                                  className='btn'
+                                  className="btn"
                                 >
-                                  <i className='fa fa-plus'></i> Thêm màu cho
+                                  <i className="fa fa-plus"></i> Thêm màu cho
                                   mẫu hàng này
                                 </button>
                               </div>
                             </div>
                           </div>
                           <OCAlertsProvider />
-                          <div className='form-actions top'>
-                            {this.state.id === '' ? (
+                          <div className="form-actions top">
+                            {this.state.id === "" ? (
                               <>
                                 {this.state.saving ? (
                                   <button
-                                    type='button'
-                                    className='mb-2 mr-2 btn btn-raised btn-primary'
+                                    type="button"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary"
                                   >
                                     <div
-                                      className='spinner-grow spinner-grow-sm '
-                                      role='status'
-                                    ></div>{' '}
-                                    &nbsp; Vui lòng đợi chút{' '}
+                                      className="spinner-grow spinner-grow-sm "
+                                      role="status"
+                                    ></div>{" "}
+                                    &nbsp; Vui lòng đợi chút{" "}
                                   </button>
                                 ) : (
                                   <button
-                                    type='submit'
-                                    className='mb-2 mr-2 btn btn-raised btn-primary'
+                                    type="submit"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary"
                                   >
-                                    <i className='ft-check' /> Thêm Sản Phẩm{' '}
+                                    <i className="ft-check" /> Thêm Sản Phẩm{" "}
                                   </button>
                                 )}
                               </>
@@ -569,21 +571,21 @@ class AddProduct extends Component {
                               <>
                                 {this.state.saving ? (
                                   <button
-                                    type='button'
-                                    className='mb-2 mr-2 btn btn-raised btn-primary'
+                                    type="button"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary"
                                   >
                                     <div
-                                      className='spinner-grow spinner-grow-sm '
-                                      role='status'
-                                    ></div>{' '}
+                                      className="spinner-grow spinner-grow-sm "
+                                      role="status"
+                                    ></div>{" "}
                                     &nbsp; Vui lòng đợi chút
                                   </button>
                                 ) : (
                                   <button
-                                    type='submit'
-                                    className='mb-2 mr-2 btn btn-raised btn-primary'
+                                    type="submit"
+                                    className="mb-2 mr-2 btn btn-raised btn-primary"
                                   >
-                                    <i className='ft-check' /> Cập Nhật Mẫu Hàng
+                                    <i className="ft-check" /> Cập Nhật Mẫu Hàng
                                   </button>
                                 )}
                               </>
@@ -597,20 +599,20 @@ class AddProduct extends Component {
               </div>
             </div>
 
-            <footer className='footer footer-static footer-light'>
-              <p className='clearfix text-muted text-sm-center px-2'>
+            <footer className="footer footer-static footer-light">
+              <p className="clearfix text-muted text-sm-center px-2">
                 <span>
-                  Quyền sở hữu của &nbsp;{' '}
+                  Quyền sở hữu của &nbsp;{" "}
                   <a
-                    href='https://www.sutygon.com'
-                    id='pixinventLink'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='text-bold-800 primary darken-2'
+                    href="https://www.sutygon.com"
+                    id="pixinventLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-bold-800 primary darken-2"
                   >
-                    SUTYGON-BOT{' '}
+                    SUTYGON-BOT{" "}
                   </a>
-                  , All rights reserved.{' '}
+                  , All rights reserved.{" "}
                 </span>
               </p>
             </footer>

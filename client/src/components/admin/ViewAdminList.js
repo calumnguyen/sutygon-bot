@@ -54,9 +54,8 @@ class ViewAdminList extends Component {
   }
 
   getTAble = () => {
-    const { auth } = this.props;
+    const { auth, admins } = this.props;
     const auth_user = auth.user;
-    const { admins } = this.state;
     if (admins) {
       if (admins.length === 0) {
         return (
@@ -262,7 +261,7 @@ class ViewAdminList extends Component {
                             <Alert />
                             <OCAlertsProvider />
                             <div className="overflow-x-scroll">
-                            <table className="table">
+                              <table className="table">
                                 <thead>
                                   <tr>
                                     <th className="text-center">Avatar</th>
@@ -270,7 +269,9 @@ class ViewAdminList extends Component {
                                     <th className="text-center">
                                       Contact Number
                                     </th>
-                                    <th className="text-center">Company Name</th>
+                                    <th className="text-center">
+                                      Company Name
+                                    </th>
                                     <th className="text-center">
                                       Company Address
                                     </th>

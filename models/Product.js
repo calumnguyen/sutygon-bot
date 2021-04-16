@@ -32,6 +32,7 @@ const ProductSchema = new mongoose.Schema(
             size: String,
             price: String,
             qty: String,
+            sameBarcode: { type: Boolean, default: false },
             barcodes: [
               {
                 barcode: Number,

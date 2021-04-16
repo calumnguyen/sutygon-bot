@@ -1,48 +1,45 @@
-import React, { Component } from 'react';
-import Sidebar from '../../layout/Sidebar';
-import Header from '../../layout/Header';
-import { Redirect } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import Loader from '../../layout/Loader';
-import shortid from 'shortid';
-import * as moment from 'moment';
-import ShowPricesOrder from './small/ShowPricesOrder';
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
+import React, { Component } from "react";
+import Sidebar from "../../layout/Sidebar";
+import Header from "../../layout/Header";
+import { Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import Loader from "../../layout/Loader";
+import * as moment from "moment";
+import ShowPricesOrder from "./small/ShowPricesOrder";
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
 import {
   getOrderById,
   orderStatusActive,
   orderUpdatePayAmount,
-} from '../../../actions/rentproduct';
-import { vi } from 'date-fns/esm/locale';
-import axios from 'axios';
+} from "../../../actions/rentproduct";
+import ReceiptUI from "../../ReceiptUI";
 
-var JsBarcode = require('jsbarcode');
+var JsBarcode = require("jsbarcode");
 
 class PerPaidScree extends Component {
   state = {
     disableNextBtn: true,
-    orderId: '',
-    Myorder: '',
-    customer: '',
+    orderId: "",
+    Myorder: "",
+    customer: "",
     leaveID: false,
-    customerId: '',
-    barcode_Array: '',
-    orderNumber: '',
+    customerId: "",
+    barcode_Array: "",
+    orderNumber: "",
     CustomerPay: false,
-    rentedOrder: '',
+    rentedOrder: "",
     product_Array: [],
     barcode_Array: [],
     insuranceAmt: 0,
     total: 0,
     total_owe: 0,
-    pay_amount: '',
+    pay_amount: "",
     already_pay_amount: 0,
-    pdfData: '',
+    pdfData: "",
     redirect: false,
-    customer_id: '',
+    customer_id: "",
     isPayAmount: false,
   };
   async componentDidMount() {
@@ -97,12 +94,12 @@ class PerPaidScree extends Component {
   printInvoice = () => {
     var css =
       '<link rel="stylesheet"  href="%PUBLIC_URL%/assets/css/app.css"/>';
-    var printDiv = document.getElementById('invoiceDiv').innerHTML;
+    var printDiv = document.getElementById("invoiceDiv").innerHTML;
 
     let newWindow = window.open(
-      '',
-      '_blank',
-      'location=yes,height=570,width=720,scrollbars=yes,status=yes'
+      "",
+      "_blank",
+      "location=yes,height=570,width=720,scrollbars=yes,status=yes"
     );
     newWindow.document.body.innerHTML = css + printDiv;
     newWindow.window.print();
@@ -110,7 +107,7 @@ class PerPaidScree extends Component {
   };
 
   printBarcode = (barcode) => {
-    return JsBarcode('#barcode', barcode, {
+    return JsBarcode("#barcode", barcode, {
       width: 1.5,
       height: 40,
     });
@@ -123,7 +120,7 @@ class PerPaidScree extends Component {
     const { insuranceAmt, pay_amount, already_pay_amount, total } = this.state;
     let final_paid = Number(already_pay_amount) + Number(pay_amount);
     let owe_amount = Number(total) - Number(final_paid);
-    if (this.state.pay_amount == '') {
+    if (this.state.pay_amount == "") {
       OCAlert.alertError(`Pay Amount is required `, { timeOut: 3000 });
       return;
     }
@@ -166,7 +163,7 @@ class PerPaidScree extends Component {
     }
     return productArray.map((product, b_index) => (
       <tr key={b_index}>
-        <td className='text-center'>
+        <td className="text-center">
           {b_index + 1}) {product}
         </td>
       </tr>
@@ -184,93 +181,94 @@ class PerPaidScree extends Component {
   render() {
     const { auth } = this.props;
     const { user } = auth;
-    if (user && user.systemRole === 'Employee') {
-      if (user && !user.sections.includes('orders')) {
-        return <Redirect to='/Error' />;
+    if (user && user.systemRole === "Employee") {
+      if (user && !user.sections.includes("orders")) {
+        return <Redirect to="/Error" />;
       }
     }
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/login' />;
+      return <Redirect to="/login" />;
     }
     if (this.state.redirect === true) {
       return <Redirect to={`/orders/vieworder/${this.state.orderId}`} />;
     }
+
+    const { parsedItemsArray } = this.props.location?.state;
 
     const {
       CustomerPay,
       insuranceAmt,
       total,
       pay_amount,
-      rentedOrder,
-      pdfData,
       orderNumber,
-      Myorder,
     } = this.state;
-    const { customer } = this.props;
-    let { order } = this.props;
+    const { customer, order } = this.props;
+
+    // console.log("order: ", order);
+    // console.log("myOrder: ", Myorder);
 
     return (
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
+        <div className="wrapper menu-collapsed">
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <section id='form-action-layouts'>
-                  <div className='form-body'>
-                    <div className='card'>
-                      <div className='card-header'>
-                        <h4 className='card-title'>Lấy Đồ</h4>
-                        <h5>{CustomerPay ? 'Thanh Toán' : 'Thanh Toán'} </h5>
+          <div className="main-panel">
+            <div className="main-content">
+              <div className="content-wrapper">
+                <section id="form-action-layouts">
+                  <div className="form-body">
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="card-title">Lấy Đồ</h4>
+                        <h5>{CustomerPay ? "Thanh Toán" : "Thanh Toán"} </h5>
                       </div>
-                      <div className='card-content'>
-                        <div className='card-body'>
-                          <div id='colors_box'>
+                      <div className="card-content">
+                        <div className="card-body">
+                          <div id="colors_box">
                             {CustomerPay ? (
                               <React.Fragment>
-                                <h3 className='text-center'>
+                                <h3 className="text-center">
                                   Khách Hàng Trả Hôm Nay:
                                   <strong>
-                                    <span className='text-warning ml-2'>
+                                    <span className="text-warning ml-2">
                                       {pay_amount} VNĐ
                                     </span>
                                   </strong>
                                 </h3>
                                 <br />
-                                <h1 className='text-center'>
-                                  Làm ơn nhận{' '}
+                                <h1 className="text-center">
+                                  Làm ơn nhận{" "}
                                   <strong>
-                                    <span className='text-success'>
-                                      {pay_amount} VNĐ{' '}
+                                    <span className="text-success">
+                                      {pay_amount} VNĐ{" "}
                                     </span>
                                   </strong>
                                   từ khách hàng.
                                 </h1>
                                 {this.state.leaveID ? (
-                                  <h3 className='text-center py-2'>
-                                    Nhận CMND/BLX mang tên{' '}
-                                    {this.state.customerId}, đánh dấu đơn hàng{' '}
-                                    {orderNumber ? orderNumber : ''} và cất giữ
+                                  <h3 className="text-center py-2">
+                                    Nhận CMND/BLX mang tên{" "}
+                                    {this.state.customerId}, đánh dấu đơn hàng{" "}
+                                    {orderNumber ? orderNumber : ""} và cất giữ
                                     cẩn thận.
                                   </h3>
                                 ) : (
-                                  <h3 className='text-center py-2'>
+                                  <h3 className="text-center py-2">
                                     Không cần nhận CMND/BLX cho đơn hàng này.
                                   </h3>
                                 )}
 
                                 <form onSubmit={(e) => this.onSubmit(e)}>
-                                  <div className='row text-center'>
-                                    <div className='col-md-12 btn-cont'>
-                                      <div className='form-group'>
+                                  <div className="row text-center">
+                                    <div className="col-md-12 btn-cont">
+                                      <div className="form-group">
                                         <button
-                                          type='submit'
-                                          className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
-                                          id='btnSize2'
+                                          type="submit"
+                                          className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                                          id="btnSize2"
                                         >
-                                          <i className='ft-check'></i>
+                                          <i className="ft-check"></i>
                                           Hoàn Tất & Hoá Đơn
                                         </button>
                                       </div>
@@ -283,7 +281,7 @@ class PerPaidScree extends Component {
                                 customerName={
                                   this.state.customer
                                     ? this.state.customer.name
-                                    : ''
+                                    : ""
                                 }
                                 onChangePay={this.onChangePay}
                                 insuranceAmt={insuranceAmt}
@@ -300,26 +298,26 @@ class PerPaidScree extends Component {
 
                               <div></div>
                               <br />
-                              <div className='col-md-12'>
-                                <div className='row justify-content-center'>
-                                  <div className='col-md-6 text-center'>
+                              <div className="col-md-12">
+                                <div className="row justify-content-center">
+                                  <div className="col-md-6 text-center">
                                     {CustomerPay ? (
                                       <button
-                                        type='button'
-                                        className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
+                                        type="button"
+                                        className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
                                         onClick={() =>
                                           this.setState({ CustomerPay: false })
                                         }
                                       >
-                                        <i className='ft-check'></i> Quay Lại
+                                        <i className="ft-check"></i> Quay Lại
                                       </button>
                                     ) : (
                                       <button
-                                        type='button'
-                                        className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
+                                        type="button"
+                                        className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
                                         onClick={this.onNextButton}
                                       >
-                                        <i className='ft-check'></i> Tiếp Theo
+                                        <i className="ft-check"></i> Tiếp Theo
                                       </button>
                                     )}
                                   </div>
@@ -335,20 +333,20 @@ class PerPaidScree extends Component {
                 </section>
               </div>
             </div>
-            <footer className='footer footer-static footer-light'>
-              <p className='clearfix text-muted text-sm-center px-2'>
+            <footer className="footer footer-static footer-light">
+              <p className="clearfix text-muted text-sm-center px-2">
                 <span>
-                  Quyền sở hữu của &nbsp;{' '}
+                  Quyền sở hữu của &nbsp;{" "}
                   <a
-                    href='https://www.sutygon.com'
-                    rel='noopener noreferrer'
-                    id='pixinventLink'
-                    target='_blank'
-                    className='text-bold-800 primary darken-2'
+                    href="https://www.sutygon.com"
+                    rel="noopener noreferrer"
+                    id="pixinventLink"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
                   >
-                    SUTYGON-BOT{' '}
+                    SUTYGON-BOT{" "}
                   </a>
-                  , All rights reserved.{' '}
+                  , All rights reserved.{" "}
                 </span>
               </p>
             </footer>
@@ -358,41 +356,57 @@ class PerPaidScree extends Component {
 
         {/* pdf invoice  */}
 
-        <div id='invoiceDiv' style={{ width: '100%', display: 'none' }}>
-          <h1 style={{ 'text-align': 'center' }}>
+        <div id="invoiceDiv" style={{ width: "100%", display: "none" }}>
+          <ReceiptUI
+            customerName={customer?.name}
+            insuranceAmount={order?.insuranceAmt}
+            leaveId={order?.leaveID}
+            orderNumber={order?.orderNumber}
+            totalAmount={order?.total}
+            rentDateFrom={order?.rentDate}
+            rentDateTo={order?.returnDate}
+            product_Array={parsedItemsArray}
+            totalWithoutTax={order?.total - order?.tax}
+            taxAmount={order?.tax}
+            paidAmount={pay_amount + order?.pay_amount}
+            username={this.props.auth?.user?.username}
+            orderBarcode={order?.orderBarcode}
+            orderStatus={order?.status}
+          />
+          {/* <h1 style={{ "text-align": "center" }}>
             {Myorder
-              ? `${Myorder.customer.name}${'#'}${Myorder.customerContactNumber}`
-              : ''}
+              ? `${Myorder.customer.name}${"#"}${Myorder.customerContactNumber}`
+              : ""}
           </h1>
-          <h1 style={{ 'text-align': 'center' }}>
+          <h1 style={{ "text-align": "center" }}>
             {this.state.orderNumber
-              ? `${'Order'}${'#'} ${
-                  Myorder && Myorder ? Myorder.orderNumber : ''
+              ? `${"Order"}${"#"} ${
+                  Myorder && Myorder ? Myorder.orderNumber : ""
                 }`
-              : ''}
+              : ""}
           </h1>
 
-          <table style={{ width: '100%' }} cellpadding='10'>
+          <table style={{ width: "100%" }} cellpadding="10">
             <thead></thead>
             <tbody>{this.getInvoiceBarcodeRecord()}</tbody>
           </table>
           <hr />
-          <table style={{ width: '100%' }} cellpadding='10'>
+          <table style={{ width: "100%" }} cellpadding="10">
             <thead></thead>
             <tbody>
               <tr>
-                <td style={{ width: '90%' }}>Total Without Tax</td>
+                <td style={{ width: "90%" }}>Total Without Tax</td>
                 <td>{`${
                   Myorder ? Number(Myorder.total) - Number(Myorder.tax) : 0
                 }`}</td>
               </tr>
               <tr>
-                <td style={{ width: '90%' }}>Discount</td>
+                <td style={{ width: "90%" }}>Discount</td>
                 <td>{`${Myorder && Myorder ? Myorder.discount_amount : 0}`}</td>
               </tr>
               <tr>
                 <td>Tax Percentage</td>
-                <td>{`${Myorder && Myorder ? Myorder.taxper : 0}${'%'}`}</td>
+                <td>{`${Myorder && Myorder ? Myorder.taxper : 0}${"%"}`}</td>
               </tr>
 
               <tr>
@@ -406,59 +420,59 @@ class PerPaidScree extends Component {
             </tbody>
           </table>
           <br />
-          <h4 style={{ 'text-align': 'center' }}>{`${'PAID TOTAL: '}${
+          <h4 style={{ "text-align": "center" }}>{`${"PAID TOTAL: "}${
             this.state.total
           }`}</h4>
           <br />
 
-          <table style={{ width: '100%' }} cellpadding='10'>
+          <table style={{ width: "100%" }} cellpadding="10">
             <thead></thead>
             <tbody>
               <tr>
-                <td style={{ width: '90%' }}>Leave ID</td>
-                <td>{this.state.leaveID == 'true' ? `${'Yes'}` : `${'No'}`}</td>
+                <td style={{ width: "90%" }}>Leave ID</td>
+                <td>{this.state.leaveID == "true" ? `${"Yes"}` : `${"No"}`}</td>
               </tr>
               <tr>
                 <td>Rent From</td>
                 <td>
-                  {' '}
+                  {" "}
                   {Myorder && Myorder
-                    ? moment(Myorder.rentDate).format('DD-MM-YYYY')
-                    : ''}
+                    ? moment(Myorder.rentDate).format("DD-MM-YYYY")
+                    : ""}
                 </td>
               </tr>
               <tr>
                 <td>Return Date</td>
                 <td>
                   {Myorder && Myorder
-                    ? moment(Myorder.returnDate).format('DD-MM-YYYY')
-                    : ''}
+                    ? moment(Myorder.returnDate).format("DD-MM-YYYY")
+                    : ""}
                 </td>
               </tr>
             </tbody>
           </table>
 
-          <table style={{ width: '100%' }}>
+          <table style={{ width: "100%" }}>
             <thead></thead>
             <tbody>
               <tr>
                 <td
-                  className='col-md-6'
+                  className="col-md-6"
                   style={{
-                    backgroundColor: 'white',
-                    textAlign: 'center',
-                    padding: '8px',
-                    width: '50%',
+                    backgroundColor: "white",
+                    textAlign: "center",
+                    padding: "8px",
+                    width: "50%",
                   }}
                 >
-                  <svg id='barcode'></svg>
+                  <svg id="barcode"></svg>
                 </td>
                 <td
-                  className='col-md-6'
+                  className="col-md-6"
                   style={{
-                    textAlign: 'center',
-                    padding: '8px',
-                    width: '50%',
+                    textAlign: "center",
+                    padding: "8px",
+                    width: "50%",
                   }}
                 >
                   Authorized by <br />
@@ -472,70 +486,70 @@ class PerPaidScree extends Component {
           <br />
           <br />
 
-          <table style={{ width: '100%' }}>
+          <table style={{ width: "100%" }}>
             <thead></thead>
             <tbody>
               <tr>
-                <td style={{ 'text-align': 'center' }}>
+                <td style={{ "text-align": "center" }}>
                   For questions and information please contact out
                   www.sutygon-bot.com
                 </td>
               </tr>
             </tbody>
-          </table>
+          </table> */}
         </div>
 
         {/* Invoice Modal */}
         <div
-          className='modal fade text-left'
-          id='primary'
-          tabIndex='-1'
-          role='dialog'
-          aria-labelledby='myModalLabel8'
-          aria-hidden='true'
+          className="modal fade text-left"
+          id="primary"
+          tabIndex="-1"
+          role="dialog"
+          aria-labelledby="myModalLabel8"
+          aria-hidden="true"
         >
-          <div className='modal-dialog' role='document'>
-            <div className='modal-content'>
-              <div className='modal-header bg-primary white'>
-                <h4 className='modal-title text-center' id='myModalLabel8'>
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header bg-primary white">
+                <h4 className="modal-title text-center" id="myModalLabel8">
                   Invoice
                 </h4>
                 <button
-                  type='button'
-                  className='close'
-                  data-dismiss='modal'
-                  aria-label='Close'
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
                 >
-                  <span aria-hidden='true'>&times;</span>
+                  <span aria-hidden="true">&times;</span>
                 </button>
                 <button
-                  type='button'
-                  className=''
-                  data-dismiss='modal'
-                  aria-label='Close'
+                  type="button"
+                  className=""
+                  data-dismiss="modal"
+                  aria-label="Close"
                 >
                   <span
-                    className='fa fa-print'
-                    aria-hidden='true'
+                    className="fa fa-print"
+                    aria-hidden="true"
                     onClick={(e) => this.printInvoice(e)}
                   ></span>
                 </button>
               </div>
-              <div className='modal-body'>
-                <div id='colors_box' id='modal-body'>
-                  <div className='row color-row'>
-                    <div className='col-md-12'>
-                      <div className='form-group'>
-                        <div className='text-center'>
+              <div className="modal-body">
+                <div id="colors_box" id="modal-body">
+                  <div className="row color-row">
+                    <div className="col-md-12">
+                      <div className="form-group">
+                        <div className="text-center">
                           <h4>
                             {customer
-                              ? `${customer.name}${'#'}${
+                              ? `${customer.name}${"#"}${
                                   customer.contactnumber
                                 }`
-                              : ''}
+                              : ""}
                           </h4>
                         </div>
-                        <div className='text-center'>
+                        <div className="text-center">
                           {/* <h4>
                             {order
                               ? `${"Order"}${"#"} ${order[0].orderNumber}`
@@ -544,173 +558,171 @@ class PerPaidScree extends Component {
                         </div>
                       </div>
                     </div>
-                    <div className='col-md-12'>
+                    <div className="col-md-12">
                       <div>
                         {this.getInvoiceBarcodeRecord()}
                         <hr />
-                        <div className='row'>
+                        <div className="row">
                           <div
-                            className='col-md-6'
-                            style={{ float: 'left', color: 'black' }}
+                            className="col-md-6"
+                            style={{ float: "left", color: "black" }}
                           >
-                            <h6 id='padLeft'>Total Without Tax</h6>
+                            <h6 id="padLeft">Total Without Tax</h6>
                           </div>
                           <div
-                            className='col-md-6'
-                            style={{ textAlign: 'center', color: 'black' }}
+                            className="col-md-6"
+                            style={{ textAlign: "center", color: "black" }}
                           >
                             <h6>{`${
-                              Myorder
-                                ? Number(Myorder.total) - Number(Myorder.tax)
+                              order
+                                ? Number(order.total) - Number(order.tax)
                                 : 0
                             }`}</h6>
                           </div>
                         </div>
-                        <div className='row'>
+                        <div className="row">
                           <div
-                            className='col-md-6'
-                            style={{ float: 'left', color: 'black' }}
+                            className="col-md-6"
+                            style={{ float: "left", color: "black" }}
                           >
-                            <h6 id='padLeft'>Tax Percentage</h6>
+                            <h6 id="padLeft">Tax Percentage</h6>
                           </div>
                           <div
-                            className='col-md-6'
-                            style={{ textAlign: 'center', color: 'black' }}
+                            className="col-md-6"
+                            style={{ textAlign: "center", color: "black" }}
                           >
-                            <h6>{`${Myorder ? Myorder.taxper : 0}${'%'}`}</h6>
-                          </div>
-                        </div>
-                        <div className='row'>
-                          <div
-                            className='col-md-6'
-                            style={{ float: 'left', color: 'black' }}
-                          >
-                            <h6 id='padLeft'>Tax Amount</h6>
-                          </div>
-                          <div
-                            className='col-md-6'
-                            style={{ textAlign: 'center', color: 'black' }}
-                          >
-                            <h6>{`${Myorder ? Myorder.tax : 0}`}</h6>
+                            <h6>{`${order ? order.taxper : 0}${"%"}`}</h6>
                           </div>
                         </div>
-                        <div className='row'>
+                        <div className="row">
                           <div
-                            className='col-md-6'
-                            style={{ float: 'left', color: 'black' }}
+                            className="col-md-6"
+                            style={{ float: "left", color: "black" }}
                           >
-                            <h6 id='padLeft'>Insurance Amount</h6>
+                            <h6 id="padLeft">Tax Amount</h6>
                           </div>
                           <div
-                            className='col-md-6'
-                            style={{ textAlign: 'center', color: 'black' }}
+                            className="col-md-6"
+                            style={{ textAlign: "center", color: "black" }}
                           >
-                            <h6>{`${Myorder ? Myorder.insuranceAmt : 0}`}</h6>
+                            <h6>{`${order ? order.tax : 0}`}</h6>
                           </div>
                         </div>
-                        <div className='row justify-content-center'>
-                          <div className='form-group'>
-                            <div className='' style={{ width: '300%' }}>
+                        <div className="row">
+                          <div
+                            className="col-md-6"
+                            style={{ float: "left", color: "black" }}
+                          >
+                            <h6 id="padLeft">Insurance Amount</h6>
+                          </div>
+                          <div
+                            className="col-md-6"
+                            style={{ textAlign: "center", color: "black" }}
+                          >
+                            <h6>{`${order ? order.insuranceAmt : 0}`}</h6>
+                          </div>
+                        </div>
+                        <div className="row justify-content-center">
+                          <div className="form-group">
+                            <div className="" style={{ width: "300%" }}>
                               <input
-                                type='text'
+                                type="text"
                                 readOnly
-                                className='form-control mm-input s-input text-center'
-                                placeholder='Total'
-                                style={{ color: 'black' }}
-                                id='setSizeFloat'
-                                value={`${'PAID TOTAL: $'}${this.state.total}`}
+                                className="form-control mm-input s-input text-center"
+                                placeholder="Total"
+                                style={{ color: "black" }}
+                                id="setSizeFloat"
+                                value={`${"PAID TOTAL: $"}${this.state.total}`}
                               />
                             </div>
                           </div>
                         </div>
-                        <div className='row'>
+                        <div className="row">
                           <div
-                            className='col-md-6'
-                            style={{ float: 'left', color: 'black' }}
+                            className="col-md-6"
+                            style={{ float: "left", color: "black" }}
                           >
                             <h6>Amount to be returned to customer</h6>
                           </div>
                           <div
-                            className='col-md-6'
-                            style={{ textAlign: 'center', color: 'black' }}
+                            className="col-md-6"
+                            style={{ textAlign: "center", color: "black" }}
                           >
                             <h6>{`${this.state.insAmt}`}</h6>
                           </div>
                         </div>
                         <br />
-                        <div className='row'>
+                        <div className="row">
                           <div
-                            className='col-md-6'
-                            style={{ float: 'left', color: 'black' }}
+                            className="col-md-6"
+                            style={{ float: "left", color: "black" }}
                           >
-                            <h6 id='padLeft'>Leave ID</h6>
+                            <h6 id="padLeft">Leave ID</h6>
                           </div>
                           <div
-                            className='col-md-6'
-                            style={{ textAlign: 'center', color: 'black' }}
+                            className="col-md-6"
+                            style={{ textAlign: "center", color: "black" }}
                           >
                             <h6>
-                              {this.state.leaveID == 'true'
-                                ? `${'Yes'}`
-                                : `${'No'}`}
+                              {this.state.leaveID == "true"
+                                ? `${"Yes"}`
+                                : `${"No"}`}
                             </h6>
                           </div>
                         </div>
-                        <div className='row'>
+                        <div className="row">
                           <div
-                            className='col-md-6'
-                            style={{ float: 'left', color: 'black' }}
+                            className="col-md-6"
+                            style={{ float: "left", color: "black" }}
                           >
-                            <h6 id='padLeft'>Rent From</h6>
+                            <h6 id="padLeft">Rent From</h6>
                           </div>
-                          <div style={{ textAlign: 'end', color: 'black' }}>
-                            <h6 style={{ textAlign: 'end', color: 'black' }}>
-                              {Myorder && Myorder
-                                ? moment(Myorder.rentDate).format('DD-MM-YYYY')
-                                : ''}
+                          <div style={{ textAlign: "end", color: "black" }}>
+                            <h6 style={{ textAlign: "end", color: "black" }}>
+                              {order && order
+                                ? moment(order.rentDate).format("DD-MM-YYYY")
+                                : ""}
                             </h6>
                           </div>
                         </div>
-                        <div className='row'>
+                        <div className="row">
                           <div
-                            className='col-md-6'
-                            style={{ float: 'left', color: 'black' }}
+                            className="col-md-6"
+                            style={{ float: "left", color: "black" }}
                           >
                             <h6>Return Date</h6>
                           </div>
 
-                          <div style={{ textAlign: 'end', color: 'black' }}>
-                            <h6 style={{ textAlign: 'end', color: 'black' }}>
-                              {Myorder && Myorder
-                                ? moment(Myorder.returnDate).format(
-                                    'DD-MM-YYYY'
-                                  )
-                                : ''}
+                          <div style={{ textAlign: "end", color: "black" }}>
+                            <h6 style={{ textAlign: "end", color: "black" }}>
+                              {order && order
+                                ? moment(order.returnDate).format("DD-MM-YYYY")
+                                : ""}
                               {/* {rentedOrder && rentedOrder?rentedOrder.returnDate:''} */}
                             </h6>
                           </div>
                         </div>
-                        <div className='col-md-12'>
+                        <div className="col-md-12">
                           <table>
                             <tbody>
                               <tr>
                                 <td
-                                  className='col-md-6'
+                                  className="col-md-6"
                                   style={{
-                                    backgroundColor: 'white',
-                                    textAlign: 'center',
-                                    padding: '8px',
-                                    width: '50%',
+                                    backgroundColor: "white",
+                                    textAlign: "center",
+                                    padding: "8px",
+                                    width: "50%",
                                   }}
                                 >
-                                  <svg id='barcode'></svg>
+                                  <svg id="barcode"></svg>
                                 </td>
                                 <td
-                                  className='col-md-6'
+                                  className="col-md-6"
                                   style={{
-                                    textAlign: 'center',
-                                    padding: '8px',
-                                    width: '50%',
+                                    textAlign: "center",
+                                    padding: "8px",
+                                    width: "50%",
                                   }}
                                 >
                                   Authorized by <br />
@@ -720,16 +732,16 @@ class PerPaidScree extends Component {
                             </tbody>
                           </table>
                         </div>
-                        <div className='row'>
+                        <div className="row">
                           <p>
                             For questions and contact information please check
                             out
                             <a
-                              href='https://www.sutygon.com'
-                              id='pixinventLink'
-                              rel='noopener noreferrer'
-                              target='_blank'
-                              className='text-bold-800 primary darken-2'
+                              href="https://www.sutygon.com"
+                              id="pixinventLink"
+                              rel="noopener noreferrer"
+                              target="_blank"
+                              className="text-bold-800 primary darken-2"
                             >
                               www.sutygon-bot.com
                             </a>

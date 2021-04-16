@@ -92,7 +92,6 @@ class ReturnSummary extends Component {
     });
     let owe_from_customer = false;
 
- 
     if (this.final_sale_total() >= order.pay_amount) {
       owe_from_customer = true;
     }
@@ -111,7 +110,6 @@ class ReturnSummary extends Component {
       barcodesArray: this.state.barcodesArray,
       charge_data: this.state.charge_data,
       discount_data: this.state.discount_data,
-
     });
   };
 
@@ -163,24 +161,12 @@ class ReturnSummary extends Component {
     }); // products foreach ends here
     return rows;
   };
+
   productBox = () => {
-    let productarray = [];
-    let { barcodesArray } = this.state;
-    const { products } = this.props;
-    if (products && barcodesArray) {
-      let sortedAray = this.getSortedData(products);
-      if (sortedAray) {
-        barcodesArray.forEach((element) => {
-          productarray.push(
-            sortedAray.filter((f) => f.barcode.toString() === element.barcode)
-          );
-          return productarray;
-        });
-      }
-    }
+    let productarray = this.props.location.state?.product_Array;
     if (productarray.length) {
       let sum_of_all_items = productarray
-        .map((p) => Number(p[0].price))
+        .map((p) => Number(p.price))
         .reduce((a2, b2) => a2 + b2);
       this.state.sum_of_all_items = sum_of_all_items;
     }
@@ -191,7 +177,10 @@ class ReturnSummary extends Component {
       <>
         <div id="sizes_box" key={b_index}>
           <div className="row">
-            <div style={{ float: "left", width: "90%" }} className="overflow-x-scroll">
+            <div
+              style={{ float: "left", width: "90%" }}
+              className="overflow-x-scroll"
+            >
               <table
                 className="table table-bordered table-light"
                 style={{
@@ -203,10 +192,11 @@ class ReturnSummary extends Component {
                 <thead></thead>
                 <tbody>
                   <tr key={b_index} style={{ margin: "3px" }}>
-                    <td className="text-center">{b[0].barcode}</td>
-                    <td className="text-center">{b[0].title}</td>
-                    <td className="text-center">{b[0].color}</td>
-                    <td className="text-center">{b[0].price}</td>
+                    <td className="text-center">{b.barcode}</td>
+                    <td className="text-center">{b.title}</td>
+                    <td className="text-center">{b.color}</td>
+                    <td className="text-center">{b.qty}</td>
+                    <td className="text-center">{b.price}</td>
                   </tr>
                 </tbody>
               </table>
@@ -361,9 +351,8 @@ class ReturnSummary extends Component {
     return Number(sum_of_all_items) + this.chargesSum() - this.discountSum();
   };
   remaining_final = () => {
-    let { state } = this.props.location;
-    let { order } = state;
-console.log("this.final_sale_total()",this.final_sale_total())
+    let { order } = this.props.location?.state;
+    console.log("this.final_sale_total()", this.final_sale_total());
     return this.final_sale_total() - order.pay_amount;
   };
   render() {

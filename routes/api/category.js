@@ -5,7 +5,6 @@ const Categories = require("../../models/categories");
 
 router.get("/:type", auth, async (req, res) => {
   try {
-    console.log("type", req.params.type);
     let catagories = await Categories.find({
       type: req.params.type,
     });

@@ -294,7 +294,7 @@ class Dashboard extends Component {
       overdue_today,
       alterations,
       admins,
-      stores
+      stores,
     } = this.props.count_orders;
     return (
       <React.Fragment>
@@ -396,7 +396,6 @@ class Dashboard extends Component {
                       </div>
                     </div>
                   )}
-
 
                   {/* {user && user.systemRole === "superadmin" ? (
                     ''
@@ -678,7 +677,7 @@ const SuperAdminDashBoard = ({ admins }) => {
   );
 };
 
-const StoreAdminDashboard = ({stores}) => {
+const StoreAdminDashboard = ({ stores }) => {
   return (
     <div className="col-md-7">
       <div className="container px-6 mx-auto">
@@ -686,7 +685,7 @@ const StoreAdminDashboard = ({stores}) => {
           {/* card1 */}
           <div className="flex items-center bg-white shadow-xs card-dashboard">
             <div className="text-orange-500 gradient-blueberry rounded-full card-dashboard-span">
-              <div className="text">{stores?stores:0}</div>
+              <div className="text">{stores ? stores : 0}</div>
             </div>
             <div className="text-card">
               <span>Stores </span>

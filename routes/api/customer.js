@@ -81,9 +81,8 @@ router.post(
         const salt = await bcrypt.genSalt(10);
         password = await bcrypt.hash(body.password, salt);
       }
-      console.log("password", password);
       customerBody = {
-        createdBy:req.user.storeId,
+        createdBy: req.user.storeId,
         ...body,
         password: password,
       };
@@ -170,7 +169,7 @@ router.get("/:id", auth, async (req, res) => {
 // @route  GET api/customer/:name
 // @desc   Get Customer (Search for customer)
 // @access Private
-router.get("/search/:contactnumber",auth, async (req, res) => {
+router.get("/search/:contactnumber", auth, async (req, res) => {
   try {
     const customer = await Customer.findOne({
       createdBy: req.user.storeId,
@@ -341,7 +340,6 @@ router.post("/:id/insights", auth, async (req, res) => {
       { barcodes: 1, _id: 0 }
     );
 
-
     // .project({ barcodes: 1 })
     // .select('barcodes')
 
@@ -351,7 +349,8 @@ router.post("/:id/insights", auth, async (req, res) => {
         // console.log(prod.barcodes)
         for (bcode of prod.barcodes) {
           let singleProduct = await Product.findOne(
-            {createdBy:req.user.storeId,
+            {
+              createdBy: req.user.storeId,
               "color.sizes.barcodes": {
                 $elemMatch: { barcode: parseInt(bcode) },
               },
@@ -372,8 +371,6 @@ router.post("/:id/insights", auth, async (req, res) => {
     });
 
     const ProductTotal = await calculateProductAmt;
-
-    console.log(orders);
 
     const totalTax = orders[0].total - (ProductTotal + orders[0].insuranceAmt);
 
