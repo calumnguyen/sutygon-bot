@@ -12,9 +12,18 @@ function OrderCard({ item, index }) {
     // <div className="col-md-5 col-sm-12 col-lg-5 mb-3">
     <div
       className="mx-sm-0"
-      style={{ paddingLeft: index > 0 ? "10px" : 0, paddingBottom: 20, margin: '0 auto' }}
+      style={{
+        paddingLeft: index > 0 ? "10px" : 0,
+        paddingBottom: 20,
+        margin: "0 auto",
+      }}
     >
-      <div style={{...styles.cardContainer, backgroundImage: `linear-gradient(to bottom right, #B0A4E8, #463690)`}}>
+      <div
+        style={{
+          ...styles.cardContainer,
+          backgroundImage: `linear-gradient(to bottom right, #B0A4E8, #463690)`,
+        }}
+      >
         <Link
           to={{ pathname: `/orders/vieworder/${item._id}` }}
           className="success p-0"
@@ -53,11 +62,7 @@ function OrderCard({ item, index }) {
             Yeu Cau
           </div>
         </div>
-        <div
-          style={styles.bottom_warning_label}
-        >
-          Lay Do Hom Nay
-        </div>
+        {false && <div style={styles.bottom_warning_label}>Lay Do Hom Nay</div>}
       </div>
     </div>
   );
@@ -153,8 +158,8 @@ const styles = {
     padding: "8px 0px",
     fontWeight: "bold",
     color: "white",
-    backgroundImage: 'linear-gradient(to right, #C65D94, #E07C96)'
-  }
+    backgroundImage: "linear-gradient(to right, #C65D94, #E07C96)",
+  },
 };
 
 export default OrderCard;

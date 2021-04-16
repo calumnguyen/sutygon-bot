@@ -53,6 +53,8 @@ function ReceiptUI({
     );
   };
 
+  console.log(totalAmount, paidAmount);
+
   return (
     <>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -146,7 +148,7 @@ function ReceiptUI({
               <div style={styles.itemNameHeading}>Giá</div>
             </th>
           </tr>
-          {product_Array.map(renderItem)}
+          {product_Array?.map(renderItem)}
           <tr style={{ paddingTop: "10px" }}>
             <th
               style={{
@@ -202,14 +204,11 @@ function ReceiptUI({
               >
                 <div style={{ marginRight: "10px" }}>Số tiền cần trả</div>
                 <div style={{ margin: "auto 0" }}>
-                  {
-                    refundAmount
-                      ? refundAmount < 0
-                        ? -refundAmount
-                        : 0
-                      : totalAmount -
-                        paidAmount /** - Amount to be paid (TODO) */
-                  }
+                  {refundAmount
+                    ? refundAmount < 0
+                      ? -refundAmount
+                      : 0
+                    : parseInt(totalAmount) - parseInt(paidAmount)}
                 </div>
               </div>
             </th>

@@ -171,7 +171,7 @@ class MatchBarcodes extends Component {
 
     if (orderItemsArray)
       orderItemsArray.forEach((item) => {
-        const orderItem = item[0];
+        const orderItem = item[0] || item;
         const objInOrder = orderBarcodeItems?.filter(
           (item) => item.barcode == orderItem.barcode
         )[0];
@@ -256,7 +256,8 @@ class MatchBarcodes extends Component {
     let m_product = [];
     if (!!barcodesArray.length) {
       barcodesArray.forEach((element, e_index) => {
-        m_product = orderedBarcode.filter((f) => f !== element.barcode);
+        if (!orderedBarcode.includes(element.barcode))
+          m_product.push(element.barcode); // = orderedBarcode.filter((f) => f != element.barcode);
       });
       this.state.m_product = m_product;
     }
@@ -265,13 +266,13 @@ class MatchBarcodes extends Component {
       if (sortedAray) {
         m_product.forEach((element) => {
           m_productarray.push(
-            sortedAray.filter((f) => f.barcode.toString() === element)
+            sortedAray.filter((f) => f.barcode.toString() == element)[0]
           );
           return m_productarray;
         });
       }
     }
-    this.state.m_productarray = m_productarray;
+    this.state.m_productarray = this.parseOrderItemsArray(m_productarray);
     return this.state.m_productarray.map((m_product, m_product_index) => (
       <>
         <div id="sizes_box" key={m_product_index}>
@@ -289,10 +290,11 @@ class MatchBarcodes extends Component {
                   <thead></thead>
                   <tbody>
                     <tr key={m_product_index} style={{ margin: "3px" }}>
-                      <td className="text-center">{m_product[0].barcode}</td>
-                      <td className="text-center">{m_product[0].title}</td>
-                      <td className="text-center">{m_product[0].color}</td>
-                      <td className="text-center">{m_product[0].price}</td>
+                      <td className="text-center">{m_product.barcode}</td>
+                      <td className="text-center">{m_product.title}</td>
+                      <td className="text-center">{m_product.color}</td>
+                      <td className="text-center">{m_product.qty}</td>
+                      <td className="text-center">{m_product.price}</td>
                     </tr>
                   </tbody>
                 </table>

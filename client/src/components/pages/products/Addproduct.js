@@ -427,9 +427,9 @@ class AddProduct extends Component {
         return <Redirect to="/Error" />;
       }
     }
-    // if (this.props.saved) {
-    //   return <Redirect to="/product" />;
-    // }
+    if (this.props.saved) {
+      return <Redirect to="/product" />;
+    }
 
     return (
       <React.Fragment>

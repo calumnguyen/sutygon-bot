@@ -366,9 +366,13 @@ class PerPaidScree extends Component {
             rentDateFrom={order?.rentDate}
             rentDateTo={order?.returnDate}
             product_Array={parsedItemsArray}
-            totalWithoutTax={order?.total - order?.tax}
+            totalWithoutTax={
+              parseInt(order?.total) -
+              parseInt(order?.tax) -
+              parseInt(order?.insuranceAmt)
+            }
             taxAmount={order?.tax}
-            paidAmount={pay_amount + order?.pay_amount}
+            paidAmount={parseInt(pay_amount) + parseInt(order?.pay_amount)}
             username={this.props.auth?.user?.username}
             orderBarcode={order?.orderBarcode}
             orderStatus={order?.status}

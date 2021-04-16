@@ -287,7 +287,7 @@ class ViewOrder extends Component {
                     orderNumber={orderNumber}
                     taxAmount={tax}
                     totalAmount={total}
-                    totalWithoutTax={total - tax}
+                    totalWithoutTax={total - tax - insuranceAmt}
                     paidAmount={paidAmount}
                     username={this.props.order?.user?.username}
                     orderBarcode={this.props.order?.orderBarcode || "404"}
