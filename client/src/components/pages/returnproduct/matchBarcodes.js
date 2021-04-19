@@ -228,10 +228,7 @@ class MatchBarcodes extends Component {
                       <td className="text-center">{b.barcode}</td>
                       <td className="text-center">{b.title}</td>
                       <td className="text-center">{b.color}</td>
-<<<<<<< Updated upstream
-=======
                       <td className="text-center">{b.size}</td>
->>>>>>> Stashed changes
                       <td className="text-center">{b.qty}</td>
                       <td className="text-center">{b.price}</td>
                     </tr>
