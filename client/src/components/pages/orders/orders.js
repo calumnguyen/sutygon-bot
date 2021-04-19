@@ -21,6 +21,17 @@ import BootstrapTable from "react-bootstrap-table-next";
 import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import OrderStatus from "./small/Status";
 import Spinner from "../../layout/Spinner.js";
+import {
+  Card,
+  CardBody,
+  CardImg,
+  CardSubtitle,
+  CardText,
+  CardTitle,
+} from "reactstrap";
+import { Button } from "bootstrap";
+import OrderCard from "./OrderCard";
+import OrdersList from "./OrdersList";
 
 class Orders extends Component {
   state = {
@@ -59,7 +70,7 @@ class Orders extends Component {
   orderTable = () => {
     const { rentproducts } = this.props;
 
-    if (rentproducts) {
+    if (rentproducts?.length) {
       let ordersDataArr = [];
       rentproducts.forEach((order, idx) => {
         ordersDataArr.push({
@@ -82,7 +93,6 @@ class Orders extends Component {
               } y/c  ${this.isToday(order.rentDate) ? "| PickUp Today" : ""}`}
             />
           ),
-
           actions: (
             <>
               <Link
@@ -99,357 +109,12 @@ class Orders extends Component {
         });
       });
 
-      const columns = [
-        {
-          dataField: "orderNumber",
-          text: "Mã Đơn Hàng",
-          sort: true,
-        },
-        {
-          dataField: "name",
-          text: "Họ & Tên",
-          sort: true,
-        },
-        {
-          dataField: "phone",
-          text: "SĐT",
-          sort: true,
-        },
-        {
-          dataField: "status",
-          text: "Trạng Thái",
-          sort: true,
-        },
-        {
-          dataField: "actions",
-          text: "Xem Đơn",
-          sort: true,
-        },
-      ];
-
-      const MySearch = (props) => {
-        let input;
-        const handleClick = () => {
-          props.onSearch(input.value);
-        };
-        return (
-          <>
-            <div className="row">
-              <div className="col-md-4">
-                <input
-                  className="form-control"
-                  style={{ backgroundColor: "white" }}
-                  ref={(n) => (input = n)}
-                  type="text"
-                />
-              </div>
-              <div className="col-md-4">
-                <button className="btn btn-success" onClick={handleClick}>
-                  <i className="fa fa-search"></i> Tìm{" "}
-                </button>
-              </div>
-            </div>
-            <div className="row ">
-              {/* Pickup Today */}
-
-              <div className="form-group col" style={{ marginTop: "-20px" }}>
-                <br></br>
-                <h3>
-                  {" "}
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "pickup")
-                          ? "linear-gradient(to bottom right, #348F50, #56b4d3)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("pickup");
-                    }}
-                  >
-                    Lấy Hàng Hôm Nay
-                  </span>
-                </h3>
-              </div>
-
-              {/* Return Today */}
-
-              <div className="form-group col" style={{ marginTop: "-20px" }}>
-                <br></br>
-                <h3>
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "return")
-                          ? "linear-gradient(to bottom right, #FEAC5E, #C779D0)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("return");
-                    }}
-                  >
-                    Trả Hàng Hôm Nay
-                  </span>
-                </h3>
-              </div>
-
-              {/* Alteration */}
-
-              <div className="form-group col" style={{ marginTop: "-20px" }}>
-                <br></br>
-                <h3>
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "alteration")
-                          ? "linear-gradient(to bottom right, #6441A5, #2a0845)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("alteration");
-                    }}
-                  >
-                    Có Yêu Cầu
-                  </span>
-                </h3>
-              </div>
-
-              {/* Pending */}
-              <div className="form-group col" style={{ marginTop: "-20px" }}>
-                <br></br>
-                <h3 className="">
-                  {" "}
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "pending")
-                          ? "linear-gradient(to bottom right, #4ca1af, #c4e0e5)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: `${
-                        this.state.status.find((s) => s == "pending")
-                          ? "#000"
-                          : "#fff"
-                      }`,
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("pending");
-                    }}
-                  >
-                    Đang Xử Lý
-                  </span>
-                </h3>
-              </div>
-
-              {/* Ready */}
-
-              <div className="form-group col" style={{ marginTop: "-20px" }}>
-                <br></br>
-                <h3>
-                  {" "}
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "ready")
-                          ? "linear-gradient(to bottom right, #136a8a, #267871)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("ready");
-                    }}
-                  >
-                    Sẵn Sàng Để Lấy
-                  </span>
-                </h3>
-              </div>
-            </div>
-
-            <div className="row">
-              {/* Active */}
-
-              <div className="form-group col" style={{ marginTop: "-30px" }}>
-                <br></br>
-                <h3>
-                  {" "}
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "active")
-                          ? "linear-gradient(to bottom right, #3a7bd5, #3a6073)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("active");
-                    }}
-                  >
-                    Đang Sử Dụng
-                  </span>
-                </h3>
-              </div>
-
-              {/* Completed */}
-              <div className="form-group col" style={{ marginTop: "-30px" }}>
-                <br></br>
-                <h3>
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "Completed")
-                          ? "linear-gradient(to bottom right, #b24592, #f15f79)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("Completed");
-                    }}
-                  >
-                    Hoàn Tất
-                  </span>
-                </h3>
-              </div>
-
-              {/* Overdue */}
-
-              <div className="form-group col" style={{ marginTop: "-30px" }}>
-                <br></br>
-                <h3>
-                  {" "}
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "overdue")
-                          ? "linear-gradient(to bottom right, #ff5f6d, #ffc371)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("overdue");
-                    }}
-                  >
-                    Trễ Hẹn Trả Đồ
-                  </span>
-                </h3>
-              </div>
-
-              {/* Lost */}
-
-              <div className="form-group col" style={{ marginTop: "-30px" }}>
-                <br></br>
-                <h3>
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "lost")
-                          ? "linear-gradient(to bottom right, #603813, #b29f94)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("lost");
-                    }}
-                  >
-                    Mất
-                  </span>
-                </h3>
-              </div>
-
-              {/* Cancelled */}
-
-              <div className="form-group col" style={{ marginTop: "-30px" }}>
-                <br></br>
-                <h3>
-                  <span
-                    className="py-2 btn-custom font-weight-600 badge "
-                    style={{
-                      cursor: "pointer",
-                      backgroundImage: `${
-                        this.state.status.find((s) => s == "cancelled")
-                          ? "linear-gradient(to bottom right, #e96443, #904e95)"
-                          : "linear-gradient(to bottom right, #000000, #434343)"
-                      }`,
-                      color: "#fff",
-                      borderColor: "#fff",
-                      borderRadius: "10px",
-                    }}
-                    onClick={() => {
-                      this.handleStatusToggle("cancelled");
-                    }}
-                  >
-                    Hủy Đồ
-                  </span>
-                </h3>
-              </div>
-            </div>
-          </>
-        );
-      };
-
       return (
-        <ToolkitProvider
-          // bootstrap4
-          keyField="id"
-          data={ordersDataArr.length === 0 ? [] : ordersDataArr}
-          columns={columns}
-          // defaultSorted={defaultSorted}
-          search
-        >
-          {(props) => (
-            <div>
-              <MySearch {...props.searchProps} />
-              <BootstrapTable {...props.baseProps} />
-              <br />
-            </div>
-          )}
-        </ToolkitProvider>
+        <>
+          {rentproducts.map((item, index) => (
+            <OrderCard key={item.id} index={index} item={item} />
+          ))}
+        </>
       );
     } else {
       return <div>Chưa có đơn hàng nào</div>;
@@ -457,6 +122,7 @@ class Orders extends Component {
   };
 
   render() {
+    const { rentproducts } = this.props;
     return (
       <>
         <Loader />
@@ -479,9 +145,7 @@ class Orders extends Component {
                             {this.state.loading ? (
                               <Spinner />
                             ) : (
-                              <div className="overflow-x-scroll">
-                                {this.orderTable()}
-                              </div>
+                              <OrdersList rentproducts={rentproducts} />
                             )}
                           </div>
                         </div>

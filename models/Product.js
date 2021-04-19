@@ -13,6 +13,10 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type2: {
+      type: Boolean,
+      default: false,
+    },
     tags: {
       type: String,
     },
@@ -32,6 +36,7 @@ const ProductSchema = new mongoose.Schema(
             size: String,
             price: String,
             qty: String,
+            sameBarcode: { type: Boolean, default: false },
             barcodes: [
               {
                 barcode: Number,

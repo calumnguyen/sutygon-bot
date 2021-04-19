@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-var moment = require('moment');
+var moment = require("moment");
 
 const InventorySchema = new mongoose.Schema({
   product: {
@@ -11,23 +11,20 @@ const InventorySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  reservations:
-    [
-      {
-        _id: {
-          type: Schema.Types.ObjectId,
-          ref: "product",
-        },
-        quantity: {
-          type: String
-        },
-        createdOn: {
-          type: Date
-        }
+  reservations: [
+    {
+      _id: {
+        type: Schema.Types.ObjectId,
+        ref: "product",
       },
-    ],
-
-},
-);
+      quantity: {
+        type: String,
+      },
+      createdOn: {
+        type: Date,
+      },
+    },
+  ],
+});
 
 module.exports = Inventory = mongoose.model("inventory", InventorySchema);

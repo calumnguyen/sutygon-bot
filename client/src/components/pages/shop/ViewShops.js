@@ -54,21 +54,23 @@ class ViewShops extends Component {
               }}
             >
               <span
-                className='btn btn-sm btn-info'
-                style={{ cursor: 'pointer' }}
+                className="btn btn-sm btn-info"
+                style={{ cursor: "pointer", marginBottom: "0px" }}
               >
                 Truy cập cửa hàng
               </span>
             </CopyToClipboard>
             {this.state.copied && this.state.currentIndex == index ? (
-              <span className='text-danger ml-1'>Đã copy</span>
+              <span className="text-danger ml-1">Đã copy</span>
             ) : (
-              ''
+              ""
             )}
           </td>
           <td className='text-center'>{shop.address}</td>
 
-          <td className='text-center'>
+
+          <td className="text-center">
+
             <Link
               to={{ pathname: `/stores/edit/${shop._id}` }}
               className='success p-0'

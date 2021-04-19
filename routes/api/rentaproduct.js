@@ -24,6 +24,7 @@ router.post(
   ],
   auth,
   async (req, res) => {
+    console.log(JSON.stringify(req.body));
     try {
       var rentedProduct = new RentedProduct({
         barcodes: req.body.barcodes,
@@ -43,7 +44,9 @@ router.post(
         coupon_code: req.body.coupon_code,
         tax: req.body.tax,
         taxper: req.body.taxper,
-        discount_amount: req.body.discount_amount,
+        discount_amount: parseFloat(req.body.discount_amount),
+        orderItems: req.body.orderItems,
+        orderBarcode: req.body.orderBarcode,
         authorization_logs: [
           {
             employee_id: req.user.id,
@@ -214,7 +217,7 @@ router.get("/", auth, async (req, res) => {
           reservedStatus: "$reservedStatus",
           readyForPickUp: "$readyForPickUp",
           pickedUpStatus: "$pickedUpStatus",
-          rentDate:'$rentDate',
+          rentDate: "$rentDate",
           customer: {
             _id: "$customer._id",
             name: "$customer.name",
@@ -355,7 +358,7 @@ router.put("/searchstatus", auth, async (req, res) => {
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
             pickedUpStatus: "$pickedUpStatus",
-            rentDate:'$rentDate',
+            rentDate: "$rentDate",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -419,7 +422,7 @@ router.put("/searchstatus", auth, async (req, res) => {
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
             pickedUpStatus: "$pickedUpStatus",
-            rentDate:'$rentDate',
+            rentDate: "$rentDate",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",
@@ -467,7 +470,7 @@ router.put("/searchstatus", auth, async (req, res) => {
             customerContactNumber: "$customerContactNumber",
             readyForPickUp: "$readyForPickUp",
             pickedUpStatus: "$pickedUpStatus",
-            rentDate:'$rentDate',
+            rentDate: "$rentDate",
             customer: {
               _id: "$customer._id",
               name: "$customer.name",

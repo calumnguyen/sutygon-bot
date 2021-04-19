@@ -5,10 +5,11 @@ import { connect } from 'react-redux';
 import { loginAdmin } from '../actions/auth';
 import { updatePassword, getUser } from '../actions/user';
 
-import Alert from './layout/Alert';
-import { getShop } from '../actions/dashboard';
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
+import Alert from "./layout/Alert";
+import { getShop } from "../actions/dashboard";
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
+
 class Login extends Component {
   state = {
     username: '',
@@ -110,7 +111,7 @@ class Login extends Component {
           }
         }
       }
-    } else if (user && user.systemRole === 'Admin') {
+    } else if (user && user.systemRole === "Admin") {
       if (this.props.AuthLoading === false && this.props.isAuthenticated) {
         if (user.isPasswordChanged === false) {
           return <Redirect to='/ActivateAccount' />;
@@ -123,6 +124,7 @@ class Login extends Component {
         return <Redirect to='/dashboard' />;
       }
     }
+
     return (
       <div className='wrapper menu-collapsed'>
         <div className='main-panel'>
@@ -237,14 +239,14 @@ class Login extends Component {
                       {/* <div className="form-group row">
                         <label className="col-md-3 label-control">Username</label>
                         <div className="col-md-9">
-                          <input
-                            type="text"
-                            className="form-control border-primary"
-                            placeholder="Enter your username"
-                            name="username"
-                            value={this.state.username}
-                            onChange={(e) => this.onChange(e) }
-                          /></div>
+                        <input
+                        type="text"
+                        className="form-control border-primary"
+                        placeholder="Enter your username"
+                        name="username"
+                        value={this.state.username}
+                        onChange={(e) => this.onChange(e) }
+                        /></div>
                       </div> */}
                       <div className='form-group row'>
                         <label className='col-md-3 label-control'>

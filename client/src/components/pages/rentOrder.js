@@ -1,59 +1,59 @@
-import React, { Component } from 'react';
-import Sidebar from '../layout/Sidebar';
-import Header from '../layout/Header';
-import { Redirect } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import Loader from '../layout/Loader';
-import shortid from 'shortid';
-import * as moment from 'moment';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { Component } from "react";
+import Sidebar from "../layout/Sidebar";
+import Header from "../layout/Header";
+import { Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import Loader from "../layout/Loader";
+import shortid from "shortid";
+import * as moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   getProductById,
   getAllProducts,
   updateProductIndex,
-  getAllProductsAll
-} from '../../actions/product';
-import { getCustomer } from '../../actions/customer';
-import { addNewRentProduct, getLastRecord } from '../../actions/rentproduct';
-import { getOrderbyOrderNumber } from '../../actions/returnproduct';
-import { addNewInvoice } from '../../actions/invoices';
-import { OCAlertsProvider } from '@opuscapita/react-alerts';
-import { OCAlert } from '@opuscapita/react-alerts';
-import { registerLocale, setDefaultLocale } from 'react-datepicker';
-import { vi } from 'date-fns/esm/locale';
-import axios from 'axios';
-registerLocale('vi', vi);
-setDefaultLocale('vi');
-var JsBarcode = require('jsbarcode');
+  getAllProductsAll,
+} from "../../actions/product";
+import { getCustomer } from "../../actions/customer";
+import { addNewRentProduct, getLastRecord } from "../../actions/rentproduct";
+import { getOrderbyOrderNumber } from "../../actions/returnproduct";
+import { addNewInvoice } from "../../actions/invoices";
+import { OCAlertsProvider } from "@opuscapita/react-alerts";
+import { OCAlert } from "@opuscapita/react-alerts";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import { vi } from "date-fns/esm/locale";
+import axios from "axios";
+registerLocale("vi", vi);
+setDefaultLocale("vi");
+var JsBarcode = require("jsbarcode");
 
 class RentOrder extends Component {
   state = {
-    id: '',
-    orderNumber: '',
-    orderBarcode: '',
+    id: "",
+    orderNumber: "",
+    orderBarcode: "",
     barcode_Array: [],
-    customer_id: '',
-    product_Array: '',
-    total_amt: '',
-    taxper: '',
-    tax: '',
-    insAmt: '',
-    rentDate: '',
-    returnDate: '',
-    total: '',
+    customer_id: "",
+    product_Array: "",
+    total_amt: "",
+    taxper: "",
+    tax: "",
+    insAmt: "",
+    rentDate: "",
+    returnDate: "",
+    total: "",
     saving: false,
     leaveID: false,
     barcodesRented: false,
     redirect: false,
-    m_returnDate: '',
-    coupon_code: '',
+    m_returnDate: "",
+    coupon_code: "",
     discount_amount: 0,
     products_length: 0,
-    coupon_type: '',
-    someOneName: '',
+    coupon_type: "",
+    someOneName: "",
     extraDays: 0,
     extraDaysAmount: 0,
     someoneElseCheckBox: false,
@@ -66,7 +66,7 @@ class RentOrder extends Component {
 
     if (lastRecord) {
       if (lastRecord.length === 0) {
-        const orderNumber = '001-00';
+        const orderNumber = "001-00";
         const newOrderNumber = this.generateRandomNumber(orderNumber);
         this.setState({
           orderNumber: newOrderNumber,
@@ -103,37 +103,37 @@ class RentOrder extends Component {
   generateRandomNumber(previousNumber) {
     // break number by dash
     // convert number into integer
-    let n_array = previousNumber.split('-');
+    let n_array = previousNumber.split("-");
     // check second half if 90
-    if (n_array[1] == '99') {
+    if (n_array[1] == "99") {
       // if yes increment first half
       n_array[0]++;
-      n_array[1] = '00';
+      n_array[1] = "00";
     } else {
       // if not add 1
       n_array[1]++;
     }
 
     function getPadded(num) {
-      var str = '' + num;
-      var pad = '000';
+      var str = "" + num;
+      var pad = "000";
       return pad.substring(0, pad.length - str.length) + str;
     }
     let firstHalf = getPadded(n_array[0]);
 
     function getPaddedSecond(num) {
-      var str = '' + num;
-      var pad = '00';
+      var str = "" + num;
+      var pad = "00";
       return pad.substring(0, pad.length - str.length) + str;
     }
     let secondHalf = getPaddedSecond(n_array[1]);
 
-    let n = firstHalf + '-' + secondHalf;
+    let n = firstHalf + "-" + secondHalf;
     return n;
   }
   focousOut(value) {
     if (value === false) {
-      this.setState({ rentDate: '', returnDate: '' });
+      this.setState({ rentDate: "", returnDate: "" });
     }
   }
 
@@ -171,22 +171,22 @@ class RentOrder extends Component {
     if (
       state.leaveID == true &&
       this.state.someoneElseCheckBox &&
-      state.someOneName == ''
+      state.someOneName == ""
     ) {
       OCAlert.alertError(`Please Enter Some One Name`, { timeOut: 3000 });
       return;
     }
     if (state.leaveID == true && this.state.someoneElseCheckBox) {
-      rentedOrder['customerId'] = state.someOneName;
+      rentedOrder["customerId"] = state.someOneName;
     }
     if (state.leaveID == true && !this.state.someoneElseCheckBox) {
-      rentedOrder['customerId'] = customer.name;
+      rentedOrder["customerId"] = customer.name;
     }
     if (state.extraDays) {
-      rentedOrder['extraDays'] = state.extraDays;
+      rentedOrder["extraDays"] = state.extraDays;
     }
     if (state.extraDaysAmount) {
-      rentedOrder['extraDaysAmount'] = state.extraDaysAmount;
+      rentedOrder["extraDaysAmount"] = state.extraDaysAmount;
     }
 
     const pdfData = {
@@ -199,7 +199,7 @@ class RentOrder extends Component {
       total_without_tax: this.calculateTotalWithoutTax(),
     };
 
-    this.props.history.push('/prepaid', {
+    this.props.history.push("/prepaid", {
       customer_id: state.customer_id,
       rentedOrder,
       product_Array: this.state.product_Array,
@@ -258,7 +258,8 @@ class RentOrder extends Component {
                   size_id: size_id,
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
                   title: product_name,
-                  color: color_name + ' | ' + size_name,
+                  color: color_name,
+                  size: size_name,
                   barcode: size.barcodes[i].barcode,
                   price: price,
                   productId: productId,
@@ -278,12 +279,12 @@ class RentOrder extends Component {
   printInvoice = () => {
     var css =
       '<link rel="stylesheet"  href="%PUBLIC_URL%/assets/css/app.css"/>';
-    var printDiv = document.getElementById('invoiceDiv').innerHTML;
+    var printDiv = document.getElementById("invoiceDiv").innerHTML;
 
     let newWindow = window.open(
-      '',
-      '_blank',
-      'location=yes,height=570,width=720,scrollbars=yes,status=yes'
+      "",
+      "_blank",
+      "location=yes,height=570,width=720,scrollbars=yes,status=yes"
     );
     newWindow.document.body.innerHTML = css + printDiv;
     newWindow.window.print();
@@ -300,55 +301,67 @@ class RentOrder extends Component {
       barcode_Array: selectedBarcodes,
     });
   };
-  getBarcodeRecord() {
+  renderProductTable() {
     let productarray = [];
     let { barcode_Array } = this.state;
- 
+
     const { products } = this.props;
     if (products) {
-      let sortedAray = this.getSortedData(products);
-      if (sortedAray) {
+      let sortedArray = this.getSortedData(products);
+      if (sortedArray) {
         barcode_Array.forEach((element) => {
-          productarray.push(
-            sortedAray.filter((f) => f.barcode == element.barcode)
-          );
+          const product = sortedArray.filter(
+            (f) => f.barcode == element.barcode
+          )[0];
+<<<<<<< Updated upstream
+          console.log(product);
+=======
+>>>>>>> Stashed changes
+          productarray.push({
+            ...product,
+            orderQty: element.orderQty,
+            price: product.price * element.orderQty,
+          });
           return productarray;
         });
       }
     }
     this.state.product_Array = productarray;
+
     return this.state.product_Array.map((product, b_index) => (
-      <div id='sizes_box'>
-        <div className='row'>
-          <div className='left overflow-x-scroll'>
+      <div id="sizes_box">
+        <div className="row">
+          <div className="left overflow-x-scroll">
             <table
-              className='table table-bordered table-light'
+              className="table table-bordered table-light"
               style={{
-                borderWidth: '1px',
-                borderColor: '#aaaaaa',
-                borderStyle: 'solid',
+                borderWidth: "1px",
+                borderColor: "#aaaaaa",
+                borderStyle: "solid",
               }}
             >
               <thead></thead>
               <tbody>
-                <tr key={b_index} style={{ margin: '3px' }}>
-                  <td className='text-center'>{product[0].barcode}</td>
-                  <td className='text-center'>{product[0].title}</td>
-                  <td className='text-center'>{product[0].color}</td>
-                  <td className='text-center'>{product[0].price}</td>
+                <tr key={b_index} style={{ margin: "3px" }}>
+                  <td className="text-center">{product.barcode}</td>
+                  <td className="text-center">{product.title}</td>
+                  <td className="text-center">{product.color}</td>
+                  <td className="text-center">{product.size}</td>
+                  <td className="text-center">{product.orderQty}</td>
+                  <td className="text-center">{product.price}</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <div className='right ml-3'>
+          <div className="right ml-3">
             <button
-              type='button'
+              type="button"
               onClick={() =>
                 this.removeBarcodeRow(b_index, barcode_Array[b_index].barcode)
               }
-              className='btn btn-raised btn-sm btn-icon btn-danger mt-1'
+              className="btn btn-raised btn-sm btn-icon btn-danger mt-1"
             >
-              <i className='fa fa-minus'></i>
+              <i className="fa fa-minus"></i>
             </button>
           </div>
           <br />
@@ -361,10 +374,10 @@ class RentOrder extends Component {
     let { product_Array } = this.state;
     return product_Array.map((product, b_index) => (
       <tr key={b_index}>
-        <td className='text-center'>{product[0].barcode}</td>
-        <td className='text-center'>{product[0].title}</td>
-        <td className='text-center'>{product[0].color}</td>
-        <td className='text-center'>{product[0].price}</td>
+        <td className="text-center">{product.barcode}</td>
+        <td className="text-center">{product.title}</td>
+        <td className="text-center">{product.color}</td>
+        <td className="text-center">{product.price}</td>
       </tr>
     ));
   }
@@ -375,7 +388,7 @@ class RentOrder extends Component {
 
     if (product_Array) {
       for (var i = 0; i < product_Array.length; i++) {
-        sum += Number(product_Array[i][0].price);
+        sum += Number(product_Array[i].price);
       }
     }
     this.state.total_amt = sum;
@@ -387,7 +400,7 @@ class RentOrder extends Component {
     var { taxper } = this.state;
 
     let amount;
-    if (taxper !== null && taxper !== '0') {
+    if (taxper !== null && taxper !== "0") {
       amount = totalAmount * (taxper * 0.01);
     } else {
       amount = 0;
@@ -425,7 +438,7 @@ class RentOrder extends Component {
   };
 
   printBarcode = (barcode) => {
-    return JsBarcode('#barcode', barcode, {
+    return JsBarcode("#barcode", barcode, {
       width: 1.5,
       height: 40,
     });
@@ -444,24 +457,20 @@ class RentOrder extends Component {
   onApplyCoupon = async () => {
     const { customer } = this.props;
     const { coupon_code, product_Array } = this.state;
-    if (coupon_code == '') {
+    if (coupon_code == "") {
       OCAlert.alertError(`Provide Coupon Code`, { timeOut: 3000 });
       return;
     }
-    const result = [];
-    product_Array.map((i) => {
-      result.push(i[0]);
-    });
     const p_total = this.calculateTotalWithoutTax();
     let obj = {
       coupon_code: coupon_code,
       total: p_total,
       customerId: customer._id,
-      products: result,
+      products: product_Array,
     };
 
     try {
-      const res = await axios.post('/api/coupons/apply_coupon', obj);
+      const res = await axios.post("/api/coupons/apply_coupon", obj);
 
       if (res.data) {
         // products_length is for each category means eligibility=="each"
@@ -478,25 +487,24 @@ class RentOrder extends Component {
         let startDate = new Date(start_date);
         let endDate = new Date(end_date);
         let new_date = new Date();
-        startDate = moment(startDate).format('DD-MM-YYYY');
-        endDate = moment(endDate).format('DD-MM-YYYY');
-        new_date = moment(new_date).format('DD-MM-YYYY');
+        startDate = moment(startDate).format("DD-MM-YYYY");
+        endDate = moment(endDate).format("DD-MM-YYYY");
+        new_date = moment(new_date).format("DD-MM-YYYY");
 
         if (startDate > new_date || new_date > endDate) {
           OCAlert.alertError(`Coupon is expired`, { timeOut: 3000 });
           return;
         }
 
-        if (coupon_type == 'percentage') {
+        if (coupon_type == "percentage") {
           // if discount amount percentage value then calculate percentage
           //params {product_total,percentage}
           const after_calculated = this.percentage(p_total, discount_amount);
-          console.log(after_calculated <= max_payout);
           if (after_calculated <= max_payout) {
             this.setState({
               coupon_type: coupon_type,
               discount_amount:
-                eligibility == 'each'
+                eligibility == "each"
                   ? after_calculated * Number(products_length)
                   : after_calculated,
             });
@@ -516,7 +524,7 @@ class RentOrder extends Component {
             //   return
             // }
 
-            if (eligibility == 'each') {
+            if (eligibility == "each") {
               this.setState({
                 coupon_type: coupon_type,
                 discount_amount: discount_amount * Number(products_length),
@@ -542,7 +550,7 @@ class RentOrder extends Component {
           this.setState({
             coupon_type: coupon_type,
             discount_amount:
-              eligibility == 'each'
+              eligibility == "each"
                 ? discount_amount * Number(products_length)
                 : discount_amount,
           });
@@ -563,23 +571,23 @@ class RentOrder extends Component {
   render() {
     const { auth, order } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/login' />;
+      return <Redirect to="/login" />;
     }
     const { user } = auth;
-    if (user && user.systemRole === 'Employee') {
-      if (user && !user.sections.includes('Rentproduct')) {
-        return <Redirect to='/Error' />;
+    if (user && user.systemRole === "Employee") {
+      if (user && !user.sections.includes("Rentproduct")) {
+        return <Redirect to="/Error" />;
       }
     }
     if (this.state.redirect === true) {
-      return <Redirect to='/rentproduct' />;
+      return <Redirect to="/rentproduct" />;
     }
 
     if (this.props.location.state === undefined) {
-      return <Redirect to='/rentproduct' />;
+      return <Redirect to="/rentproduct" />;
     }
     if (this.props.saved === true) {
-      return <Redirect to='/rentproduct' />;
+      return <Redirect to="/rentproduct" />;
     }
 
     const { customer } = this.props;
@@ -587,33 +595,33 @@ class RentOrder extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
+        <div className="wrapper menu-collapsed">
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <section id='form-action-layouts'>
-                  <div className='form-body'>
-                    <div className='card'>
-                      <div className='card-header'>
-                        <h4 className='card-title'>Thuê Đồ</h4>
+          <div className="main-panel">
+            <div className="main-content">
+              <div className="content-wrapper">
+                <section id="form-action-layouts">
+                  <div className="form-body">
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="card-title">Thuê Đồ</h4>
                       </div>
 
-                      <div className='card-content'>
-                        <div className='card-body table-responsive'>
-                          <div id='colors_box'>
-                            <div className='row color-row'>
-                              <div className='col-md-12'>
-                                <div className='form-group'>
+                      <div className="card-content">
+                        <div className="card-body table-responsive">
+                          <div id="colors_box">
+                            <div className="row color-row">
+                              <div className="col-md-12">
+                                <div className="form-group">
                                   <h3>
                                     <strong>
-                                      {customer && customer.name}{' '}
+                                      {customer && customer.name}{" "}
                                     </strong>
                                   </h3>
                                   <h4>
-                                    {`${'Điện thoại: '}${
+                                    {`${"Điện thoại: "}${
                                       customer && customer.contactnumber
                                     }`}
                                   </h4>
@@ -621,91 +629,91 @@ class RentOrder extends Component {
                               </div>
                               <OCAlertsProvider />
                               <form onSubmit={(e) => this.onSubmit(e)}>
-                                <div className='col-md-12'>
-                                  <div id='sizes_box'>
-                                    {this.getBarcodeRecord()}
+                                <div className="col-md-12">
+                                  <div id="sizes_box">
+                                    {this.renderProductTable()}
                                     <Link
                                       to={{
-                                        pathname: '/checkout',
+                                        pathname: "/checkout",
                                         state: {
                                           customer: this.state.customer_id,
                                           barcode: this.state.barcode_Array,
                                         },
                                       }}
-                                      className='btn '
+                                      className="btn "
                                     >
-                                      <i className='fa fa-external-link mr-2'></i>
+                                      <i className="fa fa-external-link mr-2"></i>
                                       Thiếu mã? Quay lại để thêm mã vào đơn hàng
                                     </Link>
 
                                     <br />
-                                    <div className='row mt-3'>
-                                      <div className='col-md-6 text-center'>
+                                    <div className="row mt-3">
+                                      <div className="col-md-6 text-center">
                                         <label
-                                          className='text-center'
-                                          id='setName'
+                                          className="text-center"
+                                          id="setName"
                                         >
                                           Ngày Lấy Đồ
                                         </label>
                                       </div>
 
-                                      <div className='col-md-6 text-center'>
+                                      <div className="col-md-6 text-center">
                                         <label
-                                          className='text-center'
-                                          id='setName'
+                                          className="text-center"
+                                          id="setName"
                                         >
                                           Ngày Trả Đồ
                                         </label>
                                       </div>
                                     </div>
 
-                                    <div className='row justify-content-center'>
-                                      <div className='col-md-6 text-center'>
+                                    <div className="row justify-content-center">
+                                      <div className="col-md-6 text-center">
                                         <input
-                                          id='issueinput4'
-                                          className='form-control round text-center'
-                                          name='rentDate'
+                                          id="issueinput4"
+                                          className="form-control round text-center"
+                                          name="rentDate"
                                           style={{
-                                            border: '1px solid #A6A9AE',
-                                            color: '#75787d',
-                                            padding: '0.375rem 0.75rem',
-                                            lineHeight: '1.5',
+                                            border: "1px solid #A6A9AE",
+                                            color: "#75787d",
+                                            padding: "0.375rem 0.75rem",
+                                            lineHeight: "1.5",
                                           }}
                                           required
                                           readOnly
-                                          data-title='Return Date'
+                                          data-title="Return Date"
                                           value={
                                             this.state.rentDate ===
-                                            'Invalid date'
-                                              ? ''
+                                            "Invalid date"
+                                              ? ""
                                               : moment(
                                                   this.state.rentDate
-                                                ).format('DD-MM-YYYY')
+                                                ).format("DD-MM-YYYY")
                                           }
                                         />
                                       </div>
 
-                                      <div className='col-md-6 text-center'>
+                                      <div className="col-md-6 text-center">
                                         <input
-                                          id='issueinput4'
-                                          className='form-control round text-center'
-                                          name='returnDate'
+                                          id="issueinput4"
+                                          className="form-control round text-center"
+                                          name="returnDate"
                                           style={{
-                                            border: '1px solid #A6A9AE',
-                                            color: '#75787d',
-                                            padding: '0.375rem 0.75rem',
-                                            lineHeight: '1.5',
+                                            border: "1px solid #A6A9AE",
+                                            color: "#75787d",
+                                            padding: "0.375rem 0.75rem",
+                                            lineHeight: "1.5",
                                           }}
                                           required
                                           readOnly
-                                          data-title='Return Date'
+                                          data-title="Return Date"
                                           value={
                                             this.state.returnDate ===
-                                            'Invalid date'
-                                              ? ''
+                                            "Invalid date"
+                                              ? ""
                                               : moment(
                                                   this.state.returnDate
-                                                ).format('DD-MM-YYYY')
+                                                ).format("DD-MM-YYYY")
                                           }
                                         />
                                       </div>
@@ -737,50 +745,50 @@ class RentOrder extends Component {
                                       </div>
                                     </div> */}
                                     <br />
-                                    <div className='row'>
-                                      <div className='col-md-12'>
-                                        <div className='form-group'>
-                                          <div style={{ float: 'left' }}>
-                                            <h4 id='padLeft'>
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="padLeft">
                                               Phí gia hạn ngày thuê
                                             </h4>
                                           </div>
-                                          <div style={{ paddingLeft: '650px' }}>
+                                          <div style={{ paddingLeft: "650px" }}>
                                             <input
-                                              style={{ width: '65%' }}
-                                              type='text'
-                                              className='form-control mm-input s-input text-center'
-                                              placeholder='Total'
+                                              style={{ width: "65%" }}
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="Total"
                                               required
                                               readOnly
-                                              id='setSizeFloat'
+                                              id="setSizeFloat"
                                               value={
                                                 this.state.extraDaysAmount
                                                   ? this.state.extraDaysAmount
                                                   : 0
                                               }
                                             />
-                                          </div>{' '}
+                                          </div>{" "}
                                         </div>
                                       </div>
                                     </div>
                                     <br />
-                                    <div className='row'>
-                                      <div className='col-md-12'>
-                                        <div className='form-group'>
-                                          <div style={{ float: 'left' }}>
-                                            <h4 id='padLeft'>
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="padLeft">
                                               Tổng Tiền Chưa Thuế
                                             </h4>
                                           </div>
-                                          <div style={{ paddingLeft: '650px' }}>
+                                          <div style={{ paddingLeft: "650px" }}>
                                             <input
-                                              style={{ width: '65%' }}
-                                              type='text'
-                                              className='form-control mm-input s-input text-center'
-                                              placeholder='VNĐ'
-                                              name='total_amt'
-                                              id='setSizeFloat'
+                                              style={{ width: "65%" }}
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="VNĐ"
+                                              name="total_amt"
+                                              id="setSizeFloat"
                                               required
                                               readOnly
                                               onChange={(e) =>
@@ -794,90 +802,90 @@ class RentOrder extends Component {
                                                     //   ? this.state
                                                     //       .discount_amount
                                                     //   : 0)
-                                                    ''
+                                                    ""
                                               }
                                             />
                                           </div>
                                           <br />
-                                        </div>{' '}
+                                        </div>{" "}
                                       </div>
                                     </div>
 
-                                    <div className='row'>
-                                      <div className='col-md-12'>
-                                        <div className='form-group'>
-                                          <div style={{ float: 'left' }}>
-                                            <h4 id='padLeft'>
-                                              Nhập % Thuế{' '}
-                                              <span className='text-muted'>
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="padLeft">
+                                              Nhập % Thuế{" "}
+                                              <span className="text-muted">
                                                 (nếu không tính thuế, nhập số
                                                 '0')
                                               </span>
                                             </h4>
                                           </div>
-                                          <div style={{ paddingLeft: '650px' }}>
+                                          <div style={{ paddingLeft: "650px" }}>
                                             <input
-                                              style={{ width: '65%' }}
-                                              name='taxper'
-                                              type='text'
-                                              className='form-control mm-input s-input text-center'
-                                              placeholder='% Thuế'
-                                              id='setSizeFloat'
+                                              style={{ width: "65%" }}
+                                              name="taxper"
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="% Thuế"
+                                              id="setSizeFloat"
                                               required
                                               value={`${this.state.taxper}`}
                                               onChange={(e) =>
                                                 this.onHandleChange(e)
                                               }
                                             />
-                                          </div>{' '}
+                                          </div>{" "}
                                         </div>
                                       </div>
                                     </div>
                                     <br />
 
-                                    <div className='row'>
-                                      <div className='col-md-12'>
-                                        <div className='form-group'>
-                                          <div style={{ paddingLeft: '650px' }}>
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ paddingLeft: "650px" }}>
                                             <input
-                                              style={{ width: '65%' }}
-                                              type='text'
-                                              className='form-control mm-input s-input text-center'
-                                              placeholder='Tiền Thuế VNĐ'
-                                              id='setSizeFloat'
+                                              style={{ width: "65%" }}
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="Tiền Thuế VNĐ"
+                                              id="setSizeFloat"
                                               value={
                                                 this.state.product_Array &&
                                                 this.state.taxper
                                                   ? `${this.calculateTax()}`
-                                                  : ''
+                                                  : ""
                                               }
                                               readOnly
                                             />
-                                          </div>{' '}
+                                          </div>{" "}
                                         </div>
                                       </div>
                                     </div>
                                     <br />
 
-                                    <div className='row'>
-                                      <div className='col-md-12'>
-                                        <div className='form-group'>
-                                          <div style={{ float: 'left' }}>
-                                            <h4 id='padLeft'>
-                                              Tiền Cọc Thêm{' '}
-                                              <span className='text-muted'>
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="padLeft">
+                                              Tiền Cọc Thêm{" "}
+                                              <span className="text-muted">
                                                 (hoàn trả khách khi trả đồ)
                                               </span>
                                             </h4>
                                           </div>
-                                          <div style={{ paddingLeft: '650px' }}>
+                                          <div style={{ paddingLeft: "650px" }}>
                                             <input
-                                              name='insAmt'
-                                              style={{ width: '65%' }}
-                                              type='text'
-                                              className='form-control mm-input s-input text-center'
-                                              placeholder='Cọc VNĐ'
-                                              id='setSizeFloat'
+                                              name="insAmt"
+                                              style={{ width: "65%" }}
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="Cọc VNĐ"
+                                              id="setSizeFloat"
                                               required
                                               value={this.state.insAmt}
                                               onChange={(e) =>
@@ -890,26 +898,26 @@ class RentOrder extends Component {
                                     </div>
                                     <br />
 
-                                    <div className='row'>
-                                      <div className='col-md-12'>
-                                        <div className='form-group'>
-                                          <div style={{ float: 'left' }}>
-                                            <h4 id='padLeft'>
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="padLeft">
                                               Cọc Chứng Minh Nhân Dân/Bằng Lái
                                               Xe
                                             </h4>
                                           </div>
                                           <div
                                             style={{
-                                              textAlign: 'left',
-                                              marginLeft: '650px',
+                                              textAlign: "left",
+                                              marginLeft: "650px",
                                             }}
                                           >
-                                            <div className='' style={{}}>
+                                            <div className="" style={{}}>
                                               <input
-                                                id='yes'
-                                                type='radio'
-                                                name='leaveID'
+                                                id="yes"
+                                                type="radio"
+                                                name="leaveID"
                                                 value={true}
                                                 onChange={
                                                   (e) =>
@@ -923,17 +931,17 @@ class RentOrder extends Component {
                                                 }
                                               />
                                               <label
-                                                htmlFor='yes'
-                                                className='ml-2'
+                                                htmlFor="yes"
+                                                className="ml-2"
                                               >
                                                 Có cọc CMND/BLX
                                               </label>
                                             </div>
-                                            <div className='' style={{}}>
+                                            <div className="" style={{}}>
                                               <input
-                                                id='no'
-                                                type='radio'
-                                                name='leaveID'
+                                                id="no"
+                                                type="radio"
+                                                name="leaveID"
                                                 value={false}
                                                 onChange={
                                                   (e) =>
@@ -947,8 +955,8 @@ class RentOrder extends Component {
                                                 }
                                               />
                                               <label
-                                                htmlFor='no'
-                                                className='ml-2'
+                                                htmlFor="no"
+                                                className="ml-2"
                                               >
                                                 Không cọc CMND/BLX
                                               </label>
@@ -957,11 +965,11 @@ class RentOrder extends Component {
                                           {this.state.leaveID == true && (
                                             <React.Fragment>
                                               <div
-                                                style={{ paddingLeft: '650px' }}
+                                                style={{ paddingLeft: "650px" }}
                                               >
                                                 <input
-                                                  type='checkbox'
-                                                  className='mr-2'
+                                                  type="checkbox"
+                                                  className="mr-2"
                                                   // className="form-control mm-input s-input text-center"
                                                   value={
                                                     this.state
@@ -974,7 +982,7 @@ class RentOrder extends Component {
                                                         .someoneElseCheckBox,
                                                     })
                                                   }
-                                                />{' '}
+                                                />{" "}
                                                 Xài CMND/BLX của người khác?
                                               </div>
 
@@ -982,16 +990,16 @@ class RentOrder extends Component {
                                                 .someoneElseCheckBox && (
                                                 <div
                                                   style={{
-                                                    paddingLeft: '650px',
+                                                    paddingLeft: "650px",
                                                   }}
                                                 >
                                                   <input
-                                                    name='some_one_name'
-                                                    style={{ width: '65%' }}
-                                                    type='text'
-                                                    className='form-control mm-input s-input text-center mt-1 '
-                                                    placeholder='Tên trên thẻ'
-                                                    autoComplete='off'
+                                                    name="some_one_name"
+                                                    style={{ width: "65%" }}
+                                                    type="text"
+                                                    className="form-control mm-input s-input text-center mt-1 "
+                                                    placeholder="Tên trên thẻ"
+                                                    autoComplete="off"
                                                     value={
                                                       this.state.someOneName
                                                     }
@@ -1012,23 +1020,23 @@ class RentOrder extends Component {
                                     </div>
 
                                     <br />
-                                    <div className='row'>
-                                      <div className='col-md-12'>
-                                        <div className='form-group'>
-                                          <div style={{ float: 'left' }}>
-                                            <h4 id='coupon_code1'>
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="coupon_code1">
                                               Mã Giảm Giá
                                             </h4>
                                           </div>
-                                          <div style={{ paddingLeft: '650px' }}>
+                                          <div style={{ paddingLeft: "650px" }}>
                                             <input
-                                              name='coupon_code'
-                                              style={{ width: '65%' }}
-                                              type='text'
-                                              className='form-control mm-input s-input text-center'
-                                              placeholder='Mã giảm giá'
-                                              id='coupon_code1'
-                                              autoComplete='off'
+                                              name="coupon_code"
+                                              style={{ width: "65%" }}
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="Mã giảm giá"
+                                              id="coupon_code1"
+                                              autoComplete="off"
                                               value={this.state.coupon_code}
                                               onChange={(e) =>
                                                 this.setState({
@@ -1039,26 +1047,26 @@ class RentOrder extends Component {
 
                                             <input
                                               style={{
-                                                width: '65%',
-                                                marginTop: '2px',
+                                                width: "65%",
+                                                marginTop: "2px",
                                               }}
-                                              type='text'
-                                              className='form-control mm-input s-input text-center'
-                                              placeholder='Discount'
-                                              id='setSizeFloat'
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="Discount"
+                                              id="setSizeFloat"
                                               value={this.state.discount_amount}
                                               readOnly
                                             />
                                             <span>
                                               {this.state.coupon_type ==
-                                              'percentage'
-                                                ? '%'
-                                                : ''}
+                                              "percentage"
+                                                ? "%"
+                                                : ""}
                                             </span>
 
                                             <span
-                                              style={{ cursor: 'pointer' }}
-                                              className='btn btn-info mt-1 btn-sm ml-4'
+                                              style={{ cursor: "pointer" }}
+                                              className="btn btn-info mt-1 btn-sm ml-4"
                                               onClick={this.onApplyCoupon}
                                             >
                                               Xài Mã Giảm Giá
@@ -1070,68 +1078,68 @@ class RentOrder extends Component {
                                     <br />
 
                                     <br />
-                                    <div className='row'>
-                                      <div className='col-md-12'>
-                                        <div className='form-group'>
-                                          <div style={{ float: 'left' }}>
-                                            <h4 id='padLeft'>
+                                    <div className="row">
+                                      <div className="col-md-12">
+                                        <div className="form-group">
+                                          <div style={{ float: "left" }}>
+                                            <h4 id="padLeft">
                                               Tổng Tiền
                                               <span
-                                                style={{ fontSize: '16px' }}
+                                                style={{ fontSize: "16px" }}
                                               >
-                                                {' '}
+                                                {" "}
                                                 (Chưa Giảm Giá)
                                               </span>
                                             </h4>
                                           </div>
-                                          <div style={{ paddingLeft: '650px' }}>
+                                          <div style={{ paddingLeft: "650px" }}>
                                             <input
-                                              style={{ width: '65%' }}
-                                              type='text'
-                                              className='form-control mm-input s-input text-center'
-                                              placeholder='VNĐ'
+                                              style={{ width: "65%" }}
+                                              type="text"
+                                              className="form-control mm-input s-input text-center"
+                                              placeholder="VNĐ"
                                               required
                                               readOnly
-                                              id='setSizeFloat'
+                                              id="setSizeFloat"
                                               value={
                                                 this.state.total_amt
                                                   ? this.calculateTotal()
-                                                  : ''
+                                                  : ""
                                               }
                                             />
-                                          </div>{' '}
+                                          </div>{" "}
                                         </div>
                                       </div>
                                     </div>
 
                                     <br />
                                     {this.state.discount_amount > 0 && (
-                                      <div className='row'>
-                                        <div className='col-md-12'>
-                                          <div className='form-group'>
-                                            <div style={{ float: 'left' }}>
-                                              <h4 id='padLeft'>
+                                      <div className="row">
+                                        <div className="col-md-12">
+                                          <div className="form-group">
+                                            <div style={{ float: "left" }}>
+                                              <h4 id="padLeft">
                                                 Tổng Tiền (Đã Giảm Giá)
                                               </h4>
                                             </div>
                                             <div
-                                              style={{ paddingLeft: '650px' }}
+                                              style={{ paddingLeft: "650px" }}
                                             >
                                               <input
-                                                style={{ width: '65%' }}
-                                                type='text'
-                                                className='form-control mm-input s-input text-center'
-                                                placeholder='VNĐ'
+                                                style={{ width: "65%" }}
+                                                type="text"
+                                                className="form-control mm-input s-input text-center"
+                                                placeholder="VNĐ"
                                                 required
                                                 readOnly
-                                                id='setSizeFloat'
+                                                id="setSizeFloat"
                                                 value={
                                                   this.state.total_amt
                                                     ? `${this.calculateTotalWithDiscount()}`
-                                                    : ''
+                                                    : ""
                                                 }
                                               />
-                                            </div>{' '}
+                                            </div>{" "}
                                           </div>
                                         </div>
                                       </div>
@@ -1139,15 +1147,15 @@ class RentOrder extends Component {
                                   </div>
 
                                   <br />
-                                  <div className='row text-center'>
-                                    <div className='col-md-12 btn-cont'>
-                                      <div className='form-group'>
+                                  <div className="row text-center">
+                                    <div className="col-md-12 btn-cont">
+                                      <div className="form-group">
                                         <button
-                                          type='submit'
-                                          className='btn btn-raised btn-primary round btn-min-width mr-1 mb-1'
-                                          id='btnSize2'
+                                          type="submit"
+                                          className="btn btn-raised btn-primary round btn-min-width mr-1 mb-1"
+                                          id="btnSize2"
                                         >
-                                          <i className='ft-check mr-2'></i>
+                                          <i className="ft-check mr-2"></i>
                                           Thanh Toán/Cọc Tiền Trước
                                         </button>
                                       </div>
@@ -1165,26 +1173,26 @@ class RentOrder extends Component {
               </div>
             </div>
 
-            <footer className='footer footer-static footer-light'>
-              <p className='clearfix text-muted text-sm-center px-2'>
+            <footer className="footer footer-static footer-light">
+              <p className="clearfix text-muted text-sm-center px-2">
                 <span>
-                  Quyền sở hữu của &nbsp;{' '}
+                  Quyền sở hữu của &nbsp;{" "}
                   <a
-                    href='https://www.sutygon.com'
-                    rel='noopener noreferrer'
-                    id='pixinventLink'
-                    target='_blank'
-                    className='text-bold-800 primary darken-2'
+                    href="https://www.sutygon.com"
+                    rel="noopener noreferrer"
+                    id="pixinventLink"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
                   >
-                    SUTYGON-BOT{' '}
+                    SUTYGON-BOT{" "}
                   </a>
-                  , All rights reserved.{' '}
+                  , All rights reserved.{" "}
                 </span>
               </p>
             </footer>
           </div>
         </div>
-        <div className='clearfix'></div>
+        <div className="clearfix"></div>
       </React.Fragment>
     );
   }
@@ -1216,7 +1224,7 @@ const mapStateToProps = (state) => ({
   customer: state.customer.customer,
   generateInvoice: state.rentproduct.generateInvoice,
   saved: state.product.saved,
-   products: state.product.products,
+  products: state.product.products,
 });
 export default connect(mapStateToProps, {
   getAllProducts,

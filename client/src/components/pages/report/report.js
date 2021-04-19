@@ -1,41 +1,41 @@
-import React, { Component } from 'react'
-import Sidebar from '../../layout/Sidebar'
-import Header from '../../layout/Header'
-import { Link } from 'react-router-dom'
-import { Redirect } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { getReport } from '../../../actions/report'
-import { getAllUsers } from '../../../actions/user'
-import { getAllCustomers } from '../../../actions/customer'
-import Alert from '../../layout/Alert'
-import Loader from '../../layout/Loader'
+import React, { Component } from "react";
+import Sidebar from "../../layout/Sidebar";
+import Header from "../../layout/Header";
+import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { getReport } from "../../../actions/report";
+import { getAllUsers } from "../../../actions/user";
+import { getAllCustomers } from "../../../actions/customer";
+import Alert from "../../layout/Alert";
+import Loader from "../../layout/Loader";
 
 class Report extends Component {
   state = {
-    id: '',
-    customer: '',
-    user: '',
-    start: '',
-    end: '',
-    reportType: '',
+    id: "",
+    customer: "",
+    user: "",
+    start: "",
+    end: "",
+    reportType: "",
     saving: false,
-  }
+  };
 
   async componentDidMount() {
-    this.props.getAllUsers()
-    this.props.getAllCustomers()
+    this.props.getAllUsers();
+    this.props.getAllCustomers();
   }
-  handleChange = (e, id = '') => {
-    this.setState({ [e.target.name]: e.target.value })
-  }
+  handleChange = (e, id = "") => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
   onSubmit = async (e) => {
-    e.preventDefault()
-    this.setState({ saving: true })
+    e.preventDefault();
+    this.setState({ saving: true });
 
-    const state = { ...this.state }
-    const { user } = this.props.auth
+    const state = { ...this.state };
+    const { user } = this.props.auth;
 
     const report = {
       user: user._id,
@@ -43,54 +43,54 @@ class Report extends Component {
       start: state.start,
       end: state.end,
       reportType: state.reportType,
-    }
-    await this.props.getReport(report)
-    this.setState({ saving: false })
-  }
+    };
+    await this.props.getReport(report);
+    this.setState({ saving: false });
+  };
 
   render() {
-    const { auth } = this.props
+    const { auth } = this.props;
     if (!auth.loading && !auth.isAuthenticated) {
-      return <Redirect to='/login' />
+      return <Redirect to="/login" />;
     }
 
     if (this.props.saved) {
-      return <Redirect to='/dashboard' />
+      return <Redirect to="/dashboard" />;
     }
-    const { user, customer } = this.state
-    const { customers } = this.props.customers
-    const { users } = this.props
+    const { user, customer } = this.state;
+    const { customers } = this.props.customers;
+    const { users } = this.props;
     return (
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
+        <div className="wrapper menu-collapsed">
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <section id='form-action-layouts'>
-                  <div className='form-body'>
-                    <div className='card'>
-                      <div className='card-header'>
-                        <h4 className='form-section'>
-                          <i className='icon-basket-loaded'></i> Report
+          <div className="main-panel">
+            <div className="main-content">
+              <div className="content-wrapper">
+                <section id="form-action-layouts">
+                  <div className="form-body">
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="form-section">
+                          <i className="icon-basket-loaded"></i> Report
                         </h4>
                       </div>
-                      <div className='card-body'>
+                      <div className="card-body">
                         <form onSubmit={(e) => this.onSubmit(e)}>
                           <Alert />
-                          <div className='row'>
-                            <div className='form-group col-6 mb-2'>
-                              <label htmlFor='issueinput5'>
+                          <div className="row">
+                            <div className="form-group col-6 mb-2">
+                              <label htmlFor="issueinput5">
                                 Select Customer
                               </label>
                               <select
-                                name='customer'
-                                className='form-control'
+                                name="customer"
+                                className="form-control"
                                 onChange={(e) => this.handleChange(e)}
                               >
-                                <option value='DEFAULT'> -- select -- </option>
+                                <option value="DEFAULT"> -- select -- </option>
                                 {customers &&
                                   customers.map((record) => (
                                     <option
@@ -98,19 +98,19 @@ class Report extends Component {
                                       value={record._id}
                                       selected={record._id === customer}
                                     >
-                                      {record.name + ' - ' + record.email}
+                                      {record.name + " - " + record.email}
                                     </option>
                                   ))}
                               </select>
                             </div>
-                            <div className='form-group col-6 mb-2'>
-                              <label htmlFor='issueinput5'>Select User</label>
+                            <div className="form-group col-6 mb-2">
+                              <label htmlFor="issueinput5">Select User</label>
                               <select
-                                name='user'
-                                className='form-control'
+                                name="user"
+                                className="form-control"
                                 onChange={(e) => this.handleChange(e)}
                               >
-                                <option value='DEFAULT'> -- select -- </option>
+                                <option value="DEFAULT"> -- select -- </option>
                                 {users &&
                                   users.map((record) => (
                                     <option
@@ -125,90 +125,90 @@ class Report extends Component {
                             </div>
                           </div>
 
-                          <div className='row'>
-                            <div className='form-group col-md-6 mb-2'>
-                              <label htmlFor='issueinput3'>Start Date</label>
+                          <div className="row">
+                            <div className="form-group col-md-6 mb-2">
+                              <label htmlFor="issueinput3">Start Date</label>
                               <input
-                                type='date'
-                                id='issueinput3'
-                                className='form-control'
-                                name='start'
-                                data-toggle='tooltip'
-                                data-trigger='hover'
-                                data-placement='top'
-                                data-title='Date Opened'
+                                type="date"
+                                id="issueinput3"
+                                className="form-control"
+                                name="start"
+                                data-toggle="tooltip"
+                                data-trigger="hover"
+                                data-placement="top"
+                                data-title="Date Opened"
                                 onChange={(e) => this.handleChange(e)}
                                 value={this.state.start}
                               />
                             </div>
-                            <div className='form-group col-md-6 mb-2'>
-                              <label htmlFor='issueinput3'>End Date</label>
+                            <div className="form-group col-md-6 mb-2">
+                              <label htmlFor="issueinput3">End Date</label>
                               <input
-                                type='date'
-                                id='issueinput3'
-                                className='form-control'
-                                name='end'
-                                data-toggle='tooltip'
-                                data-trigger='hover'
-                                data-placement='top'
-                                data-title='Date Opened'
+                                type="date"
+                                id="issueinput3"
+                                className="form-control"
+                                name="end"
+                                data-toggle="tooltip"
+                                data-trigger="hover"
+                                data-placement="top"
+                                data-title="Date Opened"
                                 onChange={(e) => this.handleChange(e)}
                                 value={this.state.end}
                               />
                             </div>
                           </div>
 
-                          <div className='row'>
-                            <div className='form-group col-md-6 mb-2'>
-                              <label htmlFor='issueinput3'>Report Type</label>{' '}
+                          <div className="row">
+                            <div className="form-group col-md-6 mb-2">
+                              <label htmlFor="issueinput3">Report Type</label>{" "}
                               <br></br>
                               <input
-                                type='radio'
-                                name='reportType'
-                                value='order'
+                                type="radio"
+                                name="reportType"
+                                value="order"
                                 onChange={(e) => this.handleChange(e)}
-                                checked={this.state.reportType === 'order'}
+                                checked={this.state.reportType === "order"}
                               />
-                              <label className='radio-inline'>Order</label>
+                              <label className="radio-inline">Order</label>
                               <br></br>
                               <input
-                                type='radio'
-                                name='reportType'
-                                value='appointment'
+                                type="radio"
+                                name="reportType"
+                                value="appointment"
                                 onChange={(e) => this.handleChange(e)}
                                 checked={
-                                  this.state.reportType === 'appointment'
+                                  this.state.reportType === "appointment"
                                 }
                               />
-                              <label className='radio-inline'>
+                              <label className="radio-inline">
                                 Appointment
                               </label>
                             </div>
                           </div>
-                          <div className='row'>
-                            <div className='form-columns col-md-6 mb-2'>
+                          <div className="row">
+                            <div className="form-columns col-md-6 mb-2">
                               {this.state.saving ? (
-                                <Link className='mb-2 mr-2 btn btn-raised btn-primary'>
+                                <Link className="mb-2 mr-2 btn btn-raised btn-primary">
                                   <div
-                                    className='spinner-grow spinner-grow-sm '
-                                    role='status'
+                                    className="spinner-grow spinner-grow-sm "
+                                    role="status"
                                   ></div>
                                   &nbsp; Generating
                                 </Link>
                               ) : (
                                 <button
                                   to={{ pathname: `/report` }}
-                                  type='submit'
-                                  className='mb-2 mr-2 btn btn-raised btn-primary'
+                                  type="submit"
+                                  className="mb-2 mr-2 btn btn-raised btn-primary"
                                 >
-                                  <i className='ft-check' /> Generate Report
+                                  <i className="ft-check" /> Generate Report
                                 </button>
                               )}
                             </div>
-                            <div className='form-columns col-md-6 mb-2'>
+                            <div className="form-columns col-md-6 mb-2">
                               <Link
                                 to={{
-                                  pathname: '/report',
+                                  pathname: "/report",
                                   data: {
                                     report: this.props.report.reports,
                                     reportType: this.state.reportType,
@@ -216,7 +216,7 @@ class Report extends Component {
                                     endDate: this.state.end,
                                   }, // your data array of objects
                                 }}
-                                className='mb-2 mr-2 btn btn-raised btn-primary'
+                                className="mb-2 mr-2 btn btn-raised btn-primary"
                               >
                                 &nbsp; Generate PDF
                               </Link>
@@ -231,26 +231,26 @@ class Report extends Component {
             </div>
           </div>
 
-          <footer className='footer footer-static footer-light'>
-            <p className='clearfix text-muted text-sm-center px-2'>
+          <footer className="footer footer-static footer-light">
+            <p className="clearfix text-muted text-sm-center px-2">
               <span>
-                Quyền sở hữu của &nbsp;{' '}
+                Quyền sở hữu của &nbsp;{" "}
                 <a
-                  href='https://www.sutygon.com'
-                  rel='noopener noreferrer'
-                  id='pixinventLink'
-                  target='_blank'
-                  className='text-bold-800 primary darken-2'
+                  href="https://www.sutygon.com"
+                  rel="noopener noreferrer"
+                  id="pixinventLink"
+                  target="_blank"
+                  className="text-bold-800 primary darken-2"
                 >
-                  SUTYGON-BOT{' '}
+                  SUTYGON-BOT{" "}
                 </a>
-                , All rights reserved.{' '}
+                , All rights reserved.{" "}
               </span>
             </p>
           </footer>
         </div>
       </React.Fragment>
-    )
+    );
   }
 }
 
@@ -263,7 +263,7 @@ Report.propTypes = {
   customers: PropTypes.object,
   getReport: PropTypes.func.isRequired,
   report: PropTypes.object,
-}
+};
 
 const mapStateToProps = (state) => ({
   saved: state.rentproduct.saved,
@@ -271,9 +271,9 @@ const mapStateToProps = (state) => ({
   users: state.user.users,
   customers: state.customer,
   report: state.report,
-})
+});
 export default connect(mapStateToProps, {
   getAllCustomers,
   getAllUsers,
   getReport,
-})(Report)
+})(Report);
