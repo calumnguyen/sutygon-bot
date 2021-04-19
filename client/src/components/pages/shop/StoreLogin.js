@@ -1,27 +1,27 @@
-import React, { Component } from "react";
-import { Redirect, Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { login } from "../../../actions/auth";
-import { updatePassword, getUser } from "../../../actions/user";
+import React, { Component } from 'react';
+import { Redirect, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { login } from '../../../actions/auth';
+import { updatePassword, getUser } from '../../../actions/user';
 
-import Alert from "../../layout/Alert";
-import { getShop } from "../../../actions/dashboard";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
+import Alert from '../../layout/Alert';
+import { getShop } from '../../../actions/dashboard';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
 class StoreLogin extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "",
-      email: "",
-      password: "",
-      newpassword: "",
-      confirmpassword: "",
-      id: "",
-      tempPass: "",
-      userID: "",
-      slug: "",
+      username: '',
+      email: '',
+      password: '',
+      newpassword: '',
+      confirmpassword: '',
+      id: '',
+      tempPass: '',
+      userID: '',
+      slug: '',
     };
   }
 
@@ -74,7 +74,7 @@ class StoreLogin extends Component {
     e.preventDefault();
     const { tempPass } = this.state;
     if (tempPass !== password) {
-      OCAlert.alertError("Wrong Password", { timeOut: 3000 });
+      OCAlert.alertError('Mật khẩu không chính xác!', { timeOut: 5000 });
       return;
     }
   };
@@ -82,7 +82,7 @@ class StoreLogin extends Component {
     e.preventDefault();
     const { confirmpassword, newpassword } = this.state;
     if (password !== newpassword) {
-      OCAlert.alertError(`Confirm password is wrong`, { timeOut: 3000 });
+      OCAlert.alertError(`Mật khẩu mới không khớp!`, { timeOut: 5000 });
       return;
     }
   };
@@ -91,24 +91,24 @@ class StoreLogin extends Component {
     const { shop } = this.props;
     const { user } = this.props.auth;
 
-    if (user && user.systemRole === "Employee") {
+    if (user && user.systemRole === 'Employee') {
       if (shop) {
         let openShop = shop[0];
         if (openShop) {
           if (this.props.AuthLoading === false && this.props.isAuthenticated) {
-            if (openShop.status === "on" && user.isPasswordChanged === true) {
-              return <Redirect to="/dashboard" />;
+            if (openShop.status === 'on' && user.isPasswordChanged === true) {
+              return <Redirect to='/dashboard' />;
             } else if (
-              openShop.status === "on" &&
+              openShop.status === 'on' &&
               user.isPasswordChanged === false
             ) {
-              return <Redirect to="/ActivateAccount" />;
-            } else if (openShop.status === "off") {
+              return <Redirect to='/ActivateAccount' />;
+            } else if (openShop.status === 'off') {
               return (
                 <Redirect
                   push
                   to={{
-                    pathname: "/storeclosed",
+                    pathname: '/storeclosed',
                     shop: shop[0],
                   }}
                 />
@@ -117,83 +117,83 @@ class StoreLogin extends Component {
           }
         }
       }
-    } else if (user && user.systemRole === "Admin") {
+    } else if (user && user.systemRole === 'Admin') {
       if (this.props.AuthLoading === false && this.props.isAuthenticated) {
         if (user.isPasswordChanged === false) {
-          return <Redirect to="/ActivateAccount" />;
+          return <Redirect to='/ActivateAccount' />;
         } else {
-          return <Redirect to="/dashboard" />;
+          return <Redirect to='/dashboard' />;
         }
       }
-    } else if (user && user.systemRole === "superadmin") {
+    } else if (user && user.systemRole === 'superadmin') {
       if (this.props.AuthLoading === false && this.props.isAuthenticated) {
-        return <Redirect to="/dashboard" />;
+        return <Redirect to='/dashboard' />;
       }
     }
     return (
-      <div className="wrapper menu-collapsed">
-        <div className="main-panel">
-          <div className="">
-            <div className="">
-              <section id="login">
-                <div className="container-fluid">
-                  <div className="row full-height-vh m-0">
-                    <div className="col-12 d-flex align-items-center justify-content-center">
-                      <div className="card m-5">
-                        <div className="card-content">
-                          <div className="card-body login-img">
-                            <div className="row m-0">
-                              <div className="col-lg-6 d-lg-block d-none py-2 text-center align-middle mt-5 mb-n5 img-block">
+      <div className='wrapper menu-collapsed'>
+        <div className='main-panel'>
+          <div className=''>
+            <div className=''>
+              <section id='login'>
+                <div className='container-fluid'>
+                  <div className='row full-height-vh m-0'>
+                    <div className='col-12 d-flex align-items-center justify-content-center'>
+                      <div className='card m-5'>
+                        <div className='card-content'>
+                          <div className='card-body login-img'>
+                            <div className='row m-0'>
+                              <div className='col-lg-6 d-lg-block d-none py-2 text-center align-middle mt-5 mb-n5 img-block'>
                                 <img
-                                  alt=""
-                                  className="img-fluid imglogin"
-                                  width="400"
-                                  height="230"
+                                  alt=''
+                                  className='img-fluid imglogin'
+                                  width='400'
+                                  height='230'
                                 ></img>
                               </div>
-                              <div className="col-lg-6 col-md-12 bg-white px-4 pt-3">
-                                <div className="logo-img text-center align-middle">
+                              <div className='col-lg-6 col-md-12 bg-white px-4 pt-3'>
+                                <div className='logo-img text-center align-middle'>
                                   <img
-                                    alt={"Sutygon-bot"}
-                                    src="../../assets/img/logos/logo.png"
+                                    alt={'Sutygon-bot'}
+                                    src='../../assets/img/logos/logo.png'
                                     height={100}
                                     width={100}
                                   />
                                 </div>
                                 <h4
-                                  className="mb-2 card-title text-center align-middle"
+                                  className='mb-2 card-title text-center align-middle'
                                   style={{}}
                                 >
                                   Đăng Nhập
                                 </h4>
-                                <p className="card-text mb-3 text-center align-middle">
+                                <p className='card-text mb-3 text-center align-middle'>
                                   Đăng Nhập Với Một Nụ Cười Nào
                                 </p>
                                 <form onSubmit={(e) => this.onSubmit(e)}>
                                   <Alert />
 
                                   <input
-                                    type="text"
-                                    className="form-control mb-3"
-                                    placeholder="Username"
+                                    type='text'
+                                    className='form-control mb-3'
+                                    placeholder='Tên Đăng Nhập'
                                     required
                                     onChange={(e) => this.onChange(e)}
-                                    name="username"
+                                    name='username'
                                   />
                                   <input
-                                    type="password"
-                                    className="form-control mb-1"
-                                    placeholder="Password"
+                                    type='password'
+                                    className='form-control mb-1'
+                                    placeholder='Mật Khẩu'
                                     required
                                     onChange={(e) => this.onChange(e)}
-                                    name="password"
+                                    name='password'
                                   />
-                                  <div className="fg-actions justify-content-between">
-                                    <div className="recover-pass">
+                                  <div className='fg-actions justify-content-between'>
+                                    <div className='recover-pass'>
                                       <input
-                                        className="btn btn-primary btn-lg btn-block"
-                                        type="submit"
-                                        value="Tôi đã sẵn sàng để chăm sóc khách hàng"
+                                        className='btn btn-primary btn-lg btn-block'
+                                        type='submit'
+                                        value='Đăng Nhập Quản Lý Cửa Hàng'
                                       />
                                     </div>
                                   </div>
@@ -214,32 +214,32 @@ class StoreLogin extends Component {
           </div>
         </div>
         <div
-          className="modal fade text-center"
-          id="default"
-          tabIndex="-1"
-          role="dialog"
-          aria-labelledby="myModalLabel1"
-          aria-hidden="true"
+          className='modal fade text-center'
+          id='default'
+          tabIndex='-1'
+          role='dialog'
+          aria-labelledby='myModalLabel1'
+          aria-hidden='true'
         >
-          <div className="modal-dialog" role="document">
-            <div className="modal-content" style={{ marginTop: "170px" }}>
-              <div className="modal-header  text-center">
-                <h4 className="modal-title" id="myModalLabel1">
-                  Update Password
+          <div className='modal-dialog' role='document'>
+            <div className='modal-content' style={{ marginTop: '170px' }}>
+              <div className='modal-header  text-center'>
+                <h4 className='modal-title' id='myModalLabel1'>
+                  Thay Đổi Mật Khẩu
                 </h4>
                 <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
+                  type='button'
+                  className='close'
+                  data-dismiss='modal'
+                  aria-label='Close'
                 >
-                  <span aria-hidden="true">&times;</span>
+                  <span aria-hidden='true'>&times;</span>
                 </button>
               </div>
-              <div className="modal-body">
+              <div className='modal-body'>
                 <form onSubmit={(e) => this.onUpdatePassword(e)}>
-                  <div className="row">
-                    <div className="col-md-12">
+                  <div className='row'>
+                    <div className='col-md-12'>
                       {/* <div className="form-group row">
                         <label className="col-md-3 label-control">Username</label>
                         <div className="col-md-9">
@@ -252,15 +252,15 @@ class StoreLogin extends Component {
                             onChange={(e) => this.onChange(e) }
                           /></div>
                       </div> */}
-                      <div className="form-group row">
-                        <label className="col-md-3 label-control">
-                          Current
+                      <div className='form-group row'>
+                        <label className='col-md-3 label-control'>
+                          Mật khẩu hiện tại
                         </label>
-                        <div className="col-md-9">
+                        <div className='col-md-9'>
                           <input
-                            className="form-control border-primary"
-                            placeholder="Current password"
-                            name="password"
+                            className='form-control border-primary'
+                            placeholder='Mật khẩu hiện tại'
+                            name='password'
                             value={this.state.password}
                             onChange={(e) => this.onChange(e)}
                             onBlur={(e) =>
@@ -269,27 +269,29 @@ class StoreLogin extends Component {
                           />
                         </div>
                       </div>
-                      <div className="form-group row">
-                        <label className="col-md-3 label-control">New</label>
-                        <div className="col-md-9">
+                      <div className='form-group row'>
+                        <label className='col-md-3 label-control'>
+                          Mật khẩu mới
+                        </label>
+                        <div className='col-md-9'>
                           <input
-                            className="form-control border-primary"
-                            placeholder="New password"
-                            name="newpassword"
+                            className='form-control border-primary'
+                            placeholder='Mật khẩu mới'
+                            name='newpassword'
                             value={this.state.newpassword}
                             onChange={(e) => this.onChange(e)}
                           />
                         </div>
                       </div>
-                      <div className="form-group row">
-                        <label className="col-md-3 label-control">
-                          Re-type New
+                      <div className='form-group row'>
+                        <label className='col-md-3 label-control'>
+                          Nhập lại mật khẩu mới
                         </label>
-                        <div className="col-md-9">
+                        <div className='col-md-9'>
                           <input
-                            className="form-control border-primary"
-                            placeholder="Re-type password"
-                            name="confirmpassword"
+                            className='form-control border-primary'
+                            placeholder='Mật khẩu mới'
+                            name='confirmpassword'
                             value={this.state.confirmpassword}
                             onChange={(e) => this.onChange(e)}
                             onBlur={(e) =>
@@ -303,19 +305,19 @@ class StoreLogin extends Component {
                       </div>
                     </div>
                   </div>
-                  <div className="modal-footer">
+                  <div className='modal-footer'>
                     <button
-                      type="submit"
-                      className="btn grey btn-lg btn-outline-success"
+                      type='submit'
+                      className='btn grey btn-lg btn-outline-success'
                     >
-                      Save Changes
+                      Đổi Mật Khẩu
                     </button>
                     <button
-                      type="button"
-                      className="btn btn-outline-danger btn-lg"
-                      data-dismiss="modal"
+                      type='button'
+                      className='btn btn-outline-danger btn-lg'
+                      data-dismiss='modal'
                     >
-                      Cancel
+                      Hủy
                     </button>
                   </div>
                 </form>
