@@ -113,12 +113,8 @@ class MatchBarcodes extends Component {
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
                   title: product_name,
                   barcode: size.barcodes[i].barcode,
-<<<<<<< Updated upstream
-                  color: color_name + " | " + size_name,
-=======
                   color: color_name,
                   size: size_name,
->>>>>>> Stashed changes
                   price: price,
                 };
                 rows.push(row);
