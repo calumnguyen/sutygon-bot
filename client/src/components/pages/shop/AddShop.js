@@ -1,23 +1,23 @@
-import React, { Component } from "react";
-import Sidebar from "../../layout/Sidebar";
-import Header from "../../layout/Header";
-import Alert from "../../layout/Alert";
-import { addNewShop, getShopById, updateStore } from "../../../actions/shop";
-import Loader from "../../layout/Loader";
-import { Redirect } from "react-router-dom";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
-import moment from "moment";
+import React, { Component } from 'react';
+import Sidebar from '../../layout/Sidebar';
+import Header from '../../layout/Header';
+import Alert from '../../layout/Alert';
+import { addNewShop, getShopById, updateStore } from '../../../actions/shop';
+import Loader from '../../layout/Loader';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { OCAlertsProvider } from '@opuscapita/react-alerts';
+import { OCAlert } from '@opuscapita/react-alerts';
+import moment from 'moment';
 class AddShop extends Component {
   state = {
-    shopId: "",
-    shop_name: "",
-    address: "",
-    slug: "",
-    email: "",
-    phone: "",
+    shopId: '',
+    shop_name: '',
+    address: '',
+    slug: '',
+    email: '',
+    phone: '',
   };
 
   async componentDidMount() {
@@ -40,23 +40,23 @@ class AddShop extends Component {
 
   componentWillUnmount = async () => {
     this.setState({
-      shopId: "",
-      shop_name: "",
-      address: "",
-      slug: "",
-      email: "",
-      phone: "",
+      shopId: '',
+      shop_name: '',
+      address: '',
+      slug: '',
+      email: '',
+      phone: '',
     });
   };
 
   onSubmit = async () => {
-    if (this.state.shop_name === "") {
-      OCAlert.alertError("Shop name is required", { timeOut: 5000 });
+    if (this.state.shop_name === '') {
+      OCAlert.alertError('Cần cung cấp tên cửa hàng!', { timeOut: 5000 });
       return;
     }
 
-    if (this.state.address === "") {
-      OCAlert.alertError("Shop address is required", {
+    if (this.state.address === '') {
+      OCAlert.alertError('Cần địa chỉ cửa hàng!', {
         timeOut: 5000,
       });
       return;
@@ -69,25 +69,25 @@ class AddShop extends Component {
       phone: this.state.phone,
     };
 
-    if (this.state.shopId === "") {
+    if (this.state.shopId === '') {
       await this.props.addNewShop(formData);
       this.setState({
-        shop_name: "",
-        address: "",
-        slug: "",
-        email: "",
-        phone: "",
+        shop_name: '',
+        address: '',
+        slug: '',
+        email: '',
+        phone: '',
       });
       return;
     } else {
       await this.props.updateStore(formData, this.state.shopId);
       this.setState({
-        shopId: "",
-        shop_name: "",
-        address: "",
-        slug: "",
-        email: "",
-        phone: "",
+        shopId: '',
+        shop_name: '',
+        address: '',
+        slug: '',
+        email: '',
+        phone: '',
       });
     }
     return;
@@ -99,53 +99,53 @@ class AddShop extends Component {
     let value = e.target.value;
     this.setState({
       shop_name: value,
-      slug: value.toLowerCase().split(" ").join("_"),
+      slug: value.toLowerCase().split(' ').join('_'),
     });
   };
   render() {
     return (
       <React.Fragment>
         <Loader />
-        <div className="wrapper menu-collapsed">
+        <div className='wrapper menu-collapsed'>
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className="main-panel">
-            <div className="main-content">
-              <div className="content-wrapper">
-                <div className="form-body">
-                  <div className="card">
-                    <div className="card-header">
-                      <h4 className="form-section">
-                        <i className="fa fa-home  "></i>{" "}
-                        {this.state.shopId ? "Edit Store" : "Add New Store"}
+          <div className='main-panel'>
+            <div className='main-content'>
+              <div className='content-wrapper'>
+                <div className='form-body'>
+                  <div className='card'>
+                    <div className='card-header'>
+                      <h4 className='form-section'>
+                        <i className='fa fa-home  '></i>{' '}
+                        {this.state.shopId ? 'Cập Nhật' : 'Thêm Cửa Hàng'}
                       </h4>
                     </div>
 
-                    <div className="card-body">
+                    <div className='card-body'>
                       <div
-                        className="form form-horizontal form-bordered" //
+                        className='form form-horizontal form-bordered' //
                       >
                         <Alert />
                         <OCAlertsProvider />
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="shop_name"
+                                className='col-md-4 label-control'
+                                htmlFor='shop_name'
                               >
-                                Store Name{" "}
-                                <span className="text-danger">*</span>
+                                Tên cửa hàng{' '}
+                                <span className='text-danger'>*</span>
                               </label>
                               <div className={`col-md-8`}>
-                                <div class="input-group">
+                                <div class='input-group'>
                                   <input
-                                    type="text"
-                                    id="shop_name"
-                                    className="form-control border-primary"
-                                    placeholder={"Store Name"}
-                                    name="shop_name"
+                                    type='text'
+                                    id='shop_name'
+                                    className='form-control border-primary'
+                                    placeholder={'Ví dụ: Sutygon'}
+                                    name='shop_name'
                                     onChange={this.onChangeShopName}
                                     value={this.state.shop_name}
                                   />
@@ -153,26 +153,27 @@ class AddShop extends Component {
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="shop_name"
+                                className='col-md-4 label-control'
+                                htmlFor='shop_name'
                               >
-                                Store Slug{" "}
-                                <span className="text-danger">*</span>
+                                Cửa Hàng ID sutygon.app /{' '}
+                                <span style={{ color: 'red' }}>[ID]</span>{' '}
+                                <span className='text-danger'>*</span>
                               </label>
                               <div className={`col-md-8`}>
-                                <div class="input-group">
+                                <div class='input-group'>
                                   <input
-                                    type="text"
-                                    id="slug"
+                                    type='text'
+                                    id='slug'
                                     readOnly
-                                    className="form-control border-primary"
-                                    placeholder={"Store slug"}
-                                    name="slug"
+                                    className='form-control border-primary'
+                                    placeholder={'Store slug'}
+                                    name='slug'
                                     onChange={(e) =>
-                                      this.handleChange(e, "slug")
+                                      this.handleChange(e, 'slug')
                                     }
                                     value={this.state.slug}
                                   />
@@ -181,26 +182,26 @@ class AddShop extends Component {
                             </div>
                           </div>
                         </div>
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="phone"
+                                className='col-md-4 label-control'
+                                htmlFor='phone'
                               >
-                                phone Number
+                                SĐT cửa hàng
                               </label>
-                              <div className="col-md-8">
-                                <div class="input-group">
+                              <div className='col-md-8'>
+                                <div class='input-group'>
                                   <input
-                                    type="text"
-                                    id="phone"
-                                    className="form-control border-primary"
-                                    placeholder="Store phone Number"
-                                    name="phone"
+                                    type='text'
+                                    id='phone'
+                                    className='form-control border-primary'
+                                    placeholder='Số điện thoại'
+                                    name='phone'
                                     // required
                                     onChange={(e) =>
-                                      this.handleChange(e, "phone")
+                                      this.handleChange(e, 'phone')
                                     }
                                     value={this.state.phone}
                                   />
@@ -209,25 +210,25 @@ class AddShop extends Component {
                             </div>
                           </div>
 
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="min_requirement"
+                                className='col-md-4 label-control'
+                                htmlFor='min_requirement'
                               >
-                                Store Email
+                                Cửa hàng email
                               </label>
-                              <div className="col-md-8">
-                                <div class="input-group">
+                              <div className='col-md-8'>
+                                <div class='input-group'>
                                   <input
-                                    type="email"
-                                    id="email"
-                                    className="form-control border-primary"
-                                    placeholder="Store email address "
-                                    name="email"
+                                    type='email'
+                                    id='email'
+                                    className='form-control border-primary'
+                                    placeholder='Email'
+                                    name='email'
                                     // required
                                     onChange={(e) =>
-                                      this.handleChange(e, "email")
+                                      this.handleChange(e, 'email')
                                     }
                                     value={this.state.email}
                                   />
@@ -237,27 +238,27 @@ class AddShop extends Component {
                           </div>
                         </div>
 
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group row">
+                        <div className='row'>
+                          <div className='col-md-6'>
+                            <div className='form-group row'>
                               <label
-                                className="col-md-4 label-control"
-                                htmlFor="min_requirement"
+                                className='col-md-4 label-control'
+                                htmlFor='min_requirement'
                               >
-                                Store Address{" "}
-                                <span className="text-danger">*</span>
+                                Địa chỉ cửa hàng{' '}
+                                <span className='text-danger'>*</span>
                               </label>
-                              <div className="col-md-8">
-                                <div class="input-group">
+                              <div className='col-md-8'>
+                                <div class='input-group'>
                                   <textarea
-                                    name="address"
-                                    placeholder="Store Address"
+                                    name='address'
+                                    placeholder='Địa chỉ'
                                     onChange={(e) =>
-                                      this.handleChange(e, "address")
+                                      this.handleChange(e, 'address')
                                     }
                                     value={this.state.address}
-                                    className="form-control border-primary"
-                                    id="address"
+                                    className='form-control border-primary'
+                                    id='address'
                                   ></textarea>
                                 </div>
                               </div>
@@ -265,13 +266,13 @@ class AddShop extends Component {
                           </div>
                         </div>
 
-                        <div className="form-actions top mt-3">
-                          <div className="col-md-6">
+                        <div className='form-actions top mt-3'>
+                          <div className='col-md-6'>
                             <button
-                              className="btn btn-primary"
+                              className='btn btn-primary'
                               onClick={() => this.onSubmit()}
                             >
-                              Submit
+                              Xác Nhận
                             </button>
                           </div>
                         </div>
@@ -281,19 +282,19 @@ class AddShop extends Component {
                 </div>
               </div>
             </div>
-            <footer className="footer footer-static footer-light">
-              <p className="clearfix text-muted text-sm-center px-2">
+            <footer className='footer footer-static footer-light'>
+              <p className='clearfix text-muted text-sm-center px-2'>
                 <span>
-                  Quyền sở hữu của &nbsp;{" "}
+                  Quyền sở hữu của &nbsp;{' '}
                   <a
-                    href="https://www.sutygon.com"
-                    id="pixinventLink"
-                    target="_blank"
-                    className="text-bold-800 primary darken-2"
+                    href='https://www.sutygon.com'
+                    id='pixinventLink'
+                    target='_blank'
+                    className='text-bold-800 primary darken-2'
                   >
-                    SUTYGON-BOT{" "}
+                    SUTYGON-BOT{' '}
                   </a>
-                  , All rights reserved.{" "}
+                  , All rights reserved.{' '}
                 </span>
               </p>
             </footer>
