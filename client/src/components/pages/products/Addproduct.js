@@ -65,6 +65,7 @@ class AddProduct extends Component {
           image: product.image,
           color: product.color,
           totalFromProps: test1.total,
+          sameBarcode: product.type2,
         });
       }
     }
@@ -396,6 +397,7 @@ class AddProduct extends Component {
     const formData = new FormData();
     formData.append("name", state.name);
     formData.append("productId", productId);
+    formData.append("type2", sameBarcode);
     if (state.image !== "") {
       formData.append("image", state.image);
     } else {

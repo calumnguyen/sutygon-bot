@@ -45,7 +45,7 @@ function ReceiptUI({
     return (
       <tr key={index}>
         <td style={styles.productDescCell}>{item.title}</td>
-        <td style={styles.productDescCell}>{item.color}</td>
+        <td style={styles.productDescCell}>{`${item.color} | ${item.size}`}</td>
         <td style={styles.productDescCell}>{item.barcode}</td>
         <td style={styles.productDescCell}>{item.orderQty || 1}</td>
         <td style={styles.productDescCell}>{item.price}</td>

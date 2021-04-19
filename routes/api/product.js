@@ -57,6 +57,7 @@ router.post(
           image: result.secure_url,
           color: JSON.parse(req.body.color),
           createdBy: req.user.storeId,
+          type2: req.body.type2,
         };
         let product = new Product(productBody);
         await product.save();

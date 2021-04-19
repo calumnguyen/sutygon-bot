@@ -13,6 +13,10 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type2: {
+      type: Boolean,
+      default: false,
+    },
     tags: {
       type: String,
     },
