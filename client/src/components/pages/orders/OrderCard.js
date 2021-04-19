@@ -1,6 +1,11 @@
+import moment from "moment";
 import React, { useState } from "react";
 import { CallOutline, PersonOutline } from "react-ionicons";
 import { Link } from "react-router-dom";
+
+const isToday = (someDate) => {
+  return moment(someDate).isSame(Date.now(), "day");
+};
 
 function OrderCard({ item, index }) {
   const totalNotes = item.total_notes ? item.total_notes : 0;
@@ -8,6 +13,7 @@ function OrderCard({ item, index }) {
     ? item.notes.filter((i) => i.done == false && i.alter_request == true)
         .length
     : 0;
+
   return (
     // <div className="col-md-5 col-sm-12 col-lg-5 mb-3">
     <div
@@ -62,7 +68,9 @@ function OrderCard({ item, index }) {
             Yeu Cau
           </div>
         </div>
-        {false && <div style={styles.bottom_warning_label}>Lay Do Hom Nay</div>}
+        {isToday(item?.rentDate) && (
+          <div style={styles.bottom_warning_label}>Lay Do Hom Nay</div>
+        )}
       </div>
     </div>
   );
