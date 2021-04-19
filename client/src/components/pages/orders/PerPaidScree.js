@@ -66,6 +66,7 @@ class PerPaidScree extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
+    if (!this.props.order) return;
     this.setState({ saving: true });
     const state = { ...this.state };
     let final_paid =
@@ -204,7 +205,7 @@ class PerPaidScree extends Component {
     } = this.state;
     const { customer, order } = this.props;
 
-    // console.log("order: ", order);
+    console.log("order: ", order);
     // console.log("myOrder: ", Myorder);
 
     return (
@@ -259,7 +260,11 @@ class PerPaidScree extends Component {
                                   </h3>
                                 )}
 
-                                <form onSubmit={(e) => this.onSubmit(e)}>
+                                <form
+                                  onSubmit={(e) => {
+                                    this.onSubmit(e);
+                                  }}
+                                >
                                   <div className="row text-center">
                                     <div className="col-md-12 btn-cont">
                                       <div className="form-group">

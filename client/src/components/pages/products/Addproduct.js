@@ -46,6 +46,7 @@ class AddProduct extends Component {
     sizeQty: "",
     individual_color_size_total: "",
     enteredSizeQty: "",
+    sameBarcode: false,
   };
 
   async componentDidMount() {
@@ -203,7 +204,7 @@ class AddProduct extends Component {
   };
 
   getSizeboxes = (color_id) => {
-    let { color, id } = this.state; // get all colors
+    let { color } = this.state; // get all colors
     if (color_id) {
       let color_obj = color.filter((color) => color._id === color_id); // get current color obj
       return color_obj[0].sizes.map((size) => (
@@ -251,15 +252,6 @@ class AddProduct extends Component {
               onChange={(e) => this.handleChange(e, color_id, size.id)}
               value={size.price}
               required
-              style={{ marginRight: "10px" }}
-            />
-            <p style={{ marginRight: "10px" }}>Same barcode?</p>
-            <input
-              name="sameBarcode"
-              type="checkbox"
-              onChange={(e) => this.handleChange(e, color_id, size.id, true)}
-              checked={size.sameBarcode}
-              disabled={id}
               style={{ marginRight: "10px" }}
             />
             <button
@@ -370,10 +362,17 @@ class AddProduct extends Component {
   };
 
   onSubmit = async (e) => {
+    const { sameBarcode } = this.state;
     e.preventDefault();
     var productId = Math.floor(Math.random() * 899999 + 100000);
     this.setState({ saving: true });
     const state = { ...this.state };
+
+    if (sameBarcode) {
+      for (const color of state.color) {
+        for (const size of color.sizes) size.sameBarcode = true;
+      }
+    }
 
     this.calculateTotals(state);
     if (state.totalFromProps > state.total) {
@@ -418,6 +417,7 @@ class AddProduct extends Component {
 
   render() {
     const { auth } = this.props;
+    const { id, sameBarcode } = this.state;
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/login" />;
     }
@@ -521,6 +521,27 @@ class AddProduct extends Component {
                             <div className="col-md-12">
                               <h3>Màu</h3>
                             </div>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
+                          >
+                            <p style={{ margin: "0 10px 0 0" }}>
+                              Same barcode?
+                            </p>
+                            <input
+                              name="sameBarcode"
+                              type="checkbox"
+                              onChange={(e) =>
+                                this.setState({ sameBarcode: !sameBarcode })
+                              }
+                              checked={sameBarcode}
+                              disabled={id}
+                              style={{ marginRight: "10px" }}
+                            />
                           </div>
                           <div id="colors_box">{this.getColors()}</div>
 
