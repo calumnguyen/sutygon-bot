@@ -25,22 +25,29 @@ const parseOrderStatus = (status) => {
 };
 
 function ReceiptUI({
-  paidAmount = 0,
-  orderNumber,
-  rentDateFrom,
-  rentDateTo,
-  leaveId,
-  insuranceAmount,
-  totalAmount,
+  order,
   product_Array,
-  totalWithoutTax,
-  taxAmount,
-  customerName,
   username,
-  orderBarcode,
   refundAmount,
-  orderStatus,
+  previouslyPaid = 0,
+  currentlyPaid = 0,
 }) {
+  let totalWithoutIns = 0;
+  let remainingAmount = 0;
+
+  if (refundAmount) {
+    if (refundAmount < 0) remainingAmount = -refundAmount;
+  } else {
+    if (order?.total) remainingAmount += parseInt(order?.total);
+    if (previouslyPaid) remainingAmount -= parseInt(previouslyPaid);
+    if (currentlyPaid) remainingAmount -= parseInt(currentlyPaid);
+  }
+
+  if (order?.total) totalWithoutIns += parseInt(order.total);
+  if (order?.discount_amount)
+    totalWithoutIns += parseInt(order.discount_amount);
+  if (order?.insuranceAmt) totalWithoutIns -= parseInt(order.insuranceAmt);
+
   const renderItem = (item, index) => {
     return (
       <tr key={index}>
@@ -52,8 +59,6 @@ function ReceiptUI({
       </tr>
     );
   };
-
-  console.log(totalAmount, paidAmount);
 
   return (
     <>
@@ -97,10 +102,10 @@ function ReceiptUI({
               }}
             >
               <div style={{ fontWeight: "500", padding: "5px 0" }}>
-                MSHĐ: {orderNumber || ""}
+                MSHĐ: {order?.orderNumber || ""}
               </div>
               <div style={{ padding: "5px 0" }}>
-                Trạng thái: {parseOrderStatus(orderStatus)}
+                Trạng thái: {parseOrderStatus(order?.status)}
               </div>
             </th>
             <th
@@ -112,12 +117,12 @@ function ReceiptUI({
               }}
             >
               <div style={{ fontWeight: "500", padding: "5px 0" }}>
-                KHÁCH HÀNG: {customerName}
+                KHÁCH HÀNG: {order?.customer?.name}
               </div>
               <div style={{ fontWeight: "500", padding: "5px 0" }}>
                 NGÀY THUÊ:{" "}
-                {`${moment(rentDateFrom).format("DD-MM-YYYY")} - ${moment(
-                  rentDateTo
+                {`${moment(order?.rentDate).format("DD-MM-YYYY")} - ${moment(
+                  order?.returnDate
                 ).format("DD-MM-YYYY")}`}
               </div>
               <div
@@ -127,7 +132,9 @@ function ReceiptUI({
                   color: "#fa0095",
                 }}
               >
-                {leaveId ? "Khách hàng để lại CMND/BLX" : "Không cọc CMND/BLX"}
+                {order?.leaveId
+                  ? "Khách hàng để lại CMND/BLX"
+                  : "Không cọc CMND/BLX"}
               </div>
             </th>
           </tr>
@@ -166,11 +173,9 @@ function ReceiptUI({
                 }}
               >
                 <div style={{ marginRight: "10px" }}>
-                  Tổng giá trị (không cọc)
+                  Tổng giá trị (không cọc) -
                 </div>
-                <div style={{ margin: "auto 0" }}>
-                  {totalWithoutTax + taxAmount}
-                </div>
+                <div style={{ margin: "auto 0" }}>{totalWithoutIns}</div>
               </div>
               <div
                 style={{
@@ -181,8 +186,51 @@ function ReceiptUI({
                 }}
               >
                 <div style={{ marginRight: "10px" }}>Tiền cọc</div>
-                <div style={{ margin: "auto 0" }}>{insuranceAmount}</div>
+                <div style={{ margin: "auto 0" }}>{order?.insuranceAmt}</div>
               </div>
+              {order?.coupon_code && (
+                <>
+                  <div
+                    style={{
+                      padding: "5px 0",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ marginRight: "10px" }}>Coupon Code:</div>
+                    <div style={{ margin: "auto 0" }}>{order?.coupon_code}</div>
+                  </div>
+                  <div
+                    style={{
+                      padding: "5px 0",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ marginRight: "10px" }}>Discount Amount:</div>
+                    <div style={{ margin: "auto 0" }}>
+                      {order?.discount_amount}
+                    </div>
+                  </div>
+                </>
+              )}
+              {previouslyPaid ? (
+                <div
+                  style={{
+                    padding: "5px 0",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ marginRight: "10px" }}>Previously paid</div>
+                  <div style={{ margin: "auto 0" }}>{previouslyPaid}</div>
+                </div>
+              ) : (
+                <></>
+              )}
               <div
                 style={{
                   padding: "5px 0",
@@ -192,7 +240,7 @@ function ReceiptUI({
                 }}
               >
                 <div style={{ marginRight: "10px" }}>Đã trả</div>
-                <div style={{ margin: "auto 0" }}>{paidAmount}</div>
+                <div style={{ margin: "auto 0" }}>{currentlyPaid}</div>
               </div>
               <div
                 style={{
@@ -203,13 +251,7 @@ function ReceiptUI({
                 }}
               >
                 <div style={{ marginRight: "10px" }}>Số tiền cần trả</div>
-                <div style={{ margin: "auto 0" }}>
-                  {refundAmount
-                    ? refundAmount < 0
-                      ? -refundAmount
-                      : 0
-                    : parseInt(totalAmount) - parseInt(paidAmount)}
-                </div>
+                <div style={{ margin: "auto 0" }}>{remainingAmount}</div>
               </div>
             </th>
             <th
@@ -255,7 +297,7 @@ function ReceiptUI({
                     alignSelf: "center",
                   }}
                 >
-                  <Barcode value={orderBarcode} width={1} height={50} />
+                  <Barcode value={order?.orderBarcode} width={1} height={50} />
                 </div>
               </div>
             </td>

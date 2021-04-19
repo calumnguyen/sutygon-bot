@@ -363,24 +363,11 @@ class PerPaidScree extends Component {
 
         <div id="invoiceDiv" style={{ width: "100%", display: "none" }}>
           <ReceiptUI
-            customerName={customer?.name}
-            insuranceAmount={order?.insuranceAmt}
-            leaveId={order?.leaveID}
-            orderNumber={order?.orderNumber}
-            totalAmount={order?.total}
-            rentDateFrom={order?.rentDate}
-            rentDateTo={order?.returnDate}
+            order={this.props.order}
             product_Array={parsedItemsArray}
-            totalWithoutTax={
-              parseInt(order?.total) -
-              parseInt(order?.tax) -
-              parseInt(order?.insuranceAmt)
-            }
-            taxAmount={order?.tax}
-            paidAmount={parseInt(pay_amount) + parseInt(order?.pay_amount)}
+            previouslyPaid={order?.pay_amount}
+            currentlyPaid={pay_amount}
             username={this.props.auth?.user?.username}
-            orderBarcode={order?.orderBarcode}
-            orderStatus={order?.status}
           />
           {/* <h1 style={{ "text-align": "center" }}>
             {Myorder

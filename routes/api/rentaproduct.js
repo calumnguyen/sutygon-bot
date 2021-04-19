@@ -44,7 +44,7 @@ router.post(
         coupon_code: req.body.coupon_code,
         tax: req.body.tax,
         taxper: req.body.taxper,
-        discount_amount: req.body.discount_amount,
+        discount_amount: parseFloat(req.body.discount_amount),
         orderItems: req.body.orderItems,
         orderBarcode: req.body.orderBarcode,
         authorization_logs: [

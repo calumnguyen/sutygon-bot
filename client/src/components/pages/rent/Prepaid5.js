@@ -342,20 +342,10 @@ class Prepaid5 extends Component {
 
         <div id="invoiceDiv" style={{ width: "100%", display: "none" }}>
           <ReceiptUI
-            customerName={customer.name}
-            insuranceAmount={rentedOrder.insuranceAmt}
-            leaveId={rentedOrder.leaveID}
-            orderNumber={rentedOrder.orderNumber}
-            totalAmount={rentedOrder.total}
-            rentDateFrom={rentedOrder.rentDate}
-            rentDateTo={rentedOrder.returnDate}
+            order={{ ...rentedOrder, customer, status: "pending" }}
             product_Array={product_Array}
-            totalWithoutTax={pdfData.total_without_tax}
-            taxAmount={pdfData.tax}
-            paidAmount={this.state.pay_amount}
             username={this.props.auth?.user?.username}
-            orderBarcode={rentedOrder.orderBarcode}
-            orderStatus={"pending"}
+            currentlyPaid={pay_amount}
           />
           {/* <h1 style={{ "text-align": "center" }}>
             {customer ? `${customer.name}${"#"}${customer.contactnumber}` : ""}

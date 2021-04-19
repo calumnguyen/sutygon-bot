@@ -258,7 +258,8 @@ class RentOrder extends Component {
                   size_id: size_id,
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
                   title: product_name,
-                  color: color_name + " | " + size_name,
+                  color: color_name,
+                  size: size_name,
                   barcode: size.barcodes[i].barcode,
                   price: price,
                   productId: productId,
@@ -312,6 +313,7 @@ class RentOrder extends Component {
           const product = sortedArray.filter(
             (f) => f.barcode == element.barcode
           )[0];
+          console.log(product);
           productarray.push({
             ...product,
             orderQty: element.orderQty,
@@ -341,6 +343,7 @@ class RentOrder extends Component {
                   <td className="text-center">{product.barcode}</td>
                   <td className="text-center">{product.title}</td>
                   <td className="text-center">{product.color}</td>
+                  <td className="text-center">{product.size}</td>
                   <td className="text-center">{product.orderQty}</td>
                   <td className="text-center">{product.price}</td>
                 </tr>
@@ -455,16 +458,12 @@ class RentOrder extends Component {
       OCAlert.alertError(`Provide Coupon Code`, { timeOut: 3000 });
       return;
     }
-    const result = [];
-    product_Array.map((i) => {
-      result.push(i[0]);
-    });
     const p_total = this.calculateTotalWithoutTax();
     let obj = {
       coupon_code: coupon_code,
       total: p_total,
       customerId: customer._id,
-      products: result,
+      products: product_Array,
     };
 
     try {

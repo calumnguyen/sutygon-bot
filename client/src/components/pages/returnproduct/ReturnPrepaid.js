@@ -871,20 +871,10 @@ class ReturnPrepaid extends Component {
 
             <div id="invoiceDiv" style={{ width: "100%", display: "none" }}>
               <ReceiptUI
-                customerName={order?.customer?.name}
                 product_Array={this.parseProductsArray(product_Array)}
-                insuranceAmount={order?.insuranceAmt}
-                leaveId={order?.leaveID}
-                rentDateFrom={order?.rentDate}
-                rentDateTo={order?.returnDate}
-                orderNumber={order?.orderNumber}
-                taxAmount={order?.tax}
-                totalAmount={order?.total}
-                totalWithoutTax={order?.total - order?.tax}
-                paidAmount={order?.pay_amount}
                 username={user?.username}
-                orderBarcode={order?.orderBarcode || "404"}
-                orderStatus={"Completed"}
+                order={{ ...order, status: "Completed" }}
+                currentlyPaid={order.pay_amount}
                 refundAmount={
                   owe_from_customer ? -amount_remaing : amount_remaing
                 }

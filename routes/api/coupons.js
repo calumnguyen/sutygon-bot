@@ -189,6 +189,7 @@ router.post("/apply_coupon", auth, async (req, res) => {
       return res.status(404).json({ msg: "Coupon is Inactive" });
     }
   } catch (err) {
+    console.log(err)
     res
       .status(500)
       .json({ errors: [{ msg: "Server Error: Something went wrong" }] });
