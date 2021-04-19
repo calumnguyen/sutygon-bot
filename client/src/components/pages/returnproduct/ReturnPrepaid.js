@@ -79,6 +79,9 @@ class ReturnPrepaid extends Component {
     const state = { ...this.state };
     const { user } = this.props.auth;
     const { order } = this.props.location.state;
+
+    if (!order) return;
+
     this.setState({
       saving: true,
       generateInvoice: true,

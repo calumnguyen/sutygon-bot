@@ -292,9 +292,7 @@ class AddProduct extends Component {
           // looping through sizes of current color
           if (color.sizes) {
             color.sizes.forEach((size, s_index) => {
-              // console.log("size",size)
               color_size_total += parseInt(size.qty);
-              // console.log("color_size_total",color_size_total)
             });
             color.total = color_size_total;
           }

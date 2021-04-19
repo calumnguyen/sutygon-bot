@@ -19,7 +19,11 @@ function OrderCard({ item, index }) {
     <div
       className="mx-sm-0"
       style={{
+<<<<<<< Updated upstream
         paddingLeft: index > 0 ? "10px" : 0,
+=======
+        paddingLeft: "10px",
+>>>>>>> Stashed changes
         paddingBottom: 20,
         margin: "0 auto",
       }}

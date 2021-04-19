@@ -352,7 +352,10 @@ class ReturnSummary extends Component {
   };
   remaining_final = () => {
     let { order } = this.props.location?.state;
+<<<<<<< Updated upstream
     console.log("this.final_sale_total()", this.final_sale_total());
+=======
+>>>>>>> Stashed changes
     return this.final_sale_total() - order.pay_amount;
   };
   render() {

@@ -313,7 +313,10 @@ class RentOrder extends Component {
           const product = sortedArray.filter(
             (f) => f.barcode == element.barcode
           )[0];
+<<<<<<< Updated upstream
           console.log(product);
+=======
+>>>>>>> Stashed changes
           productarray.push({
             ...product,
             orderQty: element.orderQty,
@@ -497,7 +500,6 @@ class RentOrder extends Component {
           // if discount amount percentage value then calculate percentage
           //params {product_total,percentage}
           const after_calculated = this.percentage(p_total, discount_amount);
-          console.log(after_calculated <= max_payout);
           if (after_calculated <= max_payout) {
             this.setState({
               coupon_type: coupon_type,

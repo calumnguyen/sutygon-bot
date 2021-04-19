@@ -122,7 +122,11 @@ class ViewOrder extends Component {
 
   async statusToPickup(id) {
     // status to pickup
-    this.props.history.push(`/orders/prepaid/${id}`, { isPayAmount: false });
+    this.props.history.push(`/orders/prepaid/${id}`, {
+      isPayAmount: false,
+      ...this.state,
+      parsedItemsArray: this.parseProductsArray(this.parseOrderItemsArray()),
+    });
     // await this.props.orderStatusActive(id);
 
     // let { order } = this.props;
@@ -388,6 +392,7 @@ class ViewOrder extends Component {
       {
         dataField: "productId",
         text: "Mã Mẫu Hàng",
+<<<<<<< Updated upstream
         sort: true,
       },
       {
@@ -406,6 +411,26 @@ class ViewOrder extends Component {
         sort: true,
       },
       {
+=======
+        sort: true,
+      },
+      {
+        dataField: "product",
+        text: "Tên Sản Phẩm",
+        sort: true,
+      },
+      {
+        dataField: "barcode",
+        text: "Mã Sản Phẩm",
+        sort: true,
+      },
+      {
+        dataField: "qty",
+        text: "Qty",
+        sort: true,
+      },
+      {
+>>>>>>> Stashed changes
         dataField: "price",
         text: "Giá",
         sort: true,

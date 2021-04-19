@@ -265,8 +265,12 @@ function ReceiptUI({
             >
               {refundAmount && (
                 <>
+<<<<<<< Updated upstream
                   <div>Đã Hoàn tiền{/** todo: Refund amount */}</div>
                   <div>{refundAmount > 0 ? refundAmount : 0}</div>
+=======
+                  <div>Đã Hoàn tiền: {refundAmount > 0 ? refundAmount : 0}</div>
+>>>>>>> Stashed changes
                 </>
               )}
             </th>
