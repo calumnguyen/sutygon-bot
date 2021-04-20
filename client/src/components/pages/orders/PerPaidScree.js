@@ -66,7 +66,6 @@ class PerPaidScree extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-    const { parsedItemsArray } = this.props.location?.state;
     if (!this.props.order || !this.state.Myorder) return;
     this.setState({ saving: true });
     const state = { ...this.state };
