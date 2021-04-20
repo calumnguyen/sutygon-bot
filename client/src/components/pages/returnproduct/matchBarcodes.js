@@ -113,12 +113,8 @@ class MatchBarcodes extends Component {
                   barcodeIndex: i, // will be used to identify index of barcode when changeBarcode is called
                   title: product_name,
                   barcode: size.barcodes[i].barcode,
-<<<<<<< Updated upstream
-                  color: color_name + " | " + size_name,
-=======
                   color: color_name,
                   size: size_name,
->>>>>>> Stashed changes
                   price: price,
                 };
                 rows.push(row);
@@ -232,10 +228,7 @@ class MatchBarcodes extends Component {
                       <td className="text-center">{b.barcode}</td>
                       <td className="text-center">{b.title}</td>
                       <td className="text-center">{b.color}</td>
-<<<<<<< Updated upstream
-=======
                       <td className="text-center">{b.size}</td>
->>>>>>> Stashed changes
                       <td className="text-center">{b.qty}</td>
                       <td className="text-center">{b.price}</td>
                     </tr>

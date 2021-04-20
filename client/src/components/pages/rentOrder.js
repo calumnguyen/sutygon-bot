@@ -313,10 +313,6 @@ class RentOrder extends Component {
           const product = sortedArray.filter(
             (f) => f.barcode == element.barcode
           )[0];
-<<<<<<< Updated upstream
-          console.log(product);
-=======
->>>>>>> Stashed changes
           productarray.push({
             ...product,
             orderQty: element.orderQty,

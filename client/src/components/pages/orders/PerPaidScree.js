@@ -66,12 +66,8 @@ class PerPaidScree extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-<<<<<<< Updated upstream
-    if (!this.props.order) return;
-=======
     const { parsedItemsArray } = this.props.location?.state;
     if (!this.props.order || !this.state.Myorder) return;
->>>>>>> Stashed changes
     this.setState({ saving: true });
     const state = { ...this.state };
     let final_paid =
@@ -209,12 +205,6 @@ class PerPaidScree extends Component {
       orderNumber,
     } = this.state;
     const { customer, order } = this.props;
-<<<<<<< Updated upstream
-
-    console.log("order: ", order);
-    // console.log("myOrder: ", Myorder);
-=======
->>>>>>> Stashed changes
 
     return (
       <React.Fragment>
@@ -371,11 +361,7 @@ class PerPaidScree extends Component {
 
         <div id="invoiceDiv" style={{ width: "100%", display: "none" }}>
           <ReceiptUI
-<<<<<<< Updated upstream
-            order={this.props.order}
-=======
             order={this.state.Myorder}
->>>>>>> Stashed changes
             product_Array={parsedItemsArray}
             previouslyPaid={order?.pay_amount}
             currentlyPaid={pay_amount}

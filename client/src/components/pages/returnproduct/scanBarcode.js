@@ -59,13 +59,6 @@ class ScanBarcode extends Component {
     const barcodeStringArr = [];
     barcode.forEach((barcode) => barcodeStringArr.push(barcode.toString()));
 
-<<<<<<< Updated upstream
-    console.log(barcodeStringArr);
-    console.log(matchedBarcodes);
-    console.log(barcodeFromInput);
-
-=======
->>>>>>> Stashed changes
     let m_barcode = [];
     matchedBarcodes.forEach((barcode, b_index) => {
       m_barcode.push(barcode.barcode);
