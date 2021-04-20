@@ -24,7 +24,6 @@ router.post(
   ],
   auth,
   async (req, res) => {
-    console.log(JSON.stringify(req.body));
     try {
       var rentedProduct = new RentedProduct({
         barcodes: req.body.barcodes,

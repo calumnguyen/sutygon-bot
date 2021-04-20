@@ -362,7 +362,7 @@ class PerPaidScree extends Component {
           <ReceiptUI
             order={this.state.Myorder}
             product_Array={parsedItemsArray}
-            previouslyPaid={order?.pay_amount}
+            previouslyPaid={this.state.already_pay_amount}
             currentlyPaid={pay_amount}
             username={this.props.auth?.user?.username}
           />
