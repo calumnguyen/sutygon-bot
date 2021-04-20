@@ -1,16 +1,16 @@
 import React from "react";
 import moment from "moment";
-import JsBarcode from "jsbarcode";
-import { createCanvas } from "canvas";
 import Barcode from "react-barcode";
 
 const parseOrderStatus = (status) => {
   switch (status?.toLowerCase()) {
     case "pending":
       return "Chưa sẵn sàng";
+    case "ready":
+      return "Sẵn sàng";
     case "active":
       return "Đã lấy hàng";
-    case "Completed":
+    case "completed":
       return "Hoàn tất";
     case "overdue":
       return "Trễ hàng";
@@ -20,7 +20,7 @@ const parseOrderStatus = (status) => {
       return "Sẵn sàng";
 
     default:
-      return "";
+      return status;
   }
 };
 
