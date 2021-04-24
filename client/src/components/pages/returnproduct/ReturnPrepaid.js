@@ -408,9 +408,9 @@ class ReturnPrepaid extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/login" />;
     }
-    // if (this.props.saved === true) {
-    //   return <Redirect to="/returnproduct" />;
-    // }
+    if (this.props.saved === true) {
+      return <Redirect to="/returnproduct" />;
+    }
     // if (this.state.redirect === true) {
     //   return <Redirect to="/rentproduct" />;
     // }
