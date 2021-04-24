@@ -147,7 +147,7 @@ function OrdersList({ rentproducts }) {
         className="form-control"
         style={{ backgroundColor: "white" }}
       />
-      <div className="row">
+      {/* <div className="row">
         {filtersList.map((filter, index) => (
           <SearchFilterOption
             filters={statusFilters}
@@ -159,16 +159,16 @@ function OrdersList({ rentproducts }) {
             filterBGColorTo={filter.backgroundColorTo}
           />
         ))}
-      </div>
+      </div> */}
       {list?.length ? (
         Object.keys(filteredList).map((status) => {
           if (filteredList[status].length)
             return (
-              <div key={status}>
+              <div style={{ marginBottom: 90 }} key={status}>
                 {renderStatusHeader(status)}
                 <div className="row">
                   {filteredList[status].map((item, index) => (
-                    <OrderCard index={index} item={item} />
+                    <OrderCard key={index} index={index} item={item} />
                   ))}
                 </div>
               </div>

@@ -14,6 +14,21 @@ const getItemsArray = (productArray, order, discountsArray, chargesArray) => {
     });
   }
 
+  itemsArray.push({
+    title: `Tax: ${order.taxper}%`,
+    price: order.tax,
+    orderQty: " ",
+  });
+
+  if (chargesArray)
+    chargesArray.forEach((charge) => {
+      itemsArray.push({
+        title: charge.name,
+        price: `${charge.amount}`,
+        orderQty: " ",
+      });
+    });
+
   if (order.coupon_code) {
     itemsArray.push({
       title: `Coupon code: ${order.coupon_code}`,
@@ -30,21 +45,6 @@ const getItemsArray = (productArray, order, discountsArray, chargesArray) => {
         orderQty: " ",
       });
     });
-
-  if (chargesArray)
-    chargesArray.forEach((charge) => {
-      itemsArray.push({
-        title: charge.name,
-        price: `${charge.amount}`,
-        orderQty: " ",
-      });
-    });
-
-  itemsArray.push({
-    title: `Tax: ${order.taxper}%`,
-    price: order.tax,
-    orderQty: " ",
-  });
 
   return itemsArray;
 };

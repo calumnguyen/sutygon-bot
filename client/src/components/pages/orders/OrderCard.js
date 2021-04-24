@@ -24,8 +24,8 @@ function OrderCard({ item, index }) {
     <div
       className="mx-sm-0"
       style={{
-        paddingLeft: 30,
-        paddingBottom: 20,
+        paddingLeft: 50,
+        paddingBottom: 30,
         margin: "0 auto",
       }}
     >
@@ -156,7 +156,7 @@ const styles = {
     minWidth: "150px",
     textAlign: "center",
     color: "#4CA1AF",
-    fontSize: "20px",
+    fontSize: "1rem",
     fontWeight: "bold",
     borderRadius: "10px",
   },
