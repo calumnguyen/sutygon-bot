@@ -308,6 +308,7 @@ class AddProduct extends Component {
   };
 
   calculateIndividualTotals = (e, color_id, size_id) => {
+    const { sameBarcode } = this.state;
     e.preventDefault();
     let enteredValue = e.target.value;
     const { qty } = this.props;
@@ -329,7 +330,8 @@ class AddProduct extends Component {
       let _qty = qty[0].qty;
       if (
         !(parseInt(enteredValue) > parseInt(_qty)) &&
-        parseInt(enteredValue) != parseInt(_qty)
+        parseInt(enteredValue) != parseInt(_qty) &&
+        !sameBarcode
       ) {
         OCAlert.alertError(
           `Số lượng sản phẩm không thể ít hơn ${_qty}. Nếu muốn xoá sản phẩm, vào mục Barcode để chọn sản phẩm mà xoá.`,
@@ -374,7 +376,7 @@ class AddProduct extends Component {
     }
 
     this.calculateTotals(state);
-    if (state.totalFromProps > state.total) {
+    if (state.totalFromProps > state.total && !sameBarcode) {
       OCAlert.alertError(
         `${"Số lượng sản phẩm không thể ít hơn "} ${state.totalFromProps}`,
         { timeOut: 5000 }

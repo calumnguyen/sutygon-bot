@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Util from "../../../utils";
 import OrderCard from "./OrderCard";
 import SearchFilterOption from "./small/SearchFilterOption";
 
@@ -65,6 +66,23 @@ const filtersList = [
   },
 ];
 
+const filterByStatus = (list) => {
+  const filteredList = {
+    pending: [],
+    ready: [],
+    active: [],
+    Completed: [],
+    overdue: [],
+    lost: [],
+  };
+  if (list)
+    list.forEach((item) => {
+      if (item.status) filteredList[item.status].push(item);
+    });
+
+  return filteredList;
+};
+
 function OrdersList({ rentproducts }) {
   let list = rentproducts;
 
@@ -84,6 +102,41 @@ function OrdersList({ rentproducts }) {
   if (statusFilters.length) {
     list = list?.filter((item) => statusFilters.includes(item.status));
   }
+
+  const filteredList = filterByStatus(list);
+
+  const renderStatusHeader = (status) => {
+    const circleSize = 50;
+    const headerHeight = 80;
+    const cardColor = Util.getCardColor(status);
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          height: headerHeight,
+          alignItems: "center",
+          marginBottom: 20,
+        }}
+      >
+        <div
+          style={{
+            width: circleSize,
+            height: circleSize,
+            // backgroundColor: "grey",
+            borderRadius: circleSize,
+            margin: "0 15px",
+            backgroundImage: `linear-gradient(to bottom right, ${cardColor.from}, ${cardColor.to})`,
+          }}
+        />
+        <div style={{ color: "#301F7E", fontSize: "2rem", fontWeight: "700" }}>
+          {Util.parseOrderStatus(status)}
+        </div>
+      </div>
+    );
+  };
+
+  console.log(filteredList);
 
   return (
     <>
@@ -108,11 +161,19 @@ function OrdersList({ rentproducts }) {
         ))}
       </div>
       {list?.length ? (
-        <div className="row">
-          {list.map((item, index) => (
-            <OrderCard key={item.id} key={index} index={index} item={item} />
-          ))}
-        </div>
+        Object.keys(filteredList).map((status) => {
+          if (filteredList[status].length)
+            return (
+              <div key={status}>
+                {renderStatusHeader(status)}
+                <div className="row">
+                  {filteredList[status].map((item, index) => (
+                    <OrderCard index={index} item={item} />
+                  ))}
+                </div>
+              </div>
+            );
+        })
       ) : (
         <div>Chưa có đơn hàng nào</div>
       )}

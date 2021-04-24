@@ -408,9 +408,9 @@ class ReturnPrepaid extends Component {
     if (!auth.loading && !auth.isAuthenticated) {
       return <Redirect to="/login" />;
     }
-    if (this.props.saved === true) {
-      return <Redirect to="/returnproduct" />;
-    }
+    // if (this.props.saved === true) {
+    //   return <Redirect to="/returnproduct" />;
+    // }
     // if (this.state.redirect === true) {
     //   return <Redirect to="/rentproduct" />;
     // }
@@ -881,6 +881,8 @@ class ReturnPrepaid extends Component {
                 refundAmount={
                   owe_from_customer ? -amount_remaing : amount_remaing
                 }
+                discountsArray={this.props.location?.state?.discount_data}
+                chargesArray={this.props.location?.state?.charge_data}
               />
             </div>
           </div>

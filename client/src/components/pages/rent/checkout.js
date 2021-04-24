@@ -285,14 +285,12 @@ class Checkout extends Component {
                   Qty:
                   <input
                     min={1}
-                    onChange={(e) => {
-                      updateQty(e.target.value);
-                    }}
+                    onChange={(e) => updateQty(parseInt(e.target.value))}
                     onBlur={(e) => {
-                      if (e.target.value) {
-                        if (e.target.value > barcodeItem.qty)
-                          updateQty(barcodeItem.qty);
-                        else if (e.target.value < 1) updateQty(1);
+                      const value = parseInt(e.target.value);
+                      if (value) {
+                        if (value > barcodeItem.qty) updateQty(barcodeItem.qty);
+                        else if (value < 1) updateQty(1);
                       } else updateQty(1);
                     }}
                     max={barcodeItem.qty}
