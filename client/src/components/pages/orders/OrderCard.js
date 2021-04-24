@@ -4,27 +4,6 @@ import { CallOutline, PersonOutline } from "react-ionicons";
 import { Link } from "react-router-dom";
 import Util from "../../../utils";
 
-const getCardColor = (status) => {
-  switch (status?.toLowerCase()) {
-    case "pending":
-      return { from: "#B0A4E8", to: "#463690" };
-    case "ready":
-      return { from: "#9DCCD4", to: "#4CA1AF" };
-    case "active":
-      return { from: "#6682B5", to: "#2C4A80" };
-    case "completed":
-      return { from: "#01C6FF", to: "#0181FF" };
-    case "overdue":
-      return { from: "#DC2430", to: "#8D3D84" };
-    case "lost":
-      return { from: "#ccc", to: "#333" };
-    case "ready for pickup":
-      return { from: "#9DCCD4", to: "#4CA1AF" };
-    default:
-      return { from: "#ccc", to: "#333" };
-  }
-};
-
 const isToday = (someDate) => {
   return moment(someDate).isSame(Date.now(), "day");
 };
@@ -38,14 +17,14 @@ function OrderCard({ item, index }) {
 
   let orderStatus = Util.parseOrderStatus(item.status);
 
-  const cardColor = getCardColor(item.status);
+  const cardColor = Util.getCardColor(item.status);
 
   return (
     // <div className="col-md-5 col-sm-12 col-lg-5 mb-3">
     <div
       className="mx-sm-0"
       style={{
-        paddingLeft: "10px",
+        paddingLeft: 30,
         paddingBottom: 20,
         margin: "0 auto",
       }}
