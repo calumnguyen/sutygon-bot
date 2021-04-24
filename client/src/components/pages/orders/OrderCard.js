@@ -20,11 +20,10 @@ function OrderCard({ item, index }) {
   const cardColor = Util.getCardColor(item.status);
 
   return (
-    // <div className="col-md-5 col-sm-12 col-lg-5 mb-3">
     <div
       className="mx-sm-0"
       style={{
-        paddingLeft: 50,
+        paddingLeft: 40,
         paddingBottom: 30,
         margin: "0 auto",
       }}
@@ -85,9 +84,9 @@ function OrderCard({ item, index }) {
 const styles = {
   cardContainer: {
     position: "relative",
-    height: "320px",
-    width: "220px",
-    borderRadius: 25,
+    height: "290px",
+    width: "190px",
+    borderRadius: 22,
     padding: "10px",
     marginBottom: "10px",
     display: "flex",
@@ -98,13 +97,13 @@ const styles = {
     textAlign: "center",
     color: "white",
     fontWeight: "bold",
-    fontSize: 30,
+    fontSize: "1.8rem",
     marginTop: "10px",
     cursor: "pointer",
   },
   inner_container: {
     flex: 1,
-    border: "8px solid white",
+    border: "5px solid white",
     borderRadius: 25,
     display: "flex",
     justifyContent: "space-around",
@@ -119,6 +118,7 @@ const styles = {
   contact_text: {
     color: "white",
     marginLeft: "5px",
+    fontSize: "0.8rem",
   },
   circled_text: {
     height: "30px",
@@ -134,7 +134,7 @@ const styles = {
     fontSize: "20px",
   },
   bottom_area: {
-    fontSize: 12,
+    fontSize: "0.6rem",
     color: "white",
     display: "flex",
     flexDirection: "row",
@@ -151,9 +151,9 @@ const styles = {
     margin: "0px 10px",
   },
   order_status: {
-    padding: "10px",
+    padding: "5px",
     backgroundColor: "white",
-    minWidth: "150px",
+    minWidth: "130px",
     textAlign: "center",
     color: "#4CA1AF",
     fontSize: "1rem",
@@ -164,8 +164,8 @@ const styles = {
     position: "absolute",
     bottom: -15,
     left: "50%",
-    width: "160px",
-    marginLeft: "-80px",
+    width: "120px",
+    marginLeft: "-57px",
     zIndex: 2,
     textAlign: "center",
     borderRadius: "10px",
@@ -173,6 +173,7 @@ const styles = {
     fontWeight: "bold",
     color: "white",
     backgroundImage: "linear-gradient(to right, #C65D94, #E07C96)",
+    fontSize: "0.8rem",
   },
 };
 
