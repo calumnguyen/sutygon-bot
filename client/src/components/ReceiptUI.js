@@ -1,27 +1,52 @@
 import React from "react";
 import moment from "moment";
 import Barcode from "react-barcode";
+import Util from "../utils";
 
-const parseOrderStatus = (status) => {
-  switch (status?.toLowerCase()) {
-    case "pending":
-      return "Chưa sẵn sàng";
-    case "ready":
-      return "Sẵn sàng";
-    case "active":
-      return "Đã lấy hàng";
-    case "completed":
-      return "Hoàn tất";
-    case "overdue":
-      return "Trễ hàng";
-    case "lost":
-      return "Mất";
-    case "ready for pickup":
-      return "Sẵn sàng";
+const getItemsArray = (productArray, order, discountsArray, chargesArray) => {
+  const itemsArray = [...productArray];
 
-    default:
-      return status;
+  if (order.extraDays) {
+    itemsArray.push({
+      title: "Extra Days",
+      price: order.extraDaysAmount,
+      orderQty: " ",
+    });
   }
+
+  if (order.coupon_code) {
+    itemsArray.push({
+      title: `Coupon code: ${order.coupon_code}`,
+      price: `- ${order.discount_amount}`,
+      orderQty: " ",
+    });
+  }
+
+  if (discountsArray)
+    discountsArray.forEach((discount) => {
+      itemsArray.push({
+        title: discount.name,
+        price: `- ${discount.amount}`,
+        orderQty: " ",
+      });
+    });
+
+  if (chargesArray)
+    chargesArray.forEach((charge) => {
+      itemsArray.push({
+        title: charge.name,
+        price: `${charge.amount}`,
+        orderQty: " ",
+      });
+    });
+
+  itemsArray.push({
+    title: `Tax: ${order.taxper}%`,
+    price: order.tax,
+    orderQty: " ",
+  });
+
+  return itemsArray;
 };
 
 function ReceiptUI({
@@ -31,6 +56,8 @@ function ReceiptUI({
   refundAmount,
   previouslyPaid = 0,
   currentlyPaid = 0,
+  discountsArray,
+  chargesArray,
 }) {
   let totalWithoutIns = 0;
   let remainingAmount = 0;
@@ -44,15 +71,19 @@ function ReceiptUI({
   }
 
   if (order?.total) totalWithoutIns += parseInt(order.total);
-  if (order?.discount_amount)
-    totalWithoutIns += parseInt(order.discount_amount);
+  // if (order?.discount_amount)
+  //   totalWithoutIns += parseInt(order.discount_amount);
   if (order?.insuranceAmt) totalWithoutIns -= parseInt(order.insuranceAmt);
 
   const renderItem = (item, index) => {
     return (
       <tr key={index}>
         <td style={styles.productDescCell}>{item.title}</td>
-        <td style={styles.productDescCell}>{`${item.color} | ${item.size}`}</td>
+        <td style={styles.productDescCell}>
+          {item.color
+            ? `${item.color}${item.size ? `| ${item.size}` : ""}`
+            : ""}
+        </td>
         <td style={styles.productDescCell}>{item.barcode}</td>
         <td style={styles.productDescCell}>{item.orderQty || 1}</td>
         <td style={styles.productDescCell}>{item.price}</td>
@@ -69,16 +100,14 @@ function ReceiptUI({
         <tbody>
           <tr>
             <th style={styles.cellBorders}>
-              <div
+              <img
                 style={{
-                  height: "100px",
-                  width: "100px",
-                  margin: "25px auto",
-                  backgroundColor: "#fa0095",
+                  height: "150px",
+                  width: "150px",
+                  margin: "auto",
                 }}
-              >
-                **logo**
-              </div>
+                src={require("../assets/img/receipt-logo.png")}
+              />
             </th>
             <th
               colSpan="4"
@@ -105,7 +134,7 @@ function ReceiptUI({
                 MSHĐ: {order?.orderNumber || ""}
               </div>
               <div style={{ padding: "5px 0" }}>
-                Trạng thái: {parseOrderStatus(order?.status)}
+                Trạng thái: {Util.parseOrderStatus(order?.status)}
               </div>
             </th>
             <th
@@ -155,7 +184,12 @@ function ReceiptUI({
               <div style={styles.itemNameHeading}>Giá</div>
             </th>
           </tr>
-          {product_Array?.map(renderItem)}
+          {getItemsArray(
+            product_Array,
+            order,
+            discountsArray,
+            chargesArray
+          )?.map(renderItem)}
           <tr style={{ paddingTop: "10px" }}>
             <th
               style={{
@@ -188,7 +222,7 @@ function ReceiptUI({
                 <div style={{ marginRight: "10px" }}>Tiền cọc</div>
                 <div style={{ margin: "auto 0" }}>{order?.insuranceAmt}</div>
               </div>
-              {order?.coupon_code && (
+              {/* {order?.coupon_code && (
                 <>
                   <div
                     style={{
@@ -215,8 +249,8 @@ function ReceiptUI({
                     </div>
                   </div>
                 </>
-              )}
-              {previouslyPaid ? (
+              )} */}
+              {/* {previouslyPaid ? (
                 <div
                   style={{
                     padding: "5px 0",
@@ -230,7 +264,7 @@ function ReceiptUI({
                 </div>
               ) : (
                 <></>
-              )}
+              )} */}
               <div
                 style={{
                   padding: "5px 0",
@@ -240,7 +274,9 @@ function ReceiptUI({
                 }}
               >
                 <div style={{ marginRight: "10px" }}>Đã trả</div>
-                <div style={{ margin: "auto 0" }}>{currentlyPaid}</div>
+                <div style={{ margin: "auto 0" }}>
+                  {parseInt(currentlyPaid) + parseInt(previouslyPaid)}
+                </div>
               </div>
               <div
                 style={{
@@ -296,7 +332,7 @@ function ReceiptUI({
                     alignSelf: "center",
                   }}
                 >
-                  <Barcode value={order?.orderBarcode} width={1} height={50} />
+                  <Barcode value={order?.orderNumber} width={1} height={50} />
                 </div>
               </div>
             </td>

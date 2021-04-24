@@ -2,6 +2,28 @@ import moment from "moment";
 import React, { useState } from "react";
 import { CallOutline, PersonOutline } from "react-ionicons";
 import { Link } from "react-router-dom";
+import Util from "../../../utils";
+
+const getCardColor = (status) => {
+  switch (status?.toLowerCase()) {
+    case "pending":
+      return { from: "#B0A4E8", to: "#463690" };
+    case "ready":
+      return { from: "#9DCCD4", to: "#4CA1AF" };
+    case "active":
+      return { from: "#6682B5", to: "#2C4A80" };
+    case "completed":
+      return { from: "#01C6FF", to: "#0181FF" };
+    case "overdue":
+      return { from: "#DC2430", to: "#8D3D84" };
+    case "lost":
+      return { from: "#ccc", to: "#333" };
+    case "ready for pickup":
+      return { from: "#9DCCD4", to: "#4CA1AF" };
+    default:
+      return { from: "#ccc", to: "#333" };
+  }
+};
 
 const isToday = (someDate) => {
   return moment(someDate).isSame(Date.now(), "day");
@@ -13,6 +35,10 @@ function OrderCard({ item, index }) {
     ? item.notes.filter((i) => i.done == false && i.alter_request == true)
         .length
     : 0;
+
+  let orderStatus = Util.parseOrderStatus(item.status);
+
+  const cardColor = getCardColor(item.status);
 
   return (
     // <div className="col-md-5 col-sm-12 col-lg-5 mb-3">
@@ -27,7 +53,7 @@ function OrderCard({ item, index }) {
       <div
         style={{
           ...styles.cardContainer,
-          backgroundImage: `linear-gradient(to bottom right, #B0A4E8, #463690)`,
+          backgroundImage: `linear-gradient(to bottom right, ${cardColor.from}, ${cardColor.to})`,
         }}
       >
         <Link
@@ -56,7 +82,7 @@ function OrderCard({ item, index }) {
             <div style={styles.contact_text}>{item.customer.contactnumber}</div>
           </div>
           <div style={{ ...styles.contact_block, justifyContent: "center" }}>
-            <div style={styles.order_status}>{item.status}</div>
+            <div style={styles.order_status}>{orderStatus}</div>
           </div>
         </div>
         <div style={{ margin: "20px 0px" }}>
@@ -68,9 +94,10 @@ function OrderCard({ item, index }) {
             Yeu Cau
           </div>
         </div>
-        {isToday(item?.rentDate) && (
-          <div style={styles.bottom_warning_label}>Lay Do Hom Nay</div>
-        )}
+        {isToday(item?.rentDate) &&
+          item.status?.toLowerCase() !== "completed" && (
+            <div style={styles.bottom_warning_label}>Lay Do Hom Nay</div>
+          )}
       </div>
     </div>
   );
@@ -79,8 +106,8 @@ function OrderCard({ item, index }) {
 const styles = {
   cardContainer: {
     position: "relative",
-    height: "370px",
-    width: "250px",
+    height: "320px",
+    width: "220px",
     borderRadius: 25,
     padding: "10px",
     marginBottom: "10px",
