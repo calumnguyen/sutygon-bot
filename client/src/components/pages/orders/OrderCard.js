@@ -23,7 +23,8 @@ function OrderCard({ item, index }) {
     <div
       className="mx-sm-0"
       style={{
-        paddingLeft: 40,
+        paddingLeft: 10,
+        paddingRight: 30,
         paddingBottom: 30,
         margin: "0 auto",
       }}

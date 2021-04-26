@@ -28,7 +28,8 @@ class Checkout extends Component {
     errormsg: "",
     bc: "",
     getOrder: "",
-    myRantDate: "",
+    myRentDate: "",
+    warningProduct: {},
   };
 
   async componentDidMount() {
@@ -49,14 +50,14 @@ class Checkout extends Component {
     }
   }
 
-  addBarcodeRow = (product) => {
+  addBarcodeRow = (product, customQty) => {
     let { barcode } = this.state; // get all barcode
 
     barcode.push({
       id: product.size_id,
       barcode: product.barcode,
       sameBarcode: product.sameBarcode,
-      qty: product.qty,
+      qty: customQty ? customQty : product.qty,
       orderQty: 1,
     });
     this.setState({ barcode: [...barcode] });
@@ -180,9 +181,12 @@ class Checkout extends Component {
           this.addBarcodeRow(selectedProduct);
         } else {
           this.setState({ isLoading: false, getOrder: result.data });
-          const { returnDate } = result.data;
-          if (this.compareDateOfOrder(returnDate, bc)) {
-            this.addBarcodeRow(selectedProduct);
+          const res = this.compareDateOfOrder(result.data, selectedProduct);
+          if (res) {
+            this.addBarcodeRow(
+              selectedProduct,
+              typeof res === "number" ? res : undefined
+            );
           }
         }
         this.setState({ isLoading: false });
@@ -195,32 +199,83 @@ class Checkout extends Component {
     this.setState({ barcode });
   };
   onProceed = () => {
-    const { bc, barcode } = this.state;
-    barcode.push({
-      id: shortid.generate(),
-      barcode: bc.trim(),
-    });
-    this.setState({ barcode, isModal: false });
+    const { warningProduct } = this.state;
+    if (warningProduct) this.addBarcodeRow(warningProduct);
+    // barcode.push({
+    //   id: shortid.generate(),
+    //   barcode: bc.trim(),
+    // });
+    this.setState({ isModal: false, warningProduct: {} });
   };
 
-  compareDateOfOrder = (returnDate, bc) => {
-    let { data } = this.state;
-    let date1 = new Date(data.rentDate);
-    let date2 = new Date(returnDate);
-    let diff = new DF(date1, date2);
-    const finalDays = Math.ceil(diff.days());
-    if (finalDays > 0 && finalDays <= 5) {
-      this.setState({ errormsg: "Hơi Gần Ngày", isModal: true, bc });
-      return false;
+  compareDateOfOrder = (ordersArray, product) => {
+    const newRentDate = new Date(this.state.data.rentDate);
+    const newReturnDate = new Date(this.state.data.returnDate);
+    if (!product.sameBarcode) {
+      let date1 = new Date(ordersArray[0].rentDate);
+      let diff = new DF(date1, newReturnDate);
+      const finalDays = Math.ceil(diff.days());
+      if (finalDays <= -1) {
+        this.setState({
+          errormsg: "RẤT NGUY HIỂM",
+          isModal: true,
+          bc: product.barcode.toString(),
+          warningProduct: product,
+        });
+        return false;
+      }
+      if (finalDays == 0) {
+        this.setState({
+          errormsg: "Nguy Hiểm",
+          isModal: true,
+          bc: product.barcode.toString(),
+          warningProduct: product,
+        });
+        return false;
+      }
+      if (finalDays <= 5) {
+        this.setState({
+          errormsg: "Hơi Gần Ngày",
+          isModal: true,
+          bc: product.barcode.toString(),
+          warningProduct: product,
+        });
+        return false;
+      }
+      return true;
+    } else {
+      const overlapOrders = [];
+
+      ordersArray.forEach((order) => {
+        const { rentDate, returnDate } = order;
+        const orderRentDate = new Date(rentDate);
+        const orderReturnDate = new Date(returnDate);
+        const overlap =
+          (newRentDate >= orderRentDate && newRentDate <= orderReturnDate) ||
+          (newReturnDate >= orderRentDate && newReturnDate <= orderReturnDate);
+        if (overlap) overlapOrders.push(order);
+      });
+
+      if (overlapOrders.length) {
+        let remainingQuantity = parseInt(product.qty);
+        overlapOrders.forEach((order) => {
+          const orderItem = order.orderItems.filter(
+            (item) => item.barcode == product.barcode
+          )[0];
+          remainingQuantity -= parseInt(orderItem.orderQty);
+        });
+        if (remainingQuantity < 1) {
+          this.setState({
+            errormsg: "RẤT NGUY HIỂM",
+            isModal: true,
+            bc: product.barcode.toString(),
+            warningProduct: product,
+          });
+          return false;
+        } else return remainingQuantity;
+      }
     }
-    if (finalDays == 0) {
-      this.setState({ errormsg: "Nguy Hiểm", isModal: true, bc });
-      return false;
-    }
-    if (finalDays <= -1) {
-      this.setState({ errormsg: "RẤT NGUY HIỂM", isModal: true, bc });
-      return false;
-    }
+
     return true;
   };
 
@@ -501,7 +556,7 @@ class Checkout extends Component {
               </h5>
               <h3 className="text-center">
                 Ngày Thuê Của Khách :{" "}
-                {this.state.myRantDate ? this.state.myRantDate : ""}
+                {this.state.myRentDate ? this.state.myRentDate : ""}
               </h3>
               <div className="overflow-x-scroll">
                 <table
@@ -548,7 +603,12 @@ class Checkout extends Component {
                   </button>
                   <button
                     onClick={() =>
-                      this.setState({ isModal: false, errormsg: "", bc: "" })
+                      this.setState({
+                        isModal: false,
+                        errormsg: "",
+                        bc: "",
+                        warningProduct: {},
+                      })
                     }
                     className="btn btn-success ml-3"
                     type="button"
