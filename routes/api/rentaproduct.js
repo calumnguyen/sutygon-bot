@@ -777,12 +777,12 @@ router.get("/:barcode/findorderbybarcode", auth, async (req, res) => {
 
 router.get("/checkBarcode/:barcode", auth, async (req, res) => {
   try {
-    const result = await RentedProduct.findOne(
+    const result = await RentedProduct.find(
       {
-        barcodes: { $in: [req.params.barcode] },
+        barcodes: { $in: [parseInt(req.params.barcode), req.params.barcode] },
         status: { $nin: ["past", "lost", "Completed"] },
       },
-      { rentDate: 1, returnDate: 1, orderNumber: 1 }
+      { rentDate: 1, returnDate: 1, orderNumber: 1, orderItems: 1, barcodes: 1 }
     ).sort({ returnDate: -1 });
 
     return res.status(200).json(result);

@@ -497,8 +497,11 @@ class Barcode extends Component {
             color.sizes.forEach((size, s_index) => {
               total_qty += parseInt(size.qty);
               if (size.id === size_id) {
+                if (size.sameBarcode === true) {
+                  color.sizes.splice(s_index, 1);
+                }
                 // decrease size qty
-                if (size.qty > 0) {
+                else if (size.qty > 0) {
                   size.qty = parseInt(size.qty) - 1;
 
                   // if barcode is availble remove it too
@@ -511,19 +514,20 @@ class Barcode extends Component {
           }
         }
       });
+
       // update product for barcode only
       await this.props.deleteItem(product, product_id);
     }
-    this._deleteProduct(product);
+    this.updateProductQuantity(product);
 
     OCAlert.alertSuccess("Đã xóa sản phẩm thành công");
   };
 
-  _deleteProduct = async (product) => {
+  updateProductQuantity = async (product) => {
     // const { product } = this.props;
     let total_qty = 0;
     const ex_product = product;
-    if (ex_product && ex_product.color) {
+    if (ex_product?.color) {
       // loop through product colors
 
       ex_product.color.forEach((color, c_index) => {
