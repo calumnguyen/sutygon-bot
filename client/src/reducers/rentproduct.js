@@ -13,8 +13,8 @@ import {
   RENTPRODUCT_ITEMS,
   RENTPRODUCT_STATUS_SEARCH,
   GET_BARCODE_ORDER,
-  GET_COUNT_ORDERS
-} from '../actions/types'
+  GET_COUNT_ORDERS,
+} from "../actions/types";
 const initialState = {
   rentproduct: null,
   lastrecord: null,
@@ -23,13 +23,13 @@ const initialState = {
   // saved: false,
   generateInvoice: false,
   orderItems: null,
-  barcoderec:null,
+  barcoderec: null,
   error: {},
-  get_count_order:{},
-}
+  get_count_order: {},
+};
 
 export default function (state = initialState, action) {
-  const { type, payload } = action
+  const { type, payload } = action;
 
   switch (type) {
     case RENTPRODUCT_LOADING:
@@ -37,7 +37,7 @@ export default function (state = initialState, action) {
         ...state,
         loading: true,
         generateInvoice: false,
-      }
+      };
 
     case GET_RENTPRODUCTS:
       return {
@@ -45,7 +45,7 @@ export default function (state = initialState, action) {
         rentproducts: payload,
         loading: false,
         // saved: false,
-      }
+      };
 
     case GET_RENTPRODUCT:
       return {
@@ -53,22 +53,21 @@ export default function (state = initialState, action) {
         rentproduct: payload,
         loading: false,
         generateInvoice: true,
-      }
+      };
     case GET_LASTRECORD:
       return {
         ...state,
         lastrecord: payload,
         loading: false,
         generateInvoice: true,
-      }
+      };
     case GET_BARCODE_ORDER:
-      return{
+      return {
         ...state,
         barcoderec: payload,
         loading: false,
         generateInvoice: true,
-
-      }
+      };
 
     case RENTPRODUCT_SAVED:
       return {
@@ -76,14 +75,14 @@ export default function (state = initialState, action) {
         // saved: true,
         loading: false,
         generateInvoice: true,
-      }
+      };
     case RENTPRODUCT_UPDATED:
       return {
         ...state,
         // saved: true,
         loading: false,
         generateInvoice: true,
-      }
+      };
 
     case RENTPRODUCTS_ERROR:
       return {
@@ -91,55 +90,55 @@ export default function (state = initialState, action) {
         error: payload,
         loading: false,
         generateInvoice: false,
-      }
+      };
 
     case RENTPRODUCT_DELETED:
       return {
         ...state,
         loading: false,
         generateInvoice: false,
-      }
+      };
     case RENTPRODUCT_READY:
       return {
         ...state,
         rentproduct: payload,
         loading: false,
         generateInvoice: true,
-      }
+      };
     case RENTPRODUCT_ACTIVE:
       return {
         ...state,
         rentproduct: payload,
         loading: false,
         generateInvoice: true,
-      }
+      };
     case RENTPRODUCT_CANCEL:
       return {
         ...state,
         rentproduct: payload,
         loading: false,
         generateInvoice: true,
-      }
+      };
     case RENTPRODUCT_ITEMS:
       return {
         ...state,
         orderItems: payload,
         loading: false,
-      }
+      };
     case RENTPRODUCT_STATUS_SEARCH:
       return {
         ...state,
         rentproducts: payload,
         loading: false,
-      }
+      };
     case GET_COUNT_ORDERS:
       return {
         ...state,
         get_count_order: payload,
         loading: false,
-      }
-    
+      };
+
     default:
-      return state
+      return state;
   }
 }

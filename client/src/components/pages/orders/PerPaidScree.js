@@ -81,15 +81,16 @@ class PerPaidScree extends Component {
       this.printInvoice();
       this.redirect();
     } else {
-      await this.props.orderStatusActive(state.orderId);
-      await this.props.orderUpdatePayAmount(
-        state.orderId,
-        final_paid,
-        state.pay_amount,
-        state.payStepsLength
-      );
+      // await this.props.orderStatusActive(state.orderId);
+      // await this.props.orderUpdatePayAmount(
+      //   state.orderId,
+      //   final_paid,
+      //   state.pay_amount,
+      //   state.payStepsLength
+      // );
+      console.log("here");
       this.printInvoice();
-      this.redirect();
+      // this.redirect();
     }
   };
   printInvoice = () => {
@@ -366,130 +367,6 @@ class PerPaidScree extends Component {
             currentlyPaid={pay_amount}
             username={this.props.auth?.user?.username}
           />
-          {/* <h1 style={{ "text-align": "center" }}>
-            {Myorder
-              ? `${Myorder.customer.name}${"#"}${Myorder.customerContactNumber}`
-              : ""}
-          </h1>
-          <h1 style={{ "text-align": "center" }}>
-            {this.state.orderNumber
-              ? `${"Order"}${"#"} ${
-                  Myorder && Myorder ? Myorder.orderNumber : ""
-                }`
-              : ""}
-          </h1>
-
-          <table style={{ width: "100%" }} cellpadding="10">
-            <thead></thead>
-            <tbody>{this.getInvoiceBarcodeRecord()}</tbody>
-          </table>
-          <hr />
-          <table style={{ width: "100%" }} cellpadding="10">
-            <thead></thead>
-            <tbody>
-              <tr>
-                <td style={{ width: "90%" }}>Total Without Tax</td>
-                <td>{`${
-                  Myorder ? Number(Myorder.total) - Number(Myorder.tax) : 0
-                }`}</td>
-              </tr>
-              <tr>
-                <td style={{ width: "90%" }}>Discount</td>
-                <td>{`${Myorder && Myorder ? Myorder.discount_amount : 0}`}</td>
-              </tr>
-              <tr>
-                <td>Tax Percentage</td>
-                <td>{`${Myorder && Myorder ? Myorder.taxper : 0}${"%"}`}</td>
-              </tr>
-
-              <tr>
-                <td>Tax Amount</td>
-                <td>{`${Myorder && Myorder ? Myorder.tax : 0}`}</td>
-              </tr>
-              <tr>
-                <td>Insurance Amount</td>
-                <td>{`${Myorder ? Myorder.insuranceAmt : 0}`}</td>
-              </tr>
-            </tbody>
-          </table>
-          <br />
-          <h4 style={{ "text-align": "center" }}>{`${"PAID TOTAL: "}${
-            this.state.total
-          }`}</h4>
-          <br />
-
-          <table style={{ width: "100%" }} cellpadding="10">
-            <thead></thead>
-            <tbody>
-              <tr>
-                <td style={{ width: "90%" }}>Leave ID</td>
-                <td>{this.state.leaveID == "true" ? `${"Yes"}` : `${"No"}`}</td>
-              </tr>
-              <tr>
-                <td>Rent From</td>
-                <td>
-                  {" "}
-                  {Myorder && Myorder
-                    ? moment(Myorder.rentDate).format("DD-MM-YYYY")
-                    : ""}
-                </td>
-              </tr>
-              <tr>
-                <td>Return Date</td>
-                <td>
-                  {Myorder && Myorder
-                    ? moment(Myorder.returnDate).format("DD-MM-YYYY")
-                    : ""}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <table style={{ width: "100%" }}>
-            <thead></thead>
-            <tbody>
-              <tr>
-                <td
-                  className="col-md-6"
-                  style={{
-                    backgroundColor: "white",
-                    textAlign: "center",
-                    padding: "8px",
-                    width: "50%",
-                  }}
-                >
-                  <svg id="barcode"></svg>
-                </td>
-                <td
-                  className="col-md-6"
-                  style={{
-                    textAlign: "center",
-                    padding: "8px",
-                    width: "50%",
-                  }}
-                >
-                  Authorized by <br />
-                  Sutygon-Bot
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <br />
-          <br />
-          <br />
-          <br />
-
-          <table style={{ width: "100%" }}>
-            <thead></thead>
-            <tbody>
-              <tr>
-                <td style={{ "text-align": "center" }}>
-                  For questions and information please contact out
-                  www.sutygon-bot.com
-                </td>
-              </tr>
-            </tbody>
-          </table> */}
         </div>
 
         {/* Invoice Modal */}
