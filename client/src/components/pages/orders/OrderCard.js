@@ -26,7 +26,7 @@ function OrderCard({ item }) {
     (item.status == "ready" || item.status == "pending")
   )
     warningLabel = "Lấy Đồ Hôm Nay";
-  else if (isToday(item?.retunDate) && item.status == "active")
+  else if (isToday(item?.returnDate) && item.status == "active")
     warningLabel = "Trở Lại Hôm Nay";
 
   return (

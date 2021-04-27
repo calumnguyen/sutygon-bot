@@ -53,7 +53,8 @@ class Checkout extends Component {
 
   addBarcodeRow = (product, mildCriticalQty, criticalQty, veryCriticalQty) => {
     let { barcode } = this.state; // get all barcode
-    if (criticalQty < 1)
+    if (veryCriticalQty < 1) {
+    } else if (criticalQty < 1)
       this.setState({
         showWarning: true,
         warningLabel: "Critical",
