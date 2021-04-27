@@ -67,59 +67,6 @@ class Orders extends Component {
   isToday = (someDate) => {
     return moment(someDate).isSame(Date.now(), "day");
   };
-  orderTable = () => {
-    const { rentproducts } = this.props;
-
-    if (rentproducts?.length) {
-      let ordersDataArr = [];
-      rentproducts.forEach((order, idx) => {
-        ordersDataArr.push({
-          orderNumber: order.orderNumber,
-          name: order.customer ? order.customer.name : "",
-          phone: order.customer ? order.customer.contactnumber : "",
-          status: (
-            <OrderStatus
-              title={order.status}
-              reservedStatus={order.reservedStatus}
-              readyForPickUp={order.readyForPickUp}
-              pickedUpStatus={order.pickedUpStatus}
-              total={`${order.total_notes ? order.total_notes : 0} g/c`}
-              remain={`${
-                order.notes
-                  ? order.notes.filter(
-                      (i) => i.done == false && i.alter_request == true
-                    ).length
-                  : 0
-              } y/c  ${this.isToday(order.rentDate) ? "| PickUp Today" : ""}`}
-            />
-          ),
-          actions: (
-            <>
-              <Link
-                to={{ pathname: `/orders/vieworder/${order._id}` }}
-                className="success p-0"
-              >
-                <i
-                  className="ft-edit-3 font-medium-3 mr-2 "
-                  title="Xem Đơn Hàng"
-                ></i>
-              </Link>
-            </>
-          ),
-        });
-      });
-
-      return (
-        <>
-          {rentproducts.map((item, index) => (
-            <OrderCard key={item.id} index={index} item={item} />
-          ))}
-        </>
-      );
-    } else {
-      return <div>Chưa có đơn hàng nào</div>;
-    }
-  };
 
   render() {
     const { rentproducts } = this.props;

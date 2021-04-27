@@ -97,7 +97,6 @@ const filterByStatus = (list) => {
 };
 
 function OrdersList({ rentproducts }) {
-  console.log(rentproducts);
   let list = rentproducts;
 
   /** Filters */
@@ -149,8 +148,6 @@ function OrdersList({ rentproducts }) {
       </div>
     );
   };
-
-  console.log(filteredList);
 
   return (
     <>

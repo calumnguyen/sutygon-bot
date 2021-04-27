@@ -217,6 +217,7 @@ router.get("/", auth, async (req, res) => {
           readyForPickUp: "$readyForPickUp",
           pickedUpStatus: "$pickedUpStatus",
           rentDate: "$rentDate",
+          returnDate: "$returnDate",
           customer: {
             _id: "$customer._id",
             name: "$customer.name",
