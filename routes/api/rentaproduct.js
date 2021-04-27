@@ -541,7 +541,13 @@ router.post("/:id/status/ready", auth, async (req, res) => {
       )
       .lean();
 
-    return res.status(200).json(rentedProducts);
+    const updatedProduct = await RentedProduct.findById(req.params.id)
+      .populate("customer", "name")
+      .populate("product")
+      .populate("user", "username")
+      .lean();
+
+    return res.status(200).json(updatedProduct);
   } catch (err) {
     console.log(err);
     return res.status(500).send("Server Error!");

@@ -240,18 +240,7 @@ class ViewOrder extends Component {
   payAmountStepLogs() {
     const amount_logsArray = [];
 
-    const {
-      customer,
-      insuranceAmt,
-      leaveID,
-      rentDate,
-      returnDate,
-      orderNumber,
-      tax,
-      total,
-      orderItems,
-      amount_logs,
-    } = this.state;
+    const { amount_logs } = this.state;
 
     if (amount_logs) {
       amount_logs.forEach((log, idx) => {
@@ -361,6 +350,7 @@ class ViewOrder extends Component {
         const objInOrder = orderBarcodeItems?.filter(
           (item) => item.barcode == orderItem.barcode
         )[0];
+        console.log(objInOrder);
         const qty = objInOrder ? objInOrder.orderQty : 1;
         result.push({
           ...orderItem,
@@ -763,7 +753,7 @@ class ViewOrder extends Component {
                                 onClick={
                                   this.state.status == "past"
                                     ? () => this.pastOrderAlert()
-                                    : () =>
+                                    : () => {
                                         this.props.history.push(
                                           `/orders/prepaid/${this.state.id}`,
                                           {
@@ -773,7 +763,8 @@ class ViewOrder extends Component {
                                               this.parseOrderItemsArray()
                                             ),
                                           }
-                                        )
+                                        );
+                                      }
                                 }
                               >
                                 <i className="ft-check" />
