@@ -51,16 +51,29 @@ class Checkout extends Component {
     }
   }
 
-  addBarcodeRow = (product, warningQty, criticalQty) => {
+  addBarcodeRow = (product, mildCriticalQty, criticalQty, veryCriticalQty) => {
     let { barcode } = this.state; // get all barcode
+    if (criticalQty < 1)
+      this.setState({
+        showWarning: true,
+        warningLabel: "Critical",
+        warningProduct: product,
+      });
+    else if (mildCriticalQty < 1)
+      this.setState({
+        showWarning: true,
+        warningLabel: "Mild Critical",
+        warningProduct: product,
+      });
 
     barcode.push({
       id: product.size_id,
       barcode: product.barcode,
       sameBarcode: product.sameBarcode,
       qty: product.qty,
-      warningQty,
+      mildCriticalQty,
       criticalQty,
+      veryCriticalQty,
       orderQty: 1,
     });
     this.setState({ barcode: [...barcode] });
@@ -188,8 +201,9 @@ class Checkout extends Component {
           if (res) {
             this.addBarcodeRow(
               selectedProduct,
-              res.warningQty,
-              res.criticalQty
+              res.mildCriticalQty,
+              res.criticalQty,
+              res.veryCriticalQty
             );
           }
         }
@@ -204,7 +218,7 @@ class Checkout extends Component {
   };
   onProceed = () => {
     const { warningProduct } = this.state;
-    if (warningProduct) this.addBarcodeRow(warningProduct, 0, 0);
+    if (warningProduct) this.addBarcodeRow(warningProduct, 0, 0, 0);
     this.setState({ isModal: false, warningProduct: {} });
   };
 
@@ -244,32 +258,37 @@ class Checkout extends Component {
       }
       return { warningQty: 1, criticalQty: 1 };
     } else {
-      const overlapOrders = [];
-      const unsafeOrders = [];
+      const veryCriticalOrders = [];
+      const mildCriticalOrders = [];
+      const criticalOrders = [];
 
       ordersArray.forEach((order) => {
         const { rentDate, returnDate } = order;
         const orderRentDate = new Date(rentDate);
         const orderReturnDate = new Date(returnDate);
-        const overlap =
+        const veryCritical =
           (newRentDate >= orderRentDate && newRentDate <= orderReturnDate) ||
           (newReturnDate >= orderRentDate && newReturnDate <= orderReturnDate);
-        const unsafe =
+        const daysDifference = new DF(newRentDate, orderReturnDate).days();
+        const mildCritical =
           newRentDate > orderReturnDate &&
-          new DF(newRentDate, orderReturnDate).days() <= 5;
-        if (unsafe) unsafeOrders.push(order);
-        if (overlap) overlapOrders.push(order);
+          daysDifference <= 5 &&
+          daysDifference > 1;
+        const critical = newRentDate > orderReturnDate && daysDifference <= 1;
+        if (critical) criticalOrders.push(order);
+        if (mildCritical) mildCriticalOrders.push(order);
+        if (veryCritical) veryCriticalOrders.push(order);
       });
 
-      let remainingQty = parseInt(product.qty);
-      if (overlapOrders.length) {
-        overlapOrders.forEach((order) => {
+      let veryCriticalQty = parseInt(product.qty);
+      if (veryCriticalOrders.length) {
+        veryCriticalOrders.forEach((order) => {
           const orderItem = order.orderItems.filter(
             (item) => item.barcode == product.barcode
           )[0];
-          remainingQty -= parseInt(orderItem.orderQty);
+          veryCriticalQty -= parseInt(orderItem.orderQty);
         });
-        if (remainingQty < 1) {
+        if (veryCriticalQty < 1) {
           this.setState({
             errormsg: "RẤT NGUY HIỂM",
             isModal: true,
@@ -279,19 +298,35 @@ class Checkout extends Component {
           return false;
         }
       }
-      let warningQty = remainingQty;
-      if (unsafeOrders.length) {
-        unsafeOrders.forEach((order) => {
+
+      let criticalQty = veryCriticalQty;
+      if (criticalOrders.length) {
+        criticalOrders.forEach((order) => {
           const orderItem = order.orderItems.filter(
             (item) => item.barcode == product.barcode
           )[0];
-          warningQty -= parseInt(orderItem.orderQty);
+          criticalQty -= parseInt(orderItem.orderQty);
         });
       }
 
-      if (warningQty < 0) warningQty = 0;
+      let mildCriticalQty = criticalQty;
+      if (mildCriticalOrders.length) {
+        mildCriticalOrders.forEach((order) => {
+          const orderItem = order.orderItems.filter(
+            (item) => item.barcode == product.barcode
+          )[0];
+          mildCriticalQty -= parseInt(orderItem.orderQty);
+        });
+      }
 
-      return { warningQty, criticalQty: remainingQty };
+      if (criticalQty < 0) {
+        criticalQty = 0;
+      }
+      if (mildCriticalQty < 0) {
+        mildCriticalQty = 0;
+      }
+
+      return { mildCriticalQty, criticalQty, veryCriticalQty };
     }
   };
 
@@ -314,11 +349,19 @@ class Checkout extends Component {
     let { barcode } = this.state; // get all barcode
     if (barcode) {
       return barcode.map((barcodeItem, index) => {
-        const isError = (qty) => qty < 1 || qty > barcodeItem.qty;
+        const isMildCritical = (qty) =>
+          typeof barcodeItem.mildCriticalQty == "number"
+            ? qty > barcodeItem.mildCriticalQty
+            : false;
         const isCritical = (qty) =>
-          barcodeItem.criticalQty ? qty > barcodeItem.criticalQty : false;
-        const isWarning = (qty) =>
-          barcodeItem.warningQty ? qty > barcodeItem.warningQty : false;
+          typeof barcodeItem.criticalQty == "number"
+            ? qty > barcodeItem.criticalQty
+            : false;
+        const isVeryCritical = (qty) =>
+          typeof barcodeItem.veryCriticalQty == "number"
+            ? qty > barcodeItem.veryCriticalQty
+            : false;
+        const isError = (qty) => qty < 1 || qty > barcodeItem.qty;
 
         const updateQty = (qty) => {
           const prevQty = barcode[index].orderQty;
@@ -330,16 +373,22 @@ class Checkout extends Component {
               warningLabel: "Error",
               warningProduct: barcodeItem,
             });
+          } else if (isVeryCritical(qty) && !isVeryCritical(prevQty)) {
+            this.setState({
+              showWarning: true,
+              warningLabel: "Very Critical",
+              warningProduct: barcodeItem,
+            });
           } else if (isCritical(qty) && !isCritical(prevQty)) {
             this.setState({
               showWarning: true,
               warningLabel: "Critical",
               warningProduct: barcodeItem,
             });
-          } else if (isWarning(qty) && !isWarning(prevQty)) {
+          } else if (isMildCritical(qty) && !isMildCritical(prevQty)) {
             this.setState({
               showWarning: true,
-              warningLabel: "Warning",
+              warningLabel: "Mild Critical",
               warningProduct: barcodeItem,
             });
           }
@@ -395,10 +444,12 @@ class Checkout extends Component {
                       marginLeft: "3px",
                       color: isError(barcodeItem.orderQty)
                         ? "#800000"
-                        : isCritical(barcodeItem.orderQty)
+                        : isVeryCritical(barcodeItem.orderQty)
                         ? "red"
-                        : isWarning(barcodeItem.orderQty)
-                        ? "#ffc107"
+                        : isCritical(barcodeItem.orderQty)
+                        ? "orange"
+                        : isMildCritical(barcodeItem.orderQty)
+                        ? "gold"
                         : "black",
                     }}
                     type="number"
@@ -688,7 +739,19 @@ class Checkout extends Component {
             >
               <h1
                 className="text-center"
-                style={{ color: "red", fontWeight: "bold" }}
+                style={{
+                  color:
+                    this.state.warningLabel == "Error"
+                      ? "#800000"
+                      : this.state.warningLabel == "Very Critical"
+                      ? "red"
+                      : this.state.warningLabel == "Critical"
+                      ? "orange"
+                      : this.state.warningLabel == "Mild Critical"
+                      ? "gold"
+                      : "black",
+                  fontWeight: "bold",
+                }}
               >
                 {this.state.warningLabel}
               </h1>
@@ -698,11 +761,11 @@ class Checkout extends Component {
                 }' is greater than the ${
                   this.state.warningLabel == "Error"
                     ? "total"
-                    : this.state.warningLabel == "Critical"
+                    : this.state.warningLabel == "Very Critical"
                     ? "available"
                     : this.state.warningLabel == "Warning"
                     ? "safe"
-                    : ""
+                    : "safe"
                 } quantity for this product.`}
               </h5>
               <div
@@ -720,6 +783,18 @@ class Checkout extends Component {
                   }
                   className="btn btn-danger"
                   type="button"
+                  style={{
+                    backgroundColor:
+                      this.state.warningLabel == "Error"
+                        ? "#800000"
+                        : this.state.warningLabel == "Very Critical"
+                        ? "red"
+                        : this.state.warningLabel == "Critical"
+                        ? "orange"
+                        : this.state.warningLabel == "Mild Critical"
+                        ? "gold"
+                        : "black",
+                  }}
                 >
                   Continue
                 </button>
