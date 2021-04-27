@@ -77,13 +77,19 @@ const filterByStatus = (list) => {
   };
   if (list)
     list.forEach((item) => {
-      if (item.status) filteredList[item.status].push(item);
+      if (item.status && filteredList[item.status])
+        filteredList[item.status].push(item);
+      else if (item.status && !filteredList[item.status]) {
+        filteredList[item.status] = [];
+        filteredList[item.status].push(item);
+      }
     });
 
   return filteredList;
 };
 
 function OrdersList({ rentproducts }) {
+  console.log(rentproducts);
   let list = rentproducts;
 
   /** Filters */
