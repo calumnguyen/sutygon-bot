@@ -30,6 +30,7 @@ class Checkout extends Component {
     getOrder: "",
     myRentDate: "",
     warningProduct: {},
+    showWarning: false,
   };
 
   async componentDidMount() {
@@ -50,14 +51,16 @@ class Checkout extends Component {
     }
   }
 
-  addBarcodeRow = (product, customQty) => {
+  addBarcodeRow = (product, warningQty, criticalQty) => {
     let { barcode } = this.state; // get all barcode
 
     barcode.push({
       id: product.size_id,
       barcode: product.barcode,
       sameBarcode: product.sameBarcode,
-      qty: customQty ? customQty : product.qty,
+      qty: product.qty,
+      warningQty,
+      criticalQty,
       orderQty: 1,
     });
     this.setState({ barcode: [...barcode] });
@@ -185,7 +188,8 @@ class Checkout extends Component {
           if (res) {
             this.addBarcodeRow(
               selectedProduct,
-              typeof res === "number" ? res : undefined
+              res.warningQty,
+              res.criticalQty
             );
           }
         }
@@ -200,11 +204,7 @@ class Checkout extends Component {
   };
   onProceed = () => {
     const { warningProduct } = this.state;
-    if (warningProduct) this.addBarcodeRow(warningProduct);
-    // barcode.push({
-    //   id: shortid.generate(),
-    //   barcode: bc.trim(),
-    // });
+    if (warningProduct) this.addBarcodeRow(warningProduct, 0, 0);
     this.setState({ isModal: false, warningProduct: {} });
   };
 
@@ -212,8 +212,8 @@ class Checkout extends Component {
     const newRentDate = new Date(this.state.data.rentDate);
     const newReturnDate = new Date(this.state.data.returnDate);
     if (!product.sameBarcode) {
-      let date1 = new Date(ordersArray[0].rentDate);
-      let diff = new DF(newReturnDate, date1);
+      let date1 = new Date(ordersArray[0].returnDate);
+      let diff = new DF(newRentDate, date1);
       const finalDays = Math.ceil(diff.days());
       if (finalDays <= -1) {
         this.setState({
@@ -242,9 +242,10 @@ class Checkout extends Component {
         });
         return false;
       }
-      return true;
+      return { warningQty: 1, criticalQty: 1 };
     } else {
       const overlapOrders = [];
+      const unsafeOrders = [];
 
       ordersArray.forEach((order) => {
         const { rentDate, returnDate } = order;
@@ -253,18 +254,22 @@ class Checkout extends Component {
         const overlap =
           (newRentDate >= orderRentDate && newRentDate <= orderReturnDate) ||
           (newReturnDate >= orderRentDate && newReturnDate <= orderReturnDate);
+        const unsafe =
+          newRentDate > orderReturnDate &&
+          new DF(newRentDate, orderReturnDate).days() <= 5;
+        if (unsafe) unsafeOrders.push(order);
         if (overlap) overlapOrders.push(order);
       });
 
+      let remainingQty = parseInt(product.qty);
       if (overlapOrders.length) {
-        let remainingQuantity = parseInt(product.qty);
         overlapOrders.forEach((order) => {
           const orderItem = order.orderItems.filter(
             (item) => item.barcode == product.barcode
           )[0];
-          remainingQuantity -= parseInt(orderItem.orderQty);
+          remainingQty -= parseInt(orderItem.orderQty);
         });
-        if (remainingQuantity < 1) {
+        if (remainingQty < 1) {
           this.setState({
             errormsg: "RẤT NGUY HIỂM",
             isModal: true,
@@ -272,11 +277,22 @@ class Checkout extends Component {
             warningProduct: product,
           });
           return false;
-        } else return remainingQuantity;
+        }
       }
-    }
+      let warningQty = remainingQty;
+      if (unsafeOrders.length) {
+        unsafeOrders.forEach((order) => {
+          const orderItem = order.orderItems.filter(
+            (item) => item.barcode == product.barcode
+          )[0];
+          warningQty -= parseInt(orderItem.orderQty);
+        });
+      }
 
-    return true;
+      if (warningQty < 0) warningQty = 0;
+
+      return { warningQty, criticalQty: remainingQty };
+    }
   };
 
   handleChange = (e, barcode_id = "") => {
@@ -297,15 +313,40 @@ class Checkout extends Component {
   renderBarcodeRow = () => {
     let { barcode } = this.state; // get all barcode
     if (barcode) {
-      return barcode.map((barcodeItem) => {
+      return barcode.map((barcodeItem, index) => {
+        const isError = (qty) => qty < 1 || qty > barcodeItem.qty;
+        const isCritical = (qty) =>
+          barcodeItem.criticalQty ? qty > barcodeItem.criticalQty : false;
+        const isWarning = (qty) =>
+          barcodeItem.warningQty ? qty > barcodeItem.warningQty : false;
+
         const updateQty = (qty) => {
-          barcode.forEach((barcode) => {
-            if (barcode.id === barcodeItem.id) {
-              barcode.orderQty = qty;
-            }
-          });
+          const prevQty = barcode[index].orderQty;
+          barcode[index].orderQty = qty;
+
+          if (isError(qty) && !isError(prevQty)) {
+            this.setState({
+              showWarning: true,
+              warningLabel: "Error",
+              warningProduct: barcodeItem,
+            });
+          } else if (isCritical(qty) && !isCritical(prevQty)) {
+            this.setState({
+              showWarning: true,
+              warningLabel: "Critical",
+              warningProduct: barcodeItem,
+            });
+          } else if (isWarning(qty) && !isWarning(prevQty)) {
+            this.setState({
+              showWarning: true,
+              warningLabel: "Warning",
+              warningProduct: barcodeItem,
+            });
+          }
+
           this.setState({ barcode: [...barcode] });
         };
+
         return (
           <div id="sizes_box" key={barcodeItem.id || barcodeItem._id}>
             <div
@@ -352,11 +393,13 @@ class Checkout extends Component {
                     style={{
                       width: "40px",
                       marginLeft: "3px",
-                      color:
-                        barcodeItem.orderQty > barcodeItem.qty ||
-                        barcodeItem.orderQty < 1
-                          ? "red"
-                          : "black",
+                      color: isError(barcodeItem.orderQty)
+                        ? "#800000"
+                        : isCritical(barcodeItem.orderQty)
+                        ? "red"
+                        : isWarning(barcodeItem.orderQty)
+                        ? "#ffc107"
+                        : "black",
                     }}
                     type="number"
                     value={barcodeItem.orderQty}
@@ -574,9 +617,7 @@ class Checkout extends Component {
                   <tbody>
                     <tr style={{ margin: "3px" }}>
                       <td className="text-center">
-                        {this.state.getOrder
-                          ? this.state.getOrder.orderNumber
-                          : ""}
+                        {this.state.getOrder?.orderNumber || ""}
                       </td>
                       <td className="text-center">
                         {this.state.getOrder
@@ -616,6 +657,72 @@ class Checkout extends Component {
                     Hủy
                   </button>
                 </div>
+              </div>
+            </div>
+          </Fade>
+        </Modal>
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          open={this.state.showWarning}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500,
+          }}
+        >
+          <Fade in={this.state.showWarning}>
+            <div
+              style={{
+                width: 500,
+                backgroundColor: "#fff",
+                border: "2px solid gray",
+                padding: "5px",
+                color: "#000",
+              }}
+            >
+              <h1
+                className="text-center"
+                style={{ color: "red", fontWeight: "bold" }}
+              >
+                {this.state.warningLabel}
+              </h1>
+              <h5 className="text-center">
+                {`The selected quantity for the product barcode '${
+                  this.state.warningProduct?.barcode
+                }' is greater than the ${
+                  this.state.warningLabel == "Error"
+                    ? "total"
+                    : this.state.warningLabel == "Critical"
+                    ? "available"
+                    : this.state.warningLabel == "Warning"
+                    ? "safe"
+                    : ""
+                } quantity for this product.`}
+              </h5>
+              <div
+                className="mx-auto"
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                <button
+                  onClick={() =>
+                    this.setState({
+                      errormsg: "",
+                      warningLabel: "",
+                      showWarning: false,
+                      warningProduct: {},
+                    })
+                  }
+                  className="btn btn-danger"
+                  type="button"
+                >
+                  Continue
+                </button>
               </div>
             </div>
           </Fade>

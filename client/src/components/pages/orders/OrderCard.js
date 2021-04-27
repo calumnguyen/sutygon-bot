@@ -8,7 +8,7 @@ const isToday = (someDate) => {
   return moment(someDate).isSame(Date.now(), "day");
 };
 
-function OrderCard({ item, index }) {
+function OrderCard({ item }) {
   const totalNotes = item.total_notes ? item.total_notes : 0;
   const incompleteNotes = item.notes
     ? item.notes.filter((i) => i.done == false && i.alter_request == true)
@@ -18,6 +18,16 @@ function OrderCard({ item, index }) {
   let orderStatus = Util.parseOrderStatus(item.status);
 
   const cardColor = Util.getCardColor(item.status);
+
+  let warningLabel = "";
+
+  if (
+    isToday(item?.rentDate) &&
+    (item.status == "ready" || item.status == "pending")
+  )
+    warningLabel = "Lấy Đồ Hôm Nay";
+  else if (isToday(item?.retunDate) && item.status == "active")
+    warningLabel = "Trở Lại Hôm Nay";
 
   return (
     <div
@@ -73,10 +83,50 @@ function OrderCard({ item, index }) {
             Yeu Cau
           </div>
         </div>
-        {isToday(item?.rentDate) &&
-          item.status?.toLowerCase() !== "completed" && (
-            <div style={styles.bottom_warning_label}>Lay Do Hom Nay</div>
-          )}
+        {(!!warningLabel || item.alteration) && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: -15,
+              width: "100%",
+              left: 0,
+            }}
+          >
+            <div
+              style={{
+                ...styles.bottom_warning_label,
+                fontSize: warningLabel.length > 15 ? "0.6rem" : "0.9rem",
+                margin: "0 10px",
+              }}
+            >
+              {item.alteration && warningLabel ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <div style={{ fontSize: "0.9rem", flex: 6 }}>
+                    {"Thay đổi"}
+                  </div>
+                  <div style={{ fontSize: "1rem", flex: 1 }}>{" | "}</div>
+                  <div
+                    style={{
+                      fontSize: "0.8rem",
+                      flex: 6,
+                      lineHeight: 1,
+                    }}
+                  >
+                    {warningLabel}
+                  </div>
+                </div>
+              ) : (
+                warningLabel || "Thay đổi"
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -162,15 +212,10 @@ const styles = {
     borderRadius: "10px",
   },
   bottom_warning_label: {
-    position: "absolute",
-    bottom: -15,
-    left: "50%",
-    width: "120px",
-    marginLeft: "-57px",
-    zIndex: 2,
+    position: "relative",
     textAlign: "center",
     borderRadius: "10px",
-    padding: "8px 0px",
+    padding: "8px 10px",
     fontWeight: "bold",
     color: "white",
     backgroundImage: "linear-gradient(to right, #C65D94, #E07C96)",

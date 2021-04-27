@@ -1,29 +1,29 @@
-import React, { Component } from 'react';
-import Sidebar from '../../layout/Sidebar';
-import Header from '../../layout/Header';
-import Loader from '../../layout/Loader';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Redirect } from 'react-router-dom';
-import Alert from '../../layout/Alert';
-import PropTypes from 'prop-types';
-import { confirmAlert } from 'react-confirm-alert';
-import BootstrapTable from 'react-bootstrap-table-next';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import React, { Component } from "react";
+import Sidebar from "../../layout/Sidebar";
+import Header from "../../layout/Header";
+import Loader from "../../layout/Loader";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
+import Alert from "../../layout/Alert";
+import PropTypes from "prop-types";
+import { confirmAlert } from "react-confirm-alert";
+import BootstrapTable from "react-bootstrap-table-next";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import {
   addAlterNote,
   getAlterNotes,
   markDone,
-} from '../../../actions/alterNotes';
-import { getOrderById } from '../../../actions/rentproduct';
-import Spinner from '../../layout/Spinner.js';
+} from "../../../actions/alterNotes";
+import { getOrderById } from "../../../actions/rentproduct";
+import Spinner from "../../layout/Spinner.js";
 
 class OrderNotes extends Component {
   state = {
-    order_id: '',
-    note: '',
+    order_id: "",
+    note: "",
     alter_request: false,
-    alternotes: '',
+    alternotes: "",
     loading: true,
   };
 
@@ -64,14 +64,14 @@ class OrderNotes extends Component {
     if (error.length == 0) {
       // If error is not there then clear all fields.
       this.setState({
-        order_id: '',
-        note: '',
+        order_id: "",
+        note: "",
         alter_request: false,
       });
     } else {
       // If barcode is wrong then hold back the note and alter request state for better UX.
       this.setState({
-        order_id: '',
+        order_id: "",
       });
     }
 
@@ -86,11 +86,11 @@ class OrderNotes extends Component {
 
   markAsDoneAlert = (id) => {
     confirmAlert({
-      title: 'Hoàn Tất Yêu Cầu',
+      title: "Hoàn Tất Yêu Cầu",
       message: `Bạn có chắn chắn muốn đánh dấu yêu cầu này đã hoàn tất?`,
       buttons: [
         {
-          label: 'Yêu cầu hoàn tất',
+          label: "Yêu cầu hoàn tất",
           onClick: async () => {
             await this.props.markDone(id);
 
@@ -105,7 +105,7 @@ class OrderNotes extends Component {
           },
         },
         {
-          label: 'Không, hủy',
+          label: "Không, hủy",
           onClick: () => {},
         },
       ],
@@ -124,24 +124,24 @@ class OrderNotes extends Component {
         if (note.products) {
           note.products.forEach((product) => {
             prodString += `${product.name} | ${product.colorname} | ${product.size}`;
-            prodString += '\n';
+            prodString += "\n";
           });
         }
 
         alterNotesArr.push({
           order_id: note.order_id,
-          products: note.order_id.length <= 7 ? 'Order Note' : prodString,
+          products: note.order_id.length <= 7 ? "Order Note" : prodString,
           note: note.note,
           type: note.alter_request ? (
-            <span className='badge badge-warning'>Yêu Cầu</span>
+            <span className="badge badge-warning">Yêu Cầu</span>
           ) : (
-            <span className='badge badge-info'>Ghi Chú</span>
+            <span className="badge badge-info">Ghi Chú</span>
           ),
 
           status: !note.alter_request ? (
-            ''
+            ""
           ) : note.done ? (
-            <span className='badge badge-success'>Hoàn Tất</span>
+            <span className="badge badge-success">Hoàn Tất</span>
           ) : (
             <Link
               onClick={() => {
@@ -158,51 +158,51 @@ class OrderNotes extends Component {
 
     const columns = [
       {
-        dataField: 'order_id',
-        text: 'Mã Đơn Hàng',
+        dataField: "order_id",
+        text: "Mã Đơn Hàng",
         sort: true,
       },
       {
-        dataField: 'products',
-        text: 'Sản Phẩm',
+        dataField: "products",
+        text: "Sản Phẩm",
         sort: true,
         headerStyle: (colum, colIndex) => {
-          return { width: '140px', textAlign: 'left' };
+          return { width: "140px", textAlign: "left" };
         },
       },
       {
-        dataField: 'note',
-        text: 'Nội Dung',
+        dataField: "note",
+        text: "Nội Dung",
         sort: true,
       },
       {
-        dataField: 'type',
-        text: 'Loại',
+        dataField: "type",
+        text: "Loại",
         sort: true,
       },
       {
-        dataField: 'status',
-        text: 'Trạng Thái',
+        dataField: "status",
+        text: "Trạng Thái",
         sort: true,
       },
       {
-        dataField: 'note_by',
-        text: 'Tạo Bởi',
+        dataField: "note_by",
+        text: "Tạo Bởi",
         sort: true,
       },
     ];
 
     const defaultSorted = [
       {
-        dataField: 'contactnumber',
-        order: 'asc',
+        dataField: "contactnumber",
+        order: "asc",
       },
     ];
 
     return (
       <ToolkitProvider
         // bootstrap4
-        keyField='id'
+        keyField="id"
         data={alterNotesArr ? alterNotesArr : []}
         columns={columns}
         defaultSorted={defaultSorted}
@@ -222,44 +222,44 @@ class OrderNotes extends Component {
     return (
       <React.Fragment>
         <Loader />
-        <div className='wrapper menu-collapsed'>
+        <div className="wrapper menu-collapsed">
           <Sidebar location={this.props.location}></Sidebar>
           <Header></Header>
 
-          <div className='main-panel'>
-            <div className='main-content'>
-              <div className='content-wrapper'>
-                <section id='form-action-layouts'>
-                  <div className='form-body'>
-                    <div className='card'>
-                      <div className='card-header'>
-                        <h4 className='form-section'>
-                          <i className='icon-bag' /> Ghi Chú / Yêu Cầu
+          <div className="main-panel">
+            <div className="main-content">
+              <div className="content-wrapper">
+                <section id="form-action-layouts">
+                  <div className="form-body">
+                    <div className="card">
+                      <div className="card-header">
+                        <h4 className="form-section">
+                          <i className="icon-bag" /> Ghi Chú / Yêu Cầu
                         </h4>
                       </div>
-                      <div className='card-body'>
-                        <div className='row'>
-                          {' '}
+                      <div className="card-body">
+                        <div className="row">
+                          {" "}
                           <Alert />
                         </div>
                         <form
-                          className='form form-horizontal form-bordered'
+                          className="form form-horizontal form-bordered"
                           // method='POST'
                           onSubmit={(e) => this.onSubmit(e)}
                         >
-                          <h4 className='form-section '>
-                            <i className='ft-info'></i> Thêm Ghi Chú / Yêu Cầu
+                          <h4 className="form-section ">
+                            <i className="ft-info"></i> Thêm Ghi Chú / Yêu Cầu
                           </h4>
-                          <div className='row'>
-                            <div className='col-md-3'>
-                              <div className=''>
-                                <div className=''>
+                          <div className="row">
+                            <div className="col-md-3">
+                              <div className="">
+                                <div className="">
                                   <input
-                                    type='text'
-                                    id='projectinput3'
-                                    className='form-control border-primary'
-                                    placeholder='Mã Sản Phẩm (nếu cần)'
-                                    name='order_id'
+                                    type="text"
+                                    id="projectinput3"
+                                    className="form-control border-primary"
+                                    placeholder="Mã Sản Phẩm (nếu cần)"
+                                    name="order_id"
                                     value={this.state.order_id}
                                     onChange={(e) => {
                                       this.onChangeHandler(e);
@@ -268,15 +268,15 @@ class OrderNotes extends Component {
                                 </div>
                               </div>
                             </div>
-                            <div className='col-md-5'>
-                              <div className=''>
-                                <div className=''>
+                            <div className="col-md-5">
+                              <div className="">
+                                <div className="">
                                   <input
-                                    type='text'
-                                    id='projectinput3'
-                                    className='form-control border-primary'
-                                    placeholder='Nội Dung Ghi Chú / Yêu Cầu'
-                                    name='note'
+                                    type="text"
+                                    id="projectinput3"
+                                    className="form-control border-primary"
+                                    placeholder="Nội Dung Ghi Chú / Yêu Cầu"
+                                    name="note"
                                     value={this.state.note}
                                     onChange={(e) => {
                                       this.onChangeHandler(e);
@@ -286,30 +286,30 @@ class OrderNotes extends Component {
                                 </div>
                               </div>
                             </div>
-                            <div className='col-md-2'>
-                              <div className=''>
-                                <div className=''>
-                                  <label className='radio-inline'>
+                            <div className="col-md-2">
+                              <div className="">
+                                <div className="">
+                                  <label className="radio-inline">
                                     <input
-                                      className='input mr-2'
-                                      type='checkbox'
-                                      name='alter_request'
+                                      className="input mr-2"
+                                      type="checkbox"
+                                      name="alter_request"
                                       onChange={(e) => this.handleToggle()}
                                       checked={this.state.alter_request}
-                                    />{' '}
+                                    />{" "}
                                     Yêu Cầu?
                                   </label>
                                 </div>
                               </div>
                             </div>
-                            <div className='col-md-2'>
-                              <div className=''>
-                                <div className=''>
+                            <div className="col-md-2">
+                              <div className="">
+                                <div className="">
                                   <button
-                                    type={'submit'}
-                                    className='btn btn-success'
+                                    type={"submit"}
+                                    className="btn btn-success"
                                   >
-                                    <i className='fa fa-plus'></i> Thêm{' '}
+                                    <i className="fa fa-plus"></i> Thêm{" "}
                                   </button>
                                 </div>
                               </div>
@@ -317,22 +317,24 @@ class OrderNotes extends Component {
                           </div>
                         </form>
                       </div>
-                      <div className='card-body'>
+                      <div className="card-body">
                         <form
-                          className='form form-horizontal form-bordered'
-                          method='POST'
+                          className="form form-horizontal form-bordered"
+                          method="POST"
                           // onSubmit={(e) => this.onSubmit(e)}
                         >
-                          <h4 className='form-section '>
-                            <i className='ft-info'></i> Xem Ghi Chú / Yêu Cầu
+                          <h4 className="form-section ">
+                            <i className="ft-info"></i> Xem Ghi Chú / Yêu Cầu
                           </h4>
-                          <div className='row'>
-                            <div className='col-md-12'>
+                          <div className="row">
+                            <div className="col-md-12">
                               {this.state.loading ? (
                                 // <div>loading....</div>
                                 <Spinner />
                               ) : (
-                                <div className="overflow-x-scroll">{this.alterNotesTable()}</div>
+                                <div className="overflow-x-scroll">
+                                  {this.alterNotesTable()}
+                                </div>
                               )}
                             </div>
                           </div>
@@ -343,20 +345,20 @@ class OrderNotes extends Component {
                 </section>
               </div>
             </div>
-            <footer className='footer footer-static footer-light'>
-              <p className='clearfix text-muted text-sm-center px-2'>
+            <footer className="footer footer-static footer-light">
+              <p className="clearfix text-muted text-sm-center px-2">
                 <span>
-                  Quyền sở hữu của &nbsp;{' '}
+                  Quyền sở hữu của &nbsp;{" "}
                   <a
-                    href='https://www.sutygon.com'
-                    rel='noopener noreferrer'
-                    id='pixinventLink'
-                    target='_blank'
-                    className='text-bold-800 primary darken-2'
+                    href="https://www.sutygon.com"
+                    rel="noopener noreferrer"
+                    id="pixinventLink"
+                    target="_blank"
+                    className="text-bold-800 primary darken-2"
                   >
-                    SUTYGON-BOT{' '}
+                    SUTYGON-BOT{" "}
                   </a>
-                  , All rights reserved.{' '}
+                  , All rights reserved.{" "}
                 </span>
               </p>
             </footer>
