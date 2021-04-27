@@ -77,11 +77,19 @@ const filterByStatus = (list) => {
   };
   if (list)
     list.forEach((item) => {
-      if (item.status && filteredList[item.status])
-        filteredList[item.status].push(item);
-      else if (item.status && !filteredList[item.status]) {
-        filteredList[item.status] = [];
-        filteredList[item.status].push(item);
+      if (item.reservedStatus) {
+        if (!filteredList[item.reservedStatus])
+          filteredList[item.reservedStatus] = [];
+        filteredList[item.reservedStatus].push({
+          ...item,
+          [item.status]: true,
+          status: item.reservedStatus,
+        });
+      } else {
+        if (item.status) {
+          if (!filteredList[item.status]) filteredList[item.status] = [];
+          filteredList[item.status].push(item);
+        }
       }
     });
 
