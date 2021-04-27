@@ -176,7 +176,7 @@ class Checkout extends Component {
         const result = await Axios.get(
           `/api/rentedproducts/checkBarcode/${bc}`
         );
-        if (result.data == null) {
+        if (!result.data?.length) {
           this.setState({ isLoading: false });
           this.addBarcodeRow(selectedProduct);
         } else {
@@ -213,7 +213,7 @@ class Checkout extends Component {
     const newReturnDate = new Date(this.state.data.returnDate);
     if (!product.sameBarcode) {
       let date1 = new Date(ordersArray[0].rentDate);
-      let diff = new DF(date1, newReturnDate);
+      let diff = new DF(newReturnDate, date1);
       const finalDays = Math.ceil(diff.days());
       if (finalDays <= -1) {
         this.setState({
