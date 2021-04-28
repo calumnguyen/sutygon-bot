@@ -152,7 +152,11 @@ class Checkout extends Component {
         m_barcode.push(barcode.barcode);
       });
       e.target[0].value = "";
-      const isInclude = m_barcode.includes(bc);
+
+      console.log(bc);
+      console.log(m_barcode);
+
+      const isInclude = m_barcode.includes(parseInt(bc));
 
       if (isInclude === true) {
         // error message
