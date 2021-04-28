@@ -81,16 +81,16 @@ class PerPaidScree extends Component {
       this.printInvoice();
       this.redirect();
     } else {
-      // await this.props.orderStatusActive(state.orderId);
-      // await this.props.orderUpdatePayAmount(
-      //   state.orderId,
-      //   final_paid,
-      //   state.pay_amount,
-      //   state.payStepsLength
-      // );
+      await this.props.orderStatusActive(state.orderId);
+      await this.props.orderUpdatePayAmount(
+        state.orderId,
+        final_paid,
+        state.pay_amount,
+        state.payStepsLength
+      );
       console.log("here");
       this.printInvoice();
-      // this.redirect();
+      this.redirect();
     }
   };
   printInvoice = () => {
