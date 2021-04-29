@@ -1,33 +1,33 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { changePage } from "../../actions/pages";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import ListItem  from "./smallComponents/ListItem";
-import ListCustomItem from "./smallComponents/ListCustomItem";
-import List from "./data";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { setToggleStatus } from "../../actions/custom";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { changePage } from '../../actions/pages';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import ListItem from './smallComponents/ListItem';
+import ListCustomItem from './smallComponents/ListCustomItem';
+import List from './data';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { setToggleStatus } from '../../actions/custom';
 
 class Sidebar extends Component {
   componentDidMount() {
-    this.props.changePage(this.props.location.pathname.replace("/", ""));
+    this.props.changePage(this.props.location.pathname.replace('/', ''));
   }
   getClassName = (name) => {
     const { pathname } = this.props.location;
     let { active } = this.props;
 
-    const path = pathname.split("/");
-    const activepath = active.split("/");
+    const path = pathname.split('/');
+    const activepath = active.split('/');
 
     if (activepath[0] === path[1]) {
       active = path[1];
     }
 
     if (active === name) {
-      return "open";
+      return 'open';
     } else {
-      return "";
+      return '';
     }
   };
 
@@ -41,18 +41,17 @@ class Sidebar extends Component {
     return (
       <>
         <div
-          data-active-color="white"
-          data-background-color="purple-bliss"
-          data-image={process.env.PUBLIC_URL + "/assets/img/sidebar-bg/01.jpg"}
+          data-active-color='white'
+          data-background-color='purple-bliss'
           className={`sidebar-desktop app-sidebar`}
         >
-          <div className="sidebar-header">
-            <div className="logo">
-              <Link to="/dashboard">
-                <div className="text-center align-middle mt-n4 mb-n4">
+          <div className='sidebar-header'>
+            <div className='logo'>
+              <Link to='/dashboard'>
+                <div className='text-center align-middle mt-n4 mb-n4'>
                   <img
-                    alt={"Sutygon-bot"}
-                    src={process.env.PUBLIC_URL + "/assets/img/logo.png"}
+                    alt={'Sutygon-bot'}
+                    src={process.env.PUBLIC_URL + '/assets/img/logo.png'}
                     height={120}
                     width={120}
                   />
@@ -60,20 +59,20 @@ class Sidebar extends Component {
               </Link>
             </div>
           </div>
-          <div className="sidebar-content">
-            <div className="nav-container">
+          <div className='sidebar-content'>
+            <div className='nav-container'>
               <ul
-                id="main-menu-navigation"
-                data-menu="menu-navigation"
-                data-scroll-to-active="true"
-                className="navigation navigation-main"
+                id='main-menu-navigation'
+                data-menu='menu-navigation'
+                data-scroll-to-active='true'
+                className='navigation navigation-main'
               >
                 <ListItem
-                  getClassName={this.getClassName("dashboard")}
-                  url={"/dashboard"}
-                  title={"Trang chủ"}
-                  icon={"ft-home"}
-                  handleClick={() => this.handleClick("dashboard")}
+                  getClassName={this.getClassName('dashboard')}
+                  url={'/dashboard'}
+                  title={'Trang chủ'}
+                  icon={'ft-home'}
+                  handleClick={() => this.handleClick('dashboard')}
                 />
 
                 <DragDropContext
@@ -86,14 +85,14 @@ class Sidebar extends Component {
                     }
                   }}
                 >
-                  <Droppable droppableId="droppable-1">
+                  <Droppable droppableId='droppable-1'>
                     {(provided, _) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
                         {list &&
                           list.map((item, i) => (
                             <Draggable
                               key={item.id}
-                              draggableId={"draggable-" + item.id}
+                              draggableId={'draggable-' + item.id}
                               index={i}
                             >
                               {(provided, snapshot) => (
@@ -115,24 +114,24 @@ class Sidebar extends Component {
               </ul>
             </div>
           </div>
-          <div className="sidebar-background"></div>
+          <div className='sidebar-background'></div>
         </div>
         {/* Sidebar for mobile */}
         <div
-          data-active-color="white"
-          data-background-color="purple-bliss"
-          data-image={process.env.PUBLIC_URL + "/assets/img/sidebar-bg/01.jpg"}
+          data-active-color='white'
+          data-background-color='purple-bliss'
+          data-image={process.env.PUBLIC_URL + '/assets/img/sidebar-bg/01.jpg'}
           className={`sidebar-mobiles app-sidebar ${
-            this.props.toggleBarStatus ? "" : "hide-sidebar"
+            this.props.toggleBarStatus ? '' : 'hide-sidebar'
           }`}
         >
-          <div className="sidebar-header">
-            <div className="logo">
-              <Link to="/dashboard">
-                <div className="text-center align-middle mt-n4 mb-n4">
+          <div className='sidebar-header'>
+            <div className='logo'>
+              <Link to='/dashboard'>
+                <div className='text-center align-middle mt-n4 mb-n4'>
                   <img
-                    alt={"Sutygon-bot"}
-                    src={process.env.PUBLIC_URL + "/assets/img/logo.png"}
+                    alt={'Sutygon-bot'}
+                    src={process.env.PUBLIC_URL + '/assets/img/logo.png'}
                     height={120}
                     width={120}
                   />
@@ -140,20 +139,20 @@ class Sidebar extends Component {
               </Link>
             </div>
           </div>
-          <div className="sidebar-content">
-            <div className="nav-container">
+          <div className='sidebar-content'>
+            <div className='nav-container'>
               <ul
-                id="main-menu-navigation"
-                data-menu="menu-navigation"
-                data-scroll-to-active="true"
-                className="navigation navigation-main"
+                id='main-menu-navigation'
+                data-menu='menu-navigation'
+                data-scroll-to-active='true'
+                className='navigation navigation-main'
               >
                 <ListItem
-                  getClassName={this.getClassName("dashboard")}
-                  url={"/dashboard"}
-                  title={"Trang chủ"}
-                  icon={"ft-home"}
-                  handleClick={() => this.handleClick("dashboard")}
+                  getClassName={this.getClassName('dashboard')}
+                  url={'/dashboard'}
+                  title={'Trang chủ'}
+                  icon={'ft-home'}
+                  handleClick={() => this.handleClick('dashboard')}
                 />
 
                 <DragDropContext
@@ -166,14 +165,14 @@ class Sidebar extends Component {
                     }
                   }}
                 >
-                  <Droppable droppableId="droppable-1">
+                  <Droppable droppableId='droppable-1'>
                     {(provided, _) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
                         {list &&
                           list.map((item, i) => (
                             <Draggable
                               key={item.id}
-                              draggableId={"draggable-" + item.id}
+                              draggableId={'draggable-' + item.id}
                               index={i}
                             >
                               {(provided, snapshot) => (
@@ -195,7 +194,7 @@ class Sidebar extends Component {
               </ul>
             </div>
           </div>
-          <div className="sidebar-background"></div>
+          <div className='sidebar-background'></div>
         </div>
       </>
     );
@@ -207,7 +206,7 @@ Sidebar.propTypes = {
   changePage: PropTypes.func,
   location: PropTypes.object,
   auth: PropTypes.object,
-  setToggleStatus: PropTypes.func.isRequired
+  setToggleStatus: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -219,5 +218,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps, {
   changePage,
-  setToggleStatus
+  setToggleStatus,
 })(Sidebar);
