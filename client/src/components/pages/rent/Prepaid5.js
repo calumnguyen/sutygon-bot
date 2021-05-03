@@ -5,11 +5,8 @@ import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getCustomer } from "../../../actions/customer";
-import { Link } from "react-router-dom";
 import Loader from "../../layout/Loader";
-import shortid from "shortid";
 import * as moment from "moment";
-import DatePicker from "react-datepicker";
 import ShowPrices from "./small/ShowPrices";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
 import { OCAlert } from "@opuscapita/react-alerts";
@@ -21,8 +18,6 @@ import {
 } from "../../../actions/product";
 import { getOrderbyOrderNumber } from "../../../actions/returnproduct";
 import { addNewRentProduct, getLastRecord } from "../../../actions/rentproduct";
-import { vi } from "date-fns/esm/locale";
-import axios from "axios";
 import ReceiptUI from "../../ReceiptUI";
 
 var JsBarcode = require("jsbarcode");

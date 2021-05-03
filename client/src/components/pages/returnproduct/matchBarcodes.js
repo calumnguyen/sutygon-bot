@@ -165,18 +165,18 @@ class MatchBarcodes extends Component {
     return finalInVoiceTotal;
   };
 
-  parseOrderItemsArray = (orderItemsArray) => {
+  parseReturnedOrderItemsArray = (orderItemsArray) => {
     // const { product_Array: orderItemsArray } = this.state;
-    const orderBarcodeItems = this.state.order[0]?.orderItems;
     const result = [];
 
     if (orderItemsArray)
       orderItemsArray.forEach((item) => {
         const orderItem = item[0] || item;
-        const objInOrder = orderBarcodeItems?.filter(
-          (item) => item.barcode == orderItem.barcode
+
+        const returnedBarcode = this.state.barcodesArray?.filter(
+          (bItem) => bItem.barcode == orderItem.barcode
         )[0];
-        const qty = objInOrder ? objInOrder.orderQty : 1;
+        const qty = returnedBarcode ? returnedBarcode.qty : 1;
         result.push({
           ...orderItem,
           qty: qty,
@@ -184,6 +184,71 @@ class MatchBarcodes extends Component {
         });
       });
     return result;
+  };
+
+  getParsedOrderItemsArray = () => {
+    const parsedOrderItems = [];
+    const orderBarcodeItems = this.state.order[0]?.orderItems;
+    const { products } = this.props;
+
+    if (products && orderBarcodeItems) {
+      const sortedItems = this.getSortedData(products);
+
+      orderBarcodeItems.forEach((item) => {
+        const orderItem = sortedItems.filter(
+          (product) => product.barcode == item.barcode
+        )[0];
+        if (orderItem) {
+          const qty = item.orderQty || 1;
+          parsedOrderItems.push({
+            ...orderItem,
+            qty: qty,
+            price: orderItem.price * qty,
+          });
+        }
+      });
+    }
+    return parsedOrderItems;
+  };
+
+  getMissingProductsList = () => {
+    const { orderItems } = this.props.location.state.order[0];
+    const { barcodesArray } = this.state;
+    const { orderedBarcode } = this.props.location?.state;
+    const { products } = this.props;
+    const itemsList = [];
+    const missingItemsArray = [];
+
+    if (products && barcodesArray) {
+      const sortedArray = this.getSortedData(products);
+
+      orderItems.forEach((item) => {
+        barcodesArray.forEach((barcode) => {
+          if (barcode.barcode == item.barcode) item.returnedQty = barcode.qty;
+        });
+      });
+
+      orderItems.forEach((orderItem) => {
+        const productItem = sortedArray.filter(
+          (item) => item.barcode == orderItem.barcode
+        )[0];
+        if (!orderItem.returnedQty) {
+          missingItemsArray.push({
+            ...productItem,
+            qty: orderItem.orderQty,
+            price: productItem.price * orderItem.orderQty,
+          });
+        } else if (orderItem.returnedQty < orderItem.orderQty) {
+          const missingQty = orderItem.orderQty - orderItem.returnedQty;
+          missingItemsArray.push({
+            ...productItem,
+            qty: missingQty,
+            price: productItem.price * missingQty,
+          });
+        }
+      });
+    }
+    return missingItemsArray;
   };
 
   productBox = () => {
@@ -206,8 +271,20 @@ class MatchBarcodes extends Component {
         .reduce((a2, b2) => a2 + b2);
       this.state.sum_of_all_items = sum_of_all_items;
     }
-    productarray = this.parseOrderItemsArray(productarray);
+    productarray = this.parseReturnedOrderItemsArray(productarray);
     this.state.product_Array = productarray;
+
+    const getProductQuantity = (product) => {
+      const { barcodesArray } = this.state;
+      let selectedItem;
+      barcodesArray.forEach((item) => {
+        if (item.barcode == product.barcode) {
+          selectedItem = item;
+        }
+      });
+      return selectedItem.qty;
+    };
+
     return productarray.map((b, b_index) => (
       <>
         <div id="sizes_box" key={b_index}>
@@ -251,72 +328,52 @@ class MatchBarcodes extends Component {
   };
 
   missingProducts = () => {
-    let m_productarray = [];
-    let { products } = this.props;
-    let { orderedBarcode } = this.props.location.state;
-    let { barcodesArray } = this.state;
-    let m_product = [];
-    if (!!barcodesArray.length) {
-      barcodesArray.forEach((element, e_index) => {
-        if (!orderedBarcode.includes(element.barcode))
-          m_product.push(element.barcode); // = orderedBarcode.filter((f) => f != element.barcode);
-      });
-      this.state.m_product = m_product;
-    }
-    if (products && m_product) {
-      let sortedAray = this.getSortedData(products);
-      if (sortedAray) {
-        m_product.forEach((element) => {
-          m_productarray.push(
-            sortedAray.filter((f) => f.barcode.toString() == element)[0]
-          );
-          return m_productarray;
-        });
-      }
-    }
-    this.state.m_productarray = this.parseOrderItemsArray(m_productarray);
-    return this.state.m_productarray.map((m_product, m_product_index) => (
-      <>
-        <div id="sizes_box" key={m_product_index}>
-          <div className="row">
-            <div style={{ float: "left", width: "90%" }}>
-              <div className="overflow-x-scroll">
-                <table
-                  className="table table-bordered table-light"
-                  style={{
-                    borderWidth: "1px",
-                    borderColor: "#aaaaaa",
-                    borderStyle: "solid",
-                  }}
+    const m_productarray = this.getMissingProductsList();
+
+    if (m_productarray.length)
+      return m_productarray.map((m_product, m_product_index) => (
+        <>
+          <div id="sizes_box" key={m_product_index}>
+            <div className="row">
+              <div style={{ float: "left", width: "90%" }}>
+                <div className="overflow-x-scroll">
+                  <table
+                    className="table table-bordered table-light"
+                    style={{
+                      borderWidth: "1px",
+                      borderColor: "#aaaaaa",
+                      borderStyle: "solid",
+                    }}
+                  >
+                    <thead></thead>
+                    <tbody>
+                      <tr key={m_product_index} style={{ margin: "3px" }}>
+                        <td className="text-center">{m_product.barcode}</td>
+                        <td className="text-center">{m_product.title}</td>
+                        <td className="text-center">{m_product.color}</td>
+                        <td className="text-center">{m_product.size}</td>
+                        <td className="text-center">{m_product.qty}</td>
+                        <td className="text-center">{m_product.price}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br />
+              </div>
+
+              <div className="right ml-3">
+                <button
+                  type="button"
+                  className="btn btn-raised btn-sm btn-icon btn-danger mt-2"
                 >
-                  <thead></thead>
-                  <tbody>
-                    <tr key={m_product_index} style={{ margin: "3px" }}>
-                      <td className="text-center">{m_product.barcode}</td>
-                      <td className="text-center">{m_product.title}</td>
-                      <td className="text-center">{m_product.color}</td>
-                      <td className="text-center">{m_product.qty}</td>
-                      <td className="text-center">{m_product.price}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                  <i className="fa fa-minus text-white"></i>
+                </button>
               </div>
               <br />
             </div>
-
-            <div className="right ml-3">
-              <button
-                type="button"
-                className="btn btn-raised btn-sm btn-icon btn-danger mt-2"
-              >
-                <i className="fa fa-minus text-white"></i>
-              </button>
-            </div>
-            <br />
           </div>
-        </div>
-      </>
-    ));
+        </>
+      ));
   };
 
   invoiceproductBox = () => {
@@ -376,97 +433,10 @@ class MatchBarcodes extends Component {
       order: order[0],
       customer: order[0].customer,
       barcodesArray: this.state.barcodesArray,
-      product_Array: this.state.product_Array,
+      product_Array: this.getParsedOrderItemsArray(),
       sum_of_all_items: this.state.sum_of_all_items,
     });
-
-    //
-
-    // this.setState({
-    //   saving: true,
-    //   generateInvoice: true,
-    //   orderNumber: order[0].orderNumber,
-    // });
-
-    // if (state.generateInvoice === true) {
-    //   if (order && state.orderNumber) {
-    //     const invoiceReturn = {
-    //       order_id: order[0]._id,
-    //       customer: order[0].customer,
-    //       user_id: user._id,
-    //       type: "Return-Invoice",
-    //       orderBarcode: state.orderNumber,
-    //     };
-    //     await this.props.addNewInvoice(invoiceReturn);
-    //   }
-    //   this.printBarcode(state.orderNumber);
-    // }
-    // let { product_Array } = this.state;
-
-    // if (product_Array) {
-    //   let products = [];
-    //   // let counter = 1;
-
-    //   product_Array.forEach(async (pd, p_index) => {
-    //     await this.props.getProductById(pd[0].product_id); // <-- Error is here this should give updated product in every loop
-
-    //     let { product } = this.props;
-    //     // counter++;
-    //     // console.log('got from db', product);
-    //     if (product) {
-    //       product.color.forEach((color, c_index) => {
-    //         // get right color obj
-    //         if (color._id === pd[0].color_id) {
-    //           // get right size obj
-    //           if (color.sizes) {
-    //             color.sizes.forEach((size, s_index) => {
-    //               if (size.id === pd[0].size_id) {
-    //                 // check if current size obj contain barcodes or not
-    //                 if (size.barcodes) {
-    //                   // Add isRented
-    //                   let bcode = {
-    //                     barcode: size.barcodes[pd[0].barcodeIndex].barcode,
-    //                   };
-    //                   this.props.updateProductIndex(bcode, pd[0].product_id);
-    //                 }
-    //               }
-    //             });
-    //           }
-    //         }
-    //       });
-    //       products.push(product);
-    //       product = null;
-    //     }
-
-    //     const rentedProduct = {
-    //       status: "Completed",
-    //     };
-    //     this.props.updateRentedProduct(rentedProduct, order[0]._id);
-    //   });
-    // }
-    // this.printInvoice();
-    // this.setState({ saving: false, orderNumber: "" });
   };
-  // printInvoice = () => {
-  //   var css =
-  //     '<link rel="stylesheet"  href="%PUBLIC_URL%/assets/css/app.css"/>';
-  //   var printDiv = document.getElementById("invoiceDiv").innerHTML;
-
-  //   let newWindow = window.open(
-  //     "",
-  //     "_blank",
-  //     "location=yes,height=570,width=720,scrollbars=yes,status=yes"
-  //   );
-  //   newWindow.document.body.innerHTML = css + printDiv;
-  //   newWindow.window.print();
-  //   newWindow.document.close();
-  // };
-  // printBarcode = (barcode) => {
-  //   return JsBarcode("#barcode", barcode, {
-  //     width: 1.5,
-  //     height: 40,
-  //   });
-  // };
 
   getChargeDataRow = () => {
     let { charge_data } = this.state; // get all barcode
@@ -618,6 +588,16 @@ class MatchBarcodes extends Component {
     const { barcodesArray } = state;
     const { customerOwe, insuranceAmt, m_total } = this.state;
 
+    const { orderItems } = order[0];
+
+    let totalOrderQty = 0;
+    orderItems.forEach((item) => {
+      totalOrderQty += item.orderQty;
+    });
+
+    let returnedOrderQty = 0;
+    barcodesArray.forEach((item) => (returnedOrderQty += item.qty));
+
     return (
       <React.Fragment>
         <Loader />
@@ -669,9 +649,7 @@ class MatchBarcodes extends Component {
                                   Khách hàng đang hoàn trả{" "}
                                   <span style={{ color: "red" }}>
                                     {order && order.length > 0
-                                      ? `${barcodesArray.length}${"/"}${
-                                          order[0].barcodes.length
-                                        }`
+                                      ? `${returnedOrderQty}${"/"}${totalOrderQty}`
                                       : `0`}{" "}
                                   </span>
                                   sản phẩm trong đơn hàng này.{" "}
@@ -690,10 +668,7 @@ class MatchBarcodes extends Component {
                                   ) : (
                                     ""
                                   )}
-                                  {barcodesArray.length !==
-                                  order[0].barcodes.length
-                                    ? this.missingProducts()
-                                    : ""}
+                                  {this.missingProducts()}
 
                                   <div className="row">
                                     <div className="col-md-11 ">

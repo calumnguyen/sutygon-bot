@@ -53,37 +53,98 @@ class ScanBarcode extends Component {
     e.preventDefault();
     e.target[0].value = "";
     const { barcode } = this.state;
-    let { barcodeFromInput } = this.state;
+
+    /** New Code */
+
     const { matchedBarcodes } = this.state;
 
-    const barcodeStringArr = [];
-    barcode.forEach((barcode) => barcodeStringArr.push(barcode.toString()));
+    const matchedBarcodesCopy = [...matchedBarcodes];
 
-    let m_barcode = [];
-    matchedBarcodes.forEach((barcode, b_index) => {
-      m_barcode.push(barcode.barcode);
+    const { orderItems } = this.state.order[0];
+    let { barcodeFromInput } = this.state;
+
+    let barcodeItem;
+
+    orderItems.forEach((item) => {
+      if (item.barcode.toString() == barcodeFromInput) {
+        barcodeItem = item;
+      }
     });
-    const isInclude = m_barcode.includes(barcodeFromInput);
-    if (isInclude === true) {
-      OCAlert.alertError("Bạn đã quét mã sản phẩm này rồi, vui lòng thử lại.", {
-        timeOut: 3000,
-      });
-      this.setState({ barcodeFromInput: "" });
-      return;
-    }
 
-    let isMatch = barcodeStringArr.includes(barcodeFromInput);
-    if (isMatch === true) {
-      matchedBarcodes.push({
-        barcode: barcodeFromInput,
-      });
-      this.setState({ matchedBarcodes, barcodeFromInput: "" });
-    } else {
+    if (!barcodeItem) {
       OCAlert.alertError(
         `Mã sản phẩm vừa quét không khớp với sản phẩm trong đơn hàng. Vui lòng kiểm tra lại.`,
         { timeOut: 3000 }
       );
+      return;
     }
+
+    let preAddedItem;
+
+    matchedBarcodesCopy.forEach((barcode, index) => {
+      if (barcode.barcode == barcodeFromInput) {
+        preAddedItem = { item: barcode, index };
+        if (barcode.qty < barcodeItem.orderQty) {
+          barcode.qty++;
+        } else {
+          OCAlert.alertError(`All items of this barcode returned`, {
+            timeOut: 3000,
+          });
+          return;
+        }
+      }
+    });
+
+    if (preAddedItem) {
+      matchedBarcodesCopy.splice(preAddedItem.index, 1);
+      matchedBarcodesCopy.push(preAddedItem.item);
+    } else {
+      matchedBarcodesCopy.push({
+        barcode: barcodeFromInput,
+        qty: 1,
+      });
+    }
+
+    this.setState({
+      matchedBarcodes: matchedBarcodesCopy,
+      barcodeFromInput: "",
+    });
+
+    /** Old Code */
+
+    // const { matchedBarcodes } = this.state;
+
+    // const barcodeStringArr = [];
+    // barcode.forEach((barcode) => barcodeStringArr.push(barcode.toString()));
+
+    // let m_barcode = [];
+
+    // matchedBarcodes.forEach((barcode, b_index) => {
+    //   m_barcode.push(barcode.barcode);
+    // });
+
+    // const isInclude = m_barcode.includes(barcodeFromInput);
+
+    // if (isInclude === true) {
+    //   OCAlert.alertError("Bạn đã quét mã sản phẩm này rồi, vui lòng thử lại.", {
+    //     timeOut: 3000,
+    //   });
+    //   this.setState({ barcodeFromInput: "" });
+    //   return;
+    // }
+
+    // let isMatch = barcodeStringArr.includes(barcodeFromInput);
+    // if (isMatch === true) {
+    //   matchedBarcodes.push({
+    //     barcode: barcodeFromInput,
+    //   });
+    //   this.setState({ matchedBarcodes, barcodeFromInput: "" });
+    // } else {
+    //   OCAlert.alertError(
+    //     `Mã sản phẩm vừa quét không khớp với sản phẩm trong đơn hàng. Vui lòng kiểm tra lại.`,
+    //     { timeOut: 3000 }
+    //   );
+    // }
   };
 
   removeBarcodeRow = (id) => {
@@ -103,6 +164,7 @@ class ScanBarcode extends Component {
           <td>
             {barcode.note && barcode.condition != "good" ? barcode.note : ""}
           </td>
+          <td>{barcode.qty}</td>
           <td>
             <button
               onClick={() => this.handleOpen(barcode.barcode)}
@@ -311,6 +373,7 @@ class ScanBarcode extends Component {
                                       <th scope="col">Mã Sản Phẩm</th>
                                       <th scope="col">Tình Trạng</th>
                                       <th scope="col">Ghi Chú</th>
+                                      <th scope="col">Qty</th>
                                       <th scope="col">Hư Đồ?</th>
                                     </tr>
                                   </thead>

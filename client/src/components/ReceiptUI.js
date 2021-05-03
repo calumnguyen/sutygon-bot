@@ -62,9 +62,7 @@ function ReceiptUI({
   let totalWithoutIns = 0;
   let remainingAmount = 0;
 
-  if (refundAmount) {
-    if (refundAmount < 0) remainingAmount = -refundAmount;
-  } else {
+  if (typeof refundAmount !== "number") {
     if (order?.total) remainingAmount += parseInt(order?.total);
     if (previouslyPaid) remainingAmount -= parseInt(previouslyPaid);
     if (currentlyPaid) remainingAmount -= parseInt(currentlyPaid);
@@ -299,7 +297,7 @@ function ReceiptUI({
                 borderBottom: "1px solid #ddd",
               }}
             >
-              {refundAmount && (
+              {typeof refundAmount == "number" && (
                 <>
                   <div>Đã Hoàn tiền: {refundAmount > 0 ? refundAmount : 0}</div>
                 </>
