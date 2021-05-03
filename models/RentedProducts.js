@@ -123,6 +123,8 @@ const RentedProductSchema = new mongoose.Schema(
         status: String,
         pay: Float,
         date: { type: Date, default: Date.now },
+        return: { type: Boolean, default: false },
+        refundAmount: { type: Number },
       },
     ],
 
@@ -143,6 +145,8 @@ const RentedProductSchema = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "store",
     },
+    chargesArray: [],
+    discountsArray: [],
   },
   { timestamps: true }
 );

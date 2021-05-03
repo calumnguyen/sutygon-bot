@@ -5,14 +5,10 @@ import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getCustomer } from "../../../actions/customer";
-import { Link } from "react-router-dom";
 import Loader from "../../layout/Loader";
-import shortid from "shortid";
 import * as moment from "moment";
-import DatePicker from "react-datepicker";
 // import ShowPrices from "./small/ShowPrices";
 import { OCAlertsProvider } from "@opuscapita/react-alerts";
-import { OCAlert } from "@opuscapita/react-alerts";
 import { addNewInvoice } from "../../../actions/invoices";
 import {
   getProductById,
@@ -22,8 +18,6 @@ import {
 import { updateRentedProduct } from "../../../actions/rentproduct";
 import { getOrderbyOrderNumber } from "../../../actions/returnproduct";
 import { addNewRentProduct, getLastRecord } from "../../../actions/rentproduct";
-import { vi } from "date-fns/esm/locale";
-import axios from "axios";
 import ReceiptUI from "../../ReceiptUI";
 
 var JsBarcode = require("jsbarcode");
@@ -87,7 +81,7 @@ class ReturnPrepaid extends Component {
       generateInvoice: true,
       orderNumber: order.orderNumber,
     });
-    if (state.generateInvoice === true) {
+    if (true) {
       if (order && state.orderNumber) {
         const invoiceReturn = {
           order_id: order._id,
@@ -136,8 +130,36 @@ class ReturnPrepaid extends Component {
           product = null;
         }
 
+        const order = this.props.location?.state.order;
+
+        const { amount_steps, authorization_logs } = order;
+
+        const { owe_from_customer, amount_remaing } = this.state;
+
+        amount_steps.push({
+          date: new Date(),
+          pay: owe_from_customer ? amount_remaing : 0,
+          refundAmount: owe_from_customer ? 0 : amount_remaing,
+          return: true,
+          status: "Return items",
+        });
+
+        const { user } = this.props.auth;
+
+        authorization_logs.push({
+          date: new Date(),
+          employee_id: user?._id,
+          employee_name: user?.username || user.fullname || user.first_name,
+          message: "Items returned - status is now completed",
+          status: "Completed",
+        });
+
         const rentedProduct = {
           status: "Completed",
+          amount_steps,
+          authorization_logs,
+          chargesArray: this.props.location?.state?.charge_data,
+          discountsArray: this.props.location?.state?.discount_data,
         };
         this.props.updateRentedProduct(rentedProduct, order._id);
       });
@@ -417,7 +439,7 @@ class ReturnPrepaid extends Component {
     // if (this.props.location.state === undefined) {
     //   return <Redirect to="/rentproduct" />;
     // }
-    const { pay_amount, owe_from_customer } = this.state;
+    const { owe_from_customer } = this.state;
     const { customer } = this.props;
     const { state } = this.props.location;
     const { order } = state;
@@ -877,7 +899,8 @@ class ReturnPrepaid extends Component {
                 product_Array={this.parseProductsArray(product_Array)}
                 username={user?.username}
                 order={{ ...order, status: "Completed" }}
-                currentlyPaid={order.pay_amount}
+                currentlyPaid={owe_from_customer ? amount_remaing : 0}
+                previouslyPaid={order.pay_amount}
                 refundAmount={
                   owe_from_customer ? -amount_remaing : amount_remaing
                 }

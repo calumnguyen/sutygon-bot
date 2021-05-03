@@ -163,13 +163,27 @@ router.post(
         return res.status(422).json({ errors: errors.array() });
       }
 
+      const {
+        status,
+        authorization_logs,
+        amount_steps,
+        chargesArray,
+        discountsArray,
+      } = req.body;
+
       var updatedData = {
-        status: req.body.status,
+        status,
+        chargesArray,
+        discountsArray,
       };
 
-      if (req.body.status == "Completed") {
-        updatedData["returnedOn"] = Date.now();
-      }
+      if (authorization_logs)
+        updatedData.authorization_logs = authorization_logs;
+      if (amount_steps) updatedData.amount_steps = amount_steps;
+
+      // if (req.body.status == "Completed") {
+      //   updatedData["returnedOn"] = Date.now();
+      // }
       await RentedProduct.findByIdAndUpdate(req.params.id, updatedData);
       res.json({ msg: "Order Completed Successfully" });
     } catch (err) {

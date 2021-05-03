@@ -243,6 +243,7 @@ class ViewOrder extends Component {
     const { amount_logs } = this.state;
 
     if (amount_logs) {
+      const { order } = this.props;
       amount_logs.forEach((log, idx) => {
         let paidAmount = 0;
         amount_logs.forEach((item, index) => {
@@ -269,13 +270,18 @@ class ViewOrder extends Component {
               {this.state.invoice === idx ? (
                 <div style={{ display: "none" }} id={`invoice_${idx}`}>
                   <ReceiptUI
-                    order={this.props.order}
+                    order={order}
                     product_Array={this.parseProductsArray(
                       this.parseOrderItemsArray()
                     )}
                     previouslyPaid={paidAmount}
                     currentlyPaid={log.pay}
-                    username={this.props.order?.user?.username}
+                    username={order?.user?.username}
+                    refundAmount={log.return ? log.refundAmount : undefined}
+                    chargesArray={log.return ? order?.chargesArray : undefined}
+                    discountsArray={
+                      log.return ? order?.discountsArray : undefined
+                    }
                   />
                 </div>
               ) : (
