@@ -68,6 +68,17 @@ function ReceiptUI({
     if (currentlyPaid) remainingAmount -= parseInt(currentlyPaid);
   }
 
+  let extraChargesAndDiscounts = 0;
+
+  if (discountsArray)
+    discountsArray.forEach(
+      (discount) => (extraChargesAndDiscounts -= parseInt(discount.amount))
+    );
+  if (chargesArray)
+    chargesArray.forEach(
+      (charge) => (extraChargesAndDiscounts += parseInt(charge.amount))
+    );
+
   if (order?.total) totalWithoutIns += parseInt(order.total);
   // if (order?.discount_amount)
   //   totalWithoutIns += parseInt(order.discount_amount);
@@ -207,7 +218,9 @@ function ReceiptUI({
                 <div style={{ marginRight: "10px" }}>
                   Tổng giá trị (không cọc) -
                 </div>
-                <div style={{ margin: "auto 0" }}>{totalWithoutIns}</div>
+                <div style={{ margin: "auto 0" }}>
+                  {parseInt(totalWithoutIns) + extraChargesAndDiscounts}
+                </div>
               </div>
               <div
                 style={{

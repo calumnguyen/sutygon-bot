@@ -156,71 +156,95 @@ class ScanBarcode extends Component {
   getBarcodeRow = () => {
     let { matchedBarcodes } = this.state; // get all barcode
     if (matchedBarcodes) {
-      return matchedBarcodes.map((barcode, b_index) => (
-        <tr key={b_index}>
-          <th scope="row">{b_index + 1}</th>
-          <td>{barcode.barcode}</td>
-          <td>{barcode.condition ? barcode.condition : ""}</td>
-          <td>
-            {barcode.note && barcode.condition != "good" ? barcode.note : ""}
-          </td>
-          <td>{barcode.qty}</td>
-          <td>
-            <button
-              onClick={() => this.handleOpen(barcode.barcode)}
-              type="button"
-              className="btn btn-raised btn-sm btn-icon btn-default mt-1"
-            >
-              {barcode.condition == "good" ? (
-                <i
-                  style={{ fontSize: "30px" }}
-                  className="fa fa-check fa-2x text-success"
-                ></i>
-              ) : barcode.condition == "Minor damage" ? (
-                <i
-                  style={{ fontSize: "30px" }}
-                  className="fa fa-exclamation-triangle fa-5 text-warning"
-                ></i>
-              ) : barcode.condition == "Major damage" ? (
-                <i
-                  style={{ fontSize: "30px" }}
-                  className="fa fa-times fa-5 text-danger"
-                ></i>
-              ) : (
-                <i
-                  style={{ fontSize: "30px" }}
-                  className="fa fa-check fa-2x text-success"
-                ></i>
-              )}
-            </button>
-          </td>
-        </tr>
+      return matchedBarcodes.map((barcode, b_index) => {
+        const orderItem = this.state.order[0].orderItems?.filter(
+          (item) => item.barcode == barcode.barcode
+        )[0];
+        const handleQtyChange = (qty) => {
+          if (qty <= orderItem.orderQty && qty > 0) {
+            const matchedBarcodesCopy = [...matchedBarcodes];
+            matchedBarcodesCopy.forEach((barcodecpy) => {
+              if (barcodecpy.barcode == barcode.barcode) barcodecpy.qty = qty;
+            });
+            this.setState({ matchedBarcodes: matchedBarcodesCopy });
+          } else
+            OCAlert.alertError(`All items of this barcode returned`, {
+              timeOut: 3000,
+            });
+        };
+        return (
+          <tr key={b_index}>
+            <th scope="row">{b_index + 1}</th>
+            <td>{barcode.barcode}</td>
+            <td>{barcode.condition ? barcode.condition : ""}</td>
+            <td>
+              {barcode.note && barcode.condition != "good" ? barcode.note : ""}
+            </td>
+            <td>
+              <input
+                type="number"
+                value={barcode.qty}
+                style={{ maxWidth: "40px" }}
+                onChange={(e) => handleQtyChange(e.target.value)}
+              />
+            </td>
+            <td>
+              <button
+                onClick={() => this.handleOpen(barcode.barcode)}
+                type="button"
+                className="btn btn-raised btn-sm btn-icon btn-default mt-1"
+              >
+                {barcode.condition == "good" ? (
+                  <i
+                    style={{ fontSize: "30px" }}
+                    className="fa fa-check fa-2x text-success"
+                  ></i>
+                ) : barcode.condition == "Minor damage" ? (
+                  <i
+                    style={{ fontSize: "30px" }}
+                    className="fa fa-exclamation-triangle fa-5 text-warning"
+                  ></i>
+                ) : barcode.condition == "Major damage" ? (
+                  <i
+                    style={{ fontSize: "30px" }}
+                    className="fa fa-times fa-5 text-danger"
+                  ></i>
+                ) : (
+                  <i
+                    style={{ fontSize: "30px" }}
+                    className="fa fa-check fa-2x text-success"
+                  ></i>
+                )}
+              </button>
+            </td>
+          </tr>
 
-        // <div id="sizes_box" key={b_index}>
-        //   <div className="row">
-        //     <div className="left">
-        //       <input
-        //         type="text"
-        //         className="form-control mm-input s-input"
-        //         placeholder="Barcode"
-        //         id="widthBr"
-        //         style={{ width: "-webkit-fill-available",color:'black' }}
-        //         value={barcode.barcode}
-        //         readOnly
-        //       />
-        //     </div>
-        //     <div className="right">
-        //       <button
-        //         onClick={this.handleOpen}
-        //         type="button"
-        //         className="btn btn-raised btn-sm btn-icon btn-default mt-1"
-        //       >
-        //         <i className="fa fa-check fa-2x text-success"></i>
-        //       </button>
-        //     </div>
-        //   </div>
-        // </div>
-      ));
+          // <div id="sizes_box" key={b_index}>
+          //   <div className="row">
+          //     <div className="left">
+          //       <input
+          //         type="text"
+          //         className="form-control mm-input s-input"
+          //         placeholder="Barcode"
+          //         id="widthBr"
+          //         style={{ width: "-webkit-fill-available",color:'black' }}
+          //         value={barcode.barcode}
+          //         readOnly
+          //       />
+          //     </div>
+          //     <div className="right">
+          //       <button
+          //         onClick={this.handleOpen}
+          //         type="button"
+          //         className="btn btn-raised btn-sm btn-icon btn-default mt-1"
+          //       >
+          //         <i className="fa fa-check fa-2x text-success"></i>
+          //       </button>
+          //     </div>
+          //   </div>
+          // </div>
+        );
+      });
     }
   };
 

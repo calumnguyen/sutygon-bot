@@ -184,6 +184,11 @@ router.post(
       // if (req.body.status == "Completed") {
       //   updatedData["returnedOn"] = Date.now();
       // }
+      const order = await RentedProduct.findById(req.params.id);
+
+      if (order.status.toLowerCase() == "completed")
+        return res.json({ msg: "Order Completed Successfully" });
+
       await RentedProduct.findByIdAndUpdate(req.params.id, updatedData);
       res.json({ msg: "Order Completed Successfully" });
     } catch (err) {
