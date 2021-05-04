@@ -69,7 +69,6 @@ class ReturnPrepaid extends Component {
 
   onSubmit = async (e) => {
     e.preventDefault();
-
     const state = { ...this.state };
     const { user } = this.props.auth;
     const { order } = this.props.location.state;
@@ -129,40 +128,40 @@ class ReturnPrepaid extends Component {
           products.push(product);
           product = null;
         }
-
-        const order = this.props.location?.state.order;
-
-        const { amount_steps, authorization_logs } = order;
-
-        const { owe_from_customer, amount_remaing } = this.state;
-
-        amount_steps.push({
-          date: new Date(),
-          pay: owe_from_customer ? amount_remaing : 0,
-          refundAmount: owe_from_customer ? 0 : amount_remaing,
-          return: true,
-          status: "Return items",
-        });
-
-        const { user } = this.props.auth;
-
-        authorization_logs.push({
-          date: new Date(),
-          employee_id: user?._id,
-          employee_name: user?.username || user.fullname || user.first_name,
-          message: "Items returned - status is now completed",
-          status: "Completed",
-        });
-
-        const rentedProduct = {
-          status: "Completed",
-          amount_steps,
-          authorization_logs,
-          chargesArray: this.props.location?.state?.charge_data,
-          discountsArray: this.props.location?.state?.discount_data,
-        };
-        this.props.updateRentedProduct(rentedProduct, order._id);
       });
+      const order = this.props.location?.state.order;
+
+      const { amount_steps, authorization_logs } = order;
+
+      const { owe_from_customer, amount_remaing } = this.state;
+
+      amount_steps.push({
+        date: new Date(),
+        pay: owe_from_customer ? amount_remaing : 0,
+        refundAmount: owe_from_customer ? 0 : amount_remaing,
+        return: true,
+        status: "Return items",
+      });
+
+      const { user } = this.props.auth;
+
+      authorization_logs.push({
+        date: new Date(),
+        employee_id: user?._id,
+        employee_name: user?.username || user.fullname || user.first_name,
+        message: "Items returned - status is now completed",
+        status: "Completed",
+      });
+
+      const rentedProduct = {
+        status: "Completed",
+        amount_steps,
+        authorization_logs,
+        chargesArray: this.props.location?.state?.charge_data,
+        discountsArray: this.props.location?.state?.discount_data,
+      };
+
+      this.props.updateRentedProduct(rentedProduct, order._id);
     }
     this.printInvoice();
     this.setState({ saving: false, orderNumber: "" });
