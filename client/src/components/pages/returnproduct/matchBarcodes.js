@@ -596,7 +596,7 @@ class MatchBarcodes extends Component {
     });
 
     let returnedOrderQty = 0;
-    barcodesArray.forEach((item) => (returnedOrderQty += item.qty));
+    barcodesArray.forEach((item) => (returnedOrderQty += parseInt(item.qty)));
 
     return (
       <React.Fragment>
